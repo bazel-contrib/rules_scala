@@ -39,6 +39,14 @@ setup_suite() {
   original_dir="$PWD"
   cd "${dir}/test/compiler_sources_integrity"
 
+  local bk_bazel_rc="${dir}/tools/bazel.rc"
+
+  if [[ -f "$bk_bazel_rc" ]]; then
+    # test_rules_scala_jdk21 from .bazelci/presubmit.yml needs this.
+    mkdir tools
+    cp "${bk_bazel_rc}" tools/
+  fi
+
   # The behavior we're testing must not rely on repos generated during previous
   # builds or test runs.
   _clean
@@ -67,8 +75,9 @@ _scala_3_url() {
 
 _build_with_scala_version() {
   local scala_version="${1:-}"
-  local build_args=()
+  local build_args
 
+  build_args=()
   if [[ -n "$scala_version" ]]; then
     build_args+=("--repo_env=SCALA_VERSION=${scala_version}")
   fi
@@ -122,11 +131,13 @@ test_emit_no_canonical_reproducible_form_warning_for_default_version() {
 }
 
 test_emit_no_canonical_reproducible_form_warning_for_latest_versions() {
-  local versions=()
   local scala_version_pattern='^scala_version = "([0-9.]+)"$'
   local f
   local line
   local version
+  local versions
+
+  versions=()
 
   for f in "${dir}"/third_party/repositories/scala_*.bzl; do
     while IFS= read -r line; do
