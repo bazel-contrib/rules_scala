@@ -29,6 +29,7 @@ $runner bazel test "$test_output_flag" //test/... --extra_toolchains="//test_exp
 $runner bazel build test:ScalaBinaryInGenrule --nolegacy_external_runfiles
 $runner bazel build //test_statsfile:Simple_statsfile
 $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolchains="//test/toolchains:enable_stats_file_disabled_toolchain"
+. "${test_dir}"/test_compiler_sources_integrity.sh
 . "${test_dir}"/test_build_event_protocol.sh
 . "${test_dir}"/test_compilation.sh
 . "${test_dir}"/test_deps.sh

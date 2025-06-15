@@ -17,6 +17,9 @@ test/semanticdb/tempsrc
 # From scripts/create_repository.py
 repository-artifacts.json
 
+# From scripts/*.py
+**/__pycache__/
+
 # Until it settles down
 **/MODULE.bazel.lock
 
@@ -25,3 +28,4 @@ tmp/
 
 # Not required by tests.
 deps/latest/.bazelversion
+

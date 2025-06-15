@@ -20,7 +20,6 @@ PROTOC_VERSIONS = [
     "29.1",
     "29.0",
 ]
-
 PROTOC_BUILDS = {
     "linux-aarch_64": {
         "exec_compat": [
