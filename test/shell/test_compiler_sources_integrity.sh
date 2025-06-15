@@ -75,14 +75,16 @@ _scala_3_url() {
 
 _build_with_scala_version() {
   local scala_version="${1:-}"
-  local build_args
+  local build_args=()
 
-  build_args=()
   if [[ -n "$scala_version" ]]; then
     build_args+=("--repo_env=SCALA_VERSION=${scala_version}")
   fi
 
-  bazel build "${build_args[@]}" //... 2>&1
+  # Because the macOS BuildKite runner apparently uses an older Bash, leading to
+  # `build_args[@]` being unbound when empty:
+  # - https://stackoverflow.com/a/7577209
+  bazel build ${build_args[@]+"${build_args[@]}"} //... 2>&1
 }
 
 _expect_success_without_canonical_reproducible_warning() {
@@ -135,9 +137,7 @@ test_emit_no_canonical_reproducible_form_warning_for_latest_versions() {
   local f
   local line
   local version
-  local versions
-
-  versions=()
+  local versions=()
 
   for f in "${dir}"/third_party/repositories/scala_*.bzl; do
     while IFS= read -r line; do
