@@ -222,7 +222,7 @@ run_tests() {
   local runner="$2"
 
   while IFS= read -r line; do
-    if [[ "$line" =~ ^_?(test_[A-Za-z0-9_]+)\(\)\ ?\{$ ]]; then
+    if [[ "$line" =~ ^(_?test_[A-Za-z0-9_]+)\(\)\ ?\{$ ]]; then
       "$runner" "${BASH_REMATCH[1]}"
     fi
   done <"$test_source"

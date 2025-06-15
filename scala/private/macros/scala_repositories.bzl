@@ -1,5 +1,12 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
+load("//:scala_config.bzl", "DEFAULT_SCALA_VERSION")
+load(
+    "//scala/private:macros/compiler_sources_integrity.bzl",
+    "COMPILER_SOURCES",
+    "URL_PREFIX",
+    "URL_SUFFIX_BY_MAJOR_VERSION",
+)
 load(
     "//scala:scala_cross_version.bzl",
     "extract_major_version",
@@ -50,15 +57,113 @@ compiler_sources_repo = repository_rule(
     implementation = _compiler_sources_repo_impl,
 )
 
+def _get_compiler_srcjar(scala_version, scala_compiler_srcjar):
+    if scala_compiler_srcjar:
+        return scala_compiler_srcjar
+
+    compiler_srcjar = COMPILER_SOURCES.get(scala_version, None)
+
+    if compiler_srcjar:
+        return compiler_srcjar
+
+    # Try to guess what the correct URL will be for scala_version based on its
+    # major semver number.
+    requested_major_version = scala_version.split(".", 1)[0]
+    highest_known_major_version = URL_SUFFIX_BY_MAJOR_VERSION.keys()[-1]
+    guessed_suffix = (
+        URL_SUFFIX_BY_MAJOR_VERSION.get(requested_major_version, None) or
+        URL_SUFFIX_BY_MAJOR_VERSION[highest_known_major_version]
+    )
+    guessed_compiler_srcjar_url = (
+        URL_PREFIX + guessed_suffix.format(version = scala_version)
+    )
+    no_compiler_source_jar_integrity_error = """
+No compiler source jar integrity data exists in rules_scala for Scala version
+{version}.
+
+Please supply a compiler_srcjar object in your MODULE.bazel or legacy WORKSPACE
+file. For example, replicating the integrity data for Scala version {default}
+in MODULE.bazel would look like:
+
+    scala_deps = use_extension(
+        "@rules_scala//scala/extensions:deps.bzl",
+        "scala_deps",
+    )
+    scala_deps.scala()
+    scala_deps.compiler_srcjar(
+        integrity = "{integrity}",
+        url = "{url}",
+        version = "{default}",
+    )
+
+The equivalent legacy WORKSPACE configuration would look like:
+
+    load("@rules_scala//scala:toolchains.bzl", "scala_toolchains")
+
+    scala_toolchains(
+        scala_compiler_srcjars = {{
+            "{default}": {{
+                "integrity": "{integrity}",
+                "url": "{url}",
+            }},
+        }},
+    )
+
+Calculate the integrity value using OpenSSL or similar utilities (change the
+following URL if it's incorrect for Scala version {version}):
+
+    curl -L {guessed_compiler_srcjar_url} |
+        openssl dgst -sha256 -binary | openssl base64
+
+Then add the "sha256-" prefix manually to produce the final "integrity" value.
+
+Also:
+
+- You may replace the single "url" with a list of multiple "urls", or with a
+  "label" if a BUILD target exists for the source jar. However, you can use only
+  one of "url", "urls", or "label".
+
+- You may omit the "integrity" value, or the alternative "sha256" value.
+  However, Bazel will emit a warning about obtaining a "canonical reproducible
+  form" by using a specific "integrity" value. You can then add that "integrity"
+  value to the compiler_srcjar object (if you trust it).
+
+For more information, see:
+
+- the Subresource Integrity format description at
+  https://developer.mozilla.org/docs/Web/Security/Subresource_Integrity
+  and the formal spec at https://www.w3.org/TR/sri-2/
+
+- the docstring from the compiler_srcjar tag_class in
+  @rules_scala//scala/extensions:deps.bzl
+
+- the docstring from scala_toolchains() in @rules_scala//scala:toolchains.bzl
+
+- the dt_patches/test_dt_patches_user_srcjar/{{MODULE.bazel,WORKSPACE}} files
+  in rules_scala for more examples
+
+""".format(
+        version = scala_version,
+        default = DEFAULT_SCALA_VERSION,
+        guessed_compiler_srcjar_url = guessed_compiler_srcjar_url,
+        **COMPILER_SOURCES[DEFAULT_SCALA_VERSION]
+    )
+    fail(no_compiler_source_jar_integrity_error)
+
 def _validate_scalac_srcjar(srcjar):
-    if type(srcjar) != "dict":
-        return False
-    oneof = ["url", "urls", "label"]
     count = 0
-    for key in oneof:
-        if srcjar.get(key):
-            count += 1
-    return count == 1
+
+    if type(srcjar) == "dict":
+        for key in ["url", "urls", "label"]:
+            if srcjar.get(key):
+                count += 1
+
+    if count != 1:
+        fail(
+            "scala_compiler_srcjar invalid, must be a dict " +
+            "with exactly one of \"label\", \"url\" or \"urls\" keys, got: " +
+            repr(srcjar),
+        )
 
 def dt_patched_compiler_setup(scala_version, scala_compiler_srcjar = None):
     scala_major_version = extract_major_version(scala_version)
@@ -86,14 +191,9 @@ def dt_patched_compiler_setup(scala_version, scala_compiler_srcjar = None):
         "    srcs=[\"scala/tools/nsc/symtab/SymbolLoaders.scala\"]," if scala_major_version.startswith("2.") else "    srcs=[\"dotty/tools/dotc/core/SymbolLoaders.scala\"],",
         ")",
     ])
-    default_scalac_srcjar = {
-        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/%s/scala-compiler-%s-sources.jar" % (scala_version, scala_version) if scala_major_version.startswith("2.") else "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/%s/scala3-compiler_3-%s-sources.jar" % (scala_version, scala_version),
-    }
-    srcjar = scala_compiler_srcjar if scala_compiler_srcjar != None else default_scalac_srcjar
-    _validate_scalac_srcjar(srcjar) or fail(
-        ("scala_compiler_srcjar invalid, must be a dict with exactly one of \"label\", \"url\"" +
-         " or \"urls\" keys, got: ") + repr(srcjar),
-    )
+    srcjar = _get_compiler_srcjar(scala_version, scala_compiler_srcjar)
+    _validate_scalac_srcjar(srcjar)
+
     if srcjar.get("label"):
         dt_patched_compiler(
             name = "scala_compiler_source" + version_suffix(scala_version),

@@ -1,0 +1,45 @@
+"""Bazel module for test/shell/test_compiler_sources_integrity.sh"""
+
+module(name = "test_compiler_sources_integrity")
+
+bazel_dep(name = "rules_scala")
+local_path_override(
+    module_name = "rules_scala",
+    path = "../..",
+)
+
+scala_config = use_extension(
+    "@rules_scala//scala/extensions:config.bzl",
+    "scala_config",
+)
+scala_config.settings(
+    # Most of the time, this will trigger compiler source downloads, not a
+    # direct dependency on @scala_compiler_sources. The `alias` from //:src to
+    # @scala_compiler_sources//:src isn't common, but makes the test very fast.
+    enable_compiler_dependency_tracking = True,
+)
+
+scala_deps = use_extension(
+    "@rules_scala//scala/extensions:deps.bzl",
+    "scala_deps",
+)
+scala_deps.scala()
+scala_deps.settings(
+    # Since we're using a bogus Scala version in the compiler_srcjar.
+    validate_scala_version = False,
+)
+
+# Used for test_emit_no_canonical_reproducible_form_warning_for_user_srcjar.
+# See that test case's comments for details.
+scala_deps.compiler_srcjar(
+    integrity = "sha256-7UE3FPJ6UvJTUpinSCTquNbZmzLO0aEnMLp6FUw1H2Q=",
+    url = (
+        "https://repo1.maven.org/maven2/org/scala-lang/" +
+        "scala3-compiler_3/3.1.3/scala3-compiler_3-3.1.3-sources.jar"
+    ),
+    version = "3.1.999",
+)
+use_repo(
+    scala_deps,
+    "scala_compiler_sources",
+)

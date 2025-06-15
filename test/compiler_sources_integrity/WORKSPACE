@@ -1,0 +1,57 @@
+workspace(name = "rules_scala_test")
+
+local_repository(
+    name = "rules_scala",
+    path = "../../",
+)
+
+load("@rules_scala//scala:latest_deps.bzl", "rules_scala_dependencies")
+
+rules_scala_dependencies()
+
+load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
+
+rules_java_dependencies()
+
+load("@bazel_features//:deps.bzl", "bazel_features_deps")
+
+bazel_features_deps()
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+load("@rules_scala//:scala_config.bzl", "scala_config")
+
+scala_config(
+    # Most of the time, this will trigger compiler source downloads, not a
+    # direct dependency on @scala_compiler_sources. The `alias` from //:src to
+    # @scala_compiler_sources//:src isn't common, but makes the test very fast.
+    enable_compiler_dependency_tracking = True,
+)
+
+load(
+    "@rules_scala//scala:toolchains.bzl",
+    "scala_register_toolchains",
+    "scala_toolchains",
+)
+
+scala_toolchains(
+    scala_compiler_srcjars = {
+        "3.1.999": {
+            "integrity": "sha256-7UE3FPJ6UvJTUpinSCTquNbZmzLO0aEnMLp6FUw1H2Q=",
+            "url": (
+                "https://repo1.maven.org/maven2/org/scala-lang/" +
+                "scala3-compiler_3/3.1.3/scala3-compiler_3-3.1.3-sources.jar"
+            ),
+        },
+    },
+    # Since we're using a bogus Scala version in the compiler_srcjar.
+    validate_scala_version = False,
+)
+
+scala_register_toolchains()
