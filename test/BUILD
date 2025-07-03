@@ -729,3 +729,25 @@ scala_junit_test(
     },
     suffixes = ["Test"],
 )
+
+# Targets with inlining support
+
+# If this target doesn't have build_ijar disabled, then InlinedExported will fail to compile.
+scala_library(
+    name = "InlinableExported",
+    srcs = ["Exported.scala"],
+    build_ijar = False,
+    runtime_deps = ["Runtime"],
+)
+
+scala_library(
+    name = "InlinedExported",
+    srcs = ["OtherLib.scala"],
+    scalacopts = [
+        "-opt:l:inline",
+        "-opt-inline-from:scalarules.test.**",
+        # We need fatal warnings to ensure that the inlining actually worked.
+        "-Xfatal-warnings",
+    ],
+    deps = [":InlinableExported"],
+)

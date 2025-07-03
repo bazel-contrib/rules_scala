@@ -33,15 +33,19 @@ def phase_compile_binary(ctx, p):
     return _phase_compile_default(ctx, p, args)
 
 def phase_compile_library(ctx, p):
-    args = struct(
-        srcjars = p.collect_srcjars,
-        unused_dependency_checker_ignored_targets = [
+    args = {
+        "srcjars": p.collect_srcjars,
+        "unused_dependency_checker_ignored_targets": [
             target.label
             for target in p.scalac_provider.default_classpath + ctx.attr.exports +
                           ctx.attr.unused_dependency_checker_ignored_targets
         ],
-    )
-    return _phase_compile_default(ctx, p, args)
+    }
+
+    if hasattr(ctx.attr, "build_ijar"):
+        args["buildijar"] = ctx.attr.build_ijar
+
+    return _phase_compile_default(ctx, p, struct(**args))
 
 def phase_compile_library_for_plugin_bootstrapping(ctx, p):
     args = struct(

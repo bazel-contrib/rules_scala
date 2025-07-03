@@ -172,5 +172,21 @@ In order to have a Java rule use this jar file, use the `java_import` rule.
         </p>
       </td>
     </tr>
+    <tr>
+      <td><code>build_ijar</code></td>
+      <td>
+        <p><code>Boolean; optional (default True)</code></p>
+        <p>
+          Enables building an interface jar.
+          You can also disable the interface jar (`ijar`) functionality, it may be useful in some specific cases.
+
+          Example: if you want to enable inlining the compiled code, when it is given as a dependency for another Scala target.
+          `ijar` does not contain an implementation, so it cannot be used for inlining, disable `ijar` in this usecase.
+
+          Only change this parameter if you have an explicit usecase like the above.
+          For macro code, use a specific rule: scala_macro_library.
+        </p>
+      </td>
+    </tr>
   </tbody>
 </table>
