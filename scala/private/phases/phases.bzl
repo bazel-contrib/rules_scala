@@ -21,6 +21,7 @@ load(
     "//scala/private:phases/phase_compile.bzl",
     _phase_compile_binary = "phase_compile_binary",
     _phase_compile_common = "phase_compile_common",
+    _phase_compile_inlined_library = "phase_compile_inlined_library",
     _phase_compile_junit_test = "phase_compile_junit_test",
     _phase_compile_library = "phase_compile_library",
     _phase_compile_library_for_plugin_bootstrapping = "phase_compile_library_for_plugin_bootstrapping",
@@ -135,6 +136,7 @@ phase_collect_jars_common = _phase_collect_jars_common
 # compile
 phase_compile_binary = _phase_compile_binary
 phase_compile_library = _phase_compile_library
+phase_compile_inlined_library = _phase_compile_inlined_library
 phase_compile_library_for_plugin_bootstrapping = _phase_compile_library_for_plugin_bootstrapping
 phase_compile_junit_test = _phase_compile_junit_test
 phase_compile_repl = _phase_compile_repl

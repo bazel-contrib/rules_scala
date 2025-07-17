@@ -13,6 +13,7 @@ load(
 )
 load(
     "//scala/private:rules/scala_library.bzl",
+    _make_scala_inlined_library = "make_scala_inlined_library",
     _make_scala_library = "make_scala_library",
     _make_scala_library_for_plugin_bootstrapping = "make_scala_library_for_plugin_bootstrapping",
     _make_scala_macro_library = "make_scala_macro_library",
@@ -28,6 +29,7 @@ load(
 
 make_scala_binary = _make_scala_binary
 make_scala_library = _make_scala_library
+make_scala_inlined_library = _make_scala_inlined_library
 make_scala_library_for_plugin_bootstrapping = _make_scala_library_for_plugin_bootstrapping
 make_scala_macro_library = _make_scala_macro_library
 make_scala_repl = _make_scala_repl
