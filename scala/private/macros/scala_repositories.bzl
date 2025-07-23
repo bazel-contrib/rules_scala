@@ -2,16 +2,16 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 load("//:scala_config.bzl", "DEFAULT_SCALA_VERSION")
 load(
-    "//scala/private:macros/compiler_sources_integrity.bzl",
-    "COMPILER_SOURCES",
-    "URL_PREFIX",
-    "URL_SUFFIX_BY_MAJOR_VERSION",
-)
-load(
     "//scala:scala_cross_version.bzl",
     "extract_major_version",
     "extract_minor_version",
     "version_suffix",
+)
+load(
+    "//scala/private:macros/compiler_sources_integrity.bzl",
+    "COMPILER_SOURCES",
+    "URL_PREFIX",
+    "URL_SUFFIX_BY_MAJOR_VERSION",
 )
 
 def _dt_patched_compiler_impl(rctx):
