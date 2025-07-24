@@ -31,13 +31,6 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
-http_archive(
-    name = "rules_python",
-    sha256 = "9f9f3b300a9264e4c77999312ce663be5dee9a56e361a1f6fe7ec60e1beef9a3",
-    strip_prefix = "rules_python-1.4.1",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/1.4.1/rules_python-1.4.1.tar.gz",
-)
-
 load("@rules_python//python:repositories.bzl", "py_repositories")
 
 py_repositories()
@@ -112,10 +105,10 @@ local_repository(
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "c6cf9da6668ac84c470c43cbfccb8fdc844ead2b5a8b918e2816d44f2986f644",
+    sha256 = "9d72f7b8904128afb98d46bbef82ad7223ec9ff3718d419afb355fddd9f9484a",
     urls = [
-        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.55.0/rules_go-v0.55.0.zip",
-        "https://github.com/bazel-contrib/rules_go/releases/download/v0.55.0/rules_go-v0.55.0.zip",
+        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.55.1/rules_go-v0.55.0.zip",
+        "https://github.com/bazel-contrib/rules_go/releases/download/v0.55.1/rules_go-v0.55.1.zip",
     ],
 )
 
@@ -127,7 +120,7 @@ load(
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.24.4")
+go_register_toolchains(version = "1.24.5")
 
 http_archive(
     name = "bazelci_rules",
@@ -148,13 +141,6 @@ load("//scala/private/extensions:dev_deps.bzl", "dev_deps_repositories")
 dev_deps_repositories()
 
 register_toolchains("//test/toolchains:java21_toolchain_definition")
-
-http_archive(
-    name = "rules_shell",
-    sha256 = "b15cc2e698a3c553d773ff4af35eb4b3ce2983c319163707dddd9e70faaa062d",
-    strip_prefix = "rules_shell-0.5.0",
-    url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.5.0/rules_shell-v0.5.0.tar.gz",
-)
 
 load(
     "@rules_shell//shell:repositories.bzl",

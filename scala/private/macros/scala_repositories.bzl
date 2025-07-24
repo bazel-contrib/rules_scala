@@ -58,7 +58,7 @@ compiler_sources_repo = repository_rule(
 )
 
 def _get_compiler_srcjar(scala_version, scala_compiler_srcjar):
-    if scala_compiler_srcjar:
+    if scala_compiler_srcjar != None:
         return scala_compiler_srcjar
 
     compiler_srcjar = COMPILER_SOURCES.get(scala_version, None)

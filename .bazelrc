@@ -1,5 +1,5 @@
 # Remove once Bazel 8 becomes the minimum supported version.
-common --noenable_workspace --incompatible_use_plus_in_repo_names --incompatible_autoload_externally=
+common --noenable_workspace --incompatible_use_plus_in_repo_names
 
 # Uncomment to run tests under `WORKSPACE`. Remove once Bazel 9 becomes the
 # minimum supported version.

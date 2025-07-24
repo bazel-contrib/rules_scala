@@ -28,16 +28,16 @@ ROOT_SCALA_VERSIONS = [
 ]
 PARSER_COMBINATORS_VERSION = '1.1.2'
 SBT_COMPILER_INTERFACE_VERSION = '1.10.8'
-SBT_UTIL_INTERFACE_VERSION = '1.11.1'
+SBT_UTIL_INTERFACE_VERSION = '1.11.3'
 SCALATEST_VERSION = "3.2.19"
-SCALAFMT_VERSION = "3.9.7"
+SCALAFMT_VERSION = "3.9.8"
 KIND_PROJECTOR_VERSION = "0.13.3"
 PROTOBUF_JAVA_VERSION = "4.31.1"
 JLINE_VERSION = '3.30.4'
 SCALAPB_VERSION = '1.0.0-alpha.1'
 PROTOC_BRIDGE_VERSION = '0.9.9'
 GRPC_VERSION = '1.73.0'
-GRPC_COMMON_PROTOS_VERSION = '2.58.0'
+PROTO_GOOGLE_COMMON_PROTOS_VERSION = '2.59.2'
 GRPC_LIBS = ['netty', 'protobuf', 'stub']
 GUAVA_VERSION = '33.4.8-jre'
 
@@ -107,7 +107,7 @@ def select_root_artifacts(scala_version, scala_major, is_scala_3) -> List[str]:
 
     root_artifacts = [
         'com.google.api.grpc:proto-google-common-protos:' +
-            GRPC_COMMON_PROTOS_VERSION,
+            PROTO_GOOGLE_COMMON_PROTOS_VERSION,
         f'com.google.guava:guava:{GUAVA_VERSION}',
         f'com.google.protobuf:protobuf-java:{PROTOBUF_JAVA_VERSION}',
         f'com.thesamet.scalapb:compilerplugin_{scalapb_major}:' +

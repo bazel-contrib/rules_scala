@@ -8,10 +8,10 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "bazel_skylib",
-        sha256 = "bc283cdfcd526a52c3201279cda4bc298652efa898b10b4db0837dc51652756f",
+        sha256 = "51b5105a760b353773f904d2bbc5e664d0987fbaf22265164de65d43e910d8ac",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.8.1/bazel-skylib-1.8.1.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.8.1/bazel-skylib-1.8.1.tar.gz",
         ],
     )
 
@@ -29,9 +29,9 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.12.0/rules_java-8.12.0.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.14.0/rules_java-8.14.0.tar.gz",
         ],
-        sha256 = "1558508fc6c348d7f99477bd21681e5746936f15f0436b5f4233e30832a590f9",
+        sha256 = "bbe7d94360cc9ed4607ec5fd94995fd1ec41e84257020b6f09e64055281ecb12",
     )
 
     maybe(
@@ -55,9 +55,9 @@ def rules_scala_dependencies():
     # Resolves the following error when building under `WORKSPACE` with Bazel 8.2.1,
     # `protobuf` v31.1, and `rules_java` 8.12.0:
     # https://github.com/protocolbuffers/protobuf/pull/19129#issuecomment-2968934424
-    rules_jvm_external_tag = "6.7"
+    rules_jvm_external_tag = "6.8"
     rules_jvm_external_sha = (
-        "a1e351607f04fed296ba33c4977d3fe2a615ed50df7896676b67aac993c53c18"
+        "704a0197e4e966f96993260418f2542568198490456c21814f647ae7091f56f2"
     )
     maybe(
         http_archive,
@@ -68,4 +68,24 @@ def rules_scala_dependencies():
             rules_jvm_external_tag,
             rules_jvm_external_tag,
         ),
+    )
+
+    # Can't upgrade for now because https://github.com/bazel-contrib/rules_python/pull/2760
+    # broke Bazel 7 WORKSPACE builds. It's really only a dev dep anyway.
+    # If it's fixed per https://github.com/bazel-contrib/rules_python/issues/3119,
+    # then we can upgrade.
+    maybe(
+        http_archive,
+        name = "rules_python",
+        sha256 = "9f9f3b300a9264e4c77999312ce663be5dee9a56e361a1f6fe7ec60e1beef9a3",
+        strip_prefix = "rules_python-1.4.1",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/1.4.1/rules_python-1.4.1.tar.gz",
+    )
+
+    maybe(
+        http_archive,
+        name = "rules_shell",
+        sha256 = "b15cc2e698a3c553d773ff4af35eb4b3ce2983c319163707dddd9e70faaa062d",
+        strip_prefix = "rules_shell-0.5.0",
+        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.5.0/rules_shell-v0.5.0.tar.gz",
     )
