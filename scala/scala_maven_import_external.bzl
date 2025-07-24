@@ -141,9 +141,9 @@ def _jvm_import_external_impl(repository_ctx):
     repository_ctx.file("jar/BUILD", "\n".join([
         _HEADER,
         "",
-        "package(default_visibility = %r)" %
-        (repository_ctx.attr.visibility or
-         repository_ctx.attr.default_visibility),
+        "package(default_visibility = %r)" % (
+            repository_ctx.attr.default_visibility,
+        ),
         "",
         "alias(",
         "    name = \"jar\",",
