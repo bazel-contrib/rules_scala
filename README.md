@@ -19,6 +19,7 @@ This project defines core build rules for [Scala](https://www.scala-lang.org/) t
 
 - [scala_library](./docs/scala_library.md)
 - [scala_macro_library](./docs/scala_macro_library.md)
+- [scala_inlined_library](./docs/scala_inlined_library.md)
 - [scala_binary](./docs/scala_binary.md)
 - [scala_test](./docs/scala_test.md)
 - [scala_repl](./docs/scala_repl.md)

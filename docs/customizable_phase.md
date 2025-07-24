@@ -146,6 +146,7 @@ Currently phase architecture is used by 7 rules:
 
 - scala_library
 - scala_macro_library
+- scala_inlined_library
 - scala_library_for_plugin_bootstrapping
 - scala_binary
 - scala_test

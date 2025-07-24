@@ -18,6 +18,7 @@ load(
 )
 load(
     "//scala/private:rules/scala_library.bzl",
+    _scala_inlined_library = "scala_inlined_library",
     _scala_library = "scala_library",
     _scala_library_for_plugin_bootstrapping = "scala_library_for_plugin_bootstrapping",
     _scala_library_suite = "scala_library_suite",
@@ -63,6 +64,7 @@ scala_library = _scala_library
 scala_library_for_plugin_bootstrapping = _scala_library_for_plugin_bootstrapping
 scala_library_suite = _scala_library_suite
 scala_macro_library = _scala_macro_library
+scala_inlined_library = _scala_inlined_library
 scala_repl = _scala_repl
 scala_test = _scala_test
 scala_test_suite = _scala_test_suite

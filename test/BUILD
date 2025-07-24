@@ -6,6 +6,7 @@ load(
     "//scala:scala.bzl",
     "scala_binary",
     "scala_doc",
+    "scala_inlined_library",
     "scala_junit_test",
     "scala_library",
     "scala_library_suite",
@@ -831,4 +832,25 @@ scala_test(
     name = "ScalaTestResourcesFromLocalTargetTest",
     srcs = ["ScalaTestResourcesFromLocalTargetTest.scala"],
     resources = [":py_resource_binary"],
+)
+
+# scala_inlined_library
+
+# If this target is a scala_library instead, then InlinedExported will fail to compile.
+scala_inlined_library(
+    name = "InlinableExported",
+    srcs = ["Exported.scala"],
+    runtime_deps = ["Runtime"],
+)
+
+scala_library(
+    name = "InlinedExported",
+    srcs = ["OtherLib.scala"],
+    scalacopts = [
+        "-opt:l:inline",
+        "-opt-inline-from:scalarules.test.**",
+        # We need fatal warnings to ensure that the inlining actually worked.
+        "-Xfatal-warnings",
+    ],
+    deps = [":InlinableExported"],
 )

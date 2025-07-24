@@ -24,6 +24,7 @@ load(
     "phase_collect_jars_common",
     "phase_collect_jars_macro_library",
     "phase_collect_srcjars",
+    "phase_compile_inlined_library",
     "phase_compile_library",
     "phase_compile_library_for_plugin_bootstrapping",
     "phase_coverage_common",
@@ -217,6 +218,68 @@ def make_scala_library_for_plugin_bootstrapping(*extras):
     )
 
 scala_library_for_plugin_bootstrapping = make_scala_library_for_plugin_bootstrapping()
+
+##
+# scala_inlined_library
+##
+
+def _scala_inlined_library_impl(ctx):
+    # Build up information from dependency-like attributes
+    return run_phases(
+        ctx,
+        # customizable phases
+        [
+            ("scalac_provider", phase_scalac_provider),
+            ("scalainfo_provider", phase_scalainfo_provider_non_macro),
+            ("collect_srcjars", phase_collect_srcjars),
+            ("write_manifest", phase_write_manifest),
+            ("dependency", phase_dependency_common),
+            ("collect_jars", phase_collect_jars_common),
+            ("scalacopts", phase_scalacopts),
+            ("semanticdb", phase_semanticdb),
+            ("compile", phase_compile_inlined_library),
+            ("coverage", phase_coverage_library),
+            ("merge_jars", phase_merge_jars),
+            ("runfiles", phase_runfiles_library),
+            ("collect_exports_jars", phase_collect_exports_jars),
+            ("default_info", phase_default_info),
+        ],
+    )
+
+_scala_inlined_library_attrs = {}
+
+_scala_inlined_library_attrs.update(implicit_deps)
+
+_scala_inlined_library_attrs.update(common_attrs)
+
+_scala_inlined_library_attrs.update(_library_attrs)
+
+_scala_inlined_library_attrs.update(resolve_deps)
+
+_scala_inlined_library_attrs.update(toolchain_transition_attr)
+
+def make_scala_inlined_library(*extras):
+    return rule(
+        attrs = _dicts.add(
+            _scala_inlined_library_attrs,
+            extras_phases(extras),
+            *[extra["attrs"] for extra in extras if "attrs" in extra]
+        ),
+        fragments = ["java"],
+        outputs = _dicts.add(
+            common_outputs,
+            *[extra["outputs"] for extra in extras if "outputs" in extra]
+        ),
+        toolchains = [
+            "//scala:toolchain_type",
+            "@bazel_tools//tools/jdk:toolchain_type",
+        ],
+        cfg = scala_version_transition,
+        provides = [JavaInfo],
+        implementation = _scala_inlined_library_impl,
+    )
+
+scala_inlined_library = make_scala_inlined_library()
 
 ##
 # scala_macro_library
