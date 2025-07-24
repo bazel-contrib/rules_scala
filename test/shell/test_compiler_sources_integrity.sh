@@ -195,7 +195,7 @@ test_fail_if_compiler_srcjar_object_is_empty() {
   # scala_compiler_srcjar argument was empty. Therefore it's worth testing here.
   local expected_msg=(
     "scala_compiler_srcjar invalid, must be a dict with exactly one of"
-    '"label", "url" or "urls" keys, got: {'
+    '"label", "url" or "urls" keys, got: '
   )
 
   action_should_fail_with_message \
