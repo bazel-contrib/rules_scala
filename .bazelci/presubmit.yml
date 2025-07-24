@@ -37,6 +37,16 @@ tasks:
     # Install xmllint
     - sudo apt update && sudo apt install --reinstall libxml2-utils -y
     - "./test_rules_scala.sh || buildkite-agent annotate --style 'warning' \"Optional build with last_green Bazel version failed, [see here](${BUILDKITE_BUILD_URL}#${BUILDKITE_JOB_ID}) (It is not mandatory but worth checking)\""
+  # Remove this job once the last_green job passes after a fix lands for
+  # bazelbuild/bazel#26579.
+  test_rules_scala_linux_9_prerelease:
+    name: "./test_rules_scala (Bazel 9 rolling prerelease)"
+    platform: ubuntu2004
+    bazel: 9.0.0-pre.20250710.1
+    shell_commands:
+    # Install xmllint
+    - sudo apt update && sudo apt install --reinstall libxml2-utils -y
+    - "./test_rules_scala.sh"
   test_rules_scala_macos:
     name: "./test_rules_scala"
     platform: macos

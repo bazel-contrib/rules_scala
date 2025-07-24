@@ -39,6 +39,11 @@ scala_deps.compiler_srcjar(
     ),
     version = "3.1.999",
 )
+
+# Used for test_fail_if_compiler_srcjar_object_is_empty.
+scala_deps.compiler_srcjar(
+    version = "3.1.1000",
+)
 use_repo(
     scala_deps,
     "scala_compiler_sources",

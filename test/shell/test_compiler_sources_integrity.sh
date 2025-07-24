@@ -188,6 +188,21 @@ test_fail_with_scala3_compiler_source_link_for_unknown_major_version() {
   _expect_failure_with_guessed_url "$scala_version" "$guessed_url"
 }
 
+test_fail_if_compiler_srcjar_object_is_empty() {
+  # This case is covered more in depth in dt_patches/dt_patch_test.sh via its
+  # test_compiler_srcjar_error helper function. However, we did have a bug
+  # whereby _get_compiler_srcjar incorrectly returned a valid value when its
+  # scala_compiler_srcjar argument was empty. Therefore it's worth testing here.
+  local expected_msg=(
+    "scala_compiler_srcjar invalid, must be a dict with exactly one of"
+    '"label", "url" or "urls" keys, got: '
+  )
+
+  action_should_fail_with_message \
+    "${expected_msg[*]}" \
+    build --repo_env=SCALA_VERSION=3.1.1000 //...
+}
+
 # main()
 
 setup_suite

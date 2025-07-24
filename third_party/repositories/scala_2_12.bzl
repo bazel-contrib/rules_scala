@@ -425,8 +425,8 @@ artifacts = {
         ],
     },
     "org_scalameta_common": {
-        "artifact": "org.scalameta:common_2.12:4.13.6",
-        "sha256": "eb9587a235110d315539084f7b69523245dcc312c711a46db75afab69ca24130",
+        "artifact": "org.scalameta:common_2.12:4.13.8",
+        "sha256": "7d26c32e535ebdf378370ed43501a25d3ed7e529a48952b9ea5455918a879e67",
         "deps": [
             "@com_lihaoyi_sourcecode",
             "@io_bazel_rules_scala_scala_library",
@@ -449,8 +449,8 @@ artifacts = {
         ],
     },
     "org_scalameta_io": {
-        "artifact": "org.scalameta:io_2.12:4.13.6",
-        "sha256": "f4280f66d36ff3cde0c0f02df4d9820ddc790e478101c0a0cc4719c671a80e65",
+        "artifact": "org.scalameta:io_2.12:4.13.8",
+        "sha256": "6f13dd7bb44db8be8c711dec8e1785a28b6c559d78c6b5a35064ef41138b5042",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
@@ -493,16 +493,16 @@ artifacts = {
         ],
     },
     "org_scalameta_parsers": {
-        "artifact": "org.scalameta:parsers_2.12:4.13.6",
-        "sha256": "d510f3120f56e73d63dcdb997f2eabdcfd5ffe64b50c6e218ad502ab498f1df5",
+        "artifact": "org.scalameta:parsers_2.12:4.13.8",
+        "sha256": "f7acdec7123b096aceae9c4f8a0f964be0303846180c0002be861e47de425b96",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@org_scalameta_trees",
         ],
     },
     "org_scalameta_scalafmt_config": {
-        "artifact": "org.scalameta:scalafmt-config_2.12:3.9.7",
-        "sha256": "1d2691705709257a6c9117d3a0f2202c0683f0a923cc5482f8de59480001f6d5",
+        "artifact": "org.scalameta:scalafmt-config_2.12:3.9.8",
+        "sha256": "2b872507ce601b06c1cace02d30c5b54723699acb93719513d0992d8d896f77c",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@org_scalameta_metaconfig_core",
@@ -510,8 +510,8 @@ artifacts = {
         ],
     },
     "org_scalameta_scalafmt_core": {
-        "artifact": "org.scalameta:scalafmt-core_2.12:3.9.7",
-        "sha256": "e54f1ab7c6dc6123ca2badbddf27bdf44623a0d2964ffed28c7c6f3549872f35",
+        "artifact": "org.scalameta:scalafmt-core_2.12:3.9.8",
+        "sha256": "e0ab9e856406c7c1845c34e3759614f07d690a46ab056c0a3745b9c6851c4612",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@org_scalameta_mdoc_parser",
@@ -521,8 +521,8 @@ artifacts = {
         ],
     },
     "org_scalameta_scalafmt_macros": {
-        "artifact": "org.scalameta:scalafmt-macros_2.12:3.9.7",
-        "sha256": "d856ace4bfe9fb84737304861f2c714096ca9ca257e99db32ae492b756501b82",
+        "artifact": "org.scalameta:scalafmt-macros_2.12:3.9.8",
+        "sha256": "d83839f7598027e9960bdf91e2021d1331a2d3b66c7db67eb3652198235d2d46",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@io_bazel_rules_scala_scala_reflect",
@@ -530,16 +530,16 @@ artifacts = {
         ],
     },
     "org_scalameta_scalafmt_sysops": {
-        "artifact": "org.scalameta:scalafmt-sysops_2.12:3.9.7",
-        "sha256": "3e61f000783432dc9571142b1457a3ef266b4b58a3e982b46d6f8f28bb6060d9",
+        "artifact": "org.scalameta:scalafmt-sysops_2.12:3.9.8",
+        "sha256": "95ac178cf456306ff49c2f40e46ab78c9531d8bf736850ea61080199828f268d",
         "deps": [
             "@com_github_bigwheel_util_backports",
             "@io_bazel_rules_scala_scala_library",
         ],
     },
     "org_scalameta_scalameta": {
-        "artifact": "org.scalameta:scalameta_2.12:4.13.6",
-        "sha256": "9bcc55e65085284925640f77d7e42661884812aa495ca6c28645d5e1d784dba1",
+        "artifact": "org.scalameta:scalameta_2.12:4.13.8",
+        "sha256": "8a163d47465cc3f3b8ef032c3fe959d51f4704da1d81003d6d4edbd2ac6a0be5",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@org_scalameta_parsers",
@@ -553,8 +553,8 @@ artifacts = {
         ],
     },
     "org_scalameta_trees": {
-        "artifact": "org.scalameta:trees_2.12:4.13.6",
-        "sha256": "5a52d7d391c24df5bec09d5f6e72f756097657417fe00ef29783cbc088d05925",
+        "artifact": "org.scalameta:trees_2.12:4.13.8",
+        "sha256": "90000b3df2e2940d537af90e7be79f4059d3fafda8c521ef029d215ac2684c8e",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@org_scalameta_common",
@@ -812,8 +812,8 @@ artifacts = {
         "sha256": "c7b478503ec524e55df19b424d46d27c8a68aeb801664fadd4f069b71f52d0f6",
     },
     "scala_proto_rules_proto_google_common_protos": {
-        "artifact": "com.google.api.grpc:proto-google-common-protos:2.58.0",
-        "sha256": "f8640af546c0afe26477fc5e946a7f455a1afebfc73d021b0c8a5034b8e67152",
+        "artifact": "com.google.api.grpc:proto-google-common-protos:2.59.2",
+        "sha256": "9407f50aef5d1cb12675c170fa64ee216023eefca49f8f5eac45124f23a6cb29",
         "deps": [
             "@com_google_protobuf_protobuf_java",
         ],
