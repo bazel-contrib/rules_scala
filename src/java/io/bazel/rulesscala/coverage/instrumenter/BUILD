@@ -15,8 +15,8 @@ java_binary(
         "//src/java/io/bazel/rulesscala/io_utils",
         "//src/java/io/bazel/rulesscala/jar",
         "//src/java/io/bazel/rulesscala/worker",
-        "@bazel_tools//src/main/protobuf:worker_protocol_java_proto",
         "@bazel_tools//tools/jdk:JacocoCoverage",
+        "@bazel_worker_java//:worker_protocol_java_proto",
     ],
 )
 

@@ -14,9 +14,9 @@ local_path_override(
     path = "../../deps/latest",
 )
 
-bazel_dep(name = "rules_java", version = "8.11.0")
+bazel_dep(name = "rules_java", version = "8.15.0")
 bazel_dep(name = "rules_proto", version = "7.1.0")
-bazel_dep(name = "rules_shell", version = "0.4.1")
+bazel_dep(name = "rules_shell", version = "0.5.1")
 bazel_dep(
     name = "protobuf",
     version = "31.1",

@@ -40,7 +40,9 @@ setup_suite() {
 }
 
 teardown_suite() {
-    teardown_test_tmpdir "$original_dir" "$test_tmpdir"
+    if [[ -n "${original_dir:-}" ]];  then
+      teardown_test_tmpdir "$original_dir" "$test_tmpdir"
+    fi
 }
 
 setup_test_module() {

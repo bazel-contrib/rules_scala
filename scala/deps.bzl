@@ -2,6 +2,7 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+load("//scala/private:macros/workspace_compat.bzl", "workspace_compat")
 
 def rules_scala_dependencies():
     """Instantiates repos needed by rules provided by `rules_scala`."""
@@ -64,3 +65,5 @@ def rules_scala_dependencies():
         strip_prefix = "rules_proto-6.0.2",
         url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.2/rules_proto-6.0.2.tar.gz",
     )
+
+    workspace_compat()

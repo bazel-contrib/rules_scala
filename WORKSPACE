@@ -105,10 +105,10 @@ local_repository(
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "9d72f7b8904128afb98d46bbef82ad7223ec9ff3718d419afb355fddd9f9484a",
+    sha256 = "89d2050410602142c9acafd01c95baf48b65f8dd16f4771d37c89f82f5e147f2",
     urls = [
-        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.55.1/rules_go-v0.55.0.zip",
-        "https://github.com/bazel-contrib/rules_go/releases/download/v0.55.1/rules_go-v0.55.1.zip",
+        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.56.1/rules_go-v0.56.1.zip",
+        "https://github.com/bazel-contrib/rules_go/releases/download/v0.56.1/rules_go-v0.56.1.zip",
     ],
 )
 

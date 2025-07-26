@@ -2,6 +2,7 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+load("//scala/private:macros/workspace_compat.bzl", "workspace_compat")
 
 def rules_scala_dependencies():
     """Instantiates repos needed by rules provided by `rules_scala`."""
@@ -29,9 +30,9 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.14.0/rules_java-8.14.0.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.15.0/rules_java-8.15.0.tar.gz",
         ],
-        sha256 = "bbe7d94360cc9ed4607ec5fd94995fd1ec41e84257020b6f09e64055281ecb12",
+        sha256 = "0a7e8811cac04b553f6c6c0d185046e3c68a4cb774e83f37a7a5fb6a3deee261",
     )
 
     maybe(
@@ -72,7 +73,8 @@ def rules_scala_dependencies():
 
     # Can't upgrade for now because https://github.com/bazel-contrib/rules_python/pull/2760
     # broke Bazel 7 WORKSPACE builds. It's really only a dev dep anyway.
-    # If it's fixed per https://github.com/bazel-contrib/rules_python/issues/3119,
+    # If it's fixed per https://github.com/bazel-contrib/rules_python/issues/3119
+    # (i.e., once https://github.com/bazel-contrib/rules_python/pull/3134 lands),
     # then we can upgrade.
     maybe(
         http_archive,
@@ -85,7 +87,9 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "rules_shell",
-        sha256 = "b15cc2e698a3c553d773ff4af35eb4b3ce2983c319163707dddd9e70faaa062d",
-        strip_prefix = "rules_shell-0.5.0",
-        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.5.0/rules_shell-v0.5.0.tar.gz",
+        sha256 = "99bfc7aaefd1ed69613bbd25e24bf7871d68aeafca3a6b79f5f85c0996a41355",
+        strip_prefix = "rules_shell-0.5.1",
+        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.5.1/rules_shell-v0.5.1.tar.gz",
     )
+
+    workspace_compat()

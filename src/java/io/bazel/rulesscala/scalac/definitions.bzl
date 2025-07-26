@@ -11,7 +11,7 @@ DEFAULT_SCALAC_DEPS = [
         "//src/protobuf/io/bazel/rules_scala:diagnostics_java_proto",
         "//src/java/io/bazel/rulesscala/scalac/compileoptions",
         "//src/java/io/bazel/rulesscala/scalac/reporter",
-        "@bazel_tools//src/main/protobuf:worker_protocol_java_proto",
+        "@bazel_worker_java//:worker_protocol_java_proto",
     ]
 ]
 

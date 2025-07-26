@@ -42,7 +42,7 @@ single_version_override(
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
-    version = "8.14.0",
+    version = "8.15.0",
 )
 
 bazel_dep(name = "rules_proto", version = "6.0.0")
@@ -65,6 +65,8 @@ single_version_override(
     patches = ["//protoc:0001-protobuf-19679-rm-protoc-dep.patch"],
     version = "31.1",
 )
+
+bazel_dep(name = "bazel_worker_java", version = "0.0.6")
 
 scala_protoc = use_extension(
     "//scala/extensions:protoc.bzl",
@@ -254,11 +256,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_go",
-    version = "0.55.1",
+    version = "0.56.1",
     dev_dependency = True,
     repo_name = "io_bazel_rules_go",  # for com_github_bazelbuild_buildtools
 )
-bazel_dep(name = "gazelle", version = "0.44.0", dev_dependency = True)
+bazel_dep(name = "gazelle", version = "0.45.0", dev_dependency = True)
 
 go_sdk = use_extension(
     "@io_bazel_rules_go//go:extensions.bzl",
@@ -284,7 +286,7 @@ go_deps = use_extension(
 # - https://go.dev/ref/mod#checksum-database
 #
 #   go list -m golang.org/x/tools@latest
-#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.34.0
+#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.35.0
 go_deps.module(
     path = "golang.org/x/tools",
     sum = "h1:mBffYraMEf7aa0sB+NuKnuCy8qI/9Bughn8dC2Gu5r0=",
@@ -302,4 +304,4 @@ use_repo(
 )
 
 bazel_dep(name = "rules_python", version = "1.5.1", dev_dependency = True)
-bazel_dep(name = "rules_shell", version = "0.5.0", dev_dependency = True)
+bazel_dep(name = "rules_shell", version = "0.5.1", dev_dependency = True)
