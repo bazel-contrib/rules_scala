@@ -194,7 +194,7 @@ fail() {
 target_file_location() {
   local target="$1"
   local cmd=(bazel query --output location "$target")
-  local regex="([^[:cntrl:]]*):[0-9]+:[0-9]+: [^[:cntrl:]]+ ${target//./\\.}$"
+  local regex="([^[:cntrl:]]*):[0-9]+:[0-9]+: [^[:cntrl:]]+ ${target//./\\.}"
   local output
 
   if ! output="$("${cmd[@]}" 2>&1)"; then
@@ -202,7 +202,7 @@ target_file_location() {
   elif [[ "$output" =~ $regex ]]; then
     printf '%s' "${BASH_REMATCH[1]}"
   else
-    fail "output of: ${cmd[*]}" "does not match: ${pattern}" "$output"
+    fail "output of: ${cmd[*]}" "does not match: ${regex}" "$output"
   fi
 }
 

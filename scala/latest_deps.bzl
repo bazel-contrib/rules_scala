@@ -2,6 +2,7 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+load("//scala/private:macros/workspace_compat.bzl", "workspace_compat")
 
 def rules_scala_dependencies():
     """Instantiates repos needed by rules provided by `rules_scala`."""
@@ -29,9 +30,9 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.12.0/rules_java-8.12.0.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.14.0/rules_java-8.14.0.tar.gz",
         ],
-        sha256 = "1558508fc6c348d7f99477bd21681e5746936f15f0436b5f4233e30832a590f9",
+        sha256 = "bbe7d94360cc9ed4607ec5fd94995fd1ec41e84257020b6f09e64055281ecb12",
     )
 
     maybe(
@@ -69,3 +70,5 @@ def rules_scala_dependencies():
             rules_jvm_external_tag,
         ),
     )
+
+    workspace_compat()

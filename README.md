@@ -1318,36 +1318,12 @@ future compatibility.
 
 __`rules_scala` 7.x officially drops support for Bazel 6.5.0.__ Bzlmod builds
 with Bazel 6.5.0 won't work at all because [Bazel 6.5.0 doesn't support
-'use_repo_rule']( https://bazel.build/versions/6.5.0/rules/lib/globals), which
+'use_repo_rule'](https://bazel.build/versions/6.5.0/rules/lib/globals), which
 ['rules_jvm_external' >= 6.3 requires](
 https://github.com/bazelbuild/rules_scala/issues/1482#issuecomment-2515496234).
 
 At the moment, `WORKSPACE` builds mostly continue to work with Bazel 6.5.0, but
-not out of the box, and may break at any time.
-
-#### Maximum of `protobuf` v29
-
-You _must_ use `protobuf` v29 or earlier. `rules_scala` now uses v30 by default,
-which removes `py_proto_library` and other symbols that Bazel 6.5.0 requires:
-
-```txt
-ERROR: Traceback (most recent call last):
-  File ".../external/bazel_tools/src/main/protobuf/BUILD",
-  line 1, column 46, in <toplevel>
-    load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
-
-Error: file '@com_google_protobuf//:protobuf.bzl'
-  does not contain symbol 'py_proto_library'
-
-ERROR: .../src/java/io/bazel/rulesscala/worker/BUILD:3:13:
-  no such target '@bazel_tools//src/main/protobuf:worker_protocol_java_proto':
-  target 'worker_protocol_java_proto'
-  not declared in package 'src/main/protobuf'
-  defined by .../external/bazel_tools/src/main/protobuf/BUILD
-  (Tip: use `query "@bazel_tools//src/main/protobuf:*"`
-    to see all the targets in that package)
-  and referenced by '//src/java/io/bazel/rulesscala/worker:worker'
-```
+may break at any time.
 
 #### Configuring the protocol compiler toolchain
 

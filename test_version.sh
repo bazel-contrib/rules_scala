@@ -98,6 +98,12 @@ check_module_bazel_template() {
 }
 
 test_check_module_bazel_template() {
+  if [[ "$(bazel --version)" =~ ^bazel\ 6\. ]]; then
+    local msg="${FUNCNAME} not compatible with Bazel 6, skipping..."
+    echo -e " ${YELLOW}${msg}${NC}"
+    return
+  fi
+
   run_in_test_repo "check_module_bazel_template" \
     "bzlmod_tidy" \
     "version_specific_tests_dir/"

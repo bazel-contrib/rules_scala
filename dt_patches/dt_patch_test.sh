@@ -36,7 +36,7 @@ test_compiler_srcjar() {
   run_in_test_repo \
     test_dt_patches_user_srcjar \
     bazel build "--repo_env=SCALA_VERSION=${SCALA_VERSION}" //... 2>&1 |
-    (! grep "canonical reproducible")
+    (! grep "scala_compiler_source.*canonical reproducible")
 }
 
 test_compiler_srcjar_nonhermetic() {
@@ -46,7 +46,7 @@ test_compiler_srcjar_nonhermetic() {
   run_in_test_repo \
     test_dt_patches_user_srcjar \
     bazel build "--repo_env=SCALA_VERSION=${SCALA_VERSION}" //... 2>&1 |
-    grep 'canonical reproducible'
+    grep 'scala_compiler_source.*canonical reproducible'
 }
 
 test_compiler_srcjar_error() {
@@ -129,7 +129,7 @@ $runner test_compiler_srcjar_error 2.12.13
 # that we grep for will only be outputted the first time (on Bazel >= 6).
 # So we clean the repo first to ensure consistency.
 
-run_in_test_repo 'test_dt_patches_user_srcjar' bazel clean --expunge
+run_in_test_repo 'test_dt_patches_user_srcjar' bazel clean --expunge_async
 
 $runner test_compiler_srcjar 2.12.14
 $runner test_compiler_srcjar 2.12.15
