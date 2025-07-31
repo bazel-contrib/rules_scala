@@ -1,14 +1,17 @@
 """Bazel module template for test/shell/test_deps_versions.sh tests."""
 
-module(
-    name = "rules_scala_deps_versions_test",
-    bazel_compatibility = [">=${bazelversion}"],
-)
+module(name = "rules_scala_deps_versions_test")
 
 bazel_dep(name = "rules_scala")
 local_path_override(
     module_name = "rules_scala",
     path = "../..",
+)
+
+bazel_dep(name = "multi_frameworks_toolchain")
+local_path_override(
+    module_name = "multi_frameworks_toolchain",
+    path = "../../examples/testing/multi_frameworks_toolchain",
 )
 
 bazel_dep(name = "bazel_skylib")

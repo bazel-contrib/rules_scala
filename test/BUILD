@@ -1,7 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library")
-load("@rules_python//python:defs.bzl", "py_binary")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
-load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load(
     "//scala:scala.bzl",
     "scala_binary",
@@ -18,7 +16,10 @@ load(
 load("//scala:scala_cross_version.bzl", "repositories")
 load(":check_statsfile.bzl", "check_statsfile")
 
-package(default_testonly = 1)
+package(
+    default_testonly = 1,
+    default_visibility = ["//test/sh_tests:__pkg__"],
+)
 
 _JUNIT_DEPS = repositories(
     SCALA_VERSION,
@@ -122,7 +123,7 @@ scala_test_suite(
     size = "small",  # Not a macro, can pass test-specific attributes.
     srcs = ["ScalaTestData.scala"],
     data = ["//test/data:foo.txt"],
-    jvm_flags = ["-Dtext=$(location //test/data:foo.txt)"],
+    jvm_flags = ["-Dtext=$(rootpath //test/data:foo.txt)"],
     scalac_jvm_flags = [
         "-Xms1G",
         "-Xmx4G",
@@ -152,6 +153,14 @@ scala_doc(
         ":HelloLib",
         ":OtherLib",
         "//test/src/main/scala/scalarules/test/compiler_plugin",  # brings kind-projector compiler plugin with it
+    ],
+)
+
+scala_doc(
+    name = "ScalaDocTestLibsOnly",
+    deps = [
+        ":HelloLib",
+        ":OtherLib",
     ],
 )
 
@@ -295,20 +304,6 @@ scala_library(
     srcs = glob(["src/main/scala/scalarules/test/mix_java_scala/*.scala"]) + glob([
         "src/main/scala/scalarules/test/mix_java_scala/*.java",
     ]),
-)
-
-genrule(
-    name = "MixJavaScalaLibTestOutputs",
-    outs = ["mix_java_scala_lib_test_rule_outputs.txt"],
-    cmd = "echo $(locations MixJavaScalaLib) > $@",
-    tools = [":MixJavaScalaLib"],
-)
-
-sh_test(
-    name = "MixJavaScalaLibTest",
-    srcs = ["test_scala_library_outputs_mixed_java_scala_jars.sh"],
-    args = ["$(location MixJavaScalaLibTestOutputs) MixJavaScalaLib"],
-    data = ["MixJavaScalaLibTestOutputs"],
 )
 
 scala_binary(
@@ -458,32 +453,6 @@ scala_specs2_junit_test(
     ],
 )
 
-# Make sure scala_binary works in test environment
-[sh_test(
-    name = "Run" + "".join([binary[idx] if binary[idx].isalnum() else "_" for idx in range(len(binary))]),
-    srcs = ["test_binary.sh"],
-    args = ["$(location %s)" % binary],
-    data = [binary if (":" in binary) else (":%s" % binary)],
-) for binary in [
-    "JavaBinary",
-    "JavaBinary2",
-    "JavaOnlySources",
-    "MixJavaScalaLibBinary",
-    "MixJavaScalaSrcjarLibBinary",
-    "ScalaBinary",
-    "ScalaLibBinary",
-    "ResourcesStripScalaBinary",
-    "ScalaBinary_dependent_on_binary_with_java",
-    "//test/src/main/scala/scalarules/test/classpath_resources:classpath_resource",
-    "//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges",
-    "//test/src/main/scala/scalarules/test/twitter_scrooge:barethrifts",
-    "//test/src/main/scala/scalarules/test/twitter_scrooge:twodeep_binary",
-    "//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooge2b_binary",
-    "//test/src/main/scala/scalarules/test/large_classpath:largeClasspath",
-    "//test:test_scala_proto_server",
-    "//test:scala_binary_jdk_11",
-]]
-
 # Make sure scala_binary respects runtime_jdk on bazel run
 scala_binary(
     name = "scala_binary_jdk_11",
@@ -503,54 +472,12 @@ scala_junit_test(
     ],
 )
 
-# Generate a file containing the rootpaths of a Scala binary.
-genrule(
-    name = "rootpath-script",
-    srcs = [":ScalaBinary"],
-    outs = ["rootpath-script.out"],
-    cmd = """
-       rootpaths=($(rootpaths {}))
-       (IFS='\n'; echo "$${{rootpaths[*]}}") | sort > $@
-   """.format(":ScalaBinary"),
-)
-
-# Validate that the rootpaths point to both the binary
-# and the JAR.
-sh_test(
-    name = "ScalaBinaryRootpaths",
-    srcs = ["rootpaths_binary.sh"],
-    args = ["$(location :rootpath-script.out)"],
-    data = [":rootpath-script.out"],
-)
-
-sh_test(
-    name = "test_binary_run_with_large_classpath",
-    srcs = ["test_binary_run_with_large_classpath.sh"],
-    args = ["$(location //test/src/main/scala/scalarules/test/large_classpath:largeClasspath)"],
-    data = ["//test/src/main/scala/scalarules/test/large_classpath:largeClasspath"],
-)
-
-# Make sure scala_binary works in genrule environment
-genrule(
-    name = "ScalaBinaryInGenrule",
-    outs = ["scala_binary_out.txt"],
-    cmd = "$(location :ScalaBinary) > $@",
-    tools = [":ScalaBinary"],
-)
-
-sh_test(
-    name = "TestScalaBinaryInGenrule",
-    srcs = ["test_binary.sh"],
-    args = ["cat $(location :ScalaBinaryInGenrule)"],
-    data = [":ScalaBinaryInGenrule"],
-)
-
 scala_specs2_junit_test(
     name = "data_location_expansion",
     size = "small",
     srcs = ["src/main/scala/scalarules/test/location_expansion/LocationExpansionTest.scala"],
     data = ["@bazel_tools//src/main/protobuf:worker_protocol_java_proto"],
-    jvm_flags = ["-Dlocation.expanded='$(locations @bazel_tools//src/main/protobuf:worker_protocol_java_proto)'"],
+    jvm_flags = ["-Dlocation.expanded='$(rootpaths @bazel_tools//src/main/protobuf:worker_protocol_java_proto)'"],
     suffixes = ["Test"],
 )
 
@@ -643,24 +570,6 @@ scala_binary(
         ":HelloLib",
         ":MacroTest",
         ":fakejar",
-    ],
-)
-
-py_binary(
-    name = "jar_lister",
-    srcs = ["jar_lister.py"],
-)
-
-sh_test(
-    name = "no_sig",
-    srcs = ["no_sigs.sh"],
-    args = [
-        "$(location //test:jar_lister)",
-        "$(location //test:ScalaBinary_with_fake_deploy.jar)",
-    ],
-    data = [
-        ":ScalaBinary_with_fake_deploy.jar",
-        ":jar_lister",
     ],
 )
 
@@ -819,16 +728,4 @@ scala_junit_test(
         "my_env_var": "my_value",
     },
     suffixes = ["Test"],
-)
-
-py_binary(
-    name = "py_resource_binary",
-    srcs = ["py_resource.py"],
-    main = "py_resource.py",
-)
-
-scala_test(
-    name = "ScalaTestResourcesFromLocalTargetTest",
-    srcs = ["ScalaTestResourcesFromLocalTargetTest.scala"],
-    resources = [":py_resource_binary"],
 )

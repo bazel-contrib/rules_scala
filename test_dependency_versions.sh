@@ -41,10 +41,30 @@ teardown_suite() {
 # Explicitly disable this, since this test sets the Bazel version.
 export USE_BAZEL_VERSION=""
 
+RULES_SCALA_TARGETS=(
+  "//test:HelloLibTest"
+  "//test:ScalaBinary"
+  "//test:ScalaDocTestLibsOnly"
+  "//test/jmh:jmh_command_line_parsing_test"
+  "//test/proto:standalone_scala_proto_outs_test"
+  "//test/src/main/scala/scalarules/test/twitter_scrooge:twitter_scrooge_tests"
+)
+
+MULTI_FRAMEWORKS_TOOLCHAIN_TARGETS=(
+  "//example:scalatest_example"
+  "//example:specs2_example"
+)
+
+ALL_TARGETS=(
+  "//..."
+  "${RULES_SCALA_TARGETS[@]/#/@rules_scala}"
+  "${MULTI_FRAMEWORKS_TOOLCHAIN_TARGETS[@]/#/@multi_frameworks_toolchain}"
+)
+
 do_build_and_test() {
   # These are the minimum versions as described in `README.md` and as set in the
   # top level `MODULE.bazel` file. Update both if/when the first test test
-  # fails. If another test fails, update the `README.md` informaton.
+  # fails. If another test fails, update the `README.md` information.
   local bazelversion="7.1.0"
   local skylib_version="1.6.0"
   local platforms_version="0.0.9"
@@ -92,7 +112,6 @@ do_build_and_test() {
   done
 
   echo "$bazelversion" >.bazelversion
-  cp "${dir}/deps/test/BUILD.bazel.test" BUILD
 
   # Set up .bazelrc
   printf '%s\n' \
@@ -129,15 +148,14 @@ do_build_and_test() {
   fi
 
   # Set up the `protobuf` precompiled protocol compiler toolchain patch.
-  if [[ "${protobuf_version:0:3}" =~ ^(29|30)\. ]]; then
+  if [[ "${protobuf_version:0:3}" =~ ^(29|[3-9][0-9]+)\. ]]; then
     cp "${dir}/protoc/0001-protobuf-19679-rm-protoc-dep.patch" ./protobuf.patch
   else
     touch ./protobuf.patch
   fi
 
-  # Render the MODULE.bazel file
-  sed -e "s%\${bazelversion}%${bazelversion}%" \
-    -e "s%\${skylib_version}%${skylib_version}%" \
+  # Render the MODULE.bazel file and create an empty top level package.
+  sed -e "s%\${skylib_version}%${skylib_version}%" \
     -e "s%\${platforms_version}%${platforms_version}%" \
     -e "s%\${protobuf_version}%${protobuf_version}%" \
     -e "s%\${rules_java_version}%${rules_java_version}%" \
@@ -145,26 +163,14 @@ do_build_and_test() {
     "${dir}/deps/test/MODULE.bazel.template" >MODULE.bazel
 
   # Copy files needed by the test targets
-  cp \
-    "${dir}"/deps/test/*.{scala,bzl} \
-    "${dir}"/examples/testing/multi_frameworks_toolchain/example/*.scala \
-    "${dir}"/test/jmh/{AddNumbers.scala,JavaType.java,ScalaType.scala,TestBenchmark.scala,data.txt} \
-    "${dir}"/test/proto/standalone.proto \
-    "${dir}"/test/src/main/scala/scalarules/test/twitter_scrooge/thrift/thrift2/thrift3/Thrift3.thrift \
+  cp "${dir}/deps/test/BUILD.bazel.test" BUILD
+  cp "${dir}"/deps/test/*.{scala,bzl} \
+    "${dir}/examples/testing/multi_frameworks_toolchain/example/ScalaTestExampleTest.scala" \
     .
 
   set -e
-  bazel build //...
-  bazel test //...
-
-  # Windows fails with:
-  # FATAL: ExecuteProgram(C:\...\ScalafmtTest.format-test) failed:
-  #   ERROR: src/main/native/windows/process.cc(202):
-  #   CreateProcessW("C:\...\ScalafmtTest.format-test"):
-  #   %1 is not a valid Win32 application.
-  if ! is_windows; then
-    bazel run //:ScalafmtTest.format-test
-  fi
+  bazel build "${ALL_TARGETS[@]}"
+  bazel test "${ALL_TARGETS[@]}"
 }
 
 test_minimum_supported_versions() {

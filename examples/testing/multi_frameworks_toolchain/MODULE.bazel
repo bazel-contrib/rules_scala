@@ -12,7 +12,7 @@ local_path_override(
     path = "../../..",
 )
 
-bazel_dep(name = "latest_dependencies")
+bazel_dep(name = "latest_dependencies", dev_dependency = True)
 local_path_override(
     module_name = "latest_dependencies",
     path = "../../../deps/latest",

@@ -1,5 +1,4 @@
 load("@rules_java//java:defs.bzl", "java_binary")
-load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_binary", "scala_library")
 load("//test/src/main/scala/scalarules/test/twitter_scrooge:twitter_scrooge_test.bzl", "twitter_scrooge_test_suite")
 load("//twitter_scrooge:twitter_scrooge.bzl", "scrooge_java_library", "scrooge_scala_library")
@@ -317,63 +316,6 @@ scala_binary(
     main_class = "scalarules.test.twitter_scrooge.BareThrifts",
     visibility = ["//visibility:public"],
     deps = [":barethriftslib"],
-)
-
-sh_test(
-    name = "libthrift2_a_not_on_classpath",
-    srcs = ["string_in_file.sh"],
-    args = [
-        "false",
-        "libthrift2_a",
-        "$(location :justscrooges)",
-    ],
-    data = [":justscrooges"],
-)
-
-sh_test(
-    name = "java_jar_not_on_classpath",
-    srcs = ["string_in_file.sh"],
-    args = [
-        "false",
-        "_java.jar",
-        "$(location :justscrooges)",
-    ],
-    data = [":justscrooges"],
-)
-
-sh_test(
-    name = "java_jar_on_classpath_in_scrooges",
-    srcs = ["string_in_file.sh"],
-    args = [
-        "true",
-        "_java.jar",
-        "$(location :justscrooges_java)",
-    ],
-    data = [":justscrooges_java"],
-)
-
-sh_test(
-    name = "thrift999_in_namespace_in_java_jar",
-    srcs = ["string_in_filename_in_jar.sh"],
-    args = [
-        "true",
-        "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
-        "thrift999",
-        "$(locations :justscrooges_java)",
-    ],
-    data = [":justscrooges_java"],
-)
-
-sh_test(
-    name = "thrift5_not_in_namespace_in_java_jar",
-    srcs = ["string_in_filename_in_jar.sh"],
-    args = [
-        "false",
-        "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
-        "thrift5",
-        "$(locations :justscrooges_java)",
-    ],
-    data = [":justscrooges_java"],
 )
 
 twitter_scrooge_test_suite()

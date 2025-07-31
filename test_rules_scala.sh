@@ -26,7 +26,7 @@ $runner bazel test "${test_output_flag}" --extra_toolchains=//scala:minimal_dire
 $runner bazel build test_expect_failure/missing_direct_deps/internal_deps/... --strict_java_deps=warn --extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_warn
 $runner bazel build //test_expect_failure/proto_source_root/... --strict_proto_deps=off
 $runner bazel test "$test_output_flag" //test/... --extra_toolchains="//test_expect_failure/plus_one_deps:plus_one_deps"
-$runner bazel build test:ScalaBinaryInGenrule --nolegacy_external_runfiles
+$runner bazel build //test/sh_tests:ScalaBinaryInGenrule --nolegacy_external_runfiles
 $runner bazel build //test_statsfile:Simple_statsfile
 $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolchains="//test/toolchains:enable_stats_file_disabled_toolchain"
 . "${test_dir}"/test_compiler_sources_integrity.sh
