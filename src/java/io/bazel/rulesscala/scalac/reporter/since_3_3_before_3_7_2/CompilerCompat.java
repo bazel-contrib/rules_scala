@@ -6,6 +6,9 @@ import dotty.tools.dotc.reporting.NoExplanation;
 
 public class CompilerCompat {
   static Message toMessage(String msg) {
-    return new NoExplanation((ctx) -> msg, Contexts.NoContext());
+        return new NoExplanation(
+            ctx -> msg,            // msgFn   : Context ⇒ String
+            Contexts.NoContext()   // using   : Context, added in 3.3.0
+    );
   }
 }
