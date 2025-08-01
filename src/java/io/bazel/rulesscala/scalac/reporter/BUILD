@@ -28,7 +28,7 @@ java_library(
             "since_3_before_3_3/CompilerCompat.java",
         ],
         between_3_3_and_3_7_2 = glob(["scala_3/*.java"]) + [
-            "since_3_3_before_3_7_2/CompilerCompat.java"
+            "since_3_3_before_3_7_2/CompilerCompat.java",
         ],
         since_3_7_2 = glob(["scala_3/*.java"]) + [
             "since_3_7_2/CompilerCompat.java",
