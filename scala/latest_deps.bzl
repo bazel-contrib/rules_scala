@@ -71,17 +71,12 @@ def rules_scala_dependencies():
         ),
     )
 
-    # Can't upgrade for now because https://github.com/bazel-contrib/rules_python/pull/2760
-    # broke Bazel 7 WORKSPACE builds. It's really only a dev dep anyway.
-    # If it's fixed per https://github.com/bazel-contrib/rules_python/issues/3119
-    # (i.e., once https://github.com/bazel-contrib/rules_python/pull/3134 lands),
-    # then we can upgrade.
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "9f9f3b300a9264e4c77999312ce663be5dee9a56e361a1f6fe7ec60e1beef9a3",
-        strip_prefix = "rules_python-1.4.1",
-        url = "https://github.com/bazelbuild/rules_python/releases/download/1.4.1/rules_python-1.4.1.tar.gz",
+        sha256 = "0e68f851a6fcf317eeab5f6dc79803cb183d30c0c65fb52e2c4b731d13b73349",
+        strip_prefix = "rules_python-1.5.2",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/1.5.2/rules_python-1.5.2.tar.gz",
     )
 
     maybe(

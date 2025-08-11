@@ -303,5 +303,5 @@ use_repo(
     "org_golang_x_tools",
 )
 
-bazel_dep(name = "rules_python", version = "1.5.1", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.5.2", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.5.1", dev_dependency = True)
