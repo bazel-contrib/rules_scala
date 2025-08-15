@@ -12,38 +12,53 @@ load(
     "PROTOC_TOOLCHAIN_TYPE",
 )
 
+# Temporary measure until native Windows ARM64 builds exist.
+_WIN_AARCH_64_PLATFORM = "win-aarch_64"
+
 def _default_platform():
     host_platform = sorted(HOST_CONSTRAINTS)
     for platform, info in PROTOC_BUILDS.items():
         if sorted(info["exec_compat"]) == host_platform:
             return platform
 
-    # Temporary measure until native Windows ARM64 builds exist.
     if host_platform == ["@platforms//cpu:aarch64", "@platforms//os:windows"]:
-        return "win64"
+        return _WIN_AARCH_64_PLATFORM
 
     fail(
         "no protoc build found for host platform with constraints: " +
         ", ".join(HOST_CONSTRAINTS),
     )
 
+def _adjust_protoc_platform(platform):
+    return platform if platform != _WIN_AARCH_64_PLATFORM else "win64"
+
 def _platform_build(platform):
+    orig_platform = platform
+    platform = _adjust_protoc_platform(platform)
+
     if platform not in PROTOC_BUILDS:
-        fail("no protoc build found for platform: " + platform)
+        fail("no protoc build found for platform: " + orig_platform)
 
     protoc_build = PROTOC_BUILDS[platform]
 
     if PROTOC_VERSION not in protoc_build["integrity"]:
         fail(
             "no protoc %s build found for platform: %s" %
-            (PROTOC_VERSION, platform),
+            (PROTOC_VERSION, orig_platform),
         )
+    elif orig_platform == _WIN_AARCH_64_PLATFORM:
+        return protoc_build | {
+            "exec_compat": [
+                "@platforms//os:windows",
+                "@platforms//cpu:aarch64",
+            ],
+        }
     return protoc_build
 
 def _download_build(repository_ctx, platform, protoc_build):
     repository_ctx.download_and_extract(
         url = PROTOC_DOWNLOAD_URL.format(
-            platform = platform,
+            platform = _adjust_protoc_platform(platform),
             version = PROTOC_VERSION,
         ),
         output = platform,

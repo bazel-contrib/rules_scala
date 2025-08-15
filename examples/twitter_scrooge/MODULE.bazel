@@ -15,7 +15,7 @@ local_path_override(
 
 bazel_dep(
     name = "protobuf",
-    version = "31.1",
+    version = "32.0",
     repo_name = "com_google_protobuf",
 )
 
@@ -25,7 +25,7 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "31.1",
+    version = "32.0",
 )
 
 bazel_dep(name = "rules_jvm_external", version = "6.7")

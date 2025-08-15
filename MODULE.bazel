@@ -2,7 +2,7 @@
 
 module(
     name = "rules_scala",
-    version = "7.1.0",
+    version = "7.1.1",
     bazel_compatibility = [">=7.1.0"],
     compatibility_level = 7,
 )
@@ -42,7 +42,7 @@ single_version_override(
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
-    version = "8.15.0",
+    version = "8.15.1",
 )
 
 bazel_dep(name = "rules_proto", version = "6.0.0")
@@ -63,7 +63,7 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//protoc:0001-protobuf-19679-rm-protoc-dep.patch"],
-    version = "31.1",
+    version = "32.0",
 )
 
 bazel_dep(name = "bazel_worker_java", version = "0.0.6")
@@ -267,7 +267,7 @@ go_sdk = use_extension(
     "go_sdk",
     dev_dependency = True,
 )
-go_sdk.download(version = "1.24.5")
+go_sdk.download(version = "1.25.0")
 
 go_deps = use_extension(
     "@gazelle//:extensions.bzl",
@@ -289,8 +289,8 @@ go_deps = use_extension(
 #   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.35.0
 go_deps.module(
     path = "golang.org/x/tools",
-    sum = "h1:mBffYraMEf7aa0sB+NuKnuCy8qI/9Bughn8dC2Gu5r0=",
-    version = "v0.35.0",
+    sum = "h1:kWS0uv/zsvHEle1LbV5LE8QujrxB3wfQyxHfhOk0Qkg=",
+    version = "v0.36.0",
 )
 go_deps.module(
     path = "github.com/golang/protobuf",
@@ -303,5 +303,5 @@ use_repo(
     "org_golang_x_tools",
 )
 
-bazel_dep(name = "rules_python", version = "1.5.2", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.5.3", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.5.1", dev_dependency = True)

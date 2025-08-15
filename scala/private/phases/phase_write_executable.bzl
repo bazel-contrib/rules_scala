@@ -26,7 +26,6 @@ def phase_write_executable_scalatest(ctx, p):
     args = struct(
         rjars = p.coverage_runfiles.rjars,
         jvm_flags = [
-            "-DRULES_SCALA_MAIN_WS_NAME=%s" % ctx.workspace_name,
             "-DRULES_SCALA_ARGS_FILE=%s" % rlocationpath_from_file(ctx, p.runfiles.args_file),
         ] + expand_location(ctx, final_jvm_flags),
         use_jacoco = ctx.configuration.coverage_enabled,
