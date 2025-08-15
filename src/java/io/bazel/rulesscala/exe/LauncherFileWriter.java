@@ -1,5 +1,6 @@
 package io.bazel.rulesscala.exe;
 
+import com.google.devtools.build.runfiles.AutoBazelRepository;
 import com.google.devtools.build.runfiles.Runfiles;
 import io.bazel.rulesscala.io_utils.StreamCopy;
 import io.bazel.rulesscala.preconditions.Preconditions;
@@ -8,11 +9,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@AutoBazelRepository
 public class LauncherFileWriter {
   public static void main(String[] args) throws IOException {
     Preconditions.require(args.length == 6);
@@ -38,9 +41,16 @@ public class LauncherFileWriter {
             .addJoinedValues("jvm_flags", "\t", jvmFlags)
             .build();
 
-    Path launcher =
-        Paths.get(Runfiles.create().rlocation("bazel_tools/tools/launcher/launcher.exe"));
+    Runfiles runfiles = Runfiles.preload()
+        .withSourceRepository(AutoBazelRepository_LauncherFileWriter.NAME);
+    Path launcher = Paths.get(
+        runfiles.rlocation("bazel_tools/tools/launcher/launcher"));
     Path outPath = Paths.get(location);
+
+    if (! launcher.toFile().exists()) {
+        // Required by Bazel 7 on Windows.
+        launcher = Paths.get(launcher.toString() + ".exe");
+    }
 
     try (InputStream in = Files.newInputStream(launcher);
         OutputStream out = Files.newOutputStream(outPath)) {

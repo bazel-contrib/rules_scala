@@ -1,5 +1,6 @@
 package io.bazel.rulesscala.scala_test;
 
+import com.google.devtools.build.runfiles.AutoBazelRepository;
 import com.google.devtools.build.runfiles.Runfiles;
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +15,12 @@ import java.util.Map;
  * unwrap runner's arguments from a file (passed via file to overcome command-line string limitation
  * on Windows)
  */
+@AutoBazelRepository
 public class Runner {
   /**
    * This is the name of the env var set by bazel when a user provides a `--test_filter` test option
    */
   private static final String TESTBRIDGE_TEST_ONLY = "TESTBRIDGE_TEST_ONLY";
-
-  /** This is the name of the system property used to pass the main workspace name */
-  private static final String RULES_SCALA_MAIN_WS_NAME = "RULES_SCALA_MAIN_WS_NAME";
 
   /**
    * This is the name of the system property used to pass a short path of the file, which includes
@@ -44,17 +43,15 @@ public class Runner {
     if (runnerArgsFileKey == null || runnerArgsFileKey.trim().isEmpty())
       throw new IllegalArgumentException(RULES_SCALA_ARGS_FILE + " is null or empty.");
 
-    String workspace = System.getProperty(RULES_SCALA_MAIN_WS_NAME);
-    if (workspace == null || workspace.trim().isEmpty())
-      throw new IllegalArgumentException(RULES_SCALA_MAIN_WS_NAME + " is null or empty.");
-
-    String runnerArgsFilePath = Runfiles.create().rlocation(runnerArgsFileKey);
+    Runfiles runfiles = Runfiles.preload()
+      .withSourceRepository(AutoBazelRepository_Runner.NAME);
+    String runnerArgsFilePath = runfiles.rlocation(runnerArgsFileKey);
     if (runnerArgsFilePath == null)
       throw new IllegalArgumentException("rlocation value is null for key: " + runnerArgsFileKey);
 
     List<String> runnerArgs =
         Files.readAllLines(Paths.get(runnerArgsFilePath), Charset.forName("UTF-8"));
-    rlocateRunpathValue(workspace, runnerArgs);
+    rlocateRunpathValue(runfiles, runnerArgs);
 
     String[] runnerArgsArray = runnerArgs.toArray(new String[runnerArgs.size()]);
 
@@ -83,12 +80,11 @@ public class Runner {
    * Replaces ScalaTest Runner's runpath elements paths (see
    * http://www.scalatest.org/user_guide/using_the_runner) with values from Bazel's runfiles
    */
-  private static void rlocateRunpathValue(String rulesWorkspace, List<String> runnerArgs)
-      throws IOException {
+  private static void rlocateRunpathValue(
+      Runfiles runfiles, List<String> runnerArgs) throws IOException {
     int runpathFlag = runnerArgs.indexOf("-R");
     if (runpathFlag >= 0) {
       String[] runpathElements = runnerArgs.get(runpathFlag + 1).split(File.pathSeparator);
-      Runfiles runfiles = Runfiles.create();
       for (int i = 0; i < runpathElements.length; i++) { 
         runpathElements[i] = runfiles.rlocation(runpathElements[i].toString());
       }

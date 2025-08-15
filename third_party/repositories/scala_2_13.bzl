@@ -48,8 +48,8 @@ artifacts = {
         "sha256": "88241573467ddca44ffd4d74aa04c2bbfd11bf7c17e0c342c94c9de7a70a7c64",
     },
     "com_google_protobuf_protobuf_java": {
-        "artifact": "com.google.protobuf:protobuf-java:4.31.1",
-        "sha256": "d60dfe7c68a0d38a248cca96924f289dc7e1966a887ee7cae397701af08575ae",
+        "artifact": "com.google.protobuf:protobuf-java:4.32.0",
+        "sha256": "e902c91b454812b7d056b8d303a572733bf0587576ff157c1049116c9626241d",
     },
     "com_lihaoyi_fansi": {
         "artifact": "com.lihaoyi:fansi_2.13:0.5.0",
@@ -427,8 +427,8 @@ artifacts = {
         "sha256": "c720e6e5bcbe6b2f48ded75a47bccdb763eede79d14330102e0d352e3d89ed92",
     },
     "org_jline_jline": {
-        "artifact": "org.jline:jline:jar:jdk8:3.30.4",
-        "sha256": "4d650bd3930b3e7ed35f3c362bf449287597bca79ae3762d4dfa965e934b2ea0",
+        "artifact": "org.jline:jline:jar:jdk8:3.30.5",
+        "sha256": "dfcd5a6229332286407912ac8ec9380dabc160a9effa01f583eb565654f728ff",
     },
     "org_jspecify_jspecify": {
         "artifact": "org.jspecify:jspecify:1.0.0",
