@@ -66,7 +66,8 @@ single_version_override(
     version = "32.0",
 )
 
-bazel_dep(name = "bazel_worker_java", version = "0.0.6")
+# See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto.
+bazel_dep(name = "bazel_worker_api", version = "0.0.6")
 
 scala_protoc = use_extension(
     "//scala/extensions:protoc.bzl",

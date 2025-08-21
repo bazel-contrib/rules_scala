@@ -476,8 +476,8 @@ scala_specs2_junit_test(
     name = "data_location_expansion",
     size = "small",
     srcs = ["src/main/scala/scalarules/test/location_expansion/LocationExpansionTest.scala"],
-    data = ["@bazel_worker_java//:worker_protocol_java_proto"],
-    jvm_flags = ["-Dlocation.expanded='$(rootpaths @bazel_worker_java//:worker_protocol_java_proto)'"],
+    data = ["//src/java/io/bazel/rulesscala/worker"],
+    jvm_flags = ["-Dlocation.expanded='$(rootpaths //src/java/io/bazel/rulesscala/worker)'"],
     suffixes = ["Test"],
 )
 

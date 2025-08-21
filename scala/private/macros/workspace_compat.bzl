@@ -10,6 +10,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 def _bazel_worker_api_repo(name, strip_prefix):
+    """See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto."""
     maybe(
         http_archive,
         name = name,
@@ -24,9 +25,4 @@ def workspace_compat():
     _bazel_worker_api_repo(
         name = "bazel_worker_api",
         strip_prefix = "proto",
-    )
-
-    _bazel_worker_api_repo(
-        name = "bazel_worker_java",
-        strip_prefix = "java",
     )

@@ -23,7 +23,7 @@ WARNINGS_CONFIG = [
 buildifier_test(
     name = "lint_check",
     exclude_patterns = [
-        "./.ijwb/*",
+        ".*",
     ],
     lint_mode = "warn",
     lint_warnings = WARNINGS_CONFIG,
@@ -35,7 +35,7 @@ buildifier_test(
 buildifier(
     name = "lint_fix",
     exclude_patterns = [
-        "./.ijwb/*",
+        ".*",
     ],
     lint_mode = "fix",
     lint_warnings = WARNINGS_CONFIG,
