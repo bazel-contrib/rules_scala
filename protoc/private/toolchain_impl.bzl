@@ -45,5 +45,5 @@ def protoc_executable(ctx):
 
     toolchain = ctx.toolchains[PROTOC_TOOLCHAIN_TYPE]
     if not toolchain:
-        fail("Couldn't resolve protocol compiler for " + PROTOC_TOOLCHAIN_TYPE)
+        fail("Couldn't resolve protocol compiler for " + str(PROTOC_TOOLCHAIN_TYPE))
     return toolchain.proto.proto_compiler.executable
