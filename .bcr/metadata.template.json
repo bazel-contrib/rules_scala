@@ -2,14 +2,19 @@
   "homepage": "https://github.com/bazel-contrib/rules_scala",
   "maintainers": [
     {
+      "name": "Mike Bland",
+      "email": "mbland@acm.org",
+      "github": "mbland"
+    },
+    {
       "name": "Simonas Pinevičius",
       "email": "simonas.pinevicius@gmail.com",
       "github": "simuons"
     },
     {
-      "name": "Vaidas Pilkauskas",
-      "email": "vaidas.pilkauskas@gmail.com",
-      "github": "liucijus"
+      "name": "Wojciech Mazur",
+      "email": "wmazur@virtuslab.com",
+      "github": "WojciechMazur"
     }
   ],
   "repository": [
