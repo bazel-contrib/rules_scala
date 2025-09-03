@@ -145,7 +145,7 @@ tasks:
   bcr_presubmit:
     # Keep in sync with .bcr/presubmit.yml.
     name: "BCR presubmit"
-    working_dir: "examples/crossbuild"
+    working_directory: "examples/crossbuild"
     platform: ${{ bcr_platform }}
     bazel: ${{ bcr_bazel }}
     build_targets:
