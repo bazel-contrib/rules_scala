@@ -146,7 +146,7 @@ tasks:
     - "bash ./test_dependency_versions.sh" # script removes ./ from BASH_SOURCE
   bcr_presubmit:
     # Keep in sync with .bcr/presubmit.yml.
-    name: BCR ${{ bcr_bazel }}
+    name: "BCR {bcr_bazel}"
     working_directory: "examples/crossbuild"
     platform: ${{ bcr_platform }}
     bazel: ${{ bcr_bazel }}
