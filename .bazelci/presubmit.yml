@@ -41,7 +41,9 @@ tasks:
     shell_commands:
     # Install xmllint
     - sudo apt update && sudo apt install --reinstall libxml2-utils -y
-    - "./test_rules_scala.sh || buildkite-agent annotate --style 'warning' \"Optional build with last_green Bazel version failed, [see here](${BUILDKITE_BUILD_URL}#${BUILDKITE_JOB_ID}) (It is not mandatory but worth checking)\""
+    - "./test_rules_scala.sh"
+    soft_fail:
+      - exit_status: "*"
   test_rules_scala_macos:
     name: "./test_rules_scala"
     platform: macos
@@ -144,7 +146,7 @@ tasks:
     - "bash ./test_dependency_versions.sh" # script removes ./ from BASH_SOURCE
   bcr_presubmit:
     # Keep in sync with .bcr/presubmit.yml.
-    name: "BCR presubmit"
+    name: "BCR presubmit ${{ bcr_bazel }}"
     working_directory: "examples/crossbuild"
     platform: ${{ bcr_platform }}
     bazel: ${{ bcr_bazel }}
@@ -152,3 +154,5 @@ tasks:
       - "//..."
     test_targets:
       - "//..."
+    soft_fail:
+      - exit_status: "*"
