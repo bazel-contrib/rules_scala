@@ -62,9 +62,10 @@ ALL_TARGETS=(
 )
 
 do_build_and_test() {
-  # These are the minimum versions as described in `README.md` and as set in the
-  # top level `MODULE.bazel` file. Update both if/when the first test test
-  # fails. If another test fails, update the `README.md` information.
+  # These are the minimum supported dependency versions as described in
+  # `README.md` and as set in the top level `MODULE.bazel` file. Update both
+  # if/when a test fails and the appropriate solution is to increase any of
+  # these minimum suported versions.
   local bazelversion="7.1.0"
   local skylib_version="1.6.0"
   local platforms_version="0.0.9"
@@ -111,14 +112,6 @@ do_build_and_test() {
     esac
   done
 
-  echo "$bazelversion" >.bazelversion
-
-  # Set up .bazelrc
-  printf '%s\n' \
-    'common --noenable_workspace --enable_bzlmod' \
-    'common --enable_platform_specific_config' \
-    'common:windows --worker_quit_after_build --enable_runfiles' >.bazelrc
-
   if [[ "$bazelversion" =~ ^([0-9]+)\.([0-9]+)\.[0-9]+.* ]]; then
     bazel_major="${BASH_REMATCH[1]}"
     bazel_minor="${BASH_REMATCH[2]}"
@@ -126,6 +119,15 @@ do_build_and_test() {
     echo "can't parse --bazelversion: $bazelversion" >&2
     exit 1
   fi
+
+  set -e
+  echo "$bazelversion" >.bazelversion
+
+  # Set up .bazelrc
+  printf '%s\n' \
+    'common --noenable_workspace --enable_bzlmod' \
+    'common --enable_platform_specific_config' \
+    'common:windows --worker_quit_after_build --enable_runfiles' >.bazelrc
 
   if [[ "$protoc_toolchain" == "true" ]]; then
     echo 'common --incompatible_enable_proto_toolchain_resolution' >>.bazelrc
@@ -164,11 +166,10 @@ do_build_and_test() {
 
   # Copy files needed by the test targets
   cp "${dir}/deps/test/BUILD.bazel.test" BUILD
-  cp "${dir}"/deps/test/*.{scala,bzl} \
+  cp "${dir}"/deps/test/defs.bzl \
     "${dir}/examples/testing/multi_frameworks_toolchain/example/ScalaTestExampleTest.scala" \
     .
 
-  set -e
   bazel build "${ALL_TARGETS[@]}"
   bazel test "${ALL_TARGETS[@]}"
 }

@@ -498,8 +498,8 @@ artifacts = {
         ],
     },
     "org_scala_sbt_util_interface": {
-        "artifact": "org.scala-sbt:util-interface:1.11.4",
-        "sha256": "9b89874d8ebb00a7798ba8cbf8a1bcf4fc3f5934543ad4eae12b136d27c160ea",
+        "artifact": "org.scala-sbt:util-interface:1.11.5",
+        "sha256": "1fc950a9e1a35385e79316e23c120d4fd184f6a7af0274e00a703b0dc76376af",
     },
     "org_scalameta_common": {
         "artifact": "org.scalameta:common_2.13:4.13.9",
@@ -668,8 +668,8 @@ artifacts = {
         "sha256": "f412ecbb235c2460b45e63584109723dea8d94b819c78c9bfc38f50cba8546c0",
     },
     "scala_proto_rules_grpc_api": {
-        "artifact": "io.grpc:grpc-api:1.74.0",
-        "sha256": "7c2c39b76fd50ea4f58a7f4c12e82640e355fc92ca025be48072be1bcc2b177d",
+        "artifact": "io.grpc:grpc-api:1.75.0",
+        "sha256": "7f309616691fa655d02512762049ed18bf4ab2b52ced424cab2f527d0bb8e3fc",
         "deps": [
             "@com_google_code_findbugs_jsr305",
             "@com_google_errorprone_error_prone_annotations",
@@ -677,15 +677,15 @@ artifacts = {
         ],
     },
     "scala_proto_rules_grpc_context": {
-        "artifact": "io.grpc:grpc-context:1.74.0",
-        "sha256": "fec0773020404a1f9b9610168692c8ed47fb77181c2ba37cc842ba7664bfc6b0",
+        "artifact": "io.grpc:grpc-context:1.75.0",
+        "sha256": "7e1de7847ea621a9ec7cb988a8baa947748d0eaef94bfe457d04d9b57105079f",
         "deps": [
             "@scala_proto_rules_grpc_api",
         ],
     },
     "scala_proto_rules_grpc_core": {
-        "artifact": "io.grpc:grpc-core:1.74.0",
-        "sha256": "5175e6223ee1f0a63cf93049aabe7bd5b675cc739b286fe3b320a88fa90c320e",
+        "artifact": "io.grpc:grpc-core:1.75.0",
+        "sha256": "f10cdbe558378494e4ffc6b1bb328b8a137f3201d46c8b24f0154eb9e51191a1",
         "deps": [
             "@com_google_android_annotations",
             "@com_google_code_gson_gson",
@@ -698,8 +698,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_grpc_netty": {
-        "artifact": "io.grpc:grpc-netty:1.74.0",
-        "sha256": "8ead962173ff44752a1970b6e567225e1e9aeebb5c74af1e33e7786a45c9d620",
+        "artifact": "io.grpc:grpc-netty:1.75.0",
+        "sha256": "2563004eb1c0a6f676678edb545377f21786144c6f55331ff1b8e6be73eb6a57",
         "deps": [
             "@com_google_errorprone_error_prone_annotations",
             "@io_bazel_rules_scala_guava",
@@ -714,8 +714,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_grpc_protobuf": {
-        "artifact": "io.grpc:grpc-protobuf:1.74.0",
-        "sha256": "08cc7cf406d027aebf2fcb464fa82f4387c8f3e96e96900257dfa251efcce4f4",
+        "artifact": "io.grpc:grpc-protobuf:1.75.0",
+        "sha256": "f52b53c349b0776815e437636dff3d3844e9b10cbb25be419a786bf3d6f20269",
         "deps": [
             "@com_google_code_findbugs_jsr305",
             "@com_google_protobuf_protobuf_java",
@@ -726,8 +726,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_grpc_protobuf_lite": {
-        "artifact": "io.grpc:grpc-protobuf-lite:1.74.0",
-        "sha256": "35182fb1225394856b738a91e414acd247e220dd90e6ca88853d9c0c6f9f4bd6",
+        "artifact": "io.grpc:grpc-protobuf-lite:1.75.0",
+        "sha256": "60fafc627aa04bcab328dcc9206f0e7aa71d95f1b612774a18272dfe7dc24cf1",
         "deps": [
             "@com_google_code_findbugs_jsr305",
             "@io_bazel_rules_scala_guava",
@@ -735,8 +735,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_grpc_stub": {
-        "artifact": "io.grpc:grpc-stub:1.74.0",
-        "sha256": "5e5557b7d72a20f12e05b05ad1b4473efb3375daa36e5289a3954c200a67f284",
+        "artifact": "io.grpc:grpc-stub:1.75.0",
+        "sha256": "dc98fe18654206948666e6657e13fe301ad0754751f28c6c10961e1e6c457997",
         "deps": [
             "@com_google_errorprone_error_prone_annotations",
             "@io_bazel_rules_scala_guava",
@@ -745,8 +745,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_grpc_util": {
-        "artifact": "io.grpc:grpc-util:1.74.0",
-        "sha256": "296dc07438c43454afc1a7f2736086550feb1fc783f9547337ad2ae721e24350",
+        "artifact": "io.grpc:grpc-util:1.75.0",
+        "sha256": "92b5a1195dad4cbd7c405b01cbd9fd2dbbd548d13d4cfabf9d2d6a37bad4cb81",
         "deps": [
             "@io_bazel_rules_scala_guava",
             "@org_codehaus_mojo_animal_sniffer_annotations",
@@ -759,15 +759,15 @@ artifacts = {
         "sha256": "671f7147487877f606af2c7e39399c8d178c492982827305d3b1c7f5b04f1145",
     },
     "scala_proto_rules_netty_buffer": {
-        "artifact": "io.netty:netty-buffer:4.1.110.Final",
-        "sha256": "46d74e79125aacc055c31f18152fdc5d4a569aa8d60091203d0baa833973ac3c",
+        "artifact": "io.netty:netty-buffer:4.1.124.Final",
+        "sha256": "830580f29c425c97bf01ae8ec69e96f4ec425f6b0c6a497c3803f261d69a2647",
         "deps": [
             "@scala_proto_rules_netty_common",
         ],
     },
     "scala_proto_rules_netty_codec": {
-        "artifact": "io.netty:netty-codec:4.1.110.Final",
-        "sha256": "9eccce9a8d827bb8ce84f9c3183fec58bd1c96a51010cf711297746034af3701",
+        "artifact": "io.netty:netty-codec:4.1.124.Final",
+        "sha256": "e1f30c0e8808df84126129ac78e303dceb6a701cdf6ccd470a63ee85cb064be0",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_common",
@@ -775,8 +775,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_codec_http": {
-        "artifact": "io.netty:netty-codec-http:4.1.110.Final",
-        "sha256": "dc0d6af5054630a70ff0ef354f20aa7a6e46738c9fc5636ed3d4fe77e38bd48d",
+        "artifact": "io.netty:netty-codec-http:4.1.124.Final",
+        "sha256": "27bb1fe0ec96abb7aa0b8c8f9bf98a105ad788d3a9abffe7f0a07299b317ffd3",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_codec",
@@ -786,8 +786,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_codec_http2": {
-        "artifact": "io.netty:netty-codec-http2:4.1.110.Final",
-        "sha256": "b546c75445a487bb7bcd5a94779caecce33582cf7be31b8b39fc0e65b1ee26fc",
+        "artifact": "io.netty:netty-codec-http2:4.1.124.Final",
+        "sha256": "90c25676201d9792029169a1e3198f1b9903bb8139bc40bb8b03c85b70c43d9f",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_codec",
@@ -798,8 +798,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_codec_socks": {
-        "artifact": "io.netty:netty-codec-socks:4.1.110.Final",
-        "sha256": "976052a3c9bb280bc6d99f3a29e6404677cf958c3de05b205093d38c006b880c",
+        "artifact": "io.netty:netty-codec-socks:4.1.124.Final",
+        "sha256": "f79232858d4a8135156623b3837fbebdc6c9a533a7bfdcb5c8653892e0f567b8",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_codec",
@@ -808,12 +808,12 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_common": {
-        "artifact": "io.netty:netty-common:4.1.110.Final",
-        "sha256": "9851ec66548b9e0d41164ce98943cdd4bbe305f68ddbd24eae52e4501a0d7b1a",
+        "artifact": "io.netty:netty-common:4.1.124.Final",
+        "sha256": "0c00e34e457708252daf7ccee0a2fe6509a426ff943c8f876f901c07cbf77931",
     },
     "scala_proto_rules_netty_handler": {
-        "artifact": "io.netty:netty-handler:4.1.110.Final",
-        "sha256": "d5a08d7de364912e4285968de4d4cce3f01da4bb048d5c6937e5f2af1f8e148a",
+        "artifact": "io.netty:netty-handler:4.1.124.Final",
+        "sha256": "8b84814d14804966bab92a91675cbef8b0e054633b0595b57f0115072a65a5c7",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_codec",
@@ -824,8 +824,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_handler_proxy": {
-        "artifact": "io.netty:netty-handler-proxy:4.1.110.Final",
-        "sha256": "ad54ab4fe9c47ef3e723d71251126db53e8db543871adb9eafc94446539eff52",
+        "artifact": "io.netty:netty-handler-proxy:4.1.124.Final",
+        "sha256": "94311023482cf1ab84abaadad374d9ffa048788ba0996885b6aea8cabcbd9676",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_codec",
@@ -836,15 +836,15 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_resolver": {
-        "artifact": "io.netty:netty-resolver:4.1.110.Final",
-        "sha256": "a2e9b4ae7caa92fc5bd747e11d1dec20d81b18fc00959554302244ac5c56ce70",
+        "artifact": "io.netty:netty-resolver:4.1.124.Final",
+        "sha256": "7a49003fc1d4e563c0b6391c4821f4e49bc25094069aa6bae9bafcf62f9c0234",
         "deps": [
             "@scala_proto_rules_netty_common",
         ],
     },
     "scala_proto_rules_netty_transport": {
-        "artifact": "io.netty:netty-transport:4.1.110.Final",
-        "sha256": "a42dd68390ca14b4ff2d40628a096c76485b4adb7c19602d5289321a0669e704",
+        "artifact": "io.netty:netty-transport:4.1.124.Final",
+        "sha256": "065c5aa6de5e8305dc1a25fb079b5dd041057ee19bd027ba24420316bf2e71b2",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_common",
@@ -852,8 +852,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_netty_transport_native_unix_common": {
-        "artifact": "io.netty:netty-transport-native-unix-common:4.1.110.Final",
-        "sha256": "51717bb7471141950390c6713a449fdb1054d07e60737ee7dda7083796cdee48",
+        "artifact": "io.netty:netty-transport-native-unix-common:4.1.124.Final",
+        "sha256": "5b824b485345d3eb4f29bd96005fe71d4bdcda3e4453a834fd58f7e113346115",
         "deps": [
             "@scala_proto_rules_netty_buffer",
             "@scala_proto_rules_netty_common",
@@ -881,15 +881,15 @@ artifacts = {
         "sha256": "c7b478503ec524e55df19b424d46d27c8a68aeb801664fadd4f069b71f52d0f6",
     },
     "scala_proto_rules_proto_google_common_protos": {
-        "artifact": "com.google.api.grpc:proto-google-common-protos:2.60.0",
-        "sha256": "6655d67f916b4afebc8096c9a311b75a9cbcc1327ff2660681f7de8802d541e9",
+        "artifact": "com.google.api.grpc:proto-google-common-protos:2.61.0",
+        "sha256": "19eab33ef40f3715afb042b61e84f9a278b0df82e0f0b5b59333c10ed393f2be",
         "deps": [
             "@com_google_protobuf_protobuf_java",
         ],
     },
     "scala_proto_rules_scalapb_compilerplugin": {
-        "artifact": "com.thesamet.scalapb:compilerplugin_2.13:1.0.0-alpha.1",
-        "sha256": "218640423ba8156f994d6d700ef960d65025f79a5918070c0898213f4384df1f",
+        "artifact": "com.thesamet.scalapb:compilerplugin_2.13:1.0.0-alpha.2",
+        "sha256": "348d8a69fe5fe7ccbb6dfd556c7eb4988f338888306149fa791237f66f7c98fd",
         "deps": [
             "@com_google_protobuf_protobuf_java",
             "@io_bazel_rules_scala_scala_library_2",
@@ -898,8 +898,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_scalapb_lenses": {
-        "artifact": "com.thesamet.scalapb:lenses_2.13:1.0.0-alpha.1",
-        "sha256": "46902feb0fd848fce92e234514254dc43b3cde5f6e10e88ae6eec52f4c016fbc",
+        "artifact": "com.thesamet.scalapb:lenses_2.13:1.0.0-alpha.2",
+        "sha256": "eb8836d4b371631cc6b708b8e119254653e0afa92ed3397aa42fe2b328d21a2a",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
             "@org_scala_lang_modules_scala_collection_compat",
@@ -922,8 +922,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_scalapb_runtime": {
-        "artifact": "com.thesamet.scalapb:scalapb-runtime_2.13:1.0.0-alpha.1",
-        "sha256": "0ceaaf48bc3fa41419fcb8830d21685aea8b7a5e403b90b3246124d9f4b6d087",
+        "artifact": "com.thesamet.scalapb:scalapb-runtime_2.13:1.0.0-alpha.2",
+        "sha256": "c68cf13cabe3129fde034942ac72184aed6c5a8130ef2e888a62c3287be99b6c",
         "deps": [
             "@com_google_protobuf_protobuf_java",
             "@io_bazel_rules_scala_scala_library_2",
@@ -932,8 +932,8 @@ artifacts = {
         ],
     },
     "scala_proto_rules_scalapb_runtime_grpc": {
-        "artifact": "com.thesamet.scalapb:scalapb-runtime-grpc_2.13:1.0.0-alpha.1",
-        "sha256": "75eb71fea9509308070812b8bcf1eec90c065be3e9d8c60b12098f206db6c581",
+        "artifact": "com.thesamet.scalapb:scalapb-runtime-grpc_2.13:1.0.0-alpha.2",
+        "sha256": "d6ebf4b9f8da19f809a604c1fe03d0e08af81f40a1324f5878f97b7f25da090c",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
             "@org_scala_lang_modules_scala_collection_compat",

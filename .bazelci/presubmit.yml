@@ -1,5 +1,10 @@
 ---
 validate_config: 1
+
+matrix:
+  bcr_platform: ["debian10", "macos", "ubuntu2004", "windows"]
+  bcr_bazel: [7.x, 8.x, rolling, last_green]
+
 tasks:
   ubuntu2004:
     name: "bazel test //test/..."
@@ -51,16 +56,14 @@ tasks:
     - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
     - "bash -lc \"pacman --noconfirm --needed -S libxml2\"" #tests require xmllint
     - "bash test_rules_scala.sh"
-  test_coverage_linux_7_6_1:
+  test_coverage_linux:
     name: "./test_coverage"
     platform: ubuntu2004
-    bazel: 7.6.1
     shell_commands:
       - "./test_coverage.sh"
-  test_coverage_macos_7.6.1:
+  test_coverage_macos:
     name: "./test_coverage"
     platform: macos
-    bazel: 7.6.1
     shell_commands:
       - "./test_coverage.sh"
   test_reproducibility_linux:
@@ -91,13 +94,11 @@ tasks:
   examples_linux:
     name: "./test_examples"
     platform: ubuntu2004
-    bazel: 7.6.1
     shell_commands:
       - "./test_examples.sh"
   cross_build_linux:
     name: "./test_cross_build"
     platform: ubuntu2004
-    bazel: 7.6.1
     shell_commands:
       - "./test_cross_build.sh"
   lint_linux:
@@ -141,3 +142,13 @@ tasks:
     - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
     - "bash -lc \"pacman --noconfirm --needed -S libxml2\"" #tests require xmllint
     - "bash ./test_dependency_versions.sh" # script removes ./ from BASH_SOURCE
+  bcr_presubmit:
+    # Keep in sync with .bcr/presubmit.yml.
+    name: "BCR presubmit"
+    working_dir: "examples/crossbuild"
+    platform: ${{ bcr_platform }}
+    bazel: ${{ bcr_bazel }}
+    build_targets:
+      - "//..."
+    test_targets:
+      - "//..."

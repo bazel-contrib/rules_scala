@@ -30,9 +30,9 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.15.1/rules_java-8.15.1.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.15.2/rules_java-8.15.2.tar.gz",
         ],
-        sha256 = "9b04cbbb0fee0632aeba628159938484cfadf4a9d2f5b1c356e8300c56467896",
+        sha256 = "47632cc506c858011853073449801d648e10483d4b50e080ec2549a4b2398960",
     )
 
     maybe(
@@ -56,17 +56,17 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "0a1cefefb4a7b550fb0b43f54df67d6da95b7ba352637669e46c987f69986f6a",
-        strip_prefix = "rules_python-1.5.3",
-        url = "https://github.com/bazelbuild/rules_python/releases/download/1.5.3/rules_python-1.5.3.tar.gz",
+        sha256 = "3664a03376fc2441e2dec357000b3a80119e2ea062ea1be41418daeb91451055",
+        strip_prefix = "rules_python-1.6.0-rc0",
+        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.6.0-rc0/rules_python-1.6.0-rc0.tar.gz",
     )
 
     maybe(
         http_archive,
         name = "rules_shell",
-        sha256 = "99bfc7aaefd1ed69613bbd25e24bf7871d68aeafca3a6b79f5f85c0996a41355",
-        strip_prefix = "rules_shell-0.5.1",
-        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.5.1/rules_shell-v0.5.1.tar.gz",
+        sha256 = "fce2a7a974aa70e9367068122e19c39a6a27a5aca30698bcf9030beb529612b6",
+        strip_prefix = "rules_shell-0.6.0",
+        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.6.0/rules_shell-v0.6.0.tar.gz",
     )
 
     workspace_compat()

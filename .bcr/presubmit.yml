@@ -1,3 +1,4 @@
+# Keep in sync with the bcr_presubmit job from .bazelci/presubmit.yml.
 bcr_test_module:
   module_path: "examples/crossbuild"
   matrix:
