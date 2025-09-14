@@ -15,7 +15,13 @@ setup_suite() {
   setup_test_tmpdir_for_file "$original_dir" "$test_source"
   test_tmpdir="$PWD"
   cd "$original_dir"
-  bazel_bin="$(command -v bazel{,.exe})"
+
+  bazel_bin=''
+  if ! bazel_bin="$(command -v bazel)" &&
+     ! bazel_bin="$(command -v bazel.exe)"; then
+    printf 'bazel executable not found in: %s\n' "$PATH" >&2
+    exit 1
+  fi
 }
 
 teardown_suite() {
