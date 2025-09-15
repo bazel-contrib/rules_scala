@@ -13,11 +13,7 @@ local_path_override(
     path = "../../deps/latest",
 )
 
-bazel_dep(
-    name = "protobuf",
-    version = "32.0",
-    repo_name = "com_google_protobuf",
-)
+bazel_dep(name = "protobuf", repo_name = "com_google_protobuf")
 
 # Temporarily required for `protoc` toolchainization until resolution of
 # protocolbuffers/protobuf#19679.
@@ -25,7 +21,7 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "32.0",
+    version = "32.1",
 )
 
 bazel_dep(name = "rules_jvm_external", version = "6.7")

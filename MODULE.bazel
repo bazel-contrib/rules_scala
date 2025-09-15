@@ -63,7 +63,7 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//protoc:0001-protobuf-19679-rm-protoc-dep.patch"],
-    version = "32.0",
+    version = "32.1",
 )
 
 # See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto.
@@ -268,7 +268,7 @@ go_sdk = use_extension(
     "go_sdk",
     dev_dependency = True,
 )
-go_sdk.download(version = "1.25.0")
+go_sdk.download(version = "1.25.1")
 
 go_deps = use_extension(
     "@gazelle//:extensions.bzl",
@@ -287,11 +287,11 @@ go_deps = use_extension(
 # - https://go.dev/ref/mod#checksum-database
 #
 #   go list -m golang.org/x/tools@latest
-#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.35.0
+#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.37.0
 go_deps.module(
     path = "golang.org/x/tools",
-    sum = "h1:kWS0uv/zsvHEle1LbV5LE8QujrxB3wfQyxHfhOk0Qkg=",
-    version = "v0.36.0",
+    sum = "h1:DVSRzp7FwePZW356yEAChSdNcQo6Nsp+fex1SUW09lE=",
+    version = "v0.37.0",
 )
 go_deps.module(
     path = "github.com/golang/protobuf",
@@ -304,5 +304,5 @@ use_repo(
     "org_golang_x_tools",
 )
 
-bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
-bazel_dep(name = "rules_shell", version = "0.6.0", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.6.1", dev_dependency = True)
+bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)

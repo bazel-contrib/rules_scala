@@ -120,7 +120,7 @@ load(
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.25.0")
+go_register_toolchains(version = "1.25.1")
 
 http_archive(
     name = "bazelci_rules",

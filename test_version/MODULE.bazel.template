@@ -17,11 +17,7 @@ local_path_override(
 bazel_dep(name = "rules_java", version = "8.15.1")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "rules_shell", version = "0.5.1")
-bazel_dep(
-    name = "protobuf",
-    version = "32.0",
-    repo_name = "com_google_protobuf",
-)
+bazel_dep(name = "protobuf", repo_name = "com_google_protobuf")
 
 # Temporarily required for `protoc` toolchainization until resolution of
 # protocolbuffers/protobuf#19679.
@@ -29,7 +25,7 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "32.0",
+    version = "32.1",
 )
 
 scala_config = use_extension(

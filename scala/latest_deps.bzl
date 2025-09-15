@@ -38,9 +38,9 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        sha256 = "3ad017543e502ffaa9cd1f4bd4fe96cf117ce7175970f191705fa0518aff80cd",
-        strip_prefix = "protobuf-32.0",
-        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v32.0.tar.gz",
+        sha256 = "d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e",
+        strip_prefix = "protobuf-32.1",
+        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v32.1.tar.gz",
         patches = [Label("//protoc:0001-protobuf-19679-rm-protoc-dep.patch")],
         patch_args = ["-p1"],
     )
@@ -56,17 +56,17 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "fa7dd2c6b7d63b3585028dd8a90a6cf9db83c33b250959c2ee7b583a6c130e12",
-        strip_prefix = "rules_python-1.6.0",
-        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.6.0/rules_python-1.6.0.tar.gz",
+        sha256 = "f2e80f97f9c0b82e2489e61e725df1e6bdaf16c4dacf5e26b95668787164baff",
+        strip_prefix = "rules_python-1.6.1",
+        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.6.1/rules_python-1.6.1.tar.gz",
     )
 
     maybe(
         http_archive,
         name = "rules_shell",
-        sha256 = "fce2a7a974aa70e9367068122e19c39a6a27a5aca30698bcf9030beb529612b6",
-        strip_prefix = "rules_shell-0.6.0",
-        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.6.0/rules_shell-v0.6.0.tar.gz",
+        sha256 = "e6b87c89bd0b27039e3af2c5da01147452f240f75d505f5b6880874f31036307",
+        strip_prefix = "rules_shell-0.6.1",
+        url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.6.1/rules_shell-v0.6.1.tar.gz",
     )
 
     workspace_compat()
