@@ -117,5 +117,5 @@ def scala_benchmark_jmh(**kw):
         testonly = testonly,
         unused_dependency_checker_mode = "off",
         runtime_jdk = runtime_jdk,
-        jvm_flags = jvm_flags
+        jvm_flags = jvm_flags,
     )
