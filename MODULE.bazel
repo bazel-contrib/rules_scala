@@ -56,6 +56,8 @@ single_version_override(
     version = "9.6.1",
 )
 
+bazel_dep(name = "rules_jvm_external", version = "6.8")
+
 # TODO: Remove this dep once protobuf 33.4 becomes the minimum supported
 # version. The repo is deprecated and archived and all public API symbols are
 # aliased to @protobuf.
