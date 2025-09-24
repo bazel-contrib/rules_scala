@@ -48,7 +48,7 @@ scala_specs2_junit_test(
 
 scala_import(
     name = "com_google_guava_guava_21_0",
-    jars = ["@com_google_guava_guava_21_0_with_file//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )
 
 scala_library(
