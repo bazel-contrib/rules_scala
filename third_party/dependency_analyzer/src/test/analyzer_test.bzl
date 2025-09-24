@@ -60,16 +60,16 @@ def tests():
             "io/bazel/rulesscala/dependencyanalyzer/StrictDepsTest.scala",
         ],
         jvm_flags = common_jvm_flags + [
-            "-Dguava.jar.location=$(rootpath @com_google_guava_guava_21_0_with_file//jar)",
-            "-Dapache.commons.jar.location=$(rootpath @org_apache_commons_commons_lang_3_5_without_file//:linkable_org_apache_commons_commons_lang_3_5_without_file)",
+            "-Dguava.jar.location=$(rootpath @rules_scala_test_maven//:com_google_guava_guava)",
+            "-Dapache.commons.jar.location=$(rootpath @rules_scala_test_maven//:org_apache_commons_commons_lang3)",
         ],
         unused_dependency_checker_mode = "off",
         deps = scala_std_dependencies + [
             "//third_party/dependency_analyzer/src/main:dependency_analyzer",
             "//third_party/utils/src/test:test_util",
-            "@com_google_guava_guava_21_0_with_file//jar",
             "@io_bazel_rules_scala_scala_compiler" + suffix,
-            "@org_apache_commons_commons_lang_3_5_without_file//:linkable_org_apache_commons_commons_lang_3_5_without_file",
+            "@rules_scala_test_maven//:com_google_guava_guava",
+            "@rules_scala_test_maven//:org_apache_commons_commons_lang3",
         ],
     )
 
@@ -80,14 +80,14 @@ def tests():
             "io/bazel/rulesscala/dependencyanalyzer/UnusedDependencyCheckerTest.scala",
         ],
         jvm_flags = common_jvm_flags + [
-            "-Dapache.commons.jar.location=$(rootpath @org_apache_commons_commons_lang_3_5_without_file//:linkable_org_apache_commons_commons_lang_3_5_without_file)",
+            "-Dapache.commons.jar.location=$(rootpath @rules_scala_test_maven//:org_apache_commons_commons_lang3)",
         ],
         unused_dependency_checker_mode = "off",
         deps = scala_std_dependencies + [
             "//third_party/dependency_analyzer/src/main:dependency_analyzer",
             "//third_party/utils/src/test:test_util",
             "@io_bazel_rules_scala_scala_compiler" + suffix,
-            "@org_apache_commons_commons_lang_3_5_without_file//:linkable_org_apache_commons_commons_lang_3_5_without_file",
+            "@rules_scala_test_maven//:org_apache_commons_commons_lang3",
         ],
     )
 

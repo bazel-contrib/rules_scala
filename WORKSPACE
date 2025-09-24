@@ -135,10 +135,6 @@ rbe_preconfig(
     toolchain = "ubuntu2004-bazel-java11",
 )
 
-load("//scala/private/extensions:dev_deps.bzl", "dev_deps_repositories")
-
-dev_deps_repositories()
-
 register_toolchains("//test/toolchains:java21_toolchain_definition")
 
 load(
@@ -167,3 +163,30 @@ rules_jvm_external_deps()
 load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
 
 rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+maven_install(
+    name = "rules_scala_test_maven",
+    artifacts = [
+        "com.github.jnr:jffi:1.3.13",
+        "com.google.guava:guava:21.0",
+        "org.apache.commons:commons-lang3:3.18.0",
+        "org.springframework:spring-core:6.2.11",
+        "org.springframework:spring-tx:6.2.11",
+        "org.typelevel:cats-core_2.12:2.13.0",
+        "org.typelevel:kind-projector_2.12.20:0.13.4",
+    ],
+    fetch_sources = True,
+    maven_install_json = "//:rules_scala_test_maven.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
+)
+
+load("@rules_scala_test_maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()

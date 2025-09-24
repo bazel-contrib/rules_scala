@@ -5,7 +5,6 @@ class dictionaries, as employed by:
 
 - `//scala/extensions:config.bzl`
 - `//scala/extensions:deps.bzl`
-- `//scala/private/extensions:dev_deps.bzl`
 - `//scala/private:macros/test/bzlmod_test_ext.bzl`
 
 This pattern overcomes the restriction that tag class attrs are not iterable,
