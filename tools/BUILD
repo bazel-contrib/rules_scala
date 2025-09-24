@@ -1,8 +1,4 @@
-load(
-    "@com_github_bazelbuild_buildtools//buildifier:def.bzl",
-    "buildifier",
-    "buildifier_test",
-)
+load("@buildifier_prebuilt//:rules.bzl", "buildifier", "buildifier_test")
 
 WARNINGS_CONFIG = [
     "-module-docstring",
