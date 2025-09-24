@@ -7,8 +7,9 @@ load(
 )
 
 # The analysis tests never execute the plugin, so any jar works on any Scala
-# version. (A real one, like @org_typelevel_kind_projector//jar, wouldn't:
-# its repo only analyzes under Scala 2.)
+# version. (A working compiler plugin, like
+# @rules_scala_test_maven//:org_typelevel_kind_projector, wouldn't: it's
+# built for Scala 2.)
 genrule(
     name = "dummy_plugin",
     outs = ["dummy_plugin.jar"],

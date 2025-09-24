@@ -183,26 +183,40 @@ use_repo(
     for scala_version in SCALA_3_VERSIONS
 ]
 
-internal_dev_deps = use_extension(
-    "//scala/private/extensions:dev_deps.bzl",
-    "dev_deps",
-    dev_dependency = True,
-)
+rules_scala_test_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 
-# See //scala/private:extensions/dev_deps.bzl for notes on some of these repos.
-use_repo(
-    internal_dev_deps,
-    "com_github_jnr_jffi_native",
-    "com_google_guava_guava_21_0",
-    "com_google_guava_guava_21_0_with_file",
-    "com_twitter__scalding_date",
-    "org_apache_commons_commons_lang_3_5",
-    "org_apache_commons_commons_lang_3_5_without_file",
-    "org_springframework_spring_core",
-    "org_springframework_spring_tx",
-    "org_typelevel__cats_core",
-    "org_typelevel_kind_projector",
+# The plain "jffi" artifact doesn't ship native methods; //test/src/main/scala/scalarules/test/scala_import:jffi_native_external
+# needs the "native" classifier jar specifically to test importing a
+# classified artifact.
+rules_scala_test_maven.artifact(
+    name = "rules_scala_test_maven",
+    testonly = True,
+    artifact = "jffi",
+    classifier = "native",
+    force_version = True,
+    group = "com.github.jnr",
+    version = "1.2.17",
 )
+rules_scala_test_maven.install(
+    name = "rules_scala_test_maven",
+    artifacts = [
+        "com.google.guava:guava:21.0",
+        "org.apache.commons:commons-lang3:3.18.0",
+        "org.springframework:spring-core:6.2.11",
+        "org.springframework:spring-tx:6.2.11",
+        "org.typelevel:cats-core_2.12:2.13.0",
+        "org.typelevel:kind-projector_2.12.20:0.13.4",
+    ],
+    fetch_sources = True,
+    lock_file = "//:rules_scala_test_maven.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
+)
+use_repo(rules_scala_test_maven, "rules_scala_test_maven")
 
 java_toolchains = use_extension(
     "@rules_java//java:extensions.bzl",

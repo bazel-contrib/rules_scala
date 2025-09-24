@@ -25,13 +25,6 @@ expect_build_failure_test(
     target = _EXTERNAL_DEPS + ":transitive_external_dependency_user",
 )
 
-expect_build_failure_test(
-    name = "fails_on_missing_direct_external_file_group_dep",
-    build_args = [_STRICT_DEPS_ERROR],
-    expect = ["expected_missing_direct_external_file_group_dep.txt"],
-    target = _EXTERNAL_DEPS + ":transitive_external_dependency_user_file_group",
-)
-
 # No --extra_toolchains override: the default toolchain has no strict-deps
 # checking, so a missing direct dep is just an ordinary missing-symbol compile
 # error rather than a buildozer hint.
