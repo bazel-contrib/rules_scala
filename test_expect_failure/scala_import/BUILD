@@ -7,20 +7,20 @@ load("//scala:scala_import.bzl", "scala_import")
 scala_import(
     name = "dummy_dependency_to_trigger_create_provider_transitive_compile_jar_usage",
     testonly = True,
-    jars = ["@org_springframework_spring_core//jar"],
+    jars = ["@rules_scala_test_maven//:org_springframework_spring_core"],
 )
 
 scala_import(
     name = "guava",
     testonly = True,
-    jars = ["@com_google_guava_guava_21_0_with_file//jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":dummy_dependency_to_trigger_create_provider_transitive_compile_jar_usage"],
 )
 
 scala_import(
     name = "cats",
     testonly = True,
-    jars = ["@org_typelevel__cats_core//jar"],
+    jars = ["@rules_scala_test_maven//:org_typelevel_cats_core_2_12"],
 )
 
 scala_import(
@@ -33,7 +33,7 @@ scala_import(
 scala_import(
     name = "commons_lang_as_imported_jar_cats_and_guava_as_compile_deps",
     testonly = True,
-    jars = ["@org_apache_commons_commons_lang_3_5//jar"],
+    jars = ["@rules_scala_test_maven//:org_apache_commons_commons_lang3"],
     deps = [
         ":guava",
         ":indirection_for_transitive_compile_deps",

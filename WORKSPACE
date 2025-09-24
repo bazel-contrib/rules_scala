@@ -134,10 +134,6 @@ rbe_preconfig(
     toolchain = "ubuntu2004-bazel-java11",
 )
 
-load("//scala/private/extensions:dev_deps.bzl", "dev_deps_repositories")
-
-dev_deps_repositories()
-
 register_toolchains("//test/toolchains:java21_toolchain_definition")
 
 load(
