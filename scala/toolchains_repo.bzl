@@ -4,13 +4,13 @@ def _generate_testing_toolchain_build_file_args(repo_attr):
     framework_deps = {}
 
     if repo_attr.scalatest:
-        framework_deps["scalatest"] = "SCALATEST_DEPS"
+        framework_deps["scalatest"] = "scalatest_artifacts"
     if repo_attr.specs2:
-        framework_deps["specs2"] = "SPECS2_DEPS"
-        framework_deps["specs2_junit"] = "SPECS2_JUNIT_DEPS"
-        framework_deps["junit"] = "JUNIT_DEPS"
+        framework_deps["specs2"] = "specs2_artifacts"
+        framework_deps["specs2_junit"] = "specs2_junit_artifacts"
+        framework_deps["junit"] = "junit_artifacts"
     if repo_attr.junit:
-        framework_deps["junit"] = "JUNIT_DEPS"
+        framework_deps["junit"] = "junit_artifacts"
 
     if len(framework_deps) == 0:
         return None
@@ -160,24 +160,21 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION", "SCALA_VERSIONS")
 _TESTING_TOOLCHAIN_BUILD = """
 load(
     "@@{rules_scala_repo}//scala:scala_cross_version.bzl",
-    "repositories",
+    "artifact_targets_for_scala_version",
     "version_suffix",
 )
-load(
-    "@@{rules_scala_repo}//testing:testing.bzl",
-    "{deps_symbols}",
-    "setup_scala_testing_toolchain",
-)
+load("@@{rules_scala_repo}//testing:testing.bzl", "setup_scala_testing_toolchain")
+load("@rules_scala_artifacts//:artifacts.bzl", "{deps_symbols}")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
 [
     setup_scala_testing_toolchain(
         name = "testing_toolchain" + version_suffix(scala_version),
         scala_version = scala_version,
-        scalatest_classpath = repositories(scala_version, {scalatest}),
-        junit_classpath = repositories(scala_version, {junit}),
-        specs2_classpath = repositories(scala_version, {specs2}),
-        specs2_junit_classpath = repositories(scala_version, {specs2_junit}),
+        scalatest_classpath = artifact_targets_for_scala_version(scala_version, {scalatest}),
+        junit_classpath = artifact_targets_for_scala_version(scala_version, {junit}),
+        specs2_classpath = artifact_targets_for_scala_version(scala_version, {specs2}),
+        specs2_junit_classpath = artifact_targets_for_scala_version(scala_version, {specs2_junit}),
     )
     for scala_version in SCALA_VERSIONS
 ]

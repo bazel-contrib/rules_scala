@@ -2,7 +2,6 @@
 
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 load("//jmh/toolchain:toolchain.bzl", "jmh_artifact_ids")
-load("//junit:junit.bzl", "junit_artifact_ids")
 load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
 load(
@@ -13,9 +12,6 @@ load(
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
 load("//scala/scalafmt:scalafmt_repositories.bzl", "scalafmt_artifact_ids")
 load("//scala_proto/default:repositories.bzl", "scala_proto_artifact_ids")
-load("//scalatest:scalatest.bzl", "scalatest_artifact_ids")
-load("//specs2:specs2.bzl", "specs2_artifact_ids")
-load("//specs2:specs2_junit.bzl", "specs2_junit_artifact_ids")
 load("//third_party/repositories:repositories.bzl", "repositories")
 load(
     "//twitter_scrooge/toolchain:toolchain.bzl",
@@ -163,22 +159,6 @@ def scala_toolchains(
         junit = True
 
     artifact_ids_to_fetch_sources = {}
-
-    if scalatest:
-        artifact_ids_to_fetch_sources.update({
-            id: True
-            for id in scalatest_artifact_ids()
-        })
-    if junit:
-        artifact_ids_to_fetch_sources.update({
-            id: True
-            for id in junit_artifact_ids()
-        })
-    if specs2:
-        artifact_ids_to_fetch_sources.update({
-            id: True
-            for id in specs2_artifact_ids() + specs2_junit_artifact_ids()
-        })
     if jmh:
         artifact_ids_to_fetch_sources.update({
             id: False

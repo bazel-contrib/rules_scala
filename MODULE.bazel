@@ -143,7 +143,6 @@ use_repo(
 use_repo(
     dev_deps,
     "io_bazel_rules_scala_guava",
-    "io_bazel_rules_scala_junit_junit",
     "io_bazel_rules_scala_scala_compiler",
     "io_bazel_rules_scala_scala_library",
 )
@@ -152,7 +151,6 @@ use_repo(
     [
         use_repo(dev_deps, dep + "_" + scala_version.replace(".", "_"))
         for dep in [
-            "io_bazel_rules_scala_junit_junit",
             "io_bazel_rules_scala_scala_compiler",
             "io_bazel_rules_scala_scala_library",
         ] + (
@@ -186,6 +184,125 @@ use_repo(
     ]
     for scala_version in SCALA_3_VERSIONS
 ]
+
+# Please keep this in sync with `examples/testing/multi_frameworks_toolchain/MODULE.bazel`
+scalatest_version = "3.2.19"
+
+specs2_pre_2_13_version = "4.4.1"
+
+specs2_2_13_version = "4.10.3"
+
+specs2_3_version = "5.0.0-RC-21"
+
+junit_artifacts = [
+    ("junit", "junit", "4.12", None),
+    ("org.hamcrest", "hamcrest-core", "1.3", None),
+]
+
+scalatest_artifacts = [
+    ("org.scalatest", "scalatest-compatible", scalatest_version, None),
+] + [
+    (group, name, scalatest_version, scala_version)
+    for scala_version in [
+        "2.11",
+        "2.12",
+        "2.13",
+        "3",
+    ]
+    for (group, name) in [
+        ("org.scalactic", "scalactic"),
+        ("org.scalatest", "scalatest"),
+        ("org.scalatest", "scalatest-core"),
+        ("org.scalatest", "scalatest-diagrams"),
+        ("org.scalatest", "scalatest-featurespec"),
+        ("org.scalatest", "scalatest-flatspec"),
+        ("org.scalatest", "scalatest-freespec"),
+        ("org.scalatest", "scalatest-funspec"),
+        ("org.scalatest", "scalatest-funsuite"),
+        ("org.scalatest", "scalatest-matchers-core"),
+        ("org.scalatest", "scalatest-mustmatchers"),
+        ("org.scalatest", "scalatest-propspec"),
+        ("org.scalatest", "scalatest-refspec"),
+        ("org.scalatest", "scalatest-shouldmatchers"),
+        ("org.scalatest", "scalatest-wordspec"),
+    ]
+]
+
+specs2_artifacts = [
+    ("org.specs2", name, version, scala_version)
+    for scala_version, version in [
+        ("2.11", specs2_pre_2_13_version),
+        ("2.12", specs2_pre_2_13_version),
+        ("2.13", specs2_2_13_version),
+        ("3", specs2_3_version),
+    ]
+    for name in [
+        "specs2-common",
+        "specs2-core",
+        "specs2-fp",
+        "specs2-matcher",
+    ]
+]
+
+specs2_junit_artifacts = [
+    ("org.specs2", "specs2-junit", version, scala_version)
+    for scala_version, version in [
+        ("2.11", specs2_pre_2_13_version),
+        ("2.12", specs2_pre_2_13_version),
+        ("2.13", specs2_2_13_version),
+        ("3", specs2_3_version),
+    ]
+]
+
+create_toolchain_metadata = use_extension("//scala/private:create_toolchain_metadata.bzl", "create_toolchain_metadata")
+
+[
+    create_toolchain_metadata.artifact(
+        name = name,
+        group = group,
+        scala_version = "" if scala_version == None else scala_version,
+        toolchain_name = toolchain_name,
+    )
+    for artifacts, toolchain_name in [
+        (junit_artifacts, "junit"),
+        (scalatest_artifacts, "scalatest"),
+        (specs2_artifacts, "specs2"),
+        (specs2_junit_artifacts, "specs2_junit"),
+    ]
+    for group, name, _, scala_version in artifacts
+]
+
+use_repo(create_toolchain_metadata, "rules_scala_artifacts")
+
+rules_scala_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+rules_scala_maven.install(
+    name = "rules_scala_maven",
+    artifacts = [
+        "{}:{}{}:{}".format(
+            group,
+            name,
+            "" if scala_version == None else "_{}".format(scala_version),
+            version,
+        )
+        for group, name, version, scala_version in (
+            junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts
+        )
+    ],
+    # Don't pull in conflicting versions of the standard library
+    excluded_artifacts = [
+        "org.scala-lang:scala-library",
+        "org.scala-lang:scala-reflect",
+    ],
+    fetch_sources = True,
+    lock_file = "//:rules_scala_maven.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
+)
+use_repo(rules_scala_maven, "rules_scala_maven")
 
 rules_scala_test_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 rules_scala_test_maven.install(

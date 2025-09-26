@@ -35,6 +35,44 @@ def extract_major_version_underscore(scala_version):
     e.g. "2.11.11" -> "2_11" """
     return extract_major_version(scala_version).replace(".", "_")
 
+def artifact_targets_for_scala_version(desired_scala_version, artifacts):
+    """Transform a list of artifacts into a list of targets compatible with the given Scala version.
+
+    Given a list of artifacts defined in `rules_scala_maven.MODULE.bazel`, filter those artifacts compatible with the
+    Scala version `desired_scala_version` and transform them into a list of targets underneath
+    `@rules_scala_maven//...`.
+
+    If `artifacts` is `None`, this function will return `None`.
+    """
+
+    if artifacts == None:
+        return None
+
+    desired_scala_version_components = desired_scala_version.split(".")
+
+    def is_compatible(scala_version):
+        components = scala_version.split(".")
+
+        if len(components) < len(desired_scala_version_components):
+            return desired_scala_version_components[:len(components)] == components
+
+        return components[:len(desired_scala_version_components)] == desired_scala_version_components
+
+    result = []
+
+    for artifact in artifacts:
+        if artifact.scala_version == "" or is_compatible(artifact.scala_version):
+            result.append(
+                # We use the canonical repository name so it resolves in workspaces other than this one
+                "@@rules_jvm_external++maven+rules_scala_maven//:{}_{}{}".format(
+                    artifact.group.replace(".", "_").replace("-", "_"),
+                    artifact.name.replace("-", "_"),
+                    "" if artifact.scala_version == "" else "_" + artifact.scala_version.replace(".", "_"),
+                ),
+            )
+
+    return result
+
 def scala_mvn_artifact(
         artifact,
         major_scala_version):

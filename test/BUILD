@@ -13,20 +13,12 @@ load(
     "scala_test",
     "scala_test_suite",
 )
-load("//scala:scala_cross_version.bzl", "repositories")
 load(":check_statsfile.bzl", "check_statsfile")
 load(":env_vars.bzl", "env_vars")
 
 package(
     default_testonly = 1,
     default_visibility = ["//test/sh_tests:__pkg__"],
-)
-
-_JUNIT_DEPS = repositories(
-    SCALA_VERSION,
-    [
-        "@io_bazel_rules_scala_junit_junit",
-    ],
 )
 
 # The examples below show how to combine Scala and Java rules.
@@ -549,7 +541,7 @@ scala_library(
 scala_library(
     name = "customJunitRunner",
     srcs = ["src/main/scala/scalarules/test/junit/JunitCustomRunner.java"],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 # make sure making a fat jar strips signatures
@@ -617,7 +609,7 @@ check_statsfile("ScalaLibBinary")
 scala_library(
     name = "JunitSeparateTarget",
     srcs = ["src/main/scala/scalarules/test/junit/separate_target/JunitSeparateTargetTest.scala"],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_junit_test(
@@ -631,7 +623,7 @@ scala_junit_test(
 java_library(
     name = "JunitJavaSeparateTarget",
     srcs = ["src/main/scala/scalarules/test/junit/separate_target/JunitJavaSeparateTargetTest.java"],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_junit_test(
@@ -645,14 +637,14 @@ scala_junit_test(
 scala_library(
     name = "TargetWithTestThatShouldNotRun",
     srcs = ["src/main/scala/scalarules/test/junit/separate_target/FailingTest.scala"],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_library(
     name = "JunitSeparateTargetWithDependencyOnTest",
     srcs = ["src/main/scala/scalarules/test/junit/separate_target/JunitSeparateTargetTest.scala"],
     runtime_deps = [":TargetWithTestThatShouldNotRun"],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_junit_test(
@@ -667,7 +659,7 @@ java_library(
     name = "JunitSeparateJavaTargetWithDependencyOnTest",
     srcs = ["src/main/scala/scalarules/test/junit/separate_target/JunitJavaSeparateTargetTest.java"],
     runtime_deps = [":TargetWithTestThatShouldNotRun"],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_junit_test(
@@ -684,7 +676,7 @@ scala_library(
         "src/main/scala/scalarules/test/junit/separate_target/JunitJavaSeparateTargetTest.java",
         "src/main/scala/scalarules/test/junit/separate_target/SomeScalaClass.scala",
     ],
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_junit_test(
@@ -702,7 +694,7 @@ scala_library(
     ],
     # make sure java compilation toolchain matches runtime toolchain ie --target
     java_compile_toolchain = "@rules_java//toolchains:toolchain_java11",
-    deps = _JUNIT_DEPS,
+    deps = ["//testing/toolchain:junit_classpath"],
 )
 
 scala_junit_test(

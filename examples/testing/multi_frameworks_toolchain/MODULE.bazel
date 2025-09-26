@@ -6,6 +6,7 @@ SCALA_VERSION = "2.12.20"
 
 VERSION_SUFFIX = "_" + SCALA_VERSION.replace(".", "_")
 
+bazel_dep(name = "rules_jvm_external", version = "6.8")
 bazel_dep(name = "rules_scala")
 local_path_override(
     module_name = "rules_scala",
@@ -40,37 +41,109 @@ scala_deps.junit()
 scala_deps.scalatest()
 scala_deps.specs2()
 
-# Under normal circumstances, the above `scala_deps` tag class instantiations
-# would be all you need. rules_scala will set up and register the toolchains
-# automatically.
-#
-# However, we need to import the repos used by the
-# `setup_scala_testing_toolchain()` example in the `BUILD` file. These repos
-# are versioned by Scala version, so we have to append the `VERSION_SUFFIX`.
-[
-    use_repo(scala_deps, "io_bazel_rules_scala_" + dep + VERSION_SUFFIX)
-    for dep in [
-        "junit_junit",
-        "org_hamcrest_hamcrest_core",
-        "scalactic",
-        "scalatest",
-        "scalatest_compatible",
-        "scalatest_core",
-        "scalatest_featurespec",
-        "scalatest_flatspec",
-        "scalatest_freespec",
-        "scalatest_funspec",
-        "scalatest_funsuite",
-        "scalatest_matchers_core",
-        "scalatest_mustmatchers",
-        "scalatest_shouldmatchers",
-        "org_specs2_specs2_common",
-        "org_specs2_specs2_core",
-        "org_specs2_specs2_fp",
-        "org_specs2_specs2_matcher",
-        "org_specs2_specs2_junit",
+# Please keep this in sync with `MODULE.bazel`. We're forced to duplicate it because:
+# 1. `@rules_scala_maven//...` (the repository the default testing toolchain uses) isn't accessible from here
+# 2. There's no way to share this with `MODULE.bazel`
+#   -  [include](https://bazel.build/rules/lib/globals/module#include) exists, but it's only permitted in top-level
+#      `MODULE.bazel` files. If `rules_scala` is used as a dependency of another module, its `MODULE.bazel` file isn't
+#      considered top-level.
+scalatest_version = "3.2.19"
+
+specs2_pre_2_13_version = "4.4.1"
+
+specs2_2_13_version = "4.10.3"
+
+specs2_3_version = "5.0.0-RC-21"
+
+junit_artifacts = [
+    ("junit", "junit", "4.12", None),
+    ("org.hamcrest", "hamcrest-core", "1.3", None),
+]
+
+scalatest_artifacts = [
+    ("org.scalatest", "scalatest-compatible", scalatest_version, None),
+] + [
+    (group, name, scalatest_version, scala_version)
+    for scala_version in [
+        "2.11",
+        "2.12",
+        "2.13",
+        "3",
+    ]
+    for (group, name) in [
+        ("org.scalactic", "scalactic"),
+        ("org.scalatest", "scalatest"),
+        ("org.scalatest", "scalatest-core"),
+        ("org.scalatest", "scalatest-diagrams"),
+        ("org.scalatest", "scalatest-featurespec"),
+        ("org.scalatest", "scalatest-flatspec"),
+        ("org.scalatest", "scalatest-freespec"),
+        ("org.scalatest", "scalatest-funspec"),
+        ("org.scalatest", "scalatest-funsuite"),
+        ("org.scalatest", "scalatest-matchers-core"),
+        ("org.scalatest", "scalatest-mustmatchers"),
+        ("org.scalatest", "scalatest-propspec"),
+        ("org.scalatest", "scalatest-refspec"),
+        ("org.scalatest", "scalatest-shouldmatchers"),
+        ("org.scalatest", "scalatest-wordspec"),
     ]
 ]
+
+specs2_artifacts = [
+    ("org.specs2", name, version, scala_version)
+    for scala_version, version in [
+        ("2.11", specs2_pre_2_13_version),
+        ("2.12", specs2_pre_2_13_version),
+        ("2.13", specs2_2_13_version),
+        ("3", specs2_3_version),
+    ]
+    for name in [
+        "specs2-common",
+        "specs2-core",
+        "specs2-fp",
+        "specs2-matcher",
+    ]
+]
+
+specs2_junit_artifacts = [
+    ("org.specs2", "specs2-junit", version, scala_version)
+    for scala_version, version in [
+        ("2.11", specs2_pre_2_13_version),
+        ("2.12", specs2_pre_2_13_version),
+        ("2.13", specs2_2_13_version),
+        ("3", specs2_3_version),
+    ]
+]
+
+multi_frameworks_toolchain_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+multi_frameworks_toolchain_maven.install(
+    name = "multi_frameworks_toolchain_maven",
+    artifacts = [
+        "{}:{}{}:{}".format(
+            group,
+            name,
+            "" if scala_version == None else "_{}".format(scala_version),
+            version,
+        )
+        for group, name, version, scala_version in (
+            junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts
+        )
+    ],
+    # Don't pull in conflicting versions of the standard library
+    excluded_artifacts = [
+        "org.scala-lang:scala-library",
+        "org.scala-lang:scala-reflect",
+    ],
+    fetch_sources = True,
+    lock_file = "//:maven.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
+)
+use_repo(multi_frameworks_toolchain_maven, "multi_frameworks_toolchain_maven")
 
 scala_protoc = use_extension(
     "@rules_scala//scala/extensions:protoc.bzl",
