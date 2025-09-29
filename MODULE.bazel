@@ -186,6 +186,8 @@ use_repo(
 ]
 
 # Please keep this in sync with `examples/testing/multi_frameworks_toolchain/MODULE.bazel`
+jmh_version = "1.36"
+
 scalatest_version = "3.2.19"
 
 specs2_pre_2_13_version = "4.4.1"
@@ -193,6 +195,27 @@ specs2_pre_2_13_version = "4.4.1"
 specs2_2_13_version = "4.10.3"
 
 specs2_3_version = "5.0.0-RC-21"
+
+asm_artifact = ("org.ow2.asm", "asm", "9.0", None)
+
+commons_math3_artifact = ("org.apache.commons", "commons-math3", "3.6.1", None)
+
+jmh_core_artifact = ("org.openjdk.jmh", "jmh-core", jmh_version, None)
+
+jmh_generator_asm_artifact = ("org.openjdk.jmh", "jmh-generator-asm", jmh_version, None)
+
+jmh_generator_reflection_artifact = ("org.openjdk.jmh", "jmh-generator-reflection", jmh_version, None)
+
+jopt_simple_artifact = ("net.sf.jopt-simple", "jopt-simple", "5.0.4", None)
+
+jmh_artifacts = [
+    asm_artifact,
+    commons_math3_artifact,
+    jmh_core_artifact,
+    jmh_generator_asm_artifact,
+    jmh_generator_reflection_artifact,
+    jopt_simple_artifact,
+]
 
 junit_artifacts = [
     ("junit", "junit", "4.12", None),
@@ -264,6 +287,29 @@ create_toolchain_metadata = use_extension("//scala/private:create_toolchain_meta
         toolchain_name = toolchain_name,
     )
     for artifacts, toolchain_name in [
+        (
+            [
+                jmh_core_artifact,
+                jmh_generator_asm_artifact,
+                jmh_generator_reflection_artifact,
+            ],
+            "benchmark_generator",
+        ),
+        (
+            [jmh_generator_asm_artifact],
+            "benchmark_generator_runtime",
+        ),
+        (
+            [
+                commons_math3_artifact,
+                jopt_simple_artifact,
+            ],
+            "jmh_classpath",
+        ),
+        (
+            [jmh_core_artifact],
+            "jmh_core",
+        ),
         (junit_artifacts, "junit"),
         (scalatest_artifacts, "scalatest"),
         (specs2_artifacts, "specs2"),
@@ -285,7 +331,7 @@ rules_scala_maven.install(
             version,
         )
         for group, name, version, scala_version in (
-            junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts
+            jmh_artifacts + junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts
         )
     ],
     # Don't pull in conflicting versions of the standard library

@@ -1,7 +1,6 @@
 """Macros to instantiate and register @rules_scala_toolchains"""
 
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
-load("//jmh/toolchain:toolchain.bzl", "jmh_artifact_ids")
 load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
 load(
@@ -159,11 +158,6 @@ def scala_toolchains(
         junit = True
 
     artifact_ids_to_fetch_sources = {}
-    if jmh:
-        artifact_ids_to_fetch_sources.update({
-            id: False
-            for id in jmh_artifact_ids()
-        })
     if twitter_scrooge:
         artifact_ids_to_fetch_sources.update({
             id: False
