@@ -12,10 +12,6 @@ load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
 load("//scala/scalafmt:scalafmt_repositories.bzl", "scalafmt_artifact_ids")
 load("//scala_proto/default:repositories.bzl", "scala_proto_artifact_ids")
 load("//third_party/repositories:repositories.bzl", "repositories")
-load(
-    "//twitter_scrooge/toolchain:toolchain.bzl",
-    "twitter_scrooge_artifact_ids",
-)
 
 _DEFAULT_TOOLCHAINS_REPO_NAME = "rules_scala_toolchains"
 
@@ -158,12 +154,6 @@ def scala_toolchains(
         junit = True
 
     artifact_ids_to_fetch_sources = {}
-    if twitter_scrooge:
-        artifact_ids_to_fetch_sources.update({
-            id: False
-            for id in twitter_scrooge_artifact_ids(**twitter_scrooge_options)
-        })
-
     for scala_version in SCALA_VERSIONS:
         version_specific_artifact_ids = {}
 

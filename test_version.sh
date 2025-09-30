@@ -65,20 +65,9 @@ run_in_test_repo() {
 
   cp -r $test_target $NEW_TEST_DIR
 
-  local scrooge_ws=""
-  local scrooge_mod=""
-
-  if [[ -n "$TWITTER_SCROOGE_VERSION" ]]; then
-    local version_param="version = \"$TWITTER_SCROOGE_VERSION\""
-    scrooge_ws="$version_param"
-    scrooge_mod="scrooge_repos.settings($version_param)\\n"
-  fi
-
-  sed -e "s%\${twitter_scrooge_repositories}%${scrooge_ws}%" \
-      WORKSPACE.template >> $NEW_TEST_DIR/WORKSPACE
-  sed -e "s%\${twitter_scrooge_repositories}%${scrooge_mod}%" \
+  sed -e "s%\${scrooge_version}%${TWITTER_SCROOGE_VERSION}%" \
       MODULE.bazel.template >> $NEW_TEST_DIR/MODULE.bazel
-  cp ../.bazel{rc,version} scrooge_repositories.bzl $NEW_TEST_DIR/
+  cp ../.bazel{rc,version} $NEW_TEST_DIR/
   cp ../protoc/0001-protobuf-19679-rm-protoc-dep.patch \
       $NEW_TEST_DIR/protobuf.patch
 
@@ -180,7 +169,7 @@ TEST_TIMEOUT=15 $runner test_reporter "${scala_3_version}"    "${diagnostics_rep
 
 TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_12_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
 TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_13_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_3_version}"    //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain 
+TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_3_version}"    //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
 
 TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_12_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain
 TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_13_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain

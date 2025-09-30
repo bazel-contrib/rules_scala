@@ -1,11 +1,18 @@
+load(
+    "@rules_scala_artifacts//:artifacts.bzl",
+    "scopt_artifacts",
+    "scrooge_core_artifacts",
+    "scrooge_generator_artifacts",
+    "util_core_artifacts",
+    "util_logging_artifacts",
+)
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:providers.bzl", "DepsInfo", "declare_deps_provider")
-load("//scala:scala_cross_version.bzl", "version_suffix")
+load("//scala:scala_cross_version.bzl", "artifact_targets_for_scala_version")
 load(
     "//scala/private/toolchain_deps:toolchain_deps.bzl",
     "expose_toolchain_deps",
 )
-load("//scala_proto/default:repositories.bzl", "GUAVA_ARTIFACT_IDS")
 
 DEP_PROVIDERS = [
     "compile_classpath",
@@ -13,37 +20,6 @@ DEP_PROVIDERS = [
     "scrooge_generator_classpath",
     "compiler_classpath",
 ]
-
-def twitter_scrooge_artifact_ids(
-        libthrift = None,
-        scrooge_core = None,
-        scrooge_generator = None,
-        util_core = None,
-        util_logging = None,
-        javax_annotation_api = None,
-        mustache = None,
-        scopt = None):
-    artifact_ids = []
-
-    if libthrift == None:
-        artifact_ids.append("libthrift")
-    if scrooge_core == None:
-        artifact_ids.append("io_bazel_rules_scala_scrooge_core")
-    if scrooge_generator == None:
-        artifact_ids.append("io_bazel_rules_scala_scrooge_generator")
-    if util_core == None:
-        artifact_ids.append("io_bazel_rules_scala_util_core")
-    if util_logging == None:
-        artifact_ids.append("io_bazel_rules_scala_util_logging")
-    if javax_annotation_api == None:
-        artifact_ids.append("io_bazel_rules_scala_javax_annotation_api")
-    if mustache == None:
-        # Mustache is for generating Java from Thrift.
-        artifact_ids.append("io_bazel_rules_scala_mustache")
-    if scopt == None:
-        artifact_ids.append("io_bazel_rules_scala_scopt")
-
-    return artifact_ids + GUAVA_ARTIFACT_IDS
 
 def _scrooge_toolchain_impl(ctx):
     toolchain = platform_common.ToolchainInfo(
@@ -96,26 +72,25 @@ def setup_scrooge_toolchain(
         javax_annotation_api = None,
         mustache = None,
         scopt = None):
-    version = version_suffix(SCALA_VERSION)
-
     if libthrift == None:
-        libthrift = "@libthrift" + version
+        # We use the canonical repository name so it resolves in workspaces other than this one
+        libthrift = "@@rules_jvm_external++maven+rules_scala_maven//:org_apache_thrift_libthrift"
     if scrooge_core == None:
-        scrooge_core = "@io_bazel_rules_scala_scrooge_core" + version
+        scrooge_core = artifact_targets_for_scala_version(SCALA_VERSION, scrooge_core_artifacts)[0]
     if scrooge_generator == None:
-        scrooge_generator = "@io_bazel_rules_scala_scrooge_generator" + version
+        scrooge_generator = artifact_targets_for_scala_version(SCALA_VERSION, scrooge_generator_artifacts)[0]
     if util_core == None:
-        util_core = "@io_bazel_rules_scala_util_core" + version
+        util_core = artifact_targets_for_scala_version(SCALA_VERSION, util_core_artifacts)[0]
     if util_logging == None:
-        util_logging = "@io_bazel_rules_scala_util_logging" + version
+        util_logging = artifact_targets_for_scala_version(SCALA_VERSION, util_logging_artifacts)[0]
     if javax_annotation_api == None:
-        javax_annotation_api = (
-            "@io_bazel_rules_scala_javax_annotation_api" + version
-        )
+        # We use the canonical repository name so it resolves in workspaces other than this one
+        javax_annotation_api = "@@rules_jvm_external++maven+rules_scala_maven//:javax_annotation_javax_annotation_api"
     if mustache == None:
-        mustache = "@io_bazel_rules_scala_mustache" + version
+        # We use the canonical repository name so it resolves in workspaces other than this one
+        mustache = "@@rules_jvm_external++maven+rules_scala_maven//:com_github_spullara_mustache_java_compiler"
     if scopt == None:
-        scopt = "@io_bazel_rules_scala_scopt" + version
+        scopt = artifact_targets_for_scala_version(SCALA_VERSION, scopt_artifacts)[0]
 
     scrooge_toolchain(
         name = "%s_impl" % name,

@@ -64,10 +64,9 @@ def artifact_targets_for_scala_version(desired_scala_version, artifacts):
         if artifact.scala_version == "" or is_compatible(artifact.scala_version):
             result.append(
                 # We use the canonical repository name so it resolves in workspaces other than this one
-                "@@rules_jvm_external++maven+rules_scala_maven//:{}_{}{}".format(
+                "@@rules_jvm_external++maven+rules_scala_maven//:{}_{}".format(
                     artifact.group.replace(".", "_").replace("-", "_"),
-                    artifact.name.replace("-", "_"),
-                    "" if artifact.scala_version == "" else "_" + artifact.scala_version.replace(".", "_"),
+                    artifact.name.replace(".", "_").replace("-", "_"),
                 ),
             )
 

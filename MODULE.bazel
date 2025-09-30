@@ -190,6 +190,10 @@ jmh_version = "1.36"
 
 scalatest_version = "3.2.19"
 
+scopt_version = "4.0.0-RC2"
+
+scrooge_version = "21.2.0"
+
 specs2_pre_2_13_version = "4.4.1"
 
 specs2_2_13_version = "4.10.3"
@@ -225,7 +229,12 @@ junit_artifacts = [
 scalatest_artifacts = [
     ("org.scalatest", "scalatest-compatible", scalatest_version, None),
 ] + [
-    (group, name, scalatest_version, scala_version)
+    (
+        group,
+        "{}_{}".format(name, scala_version),
+        scalatest_version,
+        scala_version,
+    )
     for scala_version in [
         "2.11",
         "2.12",
@@ -252,7 +261,12 @@ scalatest_artifacts = [
 ]
 
 specs2_artifacts = [
-    ("org.specs2", name, version, scala_version)
+    (
+        "org.specs2",
+        "{}_{}".format(name, scala_version),
+        version,
+        scala_version,
+    )
     for scala_version, version in [
         ("2.11", specs2_pre_2_13_version),
         ("2.12", specs2_pre_2_13_version),
@@ -268,7 +282,12 @@ specs2_artifacts = [
 ]
 
 specs2_junit_artifacts = [
-    ("org.specs2", "specs2-junit", version, scala_version)
+    (
+        "org.specs2",
+        "specs2-junit_{}".format(scala_version),
+        version,
+        scala_version,
+    )
     for scala_version, version in [
         ("2.11", specs2_pre_2_13_version),
         ("2.12", specs2_pre_2_13_version),
@@ -276,6 +295,47 @@ specs2_junit_artifacts = [
         ("3", specs2_3_version),
     ]
 ]
+
+scopt_artifacts = [
+    ("com.github.scopt", "scopt_2.11", scopt_version, "2.11"),
+    ("com.github.scopt", "scopt_2.12", scopt_version, "2.12"),
+    ("com.github.scopt", "scopt_2.13", scopt_version, "2.13"),
+    ("com.github.scopt", "scopt_2.13", scopt_version, "3"),
+]
+
+scrooge_core_artifacts = [
+    ("com.twitter", "scrooge-core_2.11", scrooge_version, "2.11"),
+    ("com.twitter", "scrooge-core_2.12", scrooge_version, "2.12"),
+    ("com.twitter", "scrooge-core_2.13", scrooge_version, "2.13"),
+    ("com.twitter", "scrooge-core_2.13", scrooge_version, "3"),
+]
+
+scrooge_generator_artifacts = [
+    ("com.twitter", "scrooge-generator_2.11", scrooge_version, "2.11"),
+    ("com.twitter", "scrooge-generator_2.12", scrooge_version, "2.12"),
+    ("com.twitter", "scrooge-generator_2.13", scrooge_version, "2.13"),
+    ("com.twitter", "scrooge-generator_2.13", scrooge_version, "3"),
+]
+
+util_core_artifacts = [
+    ("com.twitter", "util-core_2.11", scrooge_version, "2.11"),
+    ("com.twitter", "util-core_2.12", scrooge_version, "2.12"),
+    ("com.twitter", "util-core_2.13", scrooge_version, "2.13"),
+    ("com.twitter", "util-core_2.13", scrooge_version, "3"),
+]
+
+util_logging_artifacts = [
+    ("com.twitter", "util-logging_2.11", scrooge_version, "2.11"),
+    ("com.twitter", "util-logging_2.12", scrooge_version, "2.12"),
+    ("com.twitter", "util-logging_2.13", scrooge_version, "2.13"),
+    ("com.twitter", "util-logging_2.13", scrooge_version, "3"),
+]
+
+twitter_scrooge_artifacts = [
+    ("com.github.spullara.mustache.java", "compiler", "0.8.18", None),
+    ("javax.annotation", "javax.annotation-api", "1.3.2", None),
+    ("org.apache.thrift", "libthrift", "0.10.0", None),
+] + scopt_artifacts + scrooge_core_artifacts + scrooge_generator_artifacts + util_core_artifacts + util_logging_artifacts
 
 create_toolchain_metadata = use_extension("//scala/private:create_toolchain_metadata.bzl", "create_toolchain_metadata")
 
@@ -312,8 +372,13 @@ create_toolchain_metadata = use_extension("//scala/private:create_toolchain_meta
         ),
         (junit_artifacts, "junit"),
         (scalatest_artifacts, "scalatest"),
+        (scopt_artifacts, "scopt"),
+        (scrooge_core_artifacts, "scrooge_core"),
+        (scrooge_generator_artifacts, "scrooge_generator"),
         (specs2_artifacts, "specs2"),
         (specs2_junit_artifacts, "specs2_junit"),
+        (util_core_artifacts, "util_core"),
+        (util_logging_artifacts, "util_logging"),
     ]
     for group, name, _, scala_version in artifacts
 ]
@@ -324,14 +389,9 @@ rules_scala_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven
 rules_scala_maven.install(
     name = "rules_scala_maven",
     artifacts = [
-        "{}:{}{}:{}".format(
-            group,
-            name,
-            "" if scala_version == None else "_{}".format(scala_version),
-            version,
-        )
-        for group, name, version, scala_version in (
-            jmh_artifacts + junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts
+        "{}:{}:{}".format(group, name, version)
+        for group, name, version, _ in (
+            jmh_artifacts + junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts + twitter_scrooge_artifacts
         )
     ],
     # Don't pull in conflicting versions of the standard library

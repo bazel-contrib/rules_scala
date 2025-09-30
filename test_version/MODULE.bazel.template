@@ -15,6 +15,7 @@ local_path_override(
 )
 
 bazel_dep(name = "rules_java", version = "8.15.1")
+bazel_dep(name = "rules_jvm_external", version = "6.8")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "rules_shell", version = "0.5.1")
 bazel_dep(name = "protobuf", repo_name = "com_google_protobuf")
@@ -50,17 +51,46 @@ scala_deps.scala_proto()
 scala_deps.scalatest()
 scala_deps.specs2()
 
-scrooge_repos = use_extension(
-    "//:scrooge_repositories.bzl",
-    "scrooge_repositories_ext",
+scrooge_version = "${scrooge_version}"
+
+scrooge_version_or_default = "21.2.0" if scrooge_version == "" else scrooge_version
+
+test_version_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+test_version_maven.install(
+    name = "test_version_maven",
+    artifacts = [
+        "com.twitter:scrooge-core_2.11:{}".format(scrooge_version_or_default),
+        "com.twitter:scrooge-generator_2.11:{}".format(scrooge_version_or_default),
+        "com.twitter:util-core_2.11:{}".format(scrooge_version_or_default),
+        "com.twitter:util-logging_2.11:{}".format(scrooge_version_or_default),
+    ],
+    # Don't pull in conflicting versions of the standard library
+    excluded_artifacts = [
+        "org.scala-lang:scala-library",
+        "org.scala-lang:scala-reflect",
+    ],
+    fetch_sources = True,
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
 )
-${twitter_scrooge_repositories}use_repo(
-    scrooge_repos,
-    "io_bazel_rules_scala_scrooge_core",
-    "io_bazel_rules_scala_scrooge_generator",
-    "io_bazel_rules_scala_util_core",
-    "io_bazel_rules_scala_util_logging",
-    "twitter_scrooge_test_toolchain",
+use_repo(test_version_maven, "test_version_maven")
+
+scala_toolchains_repo = use_repo_rule("@rules_scala//scala:toolchains_repo.bzl", "scala_toolchains_repo")
+
+scala_toolchains_repo(
+    name = "twitter_scrooge_test_toolchain",
+    scala = False,
+    twitter_scrooge = True,
+    twitter_scrooge_deps = {} if scrooge_version == "" else {
+        "scrooge_core": "@test_version_maven//:com_twitter_scrooge_core_2_11",
+        "scrooge_generator": "@test_version_maven//:com_twitter_scrooge_generator_2_11",
+        "util_core": "@test_version_maven//:com_twitter_util_core_2_11",
+        "util_logging": "@test_version_maven//:com_twitter_util_logging_2_11",
+    },
 )
 
 scala_protoc = use_extension(

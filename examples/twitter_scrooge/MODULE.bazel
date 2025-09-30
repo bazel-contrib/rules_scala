@@ -88,33 +88,6 @@ scala_deps.twitter_scrooge(
     util_logging = "@maven//:com_twitter_util_logging_2_12",
 )
 
-# If you want to depend on any of the builtin repos when using
-# `setup_scala_toolchain` in a `BUILD` file, you will need to:
-#
-# - Remove the `scala_deps.twitter_scrooge()` overrides for those repos. This
-#   enables the module extension to generate the builtin repos for those
-#   dependencies.
-#
-# - Uncomment the `use_repo` call below to import the builtin repos into the
-#   main module's scope.
-#
-# `version_suffix` should match the `scala_version` argument to
-# `scala_config.settings()`.
-#version_suffix = "_2_12_20"
-#[
-#    use_repo(scala_deps, repo + version_suffix)
-#    for repo in [
-#        "libthrift",
-#        "io_bazel_rules_scala_scrooge_core",
-#        "io_bazel_rules_scala_scrooge_generator",
-#        "io_bazel_rules_scala_util_core",
-#        "io_bazel_rules_scala_util_logging",
-#        "io_bazel_rules_scala_javax_annotation_api",
-#        "io_bazel_rules_scala_mustache",
-#        "io_bazel_rules_scala_scopt",
-#    ]
-#]
-
 # To depend on the toolchain defined by `setup_scala_toolchain` by default,
 # instead of the builtin toolchain, uncomment this line. You can also specify it
 # on demand via:

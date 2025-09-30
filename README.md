@@ -1409,46 +1409,6 @@ scalapb_toolchain(
 Similarly, `setup_scala_proto_toolchains()` now uses a `default_gen_opts`
 parameter to replace the previous boolean `enable_all_options` parameter.
 
-### Removal of `bind()` aliases for `twitter_scrooge` dependencies
-
-`rules_scala` 7.x removes all of the obsolete [`bind()`][] aliases under
-`//external:io_bazel_rules_scala/dependency/` created for `twitter_scrooge`
-toolchain dependencies. If your project happens to depend on these aliases, you
-can replace them with the following repository references:
-
-| `bind()` alias under `//external:io_bazel_rules_scala/dependency/` | Repository reference |
-| :-- | :-- |
-| `scala/guava` | `@io_bazel_rules_scala_guava` |
-| `thrift/javax_annotation_api` | `@io_bazel_rules_scala_javax_annotation_api` |
-| `thrift/libthrift` | `@libthrift` |
-| `thrift/mustache` | `@io_bazel_rules_scala_mustache` |
-| `thrift/scopt` | `@io_bazel_rules_scala_scopt` |
-| `thrift/scrooge_core` | `@io_bazel_rules_scala_scrooge_core` |
-| `thrift/scrooge_generator` | `@io_bazel_rules_scala_scrooge_generator` |
-| `thrift/util_core` | `@io_bazel_rules_scala_util_core` |
-| `thrift/util_logging` | `@io_bazel_rules_scala_util_logging` |
-
-[`bind()`]: https://bazel.build/reference/be/workspace#bind
-
-To access these repositories under Bzlmod, you'll need to add the following to
-your `MODULE.bazel` file:
-
-```py
-scala_deps.twitter_scrooge()
-use_repo(
-    scala_deps,
-    "io_bazel_rules_scala_guava",
-    "io_bazel_rules_scala_javax_annotation_api",
-    "io_bazel_rules_scala_mustache",
-    "io_bazel_rules_scala_scopt",
-    "io_bazel_rules_scala_scrooge_core",
-    "io_bazel_rules_scala_scrooge_generator",
-    "io_bazel_rules_scala_util_core",
-    "io_bazel_rules_scala_util_logging",
-    "libthrift",
-)
-```
-
 ### Bazel module compatibility levels
 
 `rules_scala` 7.0.0 will set the
