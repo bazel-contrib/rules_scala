@@ -175,15 +175,31 @@ use_repo(
 ]
 
 # Please keep this in sync with `examples/testing/multi_frameworks_toolchain/MODULE.bazel`
+fansi_version = "0.5.0"
+
 fastparse_version = "2.1.3"
+
+geirsson_metaconfig_version = "0.9.10"
 
 grpc_version = "1.75.0"
 
 jmh_version = "1.36"
 
+mdoc_parser_version = "2.6.4"
+
+metaconfig_version = "0.15.0"
+
 netty_version = "4.1.124.Final"
 
 opencensus_version = "0.22.1"
+
+paiges_version = "0.4.4"
+
+scalafmt_version = "3.9.9"
+
+scalameta_fastparse_version = "1.0.1"
+
+scalameta_version = "4.13.9"
 
 scalapb_2_11_version = "0.9.8"
 
@@ -227,6 +243,106 @@ jmh_artifacts = [
 junit_artifacts = [
     ("junit", "junit", "4.12", None),
     ("org.hamcrest", "hamcrest-core", "1.3", None),
+]
+
+scalafmt_deps_2_11_artifacts = [
+    ("com.geirsson", "metaconfig-core_2.11", geirsson_metaconfig_version, "2.11"),
+    ("com.geirsson", "metaconfig-typesafe-config_2.11", geirsson_metaconfig_version, "2.11"),
+    ("com.lihaoyi", "pprint_2.11", "0.5.4", "2.11"),
+    ("org.scalameta", "fastparse_2.11", scalameta_fastparse_version, "2.11"),
+    ("org.scalameta", "fastparse-utils_2.11", scalameta_fastparse_version, "2.11"),
+]
+
+scalafmt_deps_2_12_artifacts = [
+    ("com.github.bigwheel", "util-backports_2.12", "2.1", "2.12"),
+]
+
+scalafmt_deps_after_2_11_artifacts = [
+    artifact
+    for name, version in [
+        ("io", scalameta_version),
+        ("mdoc-parser", mdoc_parser_version),
+        ("metaconfig-core", metaconfig_version),
+        ("metaconfig-pprint", metaconfig_version),
+        ("metaconfig-typesafe-config", metaconfig_version),
+        ("scalafmt-config", scalafmt_version),
+        ("scalafmt-macros", scalafmt_version),
+        ("scalafmt-sysops", scalafmt_version),
+    ]
+    for artifact in [
+        (
+            "org.scalameta",
+            "{}_2.12".format(name),
+            version,
+            "2.12",
+        ),
+        (
+            "org.scalameta",
+            "{}_2.13".format(name),
+            version,
+            "2.13",
+        ),
+        (
+            "org.scalameta",
+            "{}_2.13".format(name),
+            version,
+            "3",
+        ),
+    ]
+]
+
+scalafmt_deps_after_2_12_artifacts = [
+    ("org.scala-lang.modules", "scala-parallel-collections_2.13", "1.2.0", None),
+]
+
+scalafmt_deps_artifacts = [
+    ("com.typesafe", "config", "1.2.1", None),
+    ("com.lihaoyi", "fansi_2.11", "0.2.6", "2.11"),
+    ("com.lihaoyi", "fansi_2.12", fansi_version, "2.12"),
+    ("com.lihaoyi", "fansi_2.13", fansi_version, "2.13"),
+    ("com.lihaoyi", "fansi_2.13", fansi_version, "3"),
+    ("org.scalameta", "scalafmt-core_2.11", "2.7.5", "2.11"),
+    ("org.scalameta", "scalafmt-core_2.12", scalafmt_version, "2.12"),
+    ("org.scalameta", "scalafmt-core_2.13", scalafmt_version, "2.13"),
+    ("org.scalameta", "scalafmt-core_2.13", scalafmt_version, "3"),
+    ("org.typelevel", "paiges-core_2.11", "0.3.0", "2.11"),
+    ("org.typelevel", "paiges-core_2.12", paiges_version, "2.12"),
+    ("org.typelevel", "paiges-core_2.13", paiges_version, "2.13"),
+    ("org.typelevel", "paiges-core_2.13", paiges_version, "3"),
+] + [
+    artifact
+    for name in [
+        "common",
+        "parsers",
+        "scalameta",
+        "trees",
+    ]
+    for artifact in [
+        (
+            "org.scalameta",
+            "{}_2.11".format(name),
+            "4.3.22",
+            "2.11",
+        ),
+        (
+            "org.scalameta",
+            "{}_2.12".format(name),
+            scalameta_version,
+            "2.12",
+        ),
+        (
+            "org.scalameta",
+            "{}_2.13".format(name),
+            scalameta_version,
+            "2.13",
+        ),
+        (
+            "org.scalameta",
+            "{}_2.13".format(name),
+            scalameta_version,
+            "3",
+        ),
+    ]
 ]
 
 scalapb_compile_deps = [
@@ -468,6 +584,11 @@ create_toolchain_metadata = use_extension("//scala/private:create_toolchain_meta
             "jmh_core",
         ),
         (junit_artifacts, "junit"),
+        (scalafmt_deps_2_11_artifacts, "scalafmt_deps_2_11"),
+        (scalafmt_deps_2_12_artifacts, "scalafmt_deps_2_12"),
+        (scalafmt_deps_after_2_11_artifacts, "scalafmt_deps_after_2_11"),
+        (scalafmt_deps_after_2_12_artifacts, "scalafmt_deps_after_2_12"),
+        (scalafmt_deps_artifacts, "scalafmt_deps"),
         (scalapb_compile_deps, "scalapb_compile_deps"),
         (scalapb_grpc_deps, "scalapb_grpc_deps"),
         (scalapb_worker_deps, "scalapb_worker_deps"),
@@ -493,6 +614,11 @@ rules_scala_maven.install(
         for group, name, version, _ in (
             jmh_artifacts +
             junit_artifacts +
+            scalafmt_deps_2_11_artifacts +
+            scalafmt_deps_2_12_artifacts +
+            scalafmt_deps_after_2_11_artifacts +
+            scalafmt_deps_after_2_12_artifacts +
+            scalafmt_deps_artifacts +
             scalapb_compile_deps +
             scalapb_grpc_deps +
             scalapb_worker_deps +
@@ -501,6 +627,10 @@ rules_scala_maven.install(
             specs2_junit_artifacts +
             twitter_scrooge_artifacts
         )
+    ] + [
+        # `rules_jvm_external` selects v4.32.0, but we need v4.32.1, since that's the version Bazel uses to send
+        # work requests to the workers
+        "com.google.protobuf:protobuf-java:4.32.1",
     ],
     # Don't pull in conflicting versions of the standard library
     excluded_artifacts = [

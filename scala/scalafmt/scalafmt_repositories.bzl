@@ -1,48 +1,30 @@
-load("//scala:scala_cross_version.bzl", "extract_major_version")
+load(
+    "@rules_scala_artifacts//:artifacts.bzl",
+    "scalafmt_deps_2_11_artifacts",
+    "scalafmt_deps_2_12_artifacts",
+    "scalafmt_deps_after_2_11_artifacts",
+    "scalafmt_deps_after_2_12_artifacts",
+    "scalafmt_deps_artifacts",
+    "scalapb_compile_deps_artifacts"
+)
+load("//scala:scala_cross_version.bzl", "artifact_targets_for_scala_version", "extract_major_version")
 load("//scala_proto/default:repositories.bzl", "SCALAPB_COMPILE_ARTIFACT_IDS")
-
-_SCALAFMT_DEPS = [
-    "com_lihaoyi_fansi",
-    "com_typesafe_config",
-    "org_scala_lang_scalap",
-    "org_scalameta_common",
-    "org_scalameta_parsers",
-    "org_scalameta_scalafmt_core",
-    "org_scalameta_scalameta",
-    "org_scalameta_trees",
-    "org_typelevel_paiges_core",
-] + SCALAPB_COMPILE_ARTIFACT_IDS
-
-_SCALAFMT_DEPS_2_11 = [
-    "com_geirsson_metaconfig_core",
-    "com_geirsson_metaconfig_typesafe_config",
-    "com_lihaoyi_pprint",
-    "org_scalameta_fastparse",
-    "org_scalameta_fastparse_utils",
-]
-
-_SCALAFMT_DEPS_2_12 = [
-    "org_scalameta_io",
-    "org_scalameta_mdoc_parser",
-    "org_scalameta_metaconfig_core",
-    "org_scalameta_metaconfig_pprint",
-    "org_scalameta_metaconfig_typesafe_config",
-    "org_scalameta_scalafmt_config",
-    "org_scalameta_scalafmt_macros",
-    "org_scalameta_scalafmt_sysops",
-]
 
 def scalafmt_artifact_ids(scala_version):
     major_version = extract_major_version(scala_version)
 
     if major_version == "2.11":
-        return _SCALAFMT_DEPS + _SCALAFMT_DEPS_2_11
-
-    extra_deps = []
+        return artifact_targets_for_scala_version(
+            scala_version,
+            scalafmt_deps_artifacts + scalapb_compile_deps_artifacts + scalafmt_deps_2_11_artifacts,
+        )
 
     if major_version == "2.12":
-        extra_deps.append("com_github_bigwheel_util_backports")
+        extra_deps = scalafmt_deps_2_12_artifacts
     else:
-        extra_deps.append("io_bazel_rules_scala_scala_parallel_collections")
+        extra_deps = scalafmt_deps_after_2_12_artifacts
 
-    return _SCALAFMT_DEPS + _SCALAFMT_DEPS_2_12 + extra_deps
+    return artifact_targets_for_scala_version(
+        scala_version,
+        scalafmt_deps_artifacts + scalapb_compile_deps_artifacts + scalafmt_deps_after_2_11_artifacts + extra_deps,
+    )

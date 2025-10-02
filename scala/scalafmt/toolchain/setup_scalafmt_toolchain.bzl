@@ -48,11 +48,5 @@ def setup_scalafmt_toolchains():
         setup_scalafmt_toolchain(
             name = "scalafmt_toolchain" + version_suffix(scala_version),
             scala_version = scala_version,
-            scalafmt_classpath = _deps(scala_version),
+            scalafmt_classpath = scalafmt_artifact_ids(scala_version),
         )
-
-def _deps(scala_version):
-    return [
-        "@" + artifact_id + version_suffix(scala_version)
-        for artifact_id in scalafmt_artifact_ids(scala_version)
-    ]
