@@ -10,7 +10,6 @@ load(
 )
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
 load("//scala/scalafmt:scalafmt_repositories.bzl", "scalafmt_artifact_ids")
-load("//scala_proto/default:repositories.bzl", "scala_proto_artifact_ids")
 load("//third_party/repositories:repositories.bzl", "repositories")
 
 _DEFAULT_TOOLCHAINS_REPO_NAME = "rules_scala_toolchains"
@@ -163,11 +162,6 @@ def scala_toolchains(
                 for id in scala_version_artifact_ids(scala_version)
             })
 
-        if scala_proto:
-            version_specific_artifact_ids.update({
-                id: True
-                for id in scala_proto_artifact_ids(scala_version)
-            })
         if scalafmt:
             version_specific_artifact_ids.update({
                 id: fetch_sources

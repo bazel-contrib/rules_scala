@@ -131,18 +131,12 @@ dev_deps.scalafmt()
 dev_deps.scalatest()
 dev_deps.specs2()
 dev_deps.twitter_scrooge()
-use_repo(
-    dev_deps,
-    "scala_proto_rules_scalapb_compilerplugin",
-    "scala_proto_rules_scalapb_protoc_bridge",
-)
 
 # Default versions of version specific repos needed by some of our tests. Tests
 # that set `--repo_env=SCALA_VERSION=...` break without using the default here,
 # because version specific repos for other versions won't be available.
 use_repo(
     dev_deps,
-    "io_bazel_rules_scala_guava",
     "io_bazel_rules_scala_scala_compiler",
     "io_bazel_rules_scala_scala_library",
 )
@@ -153,12 +147,7 @@ use_repo(
         for dep in [
             "io_bazel_rules_scala_scala_compiler",
             "io_bazel_rules_scala_scala_library",
-        ] + (
-            # We can remove this condition once we drop support for Scala 2.11.
-            [] if scala_version.startswith("2.11.") else [
-                "scala_proto_rules_scalapb_protoc_gen",
-            ]
-        )
+        ]
     ]
     for scala_version in SCALA_VERSIONS
 ]
@@ -186,7 +175,21 @@ use_repo(
 ]
 
 # Please keep this in sync with `examples/testing/multi_frameworks_toolchain/MODULE.bazel`
+fastparse_version = "2.1.3"
+
+grpc_version = "1.75.0"
+
 jmh_version = "1.36"
+
+netty_version = "4.1.124.Final"
+
+opencensus_version = "0.22.1"
+
+scalapb_2_11_version = "0.9.8"
+
+scalapb_version = "1.0.0-alpha.2"
+
+scalapb_protoc_version = "0.9.9"
 
 scalatest_version = "3.2.19"
 
@@ -224,6 +227,100 @@ jmh_artifacts = [
 junit_artifacts = [
     ("junit", "junit", "4.12", None),
     ("org.hamcrest", "hamcrest-core", "1.3", None),
+]
+
+scalapb_compile_deps = [
+    ("com.lihaoyi", "fastparse_2.11", "2.1.2", "2.11"),
+    ("com.lihaoyi", "fastparse_2.12", fastparse_version, "2.12"),
+    ("com.lihaoyi", "fastparse_2.13", fastparse_version, "2.13"),
+    ("com.lihaoyi", "fastparse_2.13", fastparse_version, "3"),
+    ("com.thesamet.scalapb", "lenses_2.11", scalapb_2_11_version, "2.11"),
+    ("com.thesamet.scalapb", "scalapb-runtime_2.11", scalapb_2_11_version, "2.11"),
+] + [
+    artifact
+    for scala_version in [
+        "2.12",
+        "2.13",
+        "3",
+    ]
+    for artifact in [
+        (
+            "com.thesamet.scalapb",
+            "lenses_{}".format(scala_version),
+            scalapb_version,
+            scala_version,
+        ),
+        (
+            "com.thesamet.scalapb",
+            "scalapb-runtime_{}".format(scala_version),
+            scalapb_version,
+            scala_version,
+        ),
+    ]
+]
+
+scalapb_grpc_deps = [
+    ("com.google.guava", "guava", "33.4.8-jre", None),
+    ("com.google.instrumentation", "instrumentation-api", "0.3.0", None),
+    ("com.lmax", "disruptor", "3.4.2", None),
+    ("com.thesamet.scalapb", "scalapb-runtime-grpc_2.11", scalapb_2_11_version, "2.11"),
+    ("io.grpc", "grpc-api", grpc_version, None),
+    ("io.grpc", "grpc-context", grpc_version, None),
+    ("io.grpc", "grpc-core", grpc_version, None),
+    ("io.grpc", "grpc-netty", grpc_version, None),
+    ("io.grpc", "grpc-protobuf", grpc_version, None),
+    ("io.grpc", "grpc-stub", grpc_version, None),
+    ("io.netty", "netty-buffer", netty_version, None),
+    ("io.netty", "netty-codec", netty_version, None),
+    ("io.netty", "netty-codec-http", netty_version, None),
+    ("io.netty", "netty-codec-http2", netty_version, None),
+    ("io.netty", "netty-codec-socks", netty_version, None),
+    ("io.netty", "netty-common", netty_version, None),
+    ("io.netty", "netty-handler", netty_version, None),
+    ("io.netty", "netty-handler-proxy", netty_version, None),
+    ("io.netty", "netty-resolver", netty_version, None),
+    ("io.netty", "netty-transport", netty_version, None),
+    ("io.opencensus", "opencensus-api", opencensus_version, None),
+    ("io.opencensus", "opencensus-contrib-grpc-metrics", opencensus_version, None),
+    ("io.opencensus", "opencensus-impl", opencensus_version, None),
+    ("io.opencensus", "opencensus-impl-core", opencensus_version, None),
+    ("io.perfmark", "perfmark-api", "0.27.0", None),
+    ("org.jspecify", "jspecify", "1.0.0", None),
+] + [
+    (
+        "com.thesamet.scalapb",
+        "scalapb-runtime-grpc_{}".format(scala_version),
+        scalapb_version,
+        scala_version,
+    )
+    for scala_version in [
+        "2.12",
+        "2.13",
+        "3",
+    ]
+]
+
+scalapb_worker_deps = [
+    ("com.thesamet.scalapb", "compilerplugin_2.11", scalapb_2_11_version, "2.11"),
+    ("com.thesamet.scalapb", "protoc-bridge_2.11", "0.7.14", "2.11"),
+    ("com.thesamet.scalapb", "protoc-bridge_2.12", scalapb_protoc_version, "2.12"),
+    ("com.thesamet.scalapb", "protoc-bridge_2.13", scalapb_protoc_version, "2.13"),
+    ("com.thesamet.scalapb", "protoc-bridge_2.13", scalapb_protoc_version, "3"),
+    ("com.thesamet.scalapb", "protoc-gen_2.12", scalapb_protoc_version, "2.12"),
+    ("com.thesamet.scalapb", "protoc-gen_2.13", scalapb_protoc_version, "2.13"),
+    ("com.thesamet.scalapb", "protoc-gen_2.13", scalapb_protoc_version, "3"),
+] + [
+    (
+        "com.thesamet.scalapb",
+        "compilerplugin_{}".format(scala_version),
+        scalapb_version,
+        scala_version,
+    )
+    for scala_version in [
+        "2.12",
+        "2.13",
+        "3",
+    ]
 ]
 
 scalatest_artifacts = [
@@ -371,6 +468,9 @@ create_toolchain_metadata = use_extension("//scala/private:create_toolchain_meta
             "jmh_core",
         ),
         (junit_artifacts, "junit"),
+        (scalapb_compile_deps, "scalapb_compile_deps"),
+        (scalapb_grpc_deps, "scalapb_grpc_deps"),
+        (scalapb_worker_deps, "scalapb_worker_deps"),
         (scalatest_artifacts, "scalatest"),
         (scopt_artifacts, "scopt"),
         (scrooge_core_artifacts, "scrooge_core"),
@@ -391,7 +491,15 @@ rules_scala_maven.install(
     artifacts = [
         "{}:{}:{}".format(group, name, version)
         for group, name, version, _ in (
-            jmh_artifacts + junit_artifacts + scalatest_artifacts + specs2_artifacts + specs2_junit_artifacts + twitter_scrooge_artifacts
+            jmh_artifacts +
+            junit_artifacts +
+            scalapb_compile_deps +
+            scalapb_grpc_deps +
+            scalapb_worker_deps +
+            scalatest_artifacts +
+            specs2_artifacts +
+            specs2_junit_artifacts +
+            twitter_scrooge_artifacts
         )
     ],
     # Don't pull in conflicting versions of the standard library

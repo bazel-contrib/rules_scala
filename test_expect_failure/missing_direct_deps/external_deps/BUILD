@@ -26,7 +26,7 @@ java_library(
     name = "java_lib_with_unused_external_dep",
     testonly = True,
     srcs = ["Empty.java"],
-    deps = ["@io_bazel_rules_scala_guava"],
+    deps = ["@rules_scala_maven//:com_google_guava_guava"],
 )
 
 java_library(
