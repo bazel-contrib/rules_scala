@@ -19,9 +19,6 @@ scala_deps = use_extension(
     "scala_deps",
     dev_dependency = True,
 )
-scala_deps.settings(
-    fetch_sources = True,
-)
 scala_deps.scala()
 scala_deps.scalatest()
 

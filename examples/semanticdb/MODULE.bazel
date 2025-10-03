@@ -26,9 +26,6 @@ scala_deps = use_extension(
     "@rules_scala//scala/extensions:deps.bzl",
     "scala_deps",
 )
-scala_deps.settings(
-    fetch_sources = True,
-)
 scala_deps.scala()
 
 scala_protoc = use_extension(

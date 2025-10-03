@@ -1,17 +1,15 @@
 """Macros to instantiate and register @rules_scala_toolchains"""
 
+load("@rules_jvm_external//:defs.bzl", "maven_install")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
-load(
-    "//scala/private:macros/scala_repositories.bzl",
-    "scala_version_artifact_ids",
-    "setup_scala_compiler_sources",
-)
+load("//scala/private:macros/scala_repositories.bzl", "setup_scala_compiler_sources")
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
-load("//third_party/repositories:repositories.bzl", "repositories")
 
 _DEFAULT_TOOLCHAINS_REPO_NAME = "rules_scala_toolchains"
+
+_scala_parser_combinators_version = "1.1.2"
 
 def _toolchain_opts(tc_arg):
     """Converts a toolchain parameter to a (bool, dict of options).
@@ -71,10 +69,6 @@ def _process_toolchain_options(toolchain_defaults, **kwargs):
 
 def scala_toolchains(
         name = _DEFAULT_TOOLCHAINS_REPO_NAME,
-        maven_servers = default_maven_server_urls(),
-        overridden_artifacts = {},
-        fetch_sources = False,
-        validate_scala_version = True,
         scala_compiler_srcjars = {},
         scala = True,
         scalatest = False,
@@ -97,25 +91,6 @@ def scala_toolchains(
 
     Args:
         name: Name of the generated toolchains repository
-        maven_servers: Maven servers used to fetch dependency jar files
-        overridden_artifacts: artifacts overriding the defaults for the
-            configured Scala version, in the format:
-            ```starlark
-            "repo_name": {
-                "artifact": "<maven coordinates>",
-                "sha256": "<checksum>",
-                "deps": [
-                    "repository_labels_of_dependencies",
-                ],
-            }
-            ```
-            The default artifacts are defined by the
-            `third_party/repositories/scala_*.bzl` file matching the Scala
-            version.
-        fetch_sources: whether to download dependency source jars
-        validate_scala_version: Whether to check if the configured Scala
-            versions matches the default versions supported by rules_scala. Only
-            takes effect if `scala` is `True`.
         scala_compiler_srcjars: optional dictionary of Scala version string to
             compiler srcjar metadata dictionaries containing:
             - exactly one "label", "url", or "urls" key
@@ -151,29 +126,51 @@ def scala_toolchains(
     if specs2:
         junit = True
 
-    artifact_ids_to_fetch_sources = {}
+    # Most external dependencies used by the toolchains are declared in `MODULE.bazel`. Unfortunately, we can't declare
+    # the dependencies for the compilation toolchain there, as we don't know which Scala versions will be used (and
+    # can't determine that within `MODULE.bazel`). So we fetch them here using `rules_jvm_external`'s repository rule
+    # for fetching Maven artifacts: `maven_install`.
     for scala_version in SCALA_VERSIONS:
-        version_specific_artifact_ids = {}
-
-        if scala:
-            version_specific_artifact_ids.update({
-                id: fetch_sources
-                for id in scala_version_artifact_ids(scala_version)
-            })
-
-        all_artifacts = (
-            artifact_ids_to_fetch_sources | version_specific_artifact_ids
-        )
-
-        repositories(
-            scala_version = scala_version,
-            for_artifact_ids = all_artifacts.keys(),
-            maven_servers = maven_servers,
-            fetch_sources = fetch_sources,
-            fetch_sources_by_id = all_artifacts,
-            # Note the internal macro parameter misspells "overriden".
-            overriden_artifacts = overridden_artifacts,
-            validate_scala_version = (scala and validate_scala_version),
+        maven_install(
+            name = "rules_scala_compiler_{}".format(scala_version.replace(".", "_")),
+            artifacts = (
+                ([
+                    "org.scala-lang:scala-compiler:{}".format(scala_version),
+                    "org.scala-lang:scala-library:{}".format(scala_version),
+                    "org.scala-lang:scala-reflect:{}".format(scala_version),
+                    "org.scalameta:semanticdb-scalac_{}:4.9.9".format(scala_version),
+                ] if scala_version.startswith("2.") else [
+                    "org.scala-lang:scala-library:2.13.16",
+                    "org.scala-lang:scala3-compiler_3:{}".format(scala_version),
+                    "org.scala-lang:scala3-library_3:{}".format(scala_version),
+                    "org.scala-lang:scala3-interfaces:{}".format(scala_version),
+                    "org.scala-lang:tasty-core_3:{}".format(scala_version),
+                    "org.scala-lang.modules:scala-parser-combinators_2.13:{}".format(_scala_parser_combinators_version),
+                    "org.scala-lang.modules:scala-xml_3:2.1.0",
+                    "org.scala-sbt:compiler-interface:1.10.8",
+                ]) +
+                ([
+                    "org.scala-lang.modules:scala-parser-combinators_2.11:{}".format(_scala_parser_combinators_version),
+                    "org.scala-lang.modules:scala-xml_2.11:1.3.0",
+                ] if scala_version.startswith("2.11") else []) +
+                ([
+                    "org.scala-lang.modules:scala-parser-combinators_2.12:{}".format(_scala_parser_combinators_version),
+                    "org.scala-lang.modules:scala-xml_2.12:2.3.0",
+                ] if scala_version.startswith("2.12") else []) +
+                ([
+                    "org.scala-lang.modules:scala-parser-combinators_2.13:{}".format(_scala_parser_combinators_version),
+                    "org.scala-lang.modules:scala-xml_2.13:2.1.0",
+                ] if scala_version.startswith("2.13") else []) +
+                (["org.scala-lang.modules:scala-asm:9.2.0-scala-1"] if scala_version.startswith("3.1") else []) +
+                (["org.scala-lang.modules:scala-asm:9.3.0-scala-1"] if scala_version.startswith("3.2") else []) +
+                (["org.scala-lang.modules:scala-asm:9.8.0-scala-1"] if scala_version.startswith("3.3") else []) +
+                (["org.scala-lang.modules:scala-asm:9.6.0-scala-1"] if scala_version.startswith("3.4") else []) +
+                (["org.scala-lang.modules:scala-asm:9.7.0-scala-1"] if scala_version.startswith("3.5") else []) +
+                (["org.scala-lang.modules:scala-asm:9.7.1-scala-1"] if scala_version.startswith("3.6") else []) +
+                (["org.scala-lang.modules:scala-asm:9.8.0-scala-1"] if scala_version.startswith("3.7") else [])
+            ),
+            fetch_sources = True,
+            repositories = default_maven_server_urls(),
         )
 
     scala_toolchains_repo(

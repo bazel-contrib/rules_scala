@@ -24,10 +24,6 @@ scala_deps = use_extension(
     "scala_deps",
 )
 scala_deps.scala()
-scala_deps.settings(
-    # Since we're using a bogus Scala version in the compiler_srcjar.
-    validate_scala_version = False,
-)
 
 # Used for test_emit_no_canonical_reproducible_form_warning_for_user_srcjar.
 # See that test case's comments for details.

@@ -70,9 +70,6 @@ import_compiler_source_repos()
 
 load("@rules_scala//scala:toolchains.bzl", "scala_toolchains")
 
-scala_toolchains(
-    fetch_sources = True,
-    validate_scala_version = False,
-)
+scala_toolchains()
 
 register_toolchains(":dt_scala_toolchain")

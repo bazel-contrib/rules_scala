@@ -27,9 +27,6 @@ scala_deps = use_extension(
     "scala_deps",
     dev_dependency = True,
 )
-scala_deps.settings(
-    fetch_sources = False,
-)
 scala_deps.scala()
 
 # Deliberately set for Scala 3.3 and 2.13 versions less than the most

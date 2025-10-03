@@ -9,17 +9,30 @@ load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
 
 def tests():
     suffix = version_suffix(SCALA_VERSION)
+    scala_2_library_label = "@rules_scala_compiler{}//:org_scala_lang_scala_library".format(suffix)
+    scala_3_library_label = "@rules_scala_compiler{}//:org_scala_lang_scala3_library_3".format(suffix)
+    scala_reflect_label = "@rules_scala_compiler{}//:org_scala_lang_scala_reflect".format(suffix)
     common_jvm_flags = [
         "-Dplugin.jar.location=$(execpath //third_party/dependency_analyzer/src/main:dependency_analyzer)",
-        "-Dscala.library.location=$(rootpath @io_bazel_rules_scala_scala_library%s)" % suffix,
     ] + select_for_scala_version(
-        any_2 = ["-Dscala.reflect.location=$(rootpath @io_bazel_rules_scala_scala_reflect%s)" % suffix],
-        any_3 = ["-Dscala.library2.location=$(rootpath @io_bazel_rules_scala_scala_library_2%s)" % suffix],
+        any_2 = [
+            "-Dscala.library.location=$(rootpath {})".format(scala_2_library_label),
+            "-Dscala.reflect.location=$(rootpath {})".format(scala_reflect_label),
+        ],
+        any_3 = [
+            "-Dscala.library.location=$(rootpath {})".format(scala_3_library_label),
+            "-Dscala.library2.location=$(rootpath {})".format(scala_2_library_label),
+        ],
     )
 
-    scala_std_dependencies = ["@io_bazel_rules_scala_scala_library" + suffix] + select_for_scala_version(
-        any_2 = ["@io_bazel_rules_scala_scala_reflect" + suffix],
-        any_3 = ["@io_bazel_rules_scala_scala_library_2" + suffix],
+    scala_std_dependencies = [scala_2_library_label] + select_for_scala_version(
+        any_2 = [scala_reflect_label],
+        any_3 = [scala_3_library_label],
+    )
+
+    scala_compiler_dependencies = select_for_scala_version(
+        any_2 = ["@rules_scala_compiler{}//:org_scala_lang_scala_compiler".format(suffix)],
+        any_3 = ["@rules_scala_compiler{}//:org_scala_lang_scala3_compiler_3".format(suffix)],
     )
 
     scala_test(
@@ -45,11 +58,10 @@ def tests():
         ],
         jvm_flags = common_jvm_flags,
         unused_dependency_checker_mode = "off",
-        deps = scala_std_dependencies + [
+        deps = scala_compiler_dependencies + scala_std_dependencies + [
             "//src/java/io/bazel/rulesscala/io_utils",
             "//third_party/dependency_analyzer/src/main:dependency_analyzer",
             "//third_party/utils/src/test:test_util",
-            "@io_bazel_rules_scala_scala_compiler" + suffix,
         ],
     )
 
@@ -64,10 +76,9 @@ def tests():
             "-Dapache.commons.jar.location=$(rootpath @rules_scala_test_maven//:org_apache_commons_commons_lang3)",
         ],
         unused_dependency_checker_mode = "off",
-        deps = scala_std_dependencies + [
+        deps = scala_compiler_dependencies + scala_std_dependencies + [
             "//third_party/dependency_analyzer/src/main:dependency_analyzer",
             "//third_party/utils/src/test:test_util",
-            "@io_bazel_rules_scala_scala_compiler" + suffix,
             "@rules_scala_test_maven//:com_google_guava_guava",
             "@rules_scala_test_maven//:org_apache_commons_commons_lang3",
         ],
@@ -83,10 +94,9 @@ def tests():
             "-Dapache.commons.jar.location=$(rootpath @rules_scala_test_maven//:org_apache_commons_commons_lang3)",
         ],
         unused_dependency_checker_mode = "off",
-        deps = scala_std_dependencies + [
+        deps = scala_compiler_dependencies + scala_std_dependencies + [
             "//third_party/dependency_analyzer/src/main:dependency_analyzer",
             "//third_party/utils/src/test:test_util",
-            "@io_bazel_rules_scala_scala_compiler" + suffix,
             "@rules_scala_test_maven//:org_apache_commons_commons_lang3",
         ],
     )
@@ -126,7 +136,7 @@ def analyzer_tests_scala_2(scala_version):
         ],
         deps = [
             "//third_party/dependency_analyzer/src/main:scala_version",
-            "@io_bazel_rules_scala_scala_library" + suffix,
-            "@io_bazel_rules_scala_scala_reflect" + suffix,
+            "@rules_scala_compiler{}//:org_scala_lang_scala_library".format(suffix),
+            "@rules_scala_compiler{}//:org_scala_lang_scala_reflect".format(suffix),
         ],
     )

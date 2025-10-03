@@ -72,42 +72,12 @@ def artifact_targets_for_scala_version(desired_scala_version, artifacts):
 
     return result
 
-def scala_mvn_artifact(
-        artifact,
-        major_scala_version):
-    """Add scala version to maven artifact"""
-    gav = artifact.split(":")
-    groupid = gav[0]
-    artifactid = gav[1]
-    version = gav[2]
-    return "%s:%s_%s:%s" % (groupid, artifactid, major_scala_version, version)
-
 def sanitize_version(scala_version):
     """ Makes Scala version usable in target names. """
     return scala_version.replace(".", "_")
 
 def version_suffix(scala_version):
     return "_" + sanitize_version(scala_version)
-
-def repositories(scala_version, repos):
-    """Adds the Scala version suffix to a list of repository IDs.
-
-    If `repos` is `None`, this will return `None`. This enables the massaging of
-    optional function arguments.
-
-    Args:
-        scala_version: the Scala version to append to each repo name
-        repos: list of repository names
-
-    Returns:
-        a list of repository names with the Scala version suffix appended, or
-        `None` if `repos` is `None`
-    """
-    if repos == None:
-        return None
-
-    suffix = version_suffix(scala_version)
-    return [repo + suffix for repo in repos]
 
 def _scala_version_transition_impl(settings, attr):
     if attr.scala_version:

@@ -70,7 +70,6 @@ scala_config(enable_compiler_dependency_tracking = True)
 load("//scala:toolchains.bzl", "scala_register_toolchains", "scala_toolchains")
 
 scala_toolchains(
-    fetch_sources = True,
     jmh = True,
     junit = True,
     scala_proto = True,

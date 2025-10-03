@@ -51,8 +51,6 @@ scala_toolchains(
         },
         "3.1.1000": {},
     },
-    # Since we're using a bogus Scala version in the compiler_srcjar.
-    validate_scala_version = False,
 )
 
 scala_register_toolchains()
