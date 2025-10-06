@@ -1,6 +1,6 @@
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:providers.bzl", "declare_deps_provider")
-load("//scala:scala_cross_version.bzl", "repositories", "version_suffix")
+load("//scala:scala_cross_version.bzl", "extract_major_version_underscore", "version_suffix")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 
 def setup_scala_toolchain(
@@ -107,57 +107,52 @@ def setup_scala_toolchain(
         visibility = visibility,
     )
 
-_DEFAULT_DEPS = {
-    "scala_compile_classpath": {
-        "any": [
-            "@io_bazel_rules_scala_scala_compiler",
-            "@io_bazel_rules_scala_scala_library",
-        ],
-        "2": [
-            "@io_bazel_rules_scala_scala_reflect",
-        ],
-        "3": [
-            "@io_bazel_rules_scala_scala_interfaces",
-            "@io_bazel_rules_scala_scala_tasty_core",
-            "@io_bazel_rules_scala_scala_asm",
-            "@io_bazel_rules_scala_scala_library_2",
-            "@org_scala_sbt_compiler_interface",
-        ],
-    },
-    "scala_library_classpath": {
-        "any": [
-            "@io_bazel_rules_scala_scala_library",
-        ],
-        "2": [
-            "@io_bazel_rules_scala_scala_reflect",
-        ],
-        "3": [
-            "@io_bazel_rules_scala_scala_library_2",
-        ],
-    },
-    "scala_macro_classpath": {
-        "any": [
-            "@io_bazel_rules_scala_scala_library",
-        ],
-        "2": [
-            "@io_bazel_rules_scala_scala_reflect",
-        ],
-        "3": [
-            "@io_bazel_rules_scala_scala_library_2",
-        ],
-    },
-    "scala_xml": {
-        "any": ["@io_bazel_rules_scala_scala_xml"],
-    },
-    "parser_combinators": {
-        "any": ["@io_bazel_rules_scala_scala_parser_combinators"],
-    },
-    "semanticdb": {
-        "2": ["@org_scalameta_semanticdb_scalac"],
-    },
-}
-
 def default_deps(deps_id, scala_version):
-    versions = _DEFAULT_DEPS[deps_id]
-    deps = versions.get("any", []) + versions.get(scala_version[0], [])
-    return repositories(scala_version, deps)
+    if deps_id == "parser_combinators":
+        if scala_version.startswith("3."):
+            target_names = ["org_scala_lang_modules_scala_parser_combinators_2_13"]
+        else:
+            target_names = [
+                "org_scala_lang_modules_scala_parser_combinators_" + extract_major_version_underscore(scala_version),
+            ]
+    elif deps_id == "scala_compile_classpath":
+        target_names = ["org_scala_lang_scala_library"]
+
+        if scala_version.startswith("2."):
+            target_names.extend([
+                "org_scala_lang_scala_compiler",
+                "org_scala_lang_scala_reflect",
+            ])
+        elif scala_version.startswith("3."):
+            target_names.extend([
+                "org_scala_lang_modules_scala_asm",
+                "org_scala_lang_scala3_compiler_3",
+                "org_scala_lang_scala3_library_3",
+                "org_scala_lang_scala3_interfaces",
+                "org_scala_lang_tasty_core_3",
+                "org_scala_sbt_compiler_interface",
+            ])
+    elif deps_id == "scala_library_classpath" or deps_id == "scala_macro_classpath":
+        target_names = ["org_scala_lang_scala_library"]
+
+        if scala_version.startswith("2."):
+            target_names.append("org_scala_lang_scala_reflect")
+        elif scala_version.startswith("3."):
+            target_names.append("org_scala_lang_scala3_library_3")
+    elif deps_id == "scala_xml":
+        if scala_version.startswith("2."):
+            target_names = ["org_scala_lang_modules_scala_xml_" + extract_major_version_underscore(scala_version)]
+        else:
+            target_names = ["org_scala_lang_modules_scala_xml_3"]
+    elif deps_id == "semanticdb":
+        if scala_version.startswith("2."):
+            target_names = ["org_scalameta_semanticdb_scalac" + version_suffix(scala_version)]
+        else:
+            target_names = []
+    else:
+        fail("Unknown deps_id: {}".format(deps_id))
+
+    return [
+        "@rules_scala_compiler{}//:{}".format(version_suffix(scala_version), target_name)
+        for target_name in target_names
+    ]

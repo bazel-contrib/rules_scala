@@ -107,7 +107,7 @@ def _additional_transitive_compile_jars(
         return java_provider.transitive_compile_time_jars
     elif dependency_mode == "plus-one":
         # dep_target will not always have a PlusOneDeps provider, such as
-        # with scala_maven_import_external, hence the need for the fallback.
+        # with `rules_jvm_external` targets, hence the need for the fallback.
         if PlusOneDeps in dep_target:
             plus_one_jars = [dep[JavaInfo].compile_jars for dep in dep_target[PlusOneDeps].direct_deps if JavaInfo in dep]
 

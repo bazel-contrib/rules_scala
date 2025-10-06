@@ -1,9 +1,13 @@
+load(
+    "@rules_scala_artifacts//:artifacts.bzl",
+    "jmh_core_artifacts",
+    "jmh_classpath_artifacts",
+    "benchmark_generator_artifacts",
+    "benchmark_generator_runtime_artifacts",
+)
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:providers.bzl", "declare_deps_provider", _DepsInfo = "DepsInfo")
-load(
-    "//scala:scala_cross_version.bzl",
-    _versioned_repositories = "repositories",
-)
+load("//scala:scala_cross_version.bzl", "artifact_targets_for_scala_version")
 load("//scala/private/toolchain_deps:toolchain_deps.bzl", "expose_toolchain_deps")
 
 DEP_PROVIDERS = [
@@ -12,16 +16,6 @@ DEP_PROVIDERS = [
     "benchmark_generator",
     "benchmark_generator_runtime",
 ]
-
-def jmh_artifact_ids():
-    return [
-        "io_bazel_rules_scala_org_openjdk_jmh_jmh_core",
-        "io_bazel_rules_scala_org_openjdk_jmh_jmh_generator_asm",
-        "io_bazel_rules_scala_org_openjdk_jmh_jmh_generator_reflection",
-        "io_bazel_rules_scala_org_ow2_asm_asm",
-        "io_bazel_rules_scala_net_sf_jopt_simple_jopt_simple",
-        "io_bazel_rules_scala_org_apache_commons_commons_math3",
-    ]
 
 def _jmh_toolchain_impl(ctx):
     toolchain = platform_common.ToolchainInfo(
@@ -72,19 +66,14 @@ def setup_jmh_toolchain(name):
         name = "jmh_core_provider",
         deps_id = "jmh_core",
         visibility = ["//visibility:public"],
-        deps = _versioned_repositories(SCALA_VERSION, [
-            "@io_bazel_rules_scala_org_openjdk_jmh_jmh_core",
-        ]),
+        deps = artifact_targets_for_scala_version(SCALA_VERSION, jmh_core_artifacts),
     )
 
     declare_deps_provider(
         name = "jmh_classpath_provider",
         deps_id = "jmh_classpath",
         visibility = ["//visibility:public"],
-        deps = _versioned_repositories(SCALA_VERSION, [
-            "@io_bazel_rules_scala_net_sf_jopt_simple_jopt_simple",
-            "@io_bazel_rules_scala_org_apache_commons_commons_math3",
-        ]),
+        deps = artifact_targets_for_scala_version(SCALA_VERSION, jmh_classpath_artifacts),
     )
 
     declare_deps_provider(
@@ -93,18 +82,12 @@ def setup_jmh_toolchain(name):
         visibility = ["//visibility:public"],
         deps = [
             Label("//src/java/io/bazel/rulesscala/jar"),
-        ] + _versioned_repositories(SCALA_VERSION, [
-            "@io_bazel_rules_scala_org_openjdk_jmh_jmh_core",
-            "@io_bazel_rules_scala_org_openjdk_jmh_jmh_generator_asm",
-            "@io_bazel_rules_scala_org_openjdk_jmh_jmh_generator_reflection",
-        ]),
+        ] + artifact_targets_for_scala_version(SCALA_VERSION, benchmark_generator_artifacts),
     )
 
     declare_deps_provider(
         name = "benchmark_generator_runtime_provider",
         deps_id = "benchmark_generator_runtime",
         visibility = ["//visibility:public"],
-        deps = _versioned_repositories(SCALA_VERSION, [
-            "@io_bazel_rules_scala_org_openjdk_jmh_jmh_generator_asm",
-        ]),
+        deps = artifact_targets_for_scala_version(SCALA_VERSION, benchmark_generator_runtime_artifacts),
     )

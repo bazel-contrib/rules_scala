@@ -65,7 +65,7 @@ load(
     "scala_toolchains",
 )
 
-scala_toolchains(fetch_sources = True)
+scala_toolchains()
 
 register_toolchains(
     #Register and use the custom toolchain that has semanticdb enabled

@@ -1,22 +1,7 @@
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
-load("//junit:junit.bzl", "junit_artifact_ids")
 load("//scala:providers.bzl", "declare_deps_provider")
 load("//scala:scala_cross_version.bzl", "version_suffix")
-load("//scalatest:scalatest.bzl", "scalatest_artifact_ids")
-load("//specs2:specs2.bzl", "specs2_artifact_ids")
-load("//specs2:specs2_junit.bzl", "specs2_junit_artifact_ids")
 load("//testing/toolchain:toolchain.bzl", "scala_testing_toolchain")
-
-def _repoize(ids):
-    return ["@" + id for id in ids]
-
-JUNIT_DEPS = _repoize(junit_artifact_ids())
-
-SCALATEST_DEPS = _repoize(scalatest_artifact_ids())
-
-SPECS2_DEPS = _repoize(specs2_artifact_ids())
-
-SPECS2_JUNIT_DEPS = _repoize(specs2_junit_artifact_ids())
 
 DEP_PROVIDERS = [
     "junit_classpath",

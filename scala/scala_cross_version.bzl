@@ -35,15 +35,42 @@ def extract_major_version_underscore(scala_version):
     e.g. "2.11.11" -> "2_11" """
     return extract_major_version(scala_version).replace(".", "_")
 
-def scala_mvn_artifact(
-        artifact,
-        major_scala_version):
-    """Add scala version to maven artifact"""
-    gav = artifact.split(":")
-    groupid = gav[0]
-    artifactid = gav[1]
-    version = gav[2]
-    return "%s:%s_%s:%s" % (groupid, artifactid, major_scala_version, version)
+def artifact_targets_for_scala_version(desired_scala_version, artifacts):
+    """Transform a list of artifacts into a list of targets compatible with the given Scala version.
+
+    Given a list of artifacts defined in `rules_scala_maven.MODULE.bazel`, filter those artifacts compatible with the
+    Scala version `desired_scala_version` and transform them into a list of targets underneath
+    `@rules_scala_maven//...`.
+
+    If `artifacts` is `None`, this function will return `None`.
+    """
+
+    if artifacts == None:
+        return None
+
+    desired_scala_version_components = desired_scala_version.split(".")
+
+    def is_compatible(scala_version):
+        components = scala_version.split(".")
+
+        if len(components) < len(desired_scala_version_components):
+            return desired_scala_version_components[:len(components)] == components
+
+        return components[:len(desired_scala_version_components)] == desired_scala_version_components
+
+    result = []
+
+    for artifact in artifacts:
+        if artifact.scala_version == "" or is_compatible(artifact.scala_version):
+            result.append(
+                # We use the canonical repository name so it resolves in workspaces other than this one
+                "@@rules_jvm_external++maven+rules_scala_maven//:{}_{}".format(
+                    artifact.group.replace(".", "_").replace("-", "_"),
+                    artifact.name.replace(".", "_").replace("-", "_"),
+                ),
+            )
+
+    return result
 
 def sanitize_version(scala_version):
     """ Makes Scala version usable in target names. """
@@ -51,26 +78,6 @@ def sanitize_version(scala_version):
 
 def version_suffix(scala_version):
     return "_" + sanitize_version(scala_version)
-
-def repositories(scala_version, repos):
-    """Adds the Scala version suffix to a list of repository IDs.
-
-    If `repos` is `None`, this will return `None`. This enables the massaging of
-    optional function arguments.
-
-    Args:
-        scala_version: the Scala version to append to each repo name
-        repos: list of repository names
-
-    Returns:
-        a list of repository names with the Scala version suffix appended, or
-        `None` if `repos` is `None`
-    """
-    if repos == None:
-        return None
-
-    suffix = version_suffix(scala_version)
-    return [repo + suffix for repo in repos]
 
 def _scala_version_transition_impl(settings, attr):
     if attr.scala_version:

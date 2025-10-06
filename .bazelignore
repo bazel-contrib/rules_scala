@@ -7,7 +7,6 @@ dt_patches/compiler_sources
 dt_patches/test_dt_patches
 dt_patches/test_dt_patches_user_srcjar
 examples/crossbuild
-examples/overridden_artifacts
 examples/scala3
 examples/semanticdb
 examples/testing/multi_frameworks_toolchain

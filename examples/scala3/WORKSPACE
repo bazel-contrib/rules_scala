@@ -65,6 +65,6 @@ load(
     "scala_toolchains",
 )
 
-scala_toolchains(fetch_sources = True)
+scala_toolchains()
 
 scala_register_toolchains()

@@ -3,7 +3,6 @@
 Provides the `scala_deps` module extension with the following tag classes:
 
 - `settings`
-- `overridden_artifact`
 - `compiler_srcjar`
 - `scala`
 - `scalatest`
@@ -21,7 +20,6 @@ See the `scala/private/macros/bzlmod.bzl` docstring for a description of
 the defaults, attrs, and tag class dictionaries pattern employed here.
 """
 
-load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:toolchains.bzl", "scala_toolchains")
 load(
     "//scala/private:macros/bzlmod.bzl",
@@ -30,56 +28,6 @@ load(
     "single_tag_values",
 )
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
-
-_settings_defaults = {
-    "maven_servers": default_maven_server_urls(),
-    "fetch_sources": True,
-    "validate_scala_version": True,
-}
-
-_settings_attrs = {
-    "maven_servers": attr.string_list(
-        default = _settings_defaults["maven_servers"],
-        doc = "Maven servers used to fetch dependency jar files",
-    ),
-    "fetch_sources": attr.bool(
-        default = _settings_defaults["fetch_sources"],
-        doc = "Download dependency source jars",
-    ),
-    "validate_scala_version": attr.bool(
-        default = _settings_defaults["validate_scala_version"],
-        doc = (
-            "Check if the configured Scala version matches " +
-            "the default version supported by rules_scala. " +
-            "Only takes effect when the builtin Scala toolchain is " +
-            "instantiated via `scala_deps.scala()`."
-        ),
-    ),
-}
-
-_overridden_artifact_attrs = {
-    "name": attr.string(
-        doc = (
-            "Repository name of artifact to override from " +
-            "`third_party/repositories/scala_*.bzl`"
-        ),
-        mandatory = True,
-    ),
-    "artifact": attr.string(
-        doc = "Maven coordinates of the overriding artifact",
-        mandatory = True,
-    ),
-    "sha256": attr.string(
-        doc = "SHA256 checksum of the `artifact`",
-        mandatory = True,
-    ),
-    "deps": attr.string_list(
-        doc = (
-            "Repository names of artifact dependencies (with leading `@`), " +
-            "if required"
-        ),
-    ),
-}
 
 _compiler_srcjar_attrs = {
     "version": attr.string(mandatory = True),
@@ -118,20 +66,6 @@ _twitter_scrooge_attrs = {
 
 # Tag classes affecting all toolchains.
 _general_tag_classes = {
-    "settings": tag_class(
-        attrs = _settings_attrs,
-        doc = "Settings affecting the configuration of all toolchains",
-    ),
-    "overridden_artifact": tag_class(
-        attrs = _overridden_artifact_attrs,
-        doc = """
-Artifacts overriding the defaults for the configured Scala version.
-
-Can be specified multiple times, but each `name` must be unique. The default
-artifacts are defined by the `third_party/repositories/scala_*.bzl` file
-matching the Scala version.
-""",
-    ),
     "compiler_srcjar": tag_class(
         attrs = _compiler_srcjar_attrs,
         doc = """
@@ -225,16 +159,11 @@ def _scala_deps_impl(module_ctx):
     tc_names = [tc for tc in _toolchain_tag_classes]
 
     scala_toolchains(
-        overridden_artifacts = repeated_tag_values(
-            tags.overridden_artifact,
-            _overridden_artifact_attrs,
-        ),
         scala_compiler_srcjars = repeated_tag_values(
             tags.compiler_srcjar,
             _compiler_srcjar_attrs,
         ),
         **(
-            single_tag_values(module_ctx, tags.settings, _settings_defaults) |
             _toolchain_settings(module_ctx, tags, tc_names, TOOLCHAIN_DEFAULTS)
         )
     )

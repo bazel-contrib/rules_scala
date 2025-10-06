@@ -41,10 +41,10 @@ declare_deps_provider(
     deps_id = "runtime_deps"
     visibility = ["//visibility:public"],
     deps = [
-        "@com_lihaoyi_fastparse_2_12",
-        "@com_thesamet_scalapb_lenses_2_12",
-        "@io_grpc_grpc_protobuf",
-        "@org_scala_lang_scala_library",
+        "@maven//:com_lihaoyi_fastparse_2_12",
+        "@maven//:com_thesamet_scalapb_lenses_2_12",
+        "@maven//:io_grpc_grpc_protobuf",
+        "@maven//:@org_scala_lang_scala_library",
     ],
 )
 ```
@@ -74,6 +74,23 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 ```
+
+## How toolchain dependencies are fetched internally
+
+Internally, `rules_scala` utilizes `rules_jvm_external` to fetch toolchain dependencies as Maven artifacts. With the
+exception of the Scala compilation toolchain, whose dependencies are spread out across multiple `rules_scala_compiler_*`
+repositories, most toolchains' dependencies are declared in [MODULE.bazel](../MODULE.bazel) under the
+`rules_scala_maven` repository. Then, this repository is referenced inside the [`scala_deps`](scala/extensions/deps.bzl)
+module extension using its [canonical name](https://bazel.build/external/overview#canonical-repo-name),
+`rules_jvm_external++maven+rules_scala_maven`, so users of `rules_scala` don't have to call `use_repo` for the
+toolchains to work.
+
+If you're adding new dependencies, it's recommended you add them here. Having them all in one repository has a few
+advantages:
+
+- It's faster to do artifact resolution
+- It's easier to ensure conflicting versions of dependencies aren't on the classpath
+- We can maintain a single lockfile ([rules_scala_maven.json](../rules_scala_maven.json))
 
 ## Rules to export deps as targets to be depended on by other rules not aware of toolchains
 
@@ -130,7 +147,7 @@ my_toolchain_deps(
     declare_deps_provider(
         name = "my_runtime_deps_provider",
         deps_id = "runtime_deps"
-        deps = ["@dep1", "@dep2"],
+        deps = ["@maven//:dep1", "@maven//:dep2"],
         visibility = ["//visibility:public"],
     )
     ```

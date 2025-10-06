@@ -32,29 +32,11 @@ source_repos = use_extension(
     "@compiler_sources//:extensions.bzl",
     "compiler_source_repos",
 )
-use_repo(
-    source_repos,
-    # Configured for the current Scala version
-    "scala_compiler",
-    "scala_library",
-    # Scala 2 specific
-    "scala_reflect",
-    # Scala 3 specific
-    "scala3_interfaces",
-    "tasty_core",
-    # Hardcoded versions
-    "sbt_compiler_interface",
-    "scala2_library",
-    "scala_asm",
-)
+use_repo(source_repos, "scala_compiler")
 
 scala_deps = use_extension(
     "@rules_scala//scala/extensions:deps.bzl",
     "scala_deps",
-)
-scala_deps.settings(
-    fetch_sources = True,
-    validate_scala_version = False,
 )
 scala_deps.scala()
 

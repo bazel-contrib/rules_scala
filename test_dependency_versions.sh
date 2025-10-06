@@ -66,11 +66,11 @@ do_build_and_test() {
   # `README.md` and as set in the top level `MODULE.bazel` file. Update both
   # if/when a test fails and the appropriate solution is to increase any of
   # these minimum suported versions.
-  local bazelversion="7.1.0"
-  local skylib_version="1.6.0"
+  local bazelversion="7.3.0"
+  local skylib_version="1.7.0"
   local platforms_version="0.0.9"
-  local protobuf_version="28.2"
-  local rules_java_version="7.6.0"
+  local protobuf_version="29.0"
+  local rules_java_version="8.3.2"
   local rules_proto_version="6.0.0"
   local protoc_toolchain=""
   local legacy_api=""
@@ -125,7 +125,7 @@ do_build_and_test() {
 
   # Set up .bazelrc
   printf '%s\n' \
-    'common --noenable_workspace --enable_bzlmod' \
+    'common --noenable_workspace --enable_bzlmod --incompatible_use_plus_in_repo_names' \
     'common --enable_platform_specific_config' \
     'common:windows --worker_quit_after_build --enable_runfiles' >.bazelrc
 
@@ -143,10 +143,6 @@ do_build_and_test() {
 
   if [[ "$legacy_api" == "true" ]]; then
     echo 'common --experimental_google_legacy_api' >>.bazelrc
-  fi
-
-  if [[ "$bazel_major" == "7" && "$bazel_minor" -ge 3 ]]; then
-    echo 'common --incompatible_use_plus_in_repo_names' >>.bazelrc
   fi
 
   # Set up the `protobuf` precompiled protocol compiler toolchain patch.

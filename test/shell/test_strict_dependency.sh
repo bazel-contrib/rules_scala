@@ -44,7 +44,7 @@ test_plus_one_ast_analyzer_strict_deps() {
 
 test_stamped_target_label_loading() {
   local test_target="//test_expect_failure/missing_direct_deps/external_deps:java_lib_with_a_transitive_external_dep"
-  local missing_dep="@@?[a-z_.~+-]*io_bazel_rules_scala_guava[_0-9]*//:io_bazel_rules_scala_guava[_0-9]*"
+  local missing_dep="@rules_scala_maven//:com_google_guava_guava"
   local expected_message="buildozer 'add deps ${missing_dep}' ${test_target}"
 
   test_expect_failure_or_warning_on_missing_direct_deps_with_expected_message \
@@ -60,7 +60,7 @@ test_strict_deps_filter_excluded_target() {
 
 test_strict_deps_filter_included_target() {
   local test_target="//test_expect_failure/missing_direct_deps/filtering:b"
-  local expected_message="buildozer 'add deps @[a-z_.~+-]*com_google_guava_guava_21_0//:com_google_guava_guava_21_0' ${test_target}"
+  local expected_message="buildozer 'add deps @rules_scala_test_maven//:com_google_guava_guava' ${test_target}"
 
   test_expect_failure_or_warning_on_missing_direct_deps_with_expected_message \
     "${expected_message}" ${test_target} \

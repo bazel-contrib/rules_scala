@@ -115,23 +115,6 @@ default Scala toolchain and its compiler JAR repositories. The build will then
 fail if the configured Scala version doesn't match the `scala_version` value in
 the corresponding `third_party/repositories/scala_*.bzl` file.
 
-If you don't specify your own jars for every `setup_scala_toolchain()` argument,
-set `validate_scala_version = False` to disable the Scala version check.
-
-```py
-# MODULE.bazel
-scala_deps.settings(
-    validate_scala_version = False,
-    # ...other toolchain parameters...
-)
-
-# WORKSPACE
-scala_toolchains(
-    validate_scala_version = False,
-    # ...other toolchain parameters...
-)
-```
-
 ## Configuration options
 
 The following attributes apply to both `scala_toolchain` and
