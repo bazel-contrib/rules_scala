@@ -46,10 +46,12 @@ single_version_override(
 )
 
 bazel_dep(name = "rules_jvm_external", version = "6.8")
+# TODO: Update once 6.9 is released.
+# https://github.com/bazel-contrib/rules_jvm_external/commit/15c8d59963eeaf1409a591e3fe9720707ed44b89
 git_override(
     module_name = "rules_jvm_external",
-    commit = "d971ef59f675dd5bd4b5b26a7112e167d533062e",
-    remote = "https://github.com/confluentinc/rules_jvm_external",
+    commit = "15c8d59963eeaf1409a591e3fe9720707ed44b89",
+    remote = "https://github.com/bazel-contrib/rules_jvm_external",
 )
 
 bazel_dep(name = "rules_proto", version = "6.0.0")
