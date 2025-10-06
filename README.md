@@ -149,7 +149,7 @@ single_version_override(
 ### Legacy `WORKSPACE` configuration
 
 `rules_scala` 7.x enables existing users to migrate to Bzlmod. `WORKSPACE`
-continues to work for Bazel [6.5.0 (for now)](#6.5.0), 7.6.1, and 8, but
+continues to work for Bazel 7.6.1, and 8, but
 [__WORKSPACE is going away in Bazel 9__][bazel-9].
 
 [bazel-9]: https://bazel.build/external/migration
@@ -359,15 +359,12 @@ These are the minimum dependency versions required to enable the precompiled
 protocol compiler toolchain. These are validated by
 [`test_dependency_versions.sh`](./test/shell/test_dependency_versions.sh).
 
-Note that `rules_java` can be as low as 8.3.0, compared to `rules_java` 8.5.0
-specified in [Compatible Bazel versions](#compatible-bazel-versions).
-
 | Dependency | Minimum version | Reason |
 | :-: | :-: | :- |
 | `protobuf` | v29.0 | See the [Why this requires 'protobuf' v29 or later](#why-proto-v29) section.|
 | Bazel | 7.1.0 (with `rules_java` 7.10.0, 8.3.2)<br/>7.3.2 (with `rules_java` 8.3.0) | `module(bazel_compatibility = "...")` constraints in `MODULE.bazel` |
 | `platforms` | 0.0.9 | Creates the `@host_platform` repo used to auto-detect the toolchain for the host platform. |
-| `rules_java` | 7.10.0 (with `--experimental_google_legacy_api`), 8.3.0 | `protobuf` v29 needs 7.8.0 with `--experimental_google_legacy_api` for `ProguardSpecProvider`. Then it needs 7.10.0 for `//java/private:proto_support.bzl` visibility.<br/>`protobuf` v29 needs `@rules_java//java/private:proto_support.bzl` from v8.2.0. See [bazelbuild/rules_java@94d5617](https://github.com/bazelbuild/rules_java/commit/94d5617cf3d97ddda10c81ba05a865e8e3a0408e).<br/>v8.3.0 fixes bazelbuild/rules_java#233. |
+| `rules_java` | 8.3.2 | `protobuf` v29 needs 7.8.0 with `--experimental_google_legacy_api` for `ProguardSpecProvider`. Then it needs 7.10.0 for `//java/private:proto_support.bzl` visibility.<br/>`protobuf` v29 needs `@rules_java//java/private:proto_support.bzl` from v8.2.0. See [bazelbuild/rules_java@94d5617](https://github.com/bazelbuild/rules_java/commit/94d5617cf3d97ddda10c81ba05a865e8e3a0408e).<br/>v8.3.0 fixes bazelbuild/rules_java#233.</br>Bazel 7.3.0 support was added in `rules_java` v8.3.2. |
 | `rules_proto` | 7.0.0 | Required by `protobuf` v29 and later. |
 | `bazel_skylib` | 1.7.0 | Contains `paths.is_normalized`, required by `//bazel/private:bazel_proto_library_rule.bzl` in `protobuf` v29. See [bazelbuild/bazel-skylib@0e485c8](https://github.com/bazelbuild/bazel-skylib/commit/0e485c80b7992f5ebfab50637f86e966f544ad58). |
 
@@ -688,19 +685,19 @@ compatible with `rules_scala` 7.x.
 
 | Mode | Supported Bazel versions |
 | :-: |  :-: |
-| Bzlmod<br/>(Coming soon! See bazelbuild/rules_scala#1482.) | >= 7.1.0, 8.x,<br/>`rolling`, `last_green` |
-| `WORKSPACE` | 6.5.0, >= 7.1.0, 8.x<br/>(see the [notes on 6.5.0 compatibility](#6.5.0)) |
+| Bzlmod | >= 7.3.0, 8.x,<br/>`rolling`, `last_green` |
+| `WORKSPACE` | >= 7.3.0, 8.x |
 
 `rules_scala` 7.0.0 uses `ScalaPB` 1.0.0-alpha.1 to support `protobuf` v28.2 and
 later, required by newer Bazel versions and other dependencies. Below are the
 minimum versions of `protobuf` and related dependencies supported for Bazel 7
 and 8.
 
-| Dependency | Bazel >= 7.1.0 | Bazel 8.x |
+| Dependency | Bazel >= 7.3.0 | Bazel 8.x |
 | :--------: | :------------: | :-------: |
-| `bazel_skylib` | 1.6.0 | 1.7.0 |
-| `protobuf` | v28.2 | v29.0 |
-| `rules_java` | 7.6.0, 8.4.0 | 8.5.0 |
+| `bazel_skylib` | 1.7.0 | 1.7.0 |
+| `protobuf` | v29.0 | v29.0 |
+| `rules_java` | 8.3.2 | 8.5.0 |
 | `rules_proto` | 6.0.0 | 7.0.0 |
 
 The next major release will likely drop support for `protobuf` versions before
@@ -729,6 +726,7 @@ set the following compiler flags in `.bazelrc` per bazelbuild/rules_scala#1647:
 
 ```txt
 common --enable_platform_specific_config
+common --incompatible_use_plus_in_repo_names
 
 common:linux --cxxopt=-std=c++17
 common:linux --host_cxxopt=-std=c++17
@@ -829,9 +827,7 @@ that folder.
 
 __The main objective of `rules_scala` 7.x is to enable existing users to migrate
 to Bazel 8 and Bzlmod.__ To facilitate a gradual migration, it is compatible
-with both Bazel 7 and Bazel 8, and both `WORKSPACE` and Bzlmod. It remains
-compatible with Bazel 6.5.0 builds using `WORKSPACE` for the time being, but
-Bazel 6 is no longer officially supported.
+with both Bazel 7 and Bazel 8, and both `WORKSPACE` and Bzlmod.
 
 `rules_java` 7.x contains the following breaking changes when upgrading from
 `rules_scala` 6.x.
@@ -1313,17 +1309,6 @@ bazelbuild/bazel#25198 describes how the semantics of some instances of
 The good news is that replacing such instances `$(location)` with `$(rootpath)`
 is backwards compatible to Bazel 6.5.0 and 7.6.1. Updating them now will ensure
 future compatibility.
-
-### <a id="6.5.0"></a>Limited Bazel 6.5.0 compatibility
-
-__`rules_scala` 7.x officially drops support for Bazel 6.5.0.__ Bzlmod builds
-with Bazel 6.5.0 won't work at all because [Bazel 6.5.0 doesn't support
-'use_repo_rule'](https://bazel.build/versions/6.5.0/rules/lib/globals), which
-['rules_jvm_external' >= 6.3 requires](
-https://github.com/bazelbuild/rules_scala/issues/1482#issuecomment-2515496234).
-
-At the moment, `WORKSPACE` builds mostly continue to work with Bazel 6.5.0, but
-may break at any time.
 
 #### Configuring the protocol compiler toolchain
 
