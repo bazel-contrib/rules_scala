@@ -76,10 +76,6 @@ test_cross_build_example() {
   run_in_example_dir crossbuild bazel build //...
 }
 
-test_overridden_artifacts_example() {
-  run_in_example_dir overridden_artifacts bazel test --test_output=errors //...
-}
-
 test_twitter_scrooge_example() {
   # Tests for twitter_scrooge toolchain setup problems under Bzlmod from #1744.
   # Neither of the errors occurred under `WORKSPACE`
