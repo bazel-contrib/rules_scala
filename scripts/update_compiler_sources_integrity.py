@@ -29,7 +29,7 @@ SCALA_VERSIONS = [
 ] + [
     f'3.2.{patch}' for patch in range(0, 3)    # 3.2.0  to 3.2.2
 ] + [
-    f'3.3.{patch}' for patch in range(0, 7)    # 3.3.0  to 3.3.6
+    f'3.3.{patch}' for patch in range(0, 8)    # 3.3.0  to 3.3.7
 ] + [
     f'3.4.{patch}' for patch in range(0, 4)    # 3.4.0  to 3.4.3
 ] + [

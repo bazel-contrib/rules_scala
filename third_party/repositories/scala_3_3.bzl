@@ -3,7 +3,7 @@
 Mostly generated and updated by scripts/create_repository.py.
 """
 
-scala_version = "3.3.6"
+scala_version = "3.3.7"
 
 artifacts = {
     "com_github_jnr_jffi_native": {
@@ -190,8 +190,8 @@ artifacts = {
         "sha256": "86af037580bdf9ce9c05f8b2afd734daf1a8564c38cd10ca5d08bf81508ad2e4",
     },
     "io_bazel_rules_scala_scala_compiler": {
-        "artifact": "org.scala-lang:scala3-compiler_3:3.3.6",
-        "sha256": "3312960a654fd3421b1396378734ccb693bc0cbed21cca9e3974ad6f0c24191d",
+        "artifact": "org.scala-lang:scala3-compiler_3:3.3.7",
+        "sha256": "e15fed89fb45248550c8227ea407c0eb496a6afb7bdf7abba4285d2fe55baf44",
         "deps": [
             "@io_bazel_rules_scala_scala_asm",
             "@io_bazel_rules_scala_scala_interfaces",
@@ -214,12 +214,12 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_interfaces": {
-        "artifact": "org.scala-lang:scala3-interfaces:3.3.6",
-        "sha256": "c118e77fec7721aac392bcff3afe6a7cae8311f6d327fadb001f8560521d647d",
+        "artifact": "org.scala-lang:scala3-interfaces:3.3.7",
+        "sha256": "f57f897043efda83576b5c18ce01df5a5a1c2033eeb26224fc2a8d1fb779f82c",
     },
     "io_bazel_rules_scala_scala_library": {
-        "artifact": "org.scala-lang:scala3-library_3:3.3.6",
-        "sha256": "cf4ddaf76c0ce71cf68ca5d2dc7bad46c5a921aaf18909317ddc9ba6e67fb12b",
+        "artifact": "org.scala-lang:scala3-library_3:3.3.7",
+        "sha256": "a16e046f4a9df9e0d0e0bc54bf6298c94d7d867457f7b3b68291a88c568b92d0",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
         ],
@@ -250,8 +250,8 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_tasty_core": {
-        "artifact": "org.scala-lang:tasty-core_3:3.3.6",
-        "sha256": "8618e08433fc306053040794587e12105fca4e8c9f096adb55823442a494329b",
+        "artifact": "org.scala-lang:tasty-core_3:3.3.7",
+        "sha256": "0748cd71c48398888313cb3c00b8aad39bd02f94d43cbca657d52903517a1e5a",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],

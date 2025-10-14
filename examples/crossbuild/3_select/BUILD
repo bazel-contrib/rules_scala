@@ -30,6 +30,6 @@ scala_binary(
     name = "bin3",
     srcs = ["bin.scala"],
     main_class = "B",
-    scala_version = "3.3.6",
+    scala_version = "3.3.7",
     deps = [":lib"],
 )
