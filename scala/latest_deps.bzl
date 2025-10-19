@@ -9,10 +9,10 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "bazel_skylib",
-        sha256 = "51b5105a760b353773f904d2bbc5e664d0987fbaf22265164de65d43e910d8ac",
+        sha256 = "6e78f0e57de26801f6f564fa7c4a48dc8b36873e416257a92bbb0937eeac8446",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.8.1/bazel-skylib-1.8.1.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.8.1/bazel-skylib-1.8.1.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.8.2/bazel-skylib-1.8.2.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.8.2/bazel-skylib-1.8.2.tar.gz",
         ],
     )
 
@@ -30,17 +30,26 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.15.2/rules_java-8.15.2.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.16.1/rules_java-8.16.1.tar.gz",
         ],
-        sha256 = "47632cc506c858011853073449801d648e10483d4b50e080ec2549a4b2398960",
+        sha256 = "1b30698d89dccd9dc01b1a4ad7e9e5c6e669cdf1918dbb050334e365b40a1b5e",
+    )
+
+    # Required before `rules_java_dependencies` since `rules_java` 8.16.0.
+    maybe(
+        http_archive,
+        name = "bazel_features",
+        sha256 = "adc8ddf121917f197f75c5245dfa8d7b1619f10a1002e25062b093b7957f2798",
+        strip_prefix = "bazel_features-1.37.0",
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.37.0/bazel_features-v1.37.0.tar.gz",
     )
 
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        sha256 = "d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e",
-        strip_prefix = "protobuf-32.1",
-        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v32.1.tar.gz",
+        sha256 = "b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd",
+        strip_prefix = "protobuf-33.0",
+        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v33.0.tar.gz",
         patches = [Label("//protoc:0001-protobuf-19679-rm-protoc-dep.patch")],
         patch_args = ["-p1"],
     )
@@ -56,9 +65,9 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "f2e80f97f9c0b82e2489e61e725df1e6bdaf16c4dacf5e26b95668787164baff",
-        strip_prefix = "rules_python-1.6.1",
-        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.6.1/rules_python-1.6.1.tar.gz",
+        sha256 = "2f5c284fbb4e86045c2632d3573fc006facbca5d1fa02976e89dc0cd5488b590",
+        strip_prefix = "rules_python-1.6.3",
+        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.6.3/rules_python-1.6.3.tar.gz",
     )
 
     maybe(

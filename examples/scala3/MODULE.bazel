@@ -42,5 +42,5 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "32.1",
+    version = "33.0",
 )

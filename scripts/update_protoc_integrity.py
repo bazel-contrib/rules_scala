@@ -21,6 +21,7 @@ from lib.update_integrity import (
 
 
 PROTOC_VERSIONS = [
+    "33.0",
     "32.1",
     "32.0",
     "31.1",

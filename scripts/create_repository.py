@@ -26,20 +26,20 @@ ROOT_SCALA_VERSIONS = [
     "3.6.4",
     "3.7.3",
 ]
-PARSER_COMBINATORS_VERSION = '1.1.2'
-SBT_COMPILER_INTERFACE_VERSION = '1.10.8'
-SBT_UTIL_INTERFACE_VERSION = '1.11.6'
+PARSER_COMBINATORS_VERSION = '2.4.0'
+SBT_COMPILER_INTERFACE_VERSION = '1.11.0'
+SBT_UTIL_INTERFACE_VERSION = '1.11.7'
 SCALATEST_VERSION = "3.2.19"
-SCALAFMT_VERSION = "3.9.9"
-KIND_PROJECTOR_VERSION = "0.13.3"
-PROTOBUF_JAVA_VERSION = "4.32.1"
+SCALAFMT_VERSION = "3.10.1"
+KIND_PROJECTOR_VERSION = "0.13.4"
+PROTOBUF_JAVA_VERSION = "4.33.0"
 JLINE_VERSION = '3.30.6'
-SCALAPB_VERSION = '1.0.0-alpha.2'
+SCALAPB_VERSION = '1.0.0-alpha.3'
 PROTOC_BRIDGE_VERSION = '0.9.9'
-GRPC_VERSION = '1.75.0'
-PROTO_GOOGLE_COMMON_PROTOS_VERSION = '2.61.1'
+GRPC_VERSION = '1.76.0'
+PROTO_GOOGLE_COMMON_PROTOS_VERSION = '2.62.0'
 GRPC_LIBS = ['netty', 'protobuf', 'stub']
-GUAVA_VERSION = '33.4.8-jre'
+GUAVA_VERSION = '33.5.0-jre'
 
 # This should include values corresponding to `MavenCoordinates.artifact_name`,
 # i.e., group:artifact after stripping any Scala version suffix from artifact.
@@ -99,11 +99,13 @@ def select_root_artifacts(scala_version, scala_major, is_scala_3) -> List[str]:
     scalafmt_version = SCALAFMT_VERSION
     scalapb_version = SCALAPB_VERSION
     protoc_bridge_version = PROTOC_BRIDGE_VERSION
+    parser_combinators_version = PARSER_COMBINATORS_VERSION
 
     if scala_major == '2.11':
         scalafmt_version = '2.7.5'
         scalapb_version = '0.9.8'
         protoc_bridge_version = '0.7.14'
+        parser_combinators_version = '1.1.2'
 
     root_artifacts = [
         'com.google.api.grpc:proto-google-common-protos:' +
@@ -119,7 +121,7 @@ def select_root_artifacts(scala_version, scala_major, is_scala_3) -> List[str]:
         f'com.thesamet.scalapb:scalapb-runtime-grpc_{scalapb_major}:' +
             scalapb_version,
         f'org.scala-lang.modules:scala-parser-combinators_{scala_2_major}:' +
-            PARSER_COMBINATORS_VERSION,
+            parser_combinators_version,
         f'org.scala-lang:scala-compiler:{scala_2_version}',
         f'org.scala-lang:scala-library:{scala_2_version}',
         f'org.scala-lang:scala-reflect:{scala_2_version}',

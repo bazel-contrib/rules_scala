@@ -19,13 +19,14 @@ host_platform_repo(name = "host_platform")
 # others.
 register_toolchains("@rules_scala_protoc_toolchains//...:all")
 
-load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
-
-rules_java_dependencies()
-
+# Required before `rules_java_dependencies` since `rules_java` 8.16.0.
 load("@bazel_features//:deps.bzl", "bazel_features_deps")
 
 bazel_features_deps()
+
+load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
+
+rules_java_dependencies()
 
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
