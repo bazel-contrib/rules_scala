@@ -17,7 +17,7 @@ import sys
 ROOT_SCALA_VERSIONS = [
     "2.11.12",
     "2.12.20",
-    "2.13.16",
+    "2.13.17",
     "3.1.3",
     "3.2.2",
     "3.3.7", # LTS
@@ -159,7 +159,7 @@ def select_root_artifacts(scala_version, scala_major, is_scala_3) -> List[str]:
 
     else:
         root_artifacts.extend([
-            f'org.scalameta:semanticdb-scalac_{scala_version}:4.9.9',
+            f'org.scalameta:semanticdb-scalac_{scala_version}:4.13.10',
         ])
 
     return root_artifacts

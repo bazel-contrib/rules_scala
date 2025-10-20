@@ -69,7 +69,7 @@ scala_config = use_extension(
     "@rules_scala//scala/extensions:config.bzl",
     "scala_config",
 )
-scala_config.settings(scala_version = "2.13.16")
+scala_config.settings(scala_version = "2.13.17")
 
 # See the `scala/extensions/deps.bzl` docstring for a high level description of
 # the tag classes exported by this module extension.
@@ -273,7 +273,7 @@ load("@rules_scala//:scala_config.bzl", "scala_config")
 #
 # 2.12 is the default version. Use other versions by passing them explicitly:
 #
-#   scala_config(scala_version = "2.13.16")
+#   scala_config(scala_version = "2.13.17")
 #
 # You may define your own custom toolchain using Maven artifact dependencies
 # configured by your `WORKSPACE` file, imported using an external loader like
@@ -881,7 +881,7 @@ rules_scala_toolchain_deps_repositories(fetch_sources = True)
 
 load("@rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config(scala_version = "2.13.16")
+scala_config(scala_version = "2.13.17")
 
 load(
     "//testing:scalatest.bzl",
@@ -917,7 +917,7 @@ rules_scala_dependencies()
 
 load("@rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config(scala_version = "2.13.16")
+scala_config(scala_version = "2.13.17")
 
 load(
     "@rules_scala//scala:toolchains.bzl",
@@ -1041,7 +1041,7 @@ scala_config = use_extension(
     "@rules_scala//scala/extensions:config.bzl",
     "scala_config",
 )
-scala_config.settings(scala_version = "2.13.16")
+scala_config.settings(scala_version = "2.13.17")
 
 scala_deps = use_extension(
     "@rules_scala//scala/extensions:deps.bzl",

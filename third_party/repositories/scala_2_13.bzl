@@ -3,7 +3,7 @@
 Mostly generated and updated by scripts/create_repository.py.
 """
 
-scala_version = "2.13.16"
+scala_version = "2.13.17"
 
 artifacts = {
     "com_github_jnr_jffi_native": {
@@ -445,8 +445,8 @@ artifacts = {
         ],
     },
     "org_scala_lang_scalap": {
-        "artifact": "org.scala-lang:scalap:2.13.16",
-        "sha256": "7963c72c4c74d52278e42b0108ae8ae866d4d1c4579e20209a2f9617e6aacfca",
+        "artifact": "org.scala-lang:scalap:2.13.17",
+        "sha256": "ff41633c298d3c1c35f1e31ca5284e25115a094ed9682cdd71ced6a5d04a5165",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler",
         ],
@@ -572,8 +572,8 @@ artifacts = {
         ],
     },
     "org_scalameta_semanticdb_scalac": {
-        "artifact": "org.scalameta:semanticdb-scalac_2.13.16:4.9.9",
-        "sha256": "24e2c6e7aeb19656ef6b60e93d2eab886c9a7c530bf3117880b45fcb526addd7",
+        "artifact": "org.scalameta:semanticdb-scalac_2.13.17:4.13.10",
+        "sha256": "88a32438e933f3e23432bf8059d740f6fa3f11e7ba8c19474eb1f795d9c2fe3a",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
@@ -606,7 +606,7 @@ artifacts = {
         "sha256": "6058d02418e4eb5f1919a1156d63d2d1b93f2c6190b1a1806ee2b73f8726a92f",
     },
     "org_typelevel_kind_projector": {
-        "artifact": "org.typelevel:kind-projector_2.13.16:0.13.4",
+        "artifact": "org.typelevel:kind-projector_2.13.17:0.13.4",
         "sha256": "e4bac237aae1a530cc5c7f0c98723a2f9e4890b8ef02a8d0aa2afa8c79dce6c0",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler",
