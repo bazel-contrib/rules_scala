@@ -5,7 +5,6 @@ import dotty.tools.dotc.util.{NoSourcePosition, SourcePosition}
 import dotty.tools.dotc.core.Contexts.{Context, atPhase, ctx}
 import dotty.tools.dotc.core.{Flags, Phases}
 import dotty.tools.dotc.core.Symbols.Symbol
-import dotty.tools.dotc.core.Types.Type
 
 import scala.collection.mutable
 

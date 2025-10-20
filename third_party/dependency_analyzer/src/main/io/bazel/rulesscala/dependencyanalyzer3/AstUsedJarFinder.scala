@@ -1,17 +1,16 @@
 package io.bazel.rulesscala.dependencyanalyzer
 
-import dotty.tools.dotc.core.{Annotations, Flags, NameKinds, StdNames}
 
 import scala.collection.mutable
 import dotty.tools.io.AbstractFile
+import dotty.tools.dotc.ast.tpd.*
 import dotty.tools.dotc.util.SourcePosition
 import dotty.tools.dotc.core.Types.Type
 import dotty.tools.dotc.core.Constants.*
 import dotty.tools.dotc.core.Contexts.*
 import dotty.tools.dotc.core.Symbols.*
-import dotty.tools.dotc.core.Annotations.Annotation
-import dotty.tools.dotc.ast.tpd.*
 import dotty.tools.dotc.core.StdNames.nme
+import dotty.tools.dotc.core.NameKinds
 
 extension (value: String) {
   def isTastyFile: Boolean = value.endsWith(".tasty")

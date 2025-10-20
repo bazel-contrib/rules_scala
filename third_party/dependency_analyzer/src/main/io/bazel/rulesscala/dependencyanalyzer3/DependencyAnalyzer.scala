@@ -1,28 +1,18 @@
 package io.bazel.rulesscala.dependencyanalyzer
 
-import dotty.tools.dotc.ast.Trees.*
-import dotty.tools.dotc.ast.tpd
-import dotty.tools.dotc.core.Constants.Constant
 import dotty.tools.dotc.core.Contexts.{Context, ctx}
-import dotty.tools.dotc.core.Decorators.*
-import dotty.tools.dotc.core.Phases
-import dotty.tools.dotc.core.StdNames.*
-import dotty.tools.dotc.core.Symbols.*
 import dotty.tools.dotc.util.{NoSourcePosition, SrcPos}
 import dotty.tools.dotc.plugins.{PluginPhase, StandardPlugin}
 import dotty.tools.dotc.report
-import dotty.tools.dotc.typer.Typer
 import dotty.tools.backend.jvm
 import dotty.tools.dotc.transform
 
 import java.util.jar.JarFile
 import dotty.tools.io.AbstractFile
-import io.bazel.rulesscala.dependencyanalyzer.DependencyTrackingMethod.Ast
 import io.bazel.rulesscala.scalac.reporter.DepsTrackingReporter
 
 import java.util.Locale
 import scala.jdk.CollectionConverters.*
-import scala.util.control.NonFatal
 
 class DependencyAnalyzer extends StandardPlugin:
   override val name: String = "dependency-analyzer"
