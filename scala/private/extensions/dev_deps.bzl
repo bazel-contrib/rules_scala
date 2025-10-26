@@ -107,6 +107,7 @@ def _dev_deps_impl(module_ctx):
     tags = root_module_tags(module_ctx, _tag_classes.keys())
     settings = single_tag_values(module_ctx, tags.settings, _settings_defaults)
     dev_deps_repositories(**settings)
+    return module_ctx.extension_metadata(reproducible = True)
 
 dev_deps = module_extension(
     implementation = _dev_deps_impl,

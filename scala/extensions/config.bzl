@@ -69,6 +69,7 @@ def _scala_config_impl(module_ctx):
             settings["enable_compiler_dependency_tracking"],
         ),
     )
+    return module_ctx.extension_metadata(reproducible = True)
 
 scala_config = module_extension(
     implementation = _scala_config_impl,

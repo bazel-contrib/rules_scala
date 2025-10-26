@@ -47,7 +47,9 @@ teardown_suite() {
 
 setup_test_module() {
   set -e
-  cp "${dir}"/.bazel{rc,version} "${test_srcs_dir}"/bzlmod_test_ext.bzl .
+  cp "${dir}"/.bazelversion "${test_srcs_dir}"/bzlmod_test_ext.bzl .
+  sed -e "s/--lockfile_mode=error/--lockfile_mode=update/" \
+      "${dir}/.bazelrc" > ./.bazelrc
   cp "${test_srcs_dir}/BUILD.bzlmod_test" 'BUILD'
 
   sed -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \

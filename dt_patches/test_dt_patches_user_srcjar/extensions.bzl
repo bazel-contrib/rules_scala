@@ -13,8 +13,10 @@ def import_compiler_user_srcjar_repos():
         url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.4.3/scala3-compiler_3-3.4.3-sources.jar",
     )
 
-def _compiler_user_srcjar_repos_impl(_ctx):
+def _compiler_user_srcjar_repos_impl(module_ctx):
     import_compiler_user_srcjar_repos()
+    return module_ctx.extension_metadata(reproducible = True)
+
 
 compiler_user_srcjar_repos = module_extension(
     implementation = _compiler_user_srcjar_repos_impl,

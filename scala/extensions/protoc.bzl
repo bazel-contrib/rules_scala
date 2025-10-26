@@ -77,6 +77,7 @@ def _scala_protoc_impl(module_ctx):
         **single_tag_values(module_ctx, tags.toolchains, _toolchains_defaults)
     )
     return module_ctx.extension_metadata(
+        reproducible = True,
         root_module_direct_deps = [],
         root_module_direct_dev_deps = [_TOOLCHAINS_REPO],
     )
@@ -85,4 +86,6 @@ scala_protoc = module_extension(
     implementation = _scala_protoc_impl,
     tag_classes = _tag_classes,
     doc = "Configures precompiled protocol compiler toolchains",
+    os_dependent = True,
+    arch_dependent = True,
 )

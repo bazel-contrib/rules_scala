@@ -1,1 +1,7 @@
 import ../../.bazelrc
+
+# `MODULE.bazel` uses the nonreproducible `compiler_source_repos` module
+# extension and contains `scala_deps.compiler_srcjar` tags without `sha256`,
+# `integrity`, or `label` attributes. As a result, `--repo_env=SCALA_VERSION`
+# values from test cases change the `MODULE.bazel.lock` file.
+common --lockfile_mode=update

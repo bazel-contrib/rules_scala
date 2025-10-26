@@ -20,12 +20,9 @@ repository-artifacts.json
 # From scripts/*.py
 **/__pycache__/
 
-# Until it settles down
-**/MODULE.bazel.lock
-
 # Used by some tests, but can also be used for local experimentation.
 tmp/
 
 # Not required by tests.
-deps/latest/.bazelversion
-
+deps/latest/MODULE.bazel.lock
+dt_patches/compiler_sources/MODULE.bazel.lock
