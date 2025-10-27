@@ -106,10 +106,10 @@ local_repository(
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "a729c8ed2447c90fe140077689079ca0acfb7580ec41637f312d650ce9d93d96",
+    sha256 = "54bbb67a4196170cc60ef3b52a2747ad1759cba4764b4c4752b744080ad99947",
     urls = [
-        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.57.0/rules_go-v0.57.0.zip",
-        "https://github.com/bazel-contrib/rules_go/releases/download/v0.57.0/rules_go-v0.57.0.zip",
+        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.58.2/rules_go-v0.58.2.zip",
+        "https://github.com/bazel-contrib/rules_go/releases/download/v0.58.2/rules_go-v0.58.2.zip",
     ],
 )
 
@@ -121,7 +121,7 @@ load(
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.25.1")
+go_register_toolchains(version = "1.25.3")
 
 http_archive(
     name = "bazelci_rules",
