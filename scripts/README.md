@@ -107,16 +107,6 @@ existing entry from the `third_party/repositories/scala_*.bzl` file, and the
 script will add it back. Alternatively, artificially set the entry to reference
 an older artifact version.
 
-## [`sync_bazelversion.sh`](./sync-bazelversion.sh)
-
-Synchronizes all of the `.bazelversion` files in the project with the top level
-`.bazelversion`.
-
-The [bazelisk](https://github.com/bazelbuild/bazelisk) wrapper for Bazel uses
-`.bazelversion` files select a Bazel version. While `USE_BAZEL_VERSION` can
-also override the Bazel version, keeping the `.bazelversion` files synchronized
-helps avoid suprises when not using `USE_BAZEL_VERSION`.
-
 ## [`update_protoc_integrity.py`](./update_protoc_integrity.py)
 
 Updates [`protoc/private/protoc_integrity.bzl`](
