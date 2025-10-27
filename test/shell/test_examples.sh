@@ -17,7 +17,11 @@ run_in_example_dir(){
   set -e
   cd "examples/${test_dir}"
   "$@"
-  bazel shutdown
+
+  # Don't shut down in `scala3` since multiple test cases run there.
+  if [[ "$test_dir" != 'scala3' ]]; then
+    bazel shutdown
+  fi
   cd "$dir"
 }
 
