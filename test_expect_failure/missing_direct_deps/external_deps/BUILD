@@ -18,25 +18,7 @@ scala_library(
     srcs = [
         "B.scala",
     ],
-    deps = ["@com_google_guava_guava_21_0//jar"],
-)
-
-scala_library(
-    name = "transitive_external_dependency_user_file_group",
-    testonly = True,
-    srcs = [
-        "A.scala",
-    ],
-    deps = ["external_dependency_user_file_group"],
-)
-
-scala_library(
-    name = "external_dependency_user_file_group",
-    testonly = True,
-    srcs = [
-        "B.scala",
-    ],
-    deps = ["@com_google_guava_guava_21_0_with_file//jar"],
+    deps = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )
 
 # tests if external jars are stamped with a correct label
