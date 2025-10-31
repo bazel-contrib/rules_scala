@@ -144,7 +144,7 @@
   "moduleExtensions": {
     "@@rules_java+//java:rules_java_deps.bzl%compatibility_proxy": {
       "general": {
-        "bzlTransitiveDigest": "kFNgYOjJGABexRi0wd2ZNysJhy5YjAZYTI7/GThoO78=",
+        "bzlTransitiveDigest": "wz/gaA3xHNx01lt9KMTpLRTOGQHRWnTsAPhRfjdk21k=",
         "usagesDigest": "jTQDdLDxsS43zuRmg1faAjIEPWdLAbDAowI1pInQSoo=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
