@@ -257,11 +257,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_go",
-    version = "0.58.2",
+    version = "0.58.3",
     dev_dependency = True,
     repo_name = "io_bazel_rules_go",  # for com_github_bazelbuild_buildtools
 )
-bazel_dep(name = "gazelle", version = "0.45.0", dev_dependency = True)
+bazel_dep(name = "gazelle", version = "0.46.0", dev_dependency = True)
 
 go_sdk = use_extension(
     "@io_bazel_rules_go//go:extensions.bzl",
