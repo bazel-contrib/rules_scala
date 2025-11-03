@@ -24,12 +24,12 @@ scala_library(
     name = "a",
     testonly = True,
     srcs = ["Empty.scala"],
-    deps = ["@com_google_guava_guava_21_0"],
+    deps = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )
 
 scala_library(
     name = "b",
     testonly = True,
     srcs = ["Empty.scala"],
-    deps = ["@com_google_guava_guava_21_0"],
+    deps = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )

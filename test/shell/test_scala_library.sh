@@ -61,15 +61,8 @@ test_scala_library_expect_failure_on_missing_direct_internal_deps() {
 }
 
 test_scala_library_expect_failure_on_missing_direct_external_deps_jar() {
-  dependenecy_target='@[a-z_.~+-]*com_google_guava_guava_21_0//:com_google_guava_guava_21_0'
+  dependenecy_target='@rules_scala_test_maven//:com_google_guava_guava'
   test_target='test_expect_failure/missing_direct_deps/external_deps:transitive_external_dependency_user'
-
-  test_scala_library_expect_failure_on_missing_direct_deps $dependenecy_target $test_target
-}
-
-test_scala_library_expect_failure_on_missing_direct_external_deps_file_group() {
-  dependenecy_target='@[a-z_.~+-]*com_google_guava_guava_21_0_with_file//:com_google_guava_guava_21_0_with_file'
-  test_target='test_expect_failure/missing_direct_deps/external_deps:transitive_external_dependency_user_file_group'
 
   test_scala_library_expect_failure_on_missing_direct_deps $dependenecy_target $test_target
 }
@@ -103,7 +96,7 @@ test_scala_library_expect_failure_on_missing_direct_deps_off_mode() {
   #scalac outputs backslashes on windows (triple slash needed for the grep)
   if is_windows; then
     local expected_message="test_expect_failure\\\missing_direct_deps\\\internal_deps\\\A.scala:[0-9+]: error: not found: value C"
-  
+
   else
     local expected_message="test_expect_failure/missing_direct_deps/internal_deps/A.scala:[0-9+]: error: not found: value C"
   fi
@@ -190,7 +183,6 @@ test_scala_library_expect_better_failure_message_on_missing_transitive_dependenc
 $runner test_scala_library_suite
 $runner test_scala_library_expect_failure_on_missing_direct_internal_deps
 $runner test_scala_library_expect_failure_on_missing_direct_external_deps_jar
-$runner test_scala_library_expect_failure_on_missing_direct_external_deps_file_group
 $runner test_scala_library_expect_failure_on_missing_direct_deps_strict_is_disabled_by_default
 $runner test_scala_library_expect_failure_on_missing_direct_deps_warn_mode
 $runner test_scala_library_expect_failure_on_missing_direct_deps_warn_mode_java
