@@ -105,25 +105,6 @@ local_repository(
 )
 
 http_archive(
-    name = "io_bazel_rules_go",
-    sha256 = "54bbb67a4196170cc60ef3b52a2747ad1759cba4764b4c4752b744080ad99947",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.58.2/rules_go-v0.58.2.zip",
-        "https://github.com/bazel-contrib/rules_go/releases/download/v0.58.2/rules_go-v0.58.2.zip",
-    ],
-)
-
-load(
-    "@io_bazel_rules_go//go:deps.bzl",
-    "go_register_toolchains",
-    "go_rules_dependencies",
-)
-
-go_rules_dependencies()
-
-go_register_toolchains(version = "1.25.3")
-
-http_archive(
     name = "bazelci_rules",
     sha256 = "eca21884e6f66a88c358e580fd67a6b148d30ab57b1680f62a96c00f9bc6a07e",
     strip_prefix = "bazelci_rules-1.0.0",
@@ -131,6 +112,23 @@ http_archive(
 )
 
 load("@bazelci_rules//:rbe_repo.bzl", "rbe_preconfig")
+
+buildifier_prebuilt_version = "8.2.0.2"
+
+http_archive(
+    name = "buildifier_prebuilt",
+    sha256 = "f98dd3d8f32661629b8cab11f02d7730bb8e03bd8af09dbbb268047889c8ff10",
+    strip_prefix = "buildifier-prebuilt-{}".format(buildifier_prebuilt_version),
+    urls = ["http://github.com/keith/buildifier-prebuilt/archive/{}.tar.gz".format(buildifier_prebuilt_version)],
+)
+
+load("@buildifier_prebuilt//:deps.bzl", "buildifier_prebuilt_deps")
+
+buildifier_prebuilt_deps()
+
+load("@buildifier_prebuilt//:defs.bzl", "buildifier_prebuilt_register_toolchains")
+
+buildifier_prebuilt_register_toolchains()
 
 rbe_preconfig(
     name = "rbe_default",

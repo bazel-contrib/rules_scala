@@ -43,19 +43,6 @@ def dev_deps_repositories(
         fetch_sources: retrieve Maven artifact sources when True
     """
 
-    # gazelle is still getting `buildtools` from its `go.mod` file, which breaks
-    # `bazel run //tools:lint_check` when we don't import it like this. See:
-    # - https://github.com/bazel-contrib/bazel-gazelle/blob/v0.43.0/MODULE.bazel#L32-L44
-    http_archive(
-        name = "com_github_bazelbuild_buildtools",
-        integrity = _BUILD_TOOLS_INTEGRITY,
-        strip_prefix = "buildtools-%s" % _BUILD_TOOLS_RELEASE,
-        url = (
-            "https://github.com/bazelbuild/buildtools/archive/v%s.tar.gz" %
-            _BUILD_TOOLS_RELEASE
-        ),
-    )
-
     # bazel's java_import_external has been altered in rules_scala to be a macro
     # based on jvm_import_external in order to allow for other jvm-language
     # imports (e.g. scala_import) the 3rd-party dependency below is using the
