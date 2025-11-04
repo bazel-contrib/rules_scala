@@ -16,7 +16,6 @@ run_in_test_repo() {
   cd "${dir}/${test_repo}" || return 1
   "${test_command[@]}" || response_code=$?
 
-  bazel shutdown
   cd ../..
   return $response_code
 }
@@ -109,16 +108,18 @@ $runner test_compiler_patch 2.13.11
 $runner test_compiler_patch 2.13.12
 $runner test_compiler_patch 2.13.14
 $runner test_compiler_patch 2.13.15
-$runner test_compiler_patch 2.13.16
+$runner test_compiler_patch 2.13.17
 
 $runner test_compiler_patch 3.1.0 # Minimal supported version
 $runner test_compiler_patch 3.1.3
 $runner test_compiler_patch 3.2.2
-$runner test_compiler_patch 3.3.6
+$runner test_compiler_patch 3.3.7
 $runner test_compiler_patch 3.4.3
 $runner test_compiler_patch 3.5.2
 $runner test_compiler_patch 3.6.4
 $runner test_compiler_patch 3.7.3
+
+run_in_test_repo 'test_dt_patches' bazel shutdown
 
 $runner test_compiler_srcjar_error 2.12.11
 $runner test_compiler_srcjar_error 2.12.12
@@ -143,12 +144,14 @@ $runner test_compiler_srcjar_nonhermetic 2.13.11
 $runner test_compiler_srcjar_nonhermetic 2.13.12
 $runner test_compiler_srcjar_nonhermetic 2.13.14
 $runner test_compiler_srcjar_nonhermetic 2.13.15
-$runner test_compiler_srcjar_nonhermetic 2.13.16
+$runner test_compiler_srcjar_nonhermetic 2.13.17
 
 $runner test_compiler_srcjar 3.1.3
 $runner test_compiler_srcjar 3.2.2
-$runner test_compiler_srcjar_nonhermetic 3.3.6
+$runner test_compiler_srcjar_nonhermetic 3.3.7
 $runner test_compiler_srcjar 3.4.3
 $runner test_compiler_srcjar_nonhermetic 3.5.2
 $runner test_compiler_srcjar_nonhermetic 3.6.4
 $runner test_compiler_srcjar_nonhermetic 3.7.3
+
+run_in_test_repo 'test_dt_patches_user_srcjar' bazel shutdown

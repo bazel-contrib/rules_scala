@@ -22,14 +22,14 @@ scala_config = use_extension(
 )
 
 scala_config.settings(
-    scala_version = "2.13.16",
+    scala_version = "2.13.17",
     # No need to include `scala_version` in `scala_versions`.
     scala_versions = [
         "2.11.12",
         "2.12.20",
         "3.1.3",
         "3.2.2",
-        "3.3.6",
+        "3.3.7",
     ],
 )
 ```
@@ -45,10 +45,10 @@ scala_config(
     scala_versions = [
         "2.11.12",
         "2.12.20",
-        "2.13.16",
+        "2.13.17",
         "3.1.3",
         "3.2.2",
-        "3.3.6",
+        "3.3.7",
     ],
 )
 ```
@@ -287,7 +287,7 @@ specific Scala version. See [test_cross_build/version_specific/BUILD](
 scala_library(
     name = "since_3_3",
     srcs = ["since_3_3.scala"],
-    scala_version = "3.3.6",
+    scala_version = "3.3.7",
 )
 
 scala_library(

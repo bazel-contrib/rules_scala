@@ -50,8 +50,8 @@ options:
   --version SCALA_VERSION
                         Scala version for which to update repository
                         information; if not provided, updates all supported
-                        versions: 2.11.12, 2.12.20, 2.13.16, 3.1.3, 3.2.2,
-                        3.3.6, 3.4.3, 3.5.2, 3.6.4, 3.7.3
+                        versions: 2.11.12, 2.12.20, 2.13.17, 3.1.3, 3.2.2,
+                        3.3.7, 3.4.3, 3.5.2, 3.6.4, 3.7.3
   --output_dir OUTPUT_DIR
                         Directory in which to generate or update repository
                         files (default: .../third_party/repositories)
@@ -106,16 +106,6 @@ To force an update of an artifact, while keeping its same version, remove its
 existing entry from the `third_party/repositories/scala_*.bzl` file, and the
 script will add it back. Alternatively, artificially set the entry to reference
 an older artifact version.
-
-## [`sync_bazelversion.sh`](./sync-bazelversion.sh)
-
-Synchronizes all of the `.bazelversion` files in the project with the top level
-`.bazelversion`.
-
-The [bazelisk](https://github.com/bazelbuild/bazelisk) wrapper for Bazel uses
-`.bazelversion` files select a Bazel version. While `USE_BAZEL_VERSION` can
-also override the Bazel version, keeping the `.bazelversion` files synchronized
-helps avoid suprises when not using `USE_BAZEL_VERSION`.
 
 ## [`update_protoc_integrity.py`](./update_protoc_integrity.py)
 

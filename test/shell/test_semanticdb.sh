@@ -33,7 +33,7 @@ test_produces_semanticdb(){
   fi
 
   if [ $scala_majver -eq 3 ]; then
-    options+=("--repo_env=SCALA_VERSION=3.3.6")
+    options+=("--repo_env=SCALA_VERSION=3.3.7")
   fi
 
   bazel build //test/semanticdb:semantic_provider_vars_all "${options[@]}"

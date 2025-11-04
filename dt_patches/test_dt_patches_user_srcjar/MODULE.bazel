@@ -66,7 +66,6 @@ scala_deps.settings(
     fetch_sources = True,
     validate_scala_version = False,
 )
-scala_deps.scala()
 
 # The `scala_deps.compiler_srcjar()` tag prevents some of the kinds of errors
 # represented in the corresponding `WORKSPACE` file, so we have to force
@@ -144,6 +143,10 @@ scala_deps.compiler_srcjar(
     version = "2.13.16",
 )
 scala_deps.compiler_srcjar(
+    url = "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.17/scala-compiler-2.13.17-sources.jar?foo",
+    version = "2.13.17",
+)
+scala_deps.compiler_srcjar(
     integrity = "sha384-4J2ihR1QSdP5cvL3y2OUfw4uUX/hsQqcPlJV+IrQdsM/soiIAYfoEeIEt6vl3xBk",
     url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.1.3/scala3-compiler_3-3.1.3-sources.jar",
     version = "3.1.3",
@@ -154,8 +157,8 @@ scala_deps.compiler_srcjar(
     version = "3.2.2",
 )
 scala_deps.compiler_srcjar(
-    url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.3.6/scala3-compiler_3-3.3.6-sources.jar",
-    version = "3.3.6",
+    url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.3.7/scala3-compiler_3-3.3.7-sources.jar",
+    version = "3.3.7",
 )
 scala_deps.compiler_srcjar(
     label = "@scala3_compiler_srcjar//jar:downloaded.jar",
@@ -194,5 +197,5 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "32.1",
+    version = "33.0",
 )

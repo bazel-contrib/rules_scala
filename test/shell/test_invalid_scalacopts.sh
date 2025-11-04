@@ -26,7 +26,7 @@ test_logs_not_contains() {
   _check_failing_action 'action_should_fail_without_message' "$@"
 }
 
-for scalaVersion in 2.12.20 2.13.16 3.3.6; do
+for scalaVersion in 2.12.20 2.13.17 3.3.7; do
   if [[ "$scalaVersion" == 3.* ]]; then
     $runner test_logs_contains $scalaVersion "not-existing is not a valid choice for -source"
   else

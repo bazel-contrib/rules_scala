@@ -223,20 +223,34 @@ _tag_classes = _general_tag_classes | _toolchain_tag_classes
 def _scala_deps_impl(module_ctx):
     tags = root_module_tags(module_ctx, _tag_classes.keys())
     tc_names = [tc for tc in _toolchain_tag_classes]
+    compiler_srcjars = repeated_tag_values(
+        tags.compiler_srcjar,
+        _compiler_srcjar_attrs,
+    )
 
     scala_toolchains(
         overridden_artifacts = repeated_tag_values(
             tags.overridden_artifact,
             _overridden_artifact_attrs,
         ),
-        scala_compiler_srcjars = repeated_tag_values(
-            tags.compiler_srcjar,
-            _compiler_srcjar_attrs,
-        ),
+        scala_compiler_srcjars = compiler_srcjars,
         **(
             single_tag_values(module_ctx, tags.settings, _settings_defaults) |
             _toolchain_settings(module_ctx, tags, tc_names, TOOLCHAIN_DEFAULTS)
         )
+    )
+
+    nonreproducible = [
+        version for version, srcjar in compiler_srcjars.items()
+        if (
+            not srcjar.get("sha256") and
+            not srcjar.get("integrity") and
+            not srcjar.get("label")
+        )
+    ]
+
+    return module_ctx.extension_metadata(
+        reproducible = len(nonreproducible) == 0,
     )
 
 scala_deps = module_extension(

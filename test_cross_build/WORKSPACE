@@ -15,13 +15,13 @@ host_platform_repo(name = "host_platform")
 
 register_toolchains("@rules_scala_protoc_toolchains//...:all")
 
-load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
-
-rules_java_dependencies()
-
 load("@bazel_features//:deps.bzl", "bazel_features_deps")
 
 bazel_features_deps()
+
+load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
+
+rules_java_dependencies()
 
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
@@ -62,10 +62,10 @@ scala_config(
     scala_versions = [
         "2.11.12",
         "2.12.20",
-        "2.13.16",
+        "2.13.17",
         "3.1.3",
         "3.2.2",
-        "3.3.6",
+        "3.3.7",
     ],
 )
 

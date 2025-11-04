@@ -20,7 +20,7 @@ scalafmt_scala_library(
     srcs = ["unformatted/unformatted-library2.scala"],
     config = ":scala2-conf",
     format = True,
-    scala_version = "2.13.16",
+    scala_version = "2.13.17",
 )
 
 scalafmt_scala_library(
@@ -28,7 +28,7 @@ scalafmt_scala_library(
     srcs = ["formatted/formatted-library2.scala"],
     config = ":scala2-conf",
     format = True,
-    scala_version = "2.13.16",
+    scala_version = "2.13.17",
 )
 
 scalafmt_scala_library(
@@ -36,7 +36,7 @@ scalafmt_scala_library(
     srcs = ["unformatted/unformatted-library3.scala"],
     config = ":scala3-conf",
     format = True,
-    scala_version = "3.3.6",
+    scala_version = "3.3.7",
 )
 
 scalafmt_scala_library(
@@ -44,7 +44,7 @@ scalafmt_scala_library(
     srcs = ["formatted/formatted-library3.scala"],
     config = ":scala3-conf",
     format = True,
-    scala_version = "3.3.6",
+    scala_version = "3.3.7",
 )
 
 scalafmt_scala_binary(

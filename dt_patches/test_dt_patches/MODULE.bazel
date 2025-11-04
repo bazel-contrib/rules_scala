@@ -56,7 +56,6 @@ scala_deps.settings(
     fetch_sources = True,
     validate_scala_version = False,
 )
-scala_deps.scala()
 
 scala_protoc = use_extension(
     "@rules_scala//scala/extensions:protoc.bzl",
@@ -78,5 +77,5 @@ single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "32.1",
+    version = "33.0",
 )

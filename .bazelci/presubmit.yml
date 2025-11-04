@@ -41,6 +41,7 @@ tasks:
     shell_commands:
     # Install xmllint
     - sudo apt update && sudo apt install --reinstall libxml2-utils -y
+    - echo "common --lockfile_mode=update" >>.bazelrc
     - "./test_rules_scala.sh"
     soft_fail:
       - exit_status: "*"

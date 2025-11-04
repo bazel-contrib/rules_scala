@@ -3,8 +3,8 @@
 set -e
 
 scala_2_12_version="2.12.20"
-scala_2_13_version="2.13.16"
-scala_3_version="3.3.6"
+scala_2_13_version="2.13.17"
+scala_3_version="3.3.7"
 
 SCALA_VERSION_DEFAULT=$scala_2_12_version
 
@@ -78,7 +78,9 @@ run_in_test_repo() {
       WORKSPACE.template >> $NEW_TEST_DIR/WORKSPACE
   sed -e "s%\${twitter_scrooge_repositories}%${scrooge_mod}%" \
       MODULE.bazel.template >> $NEW_TEST_DIR/MODULE.bazel
-  cp ../.bazel{rc,version} scrooge_repositories.bzl $NEW_TEST_DIR/
+  sed -e "s/--lockfile_mode=error/--lockfile_mode=update/" \
+      ../.bazelrc > $NEW_TEST_DIR/.bazelrc
+  cp ../.bazelversion scrooge_repositories.bzl $NEW_TEST_DIR/
   cp ../protoc/0001-protobuf-19679-rm-protoc-dep.patch \
       $NEW_TEST_DIR/protobuf.patch
 

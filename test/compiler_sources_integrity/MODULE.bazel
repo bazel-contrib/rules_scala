@@ -23,7 +23,6 @@ scala_deps = use_extension(
     "@rules_scala//scala/extensions:deps.bzl",
     "scala_deps",
 )
-scala_deps.scala()
 scala_deps.settings(
     # Since we're using a bogus Scala version in the compiler_srcjar.
     validate_scala_version = False,

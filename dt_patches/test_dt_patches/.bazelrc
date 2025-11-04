@@ -1,1 +1,6 @@
 import ../../.bazelrc
+
+# `MODULE.bazel` uses the nonreproducible `compiler_source_repos` module
+# extension. As a result, `--repo_env=SCALA_VERSION` values from test cases
+# change the `MODULE.bazel.lock` file.
+common --lockfile_mode=update

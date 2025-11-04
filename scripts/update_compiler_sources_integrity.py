@@ -23,13 +23,13 @@ SCALA_VERSIONS = [
 ] + [
     f'2.12.{patch}' for patch in range(1, 21)  # 2.12.1 to 2.12.20
 ] + [
-    f'2.13.{patch}' for patch in range(0, 17)  # 2.13.0 to 2.13.16
+    f'2.13.{patch}' for patch in range(0, 18)  # 2.13.0 to 2.13.17
 ] + [
     f'3.1.{patch}' for patch in range(0, 4)    # 3.1.0  to 3.1.3
 ] + [
     f'3.2.{patch}' for patch in range(0, 3)    # 3.2.0  to 3.2.2
 ] + [
-    f'3.3.{patch}' for patch in range(0, 7)    # 3.3.0  to 3.3.6
+    f'3.3.{patch}' for patch in range(0, 8)    # 3.3.0  to 3.3.7
 ] + [
     f'3.4.{patch}' for patch in range(0, 4)    # 3.4.0  to 3.4.3
 ] + [

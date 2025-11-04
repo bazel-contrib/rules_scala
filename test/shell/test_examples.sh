@@ -17,7 +17,11 @@ run_in_example_dir(){
   set -e
   cd "examples/${test_dir}"
   "$@"
-  bazel shutdown
+
+  # Don't shut down in `scala3` since multiple test cases run there.
+  if [[ "$test_dir" != 'scala3' ]]; then
+    bazel shutdown
+  fi
   cd "$dir"
 }
 
@@ -42,7 +46,7 @@ test_scala3_2_example() {
 }
 
 test_scala3_3_example() {
-  run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.3.6 //...
+  run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.3.7 //...
 }
 
 test_scala3_4_example() {
