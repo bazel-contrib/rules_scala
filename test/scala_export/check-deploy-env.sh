@@ -11,7 +11,6 @@ source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null || \
 
 set -euox pipefail
 
-# TODO: These refs are different.
 classes_file=$(rlocation rules_scala/test/scala_export/classes.txt)
 
 if grep -q DeployEnvDependency.class "$classes_file"; then
