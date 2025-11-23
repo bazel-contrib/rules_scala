@@ -84,7 +84,7 @@ def sorted_semver_keyed_dict(semver_keyed_dict, reverse=False):
     """Returns a sorted copy of semver_keyed_dict."""
     return dict(sorted(
         semver_keyed_dict.items(),
-        key=lambda item: [int(n) for n in item[0].split(".")],
+        key=lambda item: [int(n) for n in item[0].split("-")[0].split(".")],
         reverse=reverse,
     ))
 
