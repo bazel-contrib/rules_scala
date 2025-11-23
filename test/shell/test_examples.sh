@@ -65,6 +65,11 @@ test_scala3_7_example() {
    run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.7.4 //...
 }
 
+test_scala3_8_example() {
+   run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.8.0-RC1 //...
+}
+
+
 test_semanticdb_example() {
   build_semanticdb_example(){
     bazel build //... --aspects aspect.bzl%semanticdb_info_aspect \
