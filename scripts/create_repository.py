@@ -25,6 +25,7 @@ ROOT_SCALA_VERSIONS = [
     "3.5.2",
     "3.6.4",
     "3.7.4",
+    "3.8.0-RC1",
 ]
 PARSER_COMBINATORS_VERSION = '2.4.0'
 SBT_COMPILER_INTERFACE_VERSION = '1.11.0'
@@ -433,7 +434,7 @@ class ArtifactResolver:
         try:
             artifacts_file = Path(self._downloaded_artifacts_file)
             command = (
-                f'cs fetch {' '.join(root_artifacts)} --json-output-file ' +
+                f'coursier fetch {' '.join(root_artifacts)} --json-output-file ' +
                 self._downloaded_artifacts_file
             )
             self._run_command(command, 'Fetching resolved artifacts')
