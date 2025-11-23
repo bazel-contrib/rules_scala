@@ -22,6 +22,10 @@ common --incompatible_enable_proto_toolchain_resolution
 
 build --enable_platform_specific_config
 
+# Use Java 17+ required for Scala 3.8+
+build --tool_java_runtime_version=17
+build --java_runtime_version=17
+
 #Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting in 'file in use' errors). See Bazel Issue#10498.
 
 build:windows --worker_quit_after_build --enable_runfiles 
