@@ -7,7 +7,7 @@ object ScalaVersion {
   val Current: ScalaVersion = ScalaVersion(util.Properties.versionNumberString)
 
   def apply(versionString: String): ScalaVersion = {
-    versionString.split("\\.") match {
+    versionString.split("\\.|-").take(3) match {
       case Array(superMajor, major, minor) =>
         new ScalaVersion(superMajor.toInt, major.toInt, minor.toInt)
       case _ =>
