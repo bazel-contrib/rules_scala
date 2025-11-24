@@ -1,0 +1,38 @@
+load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load("//scala:scala.bzl", "scala_library")
+
+# Define a custom toolchain with global plugins
+scala_toolchain(
+    name = "global_plugin_toolchain_impl",
+    plugins = ["@org_typelevel_kind_projector//jar"],
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "global_plugin_toolchain",
+    exec_compatible_with = [],
+    target_compatible_with = [],
+    toolchain = ":global_plugin_toolchain_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
+# Test library that should use the global plugin from the toolchain
+scala_library(
+    name = "test_global_plugin",
+    srcs = ["GlobalPluginTest.scala"],
+    # No explicit plugins attribute - should use the global plugin from toolchain
+)
+
+# Simple test without plugin features
+scala_library(
+    name = "test_simple",
+    srcs = ["SimplePluginTest.scala"],
+)
+
+# Test library that adds additional plugins on top of global ones
+scala_library(
+    name = "test_combined_plugins",
+    srcs = ["CombinedPluginsTest.scala"],
+    plugins = ["//test/plugins:compile_plugin"],  # Additional plugin
+)
