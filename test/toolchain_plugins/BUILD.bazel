@@ -1,38 +1,42 @@
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//scala:scala.bzl", "scala_library")
 
-# Define a custom toolchain with global plugins
+# Toolchain WITH the kind-projector plugin
 scala_toolchain(
-    name = "global_plugin_toolchain_impl",
+    name = "with_plugin_impl",
     plugins = ["@org_typelevel_kind_projector//jar"],
     visibility = ["//visibility:public"],
 )
 
 toolchain(
-    name = "global_plugin_toolchain",
-    exec_compatible_with = [],
-    target_compatible_with = [],
-    toolchain = ":global_plugin_toolchain_impl",
+    name = "with_plugin",
+    toolchain = ":with_plugin_impl",
     toolchain_type = "//scala:toolchain_type",
     visibility = ["//visibility:public"],
 )
 
-# Test library that should use the global plugin from the toolchain
-scala_library(
-    name = "test_global_plugin",
-    srcs = ["GlobalPluginTest.scala"],
-    # No explicit plugins attribute - should use the global plugin from toolchain
+# Toolchain WITHOUT the plugin (but otherwise identical)
+scala_toolchain(
+    name = "without_plugin_impl",
+    # No plugins attribute
+    visibility = ["//visibility:public"],
 )
 
-# Simple test without plugin features
-scala_library(
-    name = "test_simple",
-    srcs = ["SimplePluginTest.scala"],
+toolchain(
+    name = "without_plugin",
+    toolchain = ":without_plugin_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
 )
 
-# Test library that adds additional plugins on top of global ones
+# Test that requires kind-projector plugin
 scala_library(
-    name = "test_combined_plugins",
-    srcs = ["CombinedPluginsTest.scala"],
-    plugins = ["//test/plugins:compile_plugin"],  # Additional plugin
+    name = "requires_plugin",
+    srcs = ["RequiresPlugin.scala"],
+)
+
+# Test that doesn't require any plugin
+scala_library(
+    name = "no_plugin_needed",
+    srcs = ["NoPlugin.scala"],
 )
