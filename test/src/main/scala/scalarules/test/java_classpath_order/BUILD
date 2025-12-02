@@ -16,9 +16,13 @@ scala_library(
 )
 
 # Test that verifies the Java override works correctly
+# Note: This test is incompatible with strict deps checking because the checker
+# doesn't understand class shadowing - it sees Overridable as coming from :original
+# rather than the shadowed version from :with_java_override
 scala_test(
     name = "verify_override_test",
     srcs = ["VerifyOverride.scala"],
+    tags = ["no-strict-deps"],
+    unused_dependency_checker_mode = "off",
     deps = [":with_java_override"],
 )
-
