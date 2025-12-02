@@ -30,9 +30,12 @@ java_library(
         between_3_3_and_3_7_2 = glob(["scala_3/*.java"]) + [
             "since_3_3_before_3_7_2/CompilerCompat.java",
         ],
-        since_3_7_2 = glob(["scala_3/*.java"]) + [
-            "since_3_7_2/CompilerCompat.java",
+        between_3_7_2_and_3_7_4 = glob(["scala_3/*.java"]) + [
+            "since_3_7_2_before_3_7_4/CompilerCompat.java",
         ],
+        since_3_7_4 = glob(["scala_3/*.java"]) + [
+            "since_3_7_4/CompilerCompat.java",
+        ]
     ) + ["//src/java/io/bazel/rulesscala/scalac/deps_tracking_reporter"],
     visibility = ["//visibility:public"],
     deps = [

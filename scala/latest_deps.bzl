@@ -30,18 +30,18 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.16.1/rules_java-8.16.1.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/9.0.3/rules_java-9.0.3.tar.gz",
         ],
-        sha256 = "1b30698d89dccd9dc01b1a4ad7e9e5c6e669cdf1918dbb050334e365b40a1b5e",
+        sha256 = "865b3d334bd0f769587737447410d8042d6a95134cc45be5380805fdbacd7152",
     )
 
     # Required before `rules_java_dependencies` since `rules_java` 8.16.0.
     maybe(
         http_archive,
         name = "bazel_features",
-        sha256 = "adc8ddf121917f197f75c5245dfa8d7b1619f10a1002e25062b093b7957f2798",
-        strip_prefix = "bazel_features-1.37.0",
-        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.37.0/bazel_features-v1.37.0.tar.gz",
+        sha256 = "07271d0f6b12633777b69020c4cb1eb67b1939c0cf84bb3944dc85cc250c0c01",
+        strip_prefix = "bazel_features-1.38.0",
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.38.0/bazel_features-v1.38.0.tar.gz",
     )
 
     maybe(

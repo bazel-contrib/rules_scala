@@ -53,7 +53,7 @@ abstract class BazelConsoleReporter extends AbstractReporter {
     if((boolean) ctx.settings().Xprompt().valueIn(ctx.settingsState())){
       boolean displayPrompt = dia instanceof Diagnostic.Error;
       if(dia instanceof  Diagnostic.Warning){
-        displayPrompt = (boolean) ctx.settings().XfatalWarnings().valueIn(ctx.settingsState());
+        displayPrompt =  CompilerCompat.isWarningFatal(ctx);
       }
       if(displayPrompt) Reporter.displayPrompt(reader, writer);
     }

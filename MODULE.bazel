@@ -2,7 +2,7 @@
 
 module(
     name = "rules_scala",
-    version = "7.1.4",
+    version = "7.1.5",
     bazel_compatibility = [">=7.1.0"],
     compatibility_level = 7,
 )
@@ -22,7 +22,7 @@ SCALA_3_VERSIONS = [
     "3.3.7",
     "3.5.2",
     "3.6.4",
-    "3.7.3",
+    "3.7.4",
 ]
 
 SCALA_VERSIONS = SCALA_2_VERSIONS + SCALA_3_VERSIONS
@@ -42,7 +42,7 @@ single_version_override(
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
-    version = "8.16.1",
+    version = "9.0.3",
 )
 
 bazel_dep(name = "rules_jvm_external", version = "6.9")
@@ -263,11 +263,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_go",
-    version = "0.58.2",
+    version = "0.58.3",
     dev_dependency = True,
     repo_name = "io_bazel_rules_go",  # for com_github_bazelbuild_buildtools
 )
-bazel_dep(name = "gazelle", version = "0.45.0", dev_dependency = True)
+bazel_dep(name = "gazelle", version = "0.46.0", dev_dependency = True)
 
 go_sdk = use_extension(
     "@io_bazel_rules_go//go:extensions.bzl",

@@ -686,9 +686,9 @@ compatible with `rules_scala` 7.x.
 - See [.bazelci/presubmit.yml](./.bazelci/presubmit.yml) for the exact Bazel
     versions verified by the continuous integration builds.
 
-| Mode | Supported Bazel versions |
-| :-: |  :-: |
-| Bzlmod<br/>(Coming soon! See bazelbuild/rules_scala#1482.) | >= 7.1.0, 8.x,<br/>`rolling`, `last_green` |
+| Mode        | Supported Bazel versions |
+| :-:         |  :-: |
+| Bzlmod      | >= 7.1.0, 8.x, 9.*<br/>`rolling`, `last_green`                            |
 | `WORKSPACE` | 6.5.0, >= 7.1.0, 8.x<br/>(see the [notes on 6.5.0 compatibility](#6.5.0)) |
 
 `rules_scala` 7.0.0 uses `ScalaPB` 1.0.0-alpha.1 to support `protobuf` v28.2 and

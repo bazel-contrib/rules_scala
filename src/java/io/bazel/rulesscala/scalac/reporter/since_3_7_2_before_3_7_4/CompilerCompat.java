@@ -13,4 +13,8 @@ public class CompilerCompat {
             Contexts.NoContext()   // using   : Context, added in 3.3.0
     );
   }
+
+  static boolean isWarningFatal(Contexts.Context ctx) {
+    return (boolean) ctx.settings().XfatalWarnings().valueIn(ctx.settingsState());
+  }
 }
