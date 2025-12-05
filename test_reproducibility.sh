@@ -21,7 +21,9 @@ md5_util() {
 }
 
 non_deploy_jar_md5_sum() {
-    find bazel-bin/test -name "*.jar" ! -name "*_deploy.jar" ! -path 'bazel-bin/test/jmh/*' | xargs -n 1 -P 5 $(md5_util) | sort
+    # Exclude *-docs.jar (javadoc jars from maven_export in rules_jvm_external)
+    # because javadoc generates non-deterministic output.
+    find bazel-bin/test -name "*.jar" ! -name "*_deploy.jar" ! -name "*-docs.jar" ! -path 'bazel-bin/test/jmh/*' | xargs -n 1 -P 5 $(md5_util) | sort
 }
 
 test_build_is_identical() {
@@ -31,23 +33,27 @@ test_build_is_identical() {
         test_coverage_packages+=("//${package_dir}/...")
     done
 
+    # Use separate disk_cache directories for each build to ensure they're independent
+    # but use --disk_cache for both so they produce the same set of outputs
+    local random_dir1=$(mktemp -d -t test_repro1-XXXXXXXXXX)
+    local random_dir2=$(mktemp -d -t test_repro2-XXXXXXXXXX)
+
+    if is_windows; then
+        #need true os path to pass to Bazel's cmdline option
+        random_dir1=$(cygpath -w $random_dir1)
+        random_dir2=$(cygpath -w $random_dir2)
+    fi
+
     bazel clean #ensure we are starting from square one
-    bazel build test/...
+    bazel build --disk_cache $random_dir1 test/...
     # Also build instrumented jars.
-    bazel build --collect_code_coverage -- "${test_coverage_packages[@]}"
+    bazel build --disk_cache $random_dir1 --collect_code_coverage -- "${test_coverage_packages[@]}"
     non_deploy_jar_md5_sum > hash1
     bazel clean
     sleep 10 # to make sure that if timestamps slip in we get different ones
 
-    local random_dir=$(mktemp -d -t test_repro-XXXXXXXXXX)
- 
-    if is_windows; then
-        #need true os path to pass to Bazel's cmdline option
-        random_dir=$(cygpath -w $random_dir)    
-    fi
-
-    bazel build --disk_cache $random_dir test/...
-    bazel build --disk_cache $random_dir --collect_code_coverage -- \
+    bazel build --disk_cache $random_dir2 test/...
+    bazel build --disk_cache $random_dir2 --collect_code_coverage -- \
         "${test_coverage_packages[@]}"
     non_deploy_jar_md5_sum > hash2
     diff hash1 hash2
