@@ -19,13 +19,13 @@ bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "rules_shell", version = "0.5.1")
 bazel_dep(name = "protobuf", repo_name = "com_google_protobuf")
 
-# Temporarily required for `protoc` toolchainization until resolution of
-# protocolbuffers/protobuf#19679.
+# Temporarily required for `protoc` toolchainization until
+# protocolbuffers/protobuf#19679 appears in a published release.
 single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
-    version = "33.0",
+    version = "33.1",
 )
 
 scala_config = use_extension(

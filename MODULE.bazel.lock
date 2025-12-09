@@ -40,8 +40,8 @@
     "https://bcr.bazel.build/modules/gazelle/0.33.0/MODULE.bazel": "a13a0f279b462b784fb8dd52a4074526c4a2afe70e114c7d09066097a46b3350",
     "https://bcr.bazel.build/modules/gazelle/0.34.0/MODULE.bazel": "abdd8ce4d70978933209db92e436deb3a8b737859e9354fb5fd11fb5c2004c8a",
     "https://bcr.bazel.build/modules/gazelle/0.36.0/MODULE.bazel": "e375d5d6e9a6ca59b0cb38b0540bc9a05b6aa926d322f2de268ad267a2ee74c0",
-    "https://bcr.bazel.build/modules/gazelle/0.46.0/MODULE.bazel": "3dec215dacf2427df87b524a2c99da387882a18d753f0b1b38675992bd0a99c6",
-    "https://bcr.bazel.build/modules/gazelle/0.46.0/source.json": "f255441117f6c63a3cbc0d4fd84c09c047e54a9bdaaf6aedf66e3b4218ddebd4",
+    "https://bcr.bazel.build/modules/gazelle/0.47.0/MODULE.bazel": "b61bb007c4efad134aa30ee7f4a8e2a39b22aa5685f005edaa022fbd1de43ebc",
+    "https://bcr.bazel.build/modules/gazelle/0.47.0/source.json": "aeb2e5df14b7fb298625d75d08b9c65bdb0b56014c5eb89da9e5dd0572280ae6",
     "https://bcr.bazel.build/modules/google_benchmark/1.8.2/MODULE.bazel": "a70cf1bba851000ba93b58ae2f6d76490a9feb74192e57ab8e8ff13c34ec50cb",
     "https://bcr.bazel.build/modules/googletest/1.14.0.bcr.1/MODULE.bazel": "22c31a561553727960057361aa33bf20fb2e98584bc4fec007906e27053f80c6",
     "https://bcr.bazel.build/modules/googletest/1.14.0/MODULE.bazel": "cfbcbf3e6eac06ef9d85900f64424708cc08687d1b527f0ef65aa7517af8118f",
@@ -57,8 +57,8 @@
     "https://bcr.bazel.build/modules/package_metadata/0.0.5/source.json": "2326db2f6592578177751c3e1f74786b79382cd6008834c9d01ec865b9126a85",
     "https://bcr.bazel.build/modules/platforms/1.0.0/MODULE.bazel": "f05feb42b48f1b3c225e4ccf351f367be0371411a803198ec34a389fb22aa580",
     "https://bcr.bazel.build/modules/platforms/1.0.0/source.json": "f4ff1fd412e0246fd38c82328eb209130ead81d62dcd5a9e40910f867f733d96",
-    "https://bcr.bazel.build/modules/protobuf/33.0/MODULE.bazel": "c5270efb4aad37a2f893536076518793f409ea7df07a06df995d848d1690f21c",
-    "https://bcr.bazel.build/modules/protobuf/33.0/source.json": "cd7ac80ad863190b9151281a85acc11d77b5bde2ba56443a7215da2d4ace6da3",
+    "https://bcr.bazel.build/modules/protobuf/33.1/MODULE.bazel": "982c8a0cceab4d790076f72b7677faf836b0dfadc2b66a34aab7232116c4ae39",
+    "https://bcr.bazel.build/modules/protobuf/33.1/source.json": "992c237a40899425648213bf79b05f08c6e8dcd619f96cd944b4511b0276fbd8",
     "https://bcr.bazel.build/modules/pybind11_bazel/2.11.1/MODULE.bazel": "88af1c246226d87e65be78ed49ecd1e6f5e98648558c14ce99176da041dc378e",
     "https://bcr.bazel.build/modules/pybind11_bazel/2.12.0/MODULE.bazel": "e6f4c20442eaa7c90d7190d8dc539d0ab422f95c65a57cc59562170c58ae3d34",
     "https://bcr.bazel.build/modules/pybind11_bazel/2.12.0/source.json": "6900fdc8a9e95866b8c0d4ad4aba4d4236317b5c1cd04c502df3f0d33afed680",
@@ -88,10 +88,10 @@
     "https://bcr.bazel.build/modules/rules_go/0.42.0/MODULE.bazel": "8cfa875b9aa8c6fce2b2e5925e73c1388173ea3c32a0db4d2b4804b453c14270",
     "https://bcr.bazel.build/modules/rules_go/0.46.0/MODULE.bazel": "3477df8bdcc49e698b9d25f734c4f3a9f5931ff34ee48a2c662be168f5f2d3fd",
     "https://bcr.bazel.build/modules/rules_go/0.53.0/MODULE.bazel": "a4ed760d3ac0dbc0d7b967631a9a3fd9100d28f7d9fcf214b4df87d4bfff5f9a",
-    "https://bcr.bazel.build/modules/rules_go/0.58.3/MODULE.bazel": "5582119a4a39558d8d1b1634bcae46043d4f43a31415e861c3551b2860040b5e",
-    "https://bcr.bazel.build/modules/rules_go/0.58.3/source.json": "0bacbf5ee9eefb089b03fbd4691dd8f63b4e630515b160731e417ffeb3bd0fdb",
-    "https://bcr.bazel.build/modules/rules_java/9.0.3/MODULE.bazel": "1f98ed015f7e744a745e0df6e898a7c5e83562d6b759dfd475c76456dda5ccea",
-    "https://bcr.bazel.build/modules/rules_java/9.0.3/source.json": "b038c0c07e12e658135bbc32cc1a2ded6e33785105c9d41958014c592de4593e",
+    "https://bcr.bazel.build/modules/rules_go/0.59.0/MODULE.bazel": "b7e43e7414a3139a7547d1b4909b29085fbe5182b6c58cbe1ed4c6272815aeae",
+    "https://bcr.bazel.build/modules/rules_go/0.59.0/source.json": "1df17bb7865cfc029492c30163cee891d0dd8658ea0d5bfdf252c4b6db5c1ef6",
+    "https://bcr.bazel.build/modules/rules_java/9.3.0/MODULE.bazel": "f657c72d65ac449caae9abf2e68e66c0d36f9416848c4c4903d0b3234229e7f2",
+    "https://bcr.bazel.build/modules/rules_java/9.3.0/source.json": "59ae7e662c3c7042b88bbb42ad12483523e234c65ebe4c51611baa43e85cb248",
     "https://bcr.bazel.build/modules/rules_jvm_external/6.3/MODULE.bazel": "c998e060b85f71e00de5ec552019347c8bca255062c990ac02d051bb80a38df0",
     "https://bcr.bazel.build/modules/rules_jvm_external/6.7/MODULE.bazel": "e717beabc4d091ecb2c803c2d341b88590e9116b8bf7947915eeb33aab4f96dd",
     "https://bcr.bazel.build/modules/rules_jvm_external/6.7/source.json": "5426f412d0a7fc6b611643376c7e4a82dec991491b9ce5cb1cfdd25fe2e92be4",
@@ -111,8 +111,8 @@
     "https://bcr.bazel.build/modules/rules_python/0.31.0/MODULE.bazel": "93a43dc47ee570e6ec9f5779b2e64c1476a6ce921c48cc9a1678a91dd5f8fd58",
     "https://bcr.bazel.build/modules/rules_python/0.33.2/MODULE.bazel": "3e036c4ad8d804a4dad897d333d8dce200d943df4827cb849840055be8d2e937",
     "https://bcr.bazel.build/modules/rules_python/1.6.0/MODULE.bazel": "7e04ad8f8d5bea40451cf80b1bd8262552aa73f841415d20db96b7241bd027d8",
-    "https://bcr.bazel.build/modules/rules_python/1.6.3/MODULE.bazel": "a7b80c42cb3de5ee2a5fa1abc119684593704fcd2fec83165ebe615dec76574f",
-    "https://bcr.bazel.build/modules/rules_python/1.6.3/source.json": "f0be74977e5604a6526c8a416cda22985093ff7d5d380d41722d7e44015cc419",
+    "https://bcr.bazel.build/modules/rules_python/1.7.0/MODULE.bazel": "d01f995ecd137abf30238ad9ce97f8fc3ac57289c8b24bd0bf53324d937a14f8",
+    "https://bcr.bazel.build/modules/rules_python/1.7.0/source.json": "028a084b65dcf8f4dc4f82f8778dbe65df133f234b316828a82e060d81bdce32",
     "https://bcr.bazel.build/modules/rules_shell/0.2.0/MODULE.bazel": "fda8a652ab3c7d8fee214de05e7a9916d8b28082234e8d2c0094505c5268ed3c",
     "https://bcr.bazel.build/modules/rules_shell/0.3.0/MODULE.bazel": "de4402cd12f4cc8fda2354fce179fdb068c0b9ca1ec2d2b17b3e21b24c1a937b",
     "https://bcr.bazel.build/modules/rules_shell/0.6.1/MODULE.bazel": "72e76b0eea4e81611ef5452aa82b3da34caca0c8b7b5c0c9584338aa93bae26b",
@@ -130,134 +130,6 @@
   },
   "selectedYankedVersions": {},
   "moduleExtensions": {
-    "@@pybind11_bazel+//:internal_configure.bzl%internal_configure_extension": {
-      "general": {
-        "bzlTransitiveDigest": "ITysE3qT9ee8ipAmrQmkGImmq2UkzlEY/ZI2L3+wmI8=",
-        "usagesDigest": "D1r3lfzMuUBFxgG8V6o0bQTLMk3GkaGOaPzw53wrwyw=",
-        "recordedFileInputs": {
-          "@@pybind11_bazel+//MODULE.bazel": "e6f4c20442eaa7c90d7190d8dc539d0ab422f95c65a57cc59562170c58ae3d34"
-        },
-        "recordedDirentsInputs": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "pybind11": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "build_file": "@@pybind11_bazel+//:pybind11-BUILD.bazel",
-              "strip_prefix": "pybind11-2.12.0",
-              "urls": [
-                "https://github.com/pybind/pybind11/archive/v2.12.0.zip"
-              ]
-            }
-          }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "pybind11_bazel+",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
-      }
-    },
-    "@@rules_apple+//apple:apple.bzl%provisioning_profile_repository_extension": {
-      "general": {
-        "bzlTransitiveDigest": "mnFtExCaJeiQtg+tEC+hmfzgFiJCKdDl/WOppYYWlmo=",
-        "usagesDigest": "vsJl8Rw5NL+5Ag2wdUDoTeRF/5klkXO8545Iy7U1Q08=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "local_provisioning_profiles": {
-            "bzlFile": "@@rules_apple+//apple/internal:local_provisioning_profiles.bzl",
-            "ruleClassName": "provisioning_profile_repository",
-            "attributes": {}
-          }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "apple_support+",
-            "bazel_skylib",
-            "bazel_skylib+"
-          ],
-          [
-            "rules_apple+",
-            "bazel_skylib",
-            "bazel_skylib+"
-          ],
-          [
-            "rules_apple+",
-            "bazel_tools",
-            "bazel_tools"
-          ],
-          [
-            "rules_apple+",
-            "build_bazel_apple_support",
-            "apple_support+"
-          ],
-          [
-            "rules_apple+",
-            "build_bazel_rules_swift",
-            "rules_swift+"
-          ],
-          [
-            "rules_swift+",
-            "bazel_skylib",
-            "bazel_skylib+"
-          ],
-          [
-            "rules_swift+",
-            "bazel_tools",
-            "bazel_tools"
-          ],
-          [
-            "rules_swift+",
-            "build_bazel_apple_support",
-            "apple_support+"
-          ],
-          [
-            "rules_swift+",
-            "build_bazel_rules_swift",
-            "rules_swift+"
-          ],
-          [
-            "rules_swift+",
-            "build_bazel_rules_swift_local_config",
-            "rules_swift++non_module_deps+build_bazel_rules_swift_local_config"
-          ]
-        ]
-      }
-    },
-    "@@rules_apple+//apple:extensions.bzl%non_module_deps": {
-      "general": {
-        "bzlTransitiveDigest": "Ia8tEfgBgcPGg7pBbN19ry75D46ClFYPRisPOZv5Ex8=",
-        "usagesDigest": "M3VqFpeTCo4qmrNKGZw0dxBHvTYDrfV3cscGzlSAhQ4=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "xctestrunner": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/google/xctestrunner/archive/b7698df3d435b6491b4b4c0f9fc7a63fbed5e3a6.tar.gz"
-              ],
-              "strip_prefix": "xctestrunner-b7698df3d435b6491b4b4c0f9fc7a63fbed5e3a6",
-              "sha256": "ae3a063c985a8633cb7eb566db21656f8db8eb9a0edb8c182312c7f0db53730d"
-            }
-          }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_apple+",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
-      }
-    },
     "@@rules_kotlin+//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
       "general": {
         "bzlTransitiveDigest": "eecmTsmdIQveoA97hPtH3/Ej/kugbdCI24bhXIXaly8=",
@@ -327,10 +199,261 @@
         ]
       }
     },
+    "@@rules_python+//python/extensions:config.bzl%config": {
+      "general": {
+        "bzlTransitiveDigest": "s+BUsQFh4Ru8As4edpV7AWui3CMiU4HfgnWitOt6fm4=",
+        "usagesDigest": "ZVSXMAGpD+xzVNPuvF1IoLBkty7TROO0+akMapt1pAg=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "rules_python_internal": {
+            "bzlFile": "@@rules_python+//python/private:internal_config_repo.bzl",
+            "ruleClassName": "internal_config_repo",
+            "attributes": {
+              "transition_setting_generators": {},
+              "transition_settings": []
+            }
+          },
+          "pypi__build": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/e2/03/f3c8ba0a6b6e30d7d18c40faab90807c9bb5e9a1e3b2fe2008af624a9c97/build-1.2.1-py3-none-any.whl",
+              "sha256": "75e10f767a433d9a86e50d83f418e83efc18ede923ee5ff7df93b6cb0306c5d4",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__click": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/00/2e/d53fa4befbf2cfa713304affc7ca780ce4fc1fd8710527771b58311a3229/click-8.1.7-py3-none-any.whl",
+              "sha256": "ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__colorama": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl",
+              "sha256": "4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__importlib_metadata": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/2d/0a/679461c511447ffaf176567d5c496d1de27cbe34a87df6677d7171b2fbd4/importlib_metadata-7.1.0-py3-none-any.whl",
+              "sha256": "30962b96c0c223483ed6cc7280e7f0199feb01a0e40cfae4d4450fc6fab1f570",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__installer": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/e5/ca/1172b6638d52f2d6caa2dd262ec4c811ba59eee96d54a7701930726bce18/installer-0.7.0-py3-none-any.whl",
+              "sha256": "05d1933f0a5ba7d8d6296bb6d5018e7c94fa473ceb10cf198a92ccea19c27b53",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__more_itertools": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/50/e2/8e10e465ee3987bb7c9ab69efb91d867d93959095f4807db102d07995d94/more_itertools-10.2.0-py3-none-any.whl",
+              "sha256": "686b06abe565edfab151cb8fd385a05651e1fdf8f0a14191e4439283421f8684",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__packaging": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/49/df/1fceb2f8900f8639e278b056416d49134fb8d84c5942ffaa01ad34782422/packaging-24.0-py3-none-any.whl",
+              "sha256": "2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__pep517": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/25/6e/ca4a5434eb0e502210f591b97537d322546e4833dcb4d470a48c375c5540/pep517-0.13.1-py3-none-any.whl",
+              "sha256": "31b206f67165b3536dd577c5c3f1518e8fbaf38cbc57efff8369a392feff1721",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__pip": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/8a/6a/19e9fe04fca059ccf770861c7d5721ab4c2aebc539889e97c7977528a53b/pip-24.0-py3-none-any.whl",
+              "sha256": "ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__pip_tools": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/0d/dc/38f4ce065e92c66f058ea7a368a9c5de4e702272b479c0992059f7693941/pip_tools-7.4.1-py3-none-any.whl",
+              "sha256": "4c690e5fbae2f21e87843e89c26191f0d9454f362d8acdbd695716493ec8b3a9",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__pyproject_hooks": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/ae/f3/431b9d5fe7d14af7a32340792ef43b8a714e7726f1d7b69cc4e8e7a3f1d7/pyproject_hooks-1.1.0-py3-none-any.whl",
+              "sha256": "7ceeefe9aec63a1064c18d939bdc3adf2d8aa1988a510afec15151578b232aa2",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__setuptools": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/90/99/158ad0609729111163fc1f674a5a42f2605371a4cf036d0441070e2f7455/setuptools-78.1.1-py3-none-any.whl",
+              "sha256": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__tomli": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9/tomli-2.0.1-py3-none-any.whl",
+              "sha256": "939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__wheel": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl",
+              "sha256": "55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          },
+          "pypi__zipp": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "url": "https://files.pythonhosted.org/packages/da/55/a03fd7240714916507e1fcf7ae355bd9d9ed2e6db492595f1a67f61681be/zipp-3.18.2-py3-none-any.whl",
+              "sha256": "dce197b859eb796242b0622af1b8beb0a722d52aa2f57133ead08edd5bf5374e",
+              "type": "zip",
+              "build_file_content": "package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude to avoid non-determinism.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_python+",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_python+",
+            "pypi__build",
+            "rules_python++config+pypi__build"
+          ],
+          [
+            "rules_python+",
+            "pypi__click",
+            "rules_python++config+pypi__click"
+          ],
+          [
+            "rules_python+",
+            "pypi__colorama",
+            "rules_python++config+pypi__colorama"
+          ],
+          [
+            "rules_python+",
+            "pypi__importlib_metadata",
+            "rules_python++config+pypi__importlib_metadata"
+          ],
+          [
+            "rules_python+",
+            "pypi__installer",
+            "rules_python++config+pypi__installer"
+          ],
+          [
+            "rules_python+",
+            "pypi__more_itertools",
+            "rules_python++config+pypi__more_itertools"
+          ],
+          [
+            "rules_python+",
+            "pypi__packaging",
+            "rules_python++config+pypi__packaging"
+          ],
+          [
+            "rules_python+",
+            "pypi__pep517",
+            "rules_python++config+pypi__pep517"
+          ],
+          [
+            "rules_python+",
+            "pypi__pip",
+            "rules_python++config+pypi__pip"
+          ],
+          [
+            "rules_python+",
+            "pypi__pip_tools",
+            "rules_python++config+pypi__pip_tools"
+          ],
+          [
+            "rules_python+",
+            "pypi__pyproject_hooks",
+            "rules_python++config+pypi__pyproject_hooks"
+          ],
+          [
+            "rules_python+",
+            "pypi__setuptools",
+            "rules_python++config+pypi__setuptools"
+          ],
+          [
+            "rules_python+",
+            "pypi__tomli",
+            "rules_python++config+pypi__tomli"
+          ],
+          [
+            "rules_python+",
+            "pypi__wheel",
+            "rules_python++config+pypi__wheel"
+          ],
+          [
+            "rules_python+",
+            "pypi__zipp",
+            "rules_python++config+pypi__zipp"
+          ]
+        ]
+      }
+    },
     "@@rules_python+//python/uv:uv.bzl%uv": {
       "general": {
-        "bzlTransitiveDigest": "sEFGGTSkofONc0o5QI5Gx+F/KfHEZQLIKj1B3MNlt/g=",
-        "usagesDigest": "icnInV8HDGrRQf9x8RMfxWfBHgT3OgRlYovS/9POEJw=",
+        "bzlTransitiveDigest": "b2l7eQNeidPDzpdj1+RSuGVmjgZGCpGxl+y2y6Rtpco=",
+        "usagesDigest": "H8dQoNZcoqP+Mu0tHZTi4KHATzvNkM5ePuEqoQdklIU=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -365,178 +488,6 @@
             "rules_python+",
             "platforms",
             "platforms"
-          ]
-        ]
-      }
-    },
-    "@@rules_swift+//swift:extensions.bzl%non_module_deps": {
-      "general": {
-        "bzlTransitiveDigest": "9v7oV8oD+hvRLQU5WxJYafojNgO5Lk1/rVg3aTb5vHk=",
-        "usagesDigest": "mhACFnrdMv9Wi0Mt67bxocJqviRkDSV+Ee5Mqdj5akA=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "com_github_apple_swift_protobuf": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-protobuf/archive/1.20.2.tar.gz"
-              ],
-              "sha256": "3fb50bd4d293337f202d917b6ada22f9548a0a0aed9d9a4d791e6fbd8a246ebb",
-              "strip_prefix": "swift-protobuf-1.20.2/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_protobuf/BUILD.overlay"
-            }
-          },
-          "com_github_grpc_grpc_swift": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/grpc/grpc-swift/archive/1.16.0.tar.gz"
-              ],
-              "sha256": "58b60431d0064969f9679411264b82e40a217ae6bd34e17096d92cc4e47556a5",
-              "strip_prefix": "grpc-swift-1.16.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_grpc_grpc_swift/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_docc_symbolkit": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-docc-symbolkit/archive/refs/tags/swift-5.10-RELEASE.tar.gz"
-              ],
-              "sha256": "de1d4b6940468ddb53b89df7aa1a81323b9712775b0e33e8254fa0f6f7469a97",
-              "strip_prefix": "swift-docc-symbolkit-swift-5.10-RELEASE",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_docc_symbolkit/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_nio": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-nio/archive/2.42.0.tar.gz"
-              ],
-              "sha256": "e3304bc3fb53aea74a3e54bd005ede11f6dc357117d9b1db642d03aea87194a0",
-              "strip_prefix": "swift-nio-2.42.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_nio/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_nio_http2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-nio-http2/archive/1.26.0.tar.gz"
-              ],
-              "sha256": "f0edfc9d6a7be1d587e5b403f2d04264bdfae59aac1d74f7d974a9022c6d2b25",
-              "strip_prefix": "swift-nio-http2-1.26.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_nio_http2/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_nio_transport_services": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-nio-transport-services/archive/1.15.0.tar.gz"
-              ],
-              "sha256": "f3498dafa633751a52b9b7f741f7ac30c42bcbeb3b9edca6d447e0da8e693262",
-              "strip_prefix": "swift-nio-transport-services-1.15.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_nio_transport_services/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_nio_extras": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-nio-extras/archive/1.4.0.tar.gz"
-              ],
-              "sha256": "4684b52951d9d9937bb3e8ccd6b5daedd777021ef2519ea2f18c4c922843b52b",
-              "strip_prefix": "swift-nio-extras-1.4.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_nio_extras/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_log": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-log/archive/1.4.4.tar.gz"
-              ],
-              "sha256": "48fe66426c784c0c20031f15dc17faf9f4c9037c192bfac2f643f65cb2321ba0",
-              "strip_prefix": "swift-log-1.4.4/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_log/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_nio_ssl": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-nio-ssl/archive/2.23.0.tar.gz"
-              ],
-              "sha256": "4787c63f61dd04d99e498adc3d1a628193387e41efddf8de19b8db04544d016d",
-              "strip_prefix": "swift-nio-ssl-2.23.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_nio_ssl/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_collections": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-collections/archive/1.0.4.tar.gz"
-              ],
-              "sha256": "d9e4c8a91c60fb9c92a04caccbb10ded42f4cb47b26a212bc6b39cc390a4b096",
-              "strip_prefix": "swift-collections-1.0.4/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_collections/BUILD.overlay"
-            }
-          },
-          "com_github_apple_swift_atomics": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "urls": [
-                "https://github.com/apple/swift-atomics/archive/1.1.0.tar.gz"
-              ],
-              "sha256": "1bee7f469f7e8dc49f11cfa4da07182fbc79eab000ec2c17bfdce468c5d276fb",
-              "strip_prefix": "swift-atomics-1.1.0/",
-              "build_file": "@@rules_swift+//third_party:com_github_apple_swift_atomics/BUILD.overlay"
-            }
-          },
-          "build_bazel_rules_swift_index_import": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "build_file": "@@rules_swift+//third_party:build_bazel_rules_swift_index_import/BUILD.overlay",
-              "canonical_id": "index-import-5.8",
-              "urls": [
-                "https://github.com/MobileNativeFoundation/index-import/releases/download/5.8.0.1/index-import.tar.gz"
-              ],
-              "sha256": "28c1ffa39d99e74ed70623899b207b41f79214c498c603915aef55972a851a15"
-            }
-          },
-          "build_bazel_rules_swift_local_config": {
-            "bzlFile": "@@rules_swift+//swift/internal:swift_autoconfiguration.bzl",
-            "ruleClassName": "swift_autoconfiguration",
-            "attributes": {}
-          }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_swift+",
-            "bazel_tools",
-            "bazel_tools"
-          ],
-          [
-            "rules_swift+",
-            "build_bazel_rules_swift",
-            "rules_swift+"
           ]
         ]
       }
