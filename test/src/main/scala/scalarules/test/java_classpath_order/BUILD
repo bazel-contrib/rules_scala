@@ -22,7 +22,6 @@ scala_library(
 scala_test(
     name = "verify_override_test",
     srcs = ["VerifyOverride.scala"],
-    tags = ["no-strict-deps"],
     unused_dependency_checker_mode = "off",
     deps = [":with_java_override"],
 )
