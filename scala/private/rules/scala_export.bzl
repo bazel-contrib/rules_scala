@@ -105,7 +105,6 @@ def scala_export(
             name = scaladocs_jar_name,
             inputs = [":" + scaladocs_name] + doc_resources,
             out = name + "-scaladocs.jar",
-            visibility = visibility,
         )
         classifier_artifacts["scaladoc"] = scaladocs_jar_name
 
