@@ -58,12 +58,10 @@ def scala_export(
         as a dependency of the artifact being generated.
 
     To skip generation of the javadoc jar, add the `no-javadocs` tag to the target.
-    To skip generation of the scaladoc jar, add the `no-scaladocs` tag to the target.
 
     Generated rules:
       * `name`: A `scala_library` that other rules can depend upon.
-      * `name-docs`: A javadoc jar file.
-      * `name-scaladocs`: A scaladoc jar file.
+      * `name-docs`: A scaladoc jar file (published as javadoc).
       * `name-pom`: The pom.xml file.
       * `name.publish`: To be executed by `bazel run` to publish to a maven repo.
 
@@ -92,7 +90,7 @@ def scala_export(
         **kwargs
     )
 
-    if "no-scaladocs" not in tags:
+    if "no-javadocs" not in tags:
         scaladocs_name = name + "-scaladocs-html"
         scala_doc(
             name = scaladocs_name,
@@ -100,13 +98,13 @@ def scala_export(
             visibility = visibility,
         )
 
-        scaladocs_jar_name = name + "-scaladocs"
+        javadoc_jar_name = name + "-javadoc"
         create_jar(
-            name = scaladocs_jar_name,
+            name = javadoc_jar_name,
             inputs = [":" + scaladocs_name] + doc_resources,
-            out = name + "-scaladocs.jar",
+            out = name + "-javadoc.jar",
         )
-        classifier_artifacts["scaladoc"] = scaladocs_jar_name
+        classifier_artifacts["javadoc"] = javadoc_jar_name
 
     maven_export(
         name = name,
@@ -118,9 +116,7 @@ def scala_export(
         exclusions = exclusions,
         pom_template = pom_template,
         visibility = visibility,
-        tags = tags,
+        tags = tags + ["no-javadocs"],
         testonly = testonly,
-        javadocopts = javadocopts,
-        doc_resources = doc_resources,
         publish_maven_metadata = publish_maven_metadata,
     )

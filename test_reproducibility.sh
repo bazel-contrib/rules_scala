@@ -21,9 +21,7 @@ md5_util() {
 }
 
 non_deploy_jar_md5_sum() {
-    # Exclude *-docs.jar (javadoc jars from maven_export in rules_jvm_external)
-    # because javadoc generates non-deterministic output.
-    find bazel-bin/test -name "*.jar" ! -name "*_deploy.jar" ! -name "*-docs.jar" ! -path 'bazel-bin/test/jmh/*' | xargs -n 1 -P 5 $(md5_util) | sort
+    find bazel-bin/test -name "*.jar" ! -name "*_deploy.jar" ! -path 'bazel-bin/test/jmh/*' | xargs -n 1 -P 5 $(md5_util) | sort
 }
 
 test_build_is_identical() {

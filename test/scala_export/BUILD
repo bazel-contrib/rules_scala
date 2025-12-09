@@ -66,7 +66,7 @@ diff_test(
 genrule(
     name = "list-scaladocs",
     srcs = [
-        ":test-scaladocs",
+        ":test-javadoc",
     ],
     outs = ["scaladocs.txt"],
     cmd = "for SRC in $(SRCS); do jar tf $$SRC >> $@; done",
