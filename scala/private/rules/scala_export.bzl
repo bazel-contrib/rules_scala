@@ -1,4 +1,3 @@
-load("@bazel_skylib//rules:run_binary.bzl", "run_binary")
 load("@rules_jvm_external//:defs.bzl", "create_jar", "maven_export")
 load("//scala/private:rules/scala_doc.bzl", "make_scala_doc_rule", "scaladoc_intransitive_aspect")
 load("//scala/private:rules/scala_library.bzl", "scala_library")
@@ -12,8 +11,6 @@ DEFAULT_EXCLUDED_WORKSPACES = [
 ]
 
 scala_doc = make_scala_doc_rule(aspect = scaladoc_intransitive_aspect)
-
-SCALA_LIBS = []
 
 def scala_export(
         name,
@@ -87,15 +84,11 @@ def scala_export(
     doc_resources = kwargs.pop("doc_resources", [])
     classifier_artifacts = kwargs.pop("classifier_artifacts", {})
 
-    updated_deploy_env = [] + deploy_env
-    for lib in SCALA_LIBS:
-        if lib not in deploy_env:
-            updated_deploy_env.append(lib)
-
     scala_library(
         name = lib_name,
         tags = tags + maven_coordinates_tags,
         testonly = testonly,
+        visibility = visibility,
         **kwargs
     )
 
@@ -104,6 +97,7 @@ def scala_export(
         scala_doc(
             name = scaladocs_name,
             deps = [":" + lib_name],
+            visibility = visibility,
         )
 
         scaladocs_jar_name = name + "-scaladocs"
@@ -111,6 +105,7 @@ def scala_export(
             name = scaladocs_jar_name,
             inputs = [":" + scaladocs_name] + doc_resources,
             out = name + "-scaladocs.jar",
+            visibility = visibility,
         )
         classifier_artifacts["scaladoc"] = scaladocs_jar_name
 
@@ -119,7 +114,7 @@ def scala_export(
         maven_coordinates = maven_coordinates,
         classifier_artifacts = classifier_artifacts,
         lib_name = lib_name,
-        deploy_env = updated_deploy_env,
+        deploy_env = deploy_env,
         excluded_workspaces = excluded_workspaces,
         exclusions = exclusions,
         pom_template = pom_template,

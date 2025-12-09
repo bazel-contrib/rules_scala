@@ -18,16 +18,6 @@ def rules_scala_dependencies():
 
     maybe(
         http_archive,
-        name = "aspect_bazel_lib",
-        sha256 = "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5",
-        urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
-            "https://github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
-        ],
-    )
-
-    maybe(
-        http_archive,
         name = "platforms",
         urls = [
             "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.9/platforms-0.0.9.tar.gz",
