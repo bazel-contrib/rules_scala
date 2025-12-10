@@ -57,6 +57,7 @@ def _store_config(repository_ctx):
 string_setting(
     name = "scala_version",
     build_setting_default = "{scala_version}",
+    scope = "universal",
     values = {scala_versions},
     visibility = ["//visibility:public"],
 )

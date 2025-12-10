@@ -369,7 +369,6 @@ specified in [Compatible Bazel versions](#compatible-bazel-versions).
 | `platforms` | 0.0.9 | Creates the `@host_platform` repo used to auto-detect the toolchain for the host platform. |
 | `rules_java` | 7.10.0 (with `--experimental_google_legacy_api`), 8.3.0 | `protobuf` v29 needs 7.8.0 with `--experimental_google_legacy_api` for `ProguardSpecProvider`. Then it needs 7.10.0 for `//java/private:proto_support.bzl` visibility.<br/>`protobuf` v29 needs `@rules_java//java/private:proto_support.bzl` from v8.2.0. See [bazelbuild/rules_java@94d5617](https://github.com/bazelbuild/rules_java/commit/94d5617cf3d97ddda10c81ba05a865e8e3a0408e).<br/>v8.3.0 fixes bazelbuild/rules_java#233. |
 | `rules_proto` | 7.0.0 | Required by `protobuf` v29 and later. |
-| `bazel_skylib` | 1.7.0 | Contains `paths.is_normalized`, required by `//bazel/private:bazel_proto_library_rule.bzl` in `protobuf` v29. See [bazelbuild/bazel-skylib@0e485c8](https://github.com/bazelbuild/bazel-skylib/commit/0e485c80b7992f5ebfab50637f86e966f544ad58). |
 
 #### Common setup
 
@@ -698,7 +697,6 @@ and 8.
 
 | Dependency | Bazel >= 7.1.0 | Bazel 8.x |
 | :--------: | :------------: | :-------: |
-| `bazel_skylib` | 1.6.0 | 1.7.0 |
 | `protobuf` | v28.2 | v29.0 |
 | `rules_java` | 7.6.0, 8.4.0 | 8.5.0 |
 | `rules_proto` | 6.0.0 | 7.0.0 |

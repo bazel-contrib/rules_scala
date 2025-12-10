@@ -27,7 +27,7 @@ SCALA_3_VERSIONS = [
 
 SCALA_VERSIONS = SCALA_2_VERSIONS + SCALA_3_VERSIONS
 
-bazel_dep(name = "bazel_skylib", version = "1.6.0")
+bazel_dep(name = "bazel_skylib", version = "1.8.0")
 single_version_override(
     module_name = "bazel_skylib",
     version = "1.8.2",
