@@ -27,7 +27,7 @@ SCALA_3_VERSIONS = [
 
 SCALA_VERSIONS = SCALA_2_VERSIONS + SCALA_3_VERSIONS
 
-bazel_dep(name = "bazel_skylib", version = "1.6.0")
+bazel_dep(name = "bazel_skylib", version = "1.8.0")
 single_version_override(
     module_name = "bazel_skylib",
     version = "1.8.2",
@@ -42,7 +42,7 @@ single_version_override(
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
-    version = "9.0.3",
+    version = "9.3.0",
 )
 
 bazel_dep(name = "rules_jvm_external", version = "6.9")
@@ -63,13 +63,13 @@ bazel_dep(
     repo_name = "com_google_protobuf",
 )
 
-# Temporarily required for `protoc` toolchainization until resolution of
-# protocolbuffers/protobuf#19679.
+# Temporarily required for `protoc` toolchainization until
+# protocolbuffers/protobuf#19679 appears in a published release.
 single_version_override(
     module_name = "protobuf",
     patch_strip = 1,
     patches = ["//protoc:0001-protobuf-19679-rm-protoc-dep.patch"],
-    version = "33.0",
+    version = "33.1",
 )
 
 # See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto.
@@ -263,18 +263,18 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_go",
-    version = "0.58.3",
+    version = "0.59.0",
     dev_dependency = True,
     repo_name = "io_bazel_rules_go",  # for com_github_bazelbuild_buildtools
 )
-bazel_dep(name = "gazelle", version = "0.46.0", dev_dependency = True)
+bazel_dep(name = "gazelle", version = "0.47.0", dev_dependency = True)
 
 go_sdk = use_extension(
     "@io_bazel_rules_go//go:extensions.bzl",
     "go_sdk",
     dev_dependency = True,
 )
-go_sdk.download(version = "1.25.3")
+go_sdk.download(version = "1.25.5")
 
 go_deps = use_extension(
     "@gazelle//:extensions.bzl",
@@ -296,8 +296,8 @@ go_deps = use_extension(
 #   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.38.0
 go_deps.module(
     path = "golang.org/x/tools",
-    sum = "h1:Hx2Xv8hISq8Lm16jvBZ2VQf+RLmbd7wVUsALibYI/IQ=",
-    version = "v0.38.0",
+    sum = "h1:yLkxfA+Qnul4cs9QA3KnlFu0lVmd8JJfoq+E41uSutA=",
+    version = "v0.40.0",
 )
 go_deps.module(
     path = "github.com/golang/protobuf",
@@ -310,6 +310,6 @@ use_repo(
     "org_golang_x_tools",
 )
 
-bazel_dep(name = "rules_python", version = "1.6.3", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.7.0", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
 bazel_dep(name = "aspect_bazel_lib", version = "2.22.0", dev_dependency = True)

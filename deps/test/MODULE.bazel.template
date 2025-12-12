@@ -38,8 +38,8 @@ single_version_override(
     version = "${rules_proto_version}",
 )
 
-# Requires the patch for `protoc` toolchainization until resolution of
-# protocolbuffers/protobuf#19679.
+# Versions without protocolbuffers/protobuf#19679 require the patch for `protoc`
+# toolchainization.
 bazel_dep(name = "protobuf")
 single_version_override(
     module_name = "protobuf",

@@ -30,9 +30,9 @@ def rules_scala_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/9.0.3/rules_java-9.0.3.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/9.3.0/rules_java-9.3.0.tar.gz",
         ],
-        sha256 = "865b3d334bd0f769587737447410d8042d6a95134cc45be5380805fdbacd7152",
+        sha256 = "6ef26d4f978e8b4cf5ce1d47532d70cb62cd18431227a1c8007c8f7843243c06",
     )
 
     # Required before `rules_java_dependencies` since `rules_java` 8.16.0.
@@ -56,9 +56,9 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        sha256 = "b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd",
-        strip_prefix = "protobuf-33.0",
-        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v33.0.tar.gz",
+        sha256 = "0c98bb704ceb4e68c92f93907951ca3c36130bc73f87264e8c0771a80362ac97",
+        strip_prefix = "protobuf-33.1",
+        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v33.1.tar.gz",
         patches = [Label("//protoc:0001-protobuf-19679-rm-protoc-dep.patch")],
         patch_args = ["-p1"],
     )
@@ -74,9 +74,9 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "2f5c284fbb4e86045c2632d3573fc006facbca5d1fa02976e89dc0cd5488b590",
-        strip_prefix = "rules_python-1.6.3",
-        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.6.3/rules_python-1.6.3.tar.gz",
+        sha256 = "f609f341d6e9090b981b3f45324d05a819fd7a5a56434f849c761971ce2c47da",
+        strip_prefix = "rules_python-1.7.0",
+        url = "https://github.com/bazel-contrib/rules_python/releases/download/1.7.0/rules_python-1.7.0.tar.gz",
     )
 
     maybe(

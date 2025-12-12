@@ -251,10 +251,10 @@ def _compile_or_empty(
 
         full_jars = [ctx.outputs.jar]
         if java_jar:
-            full_jars.append(java_jar.jar)
+            full_jars.insert(0, java_jar.jar)
 
         if java_jar:
-            merged_provider = java_common.merge([scala_compilation_provider, java_jar.java_compilation_provider])
+            merged_provider = java_common.merge([java_jar.java_compilation_provider, scala_compilation_provider])
         else:
             merged_provider = scala_compilation_provider
 

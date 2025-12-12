@@ -341,7 +341,7 @@
     },
     "@@rules_python~//python/extensions:pip.bzl%pip": {
       "os:osx,arch:aarch64": {
-        "bzlTransitiveDigest": "S1/Ur7oKZWz0DvDPgUcHG8CP0FdKjvp/LkTit7AsGHs=",
+        "bzlTransitiveDigest": "G45Mj8bt254WDVcSMF+zgYdWq5dlp3Ks7hQW9djdE3c=",
         "usagesDigest": "VV/m9hcGpYNYqWuAClm1Zln5+P89fWXgpmx0PpSPWDY=",
         "recordedFileInputs": {
           "@@rules_fuzzing~//fuzzing/requirements.txt": "ab04664be026b632a0d2a2446c4f65982b7654f5b6851d2f9d399a19b7242a5b",

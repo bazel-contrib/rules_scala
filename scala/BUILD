@@ -27,6 +27,11 @@ scala_toolchain(
     name = "minimal_direct_source_deps_impl",
     dependency_mode = "plus-one",
     dependency_tracking_method = "ast",
+    # Exclude the shadowing test package from strict-deps to allow classpath-order coverage without disabling strict-deps globally in CI runs.
+    dependency_tracking_strict_deps_patterns = [
+        "",  # keep default include
+        "-//test/src/main/scala/scalarules/test/java_classpath_order",
+    ],
     strict_deps_mode = "error",
     unused_dependency_checker_mode = "error",
 )

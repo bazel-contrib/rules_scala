@@ -67,7 +67,7 @@ do_build_and_test() {
   # if/when a test fails and the appropriate solution is to increase any of
   # these minimum suported versions.
   local bazelversion="7.1.0"
-  local skylib_version="1.6.0"
+  local skylib_version="1.8.0"
   local platforms_version="0.0.9"
   local protobuf_version="28.2"
   local rules_java_version="7.6.0"
@@ -185,7 +185,6 @@ test_bazel_7_with_rules_java_8() {
 test_bazel_8() {
   do_build_and_test \
     --bazelversion=8.0.0 \
-    --skylib=1.7.0 \
     --protobuf=29.0 \
     --rules_java=8.5.0 \
     --rules_proto=7.0.0
@@ -194,7 +193,6 @@ test_bazel_8() {
 test_precompiled_protoc_rules_java_7() {
   do_build_and_test \
     --protoc_toolchain \
-    --skylib=1.7.0 \
     --protobuf=29.0 \
     --rules_java=7.10.0 \
     --rules_proto=7.0.0 \
@@ -205,7 +203,6 @@ test_precompiled_protoc_rules_java_8_3_0() {
   do_build_and_test \
     --protoc_toolchain \
     --bazelversion=7.3.2 \
-    --skylib=1.7.0 \
     --protobuf=29.0 \
     --rules_java=8.3.0 \
     --rules_proto=7.0.0
@@ -214,7 +211,6 @@ test_precompiled_protoc_rules_java_8_3_0() {
 test_precompiled_protoc_rules_java_8_3_2() {
   do_build_and_test \
     --protoc_toolchain \
-    --skylib=1.7.0 \
     --protobuf=29.0 \
     --rules_java=8.3.2 \
     --rules_proto=7.0.0
