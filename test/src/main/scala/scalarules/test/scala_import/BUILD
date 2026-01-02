@@ -7,8 +7,8 @@ load(":scala_import_stamp_test.bzl", "scala_import_stamping_test_suite")
 scala_import(
     name = "guava_and_commons_lang",
     jars = [
-        "@com_google_guava_guava_21_0_with_file//:guava-21.0.jar",
-        "@org_apache_commons_commons_lang_3_5//:commons-lang3-3.5.jar",
+        "@rules_scala_test_maven//:com_google_guava_guava",
+        "@rules_scala_test_maven//:org_apache_commons_commons_lang3",
     ],
 )
 
@@ -16,7 +16,7 @@ scala_import(
     name = "jffi_native_external",
     testonly = True,
     jars = [
-        "@com_github_jnr_jffi_native//jar",
+        "@rules_scala_test_maven//:com_github_jnr_jffi",
     ],
 )
 
@@ -50,21 +50,12 @@ scala_specs2_junit_test(
     deps = [":imported_genericlib_jar"],
 )
 
-scala_library(
-    name = "source_jar_not_oncp",
-    testonly = True,
-    srcs = ["ReferCatsImplicits.scala"],
-    # jvm_maven_import_external doesn't fetch source jars automatically
-    deps = ["@org_typelevel__cats_core//jar"],
-)
-
 ##Runtime deps
 scala_import(
     name = "indirection_for_transitive_runtime_deps",
     testonly = True,
     jars = [],
-    # jvm_maven_import_external doesn't fetch source jars automatically
-    deps = ["@org_typelevel__cats_core//jar"],
+    deps = ["@rules_scala_test_maven//:org_typelevel_cats_core_2_12"],
 )
 
 scala_import(
@@ -88,8 +79,8 @@ scala_specs2_junit_test(
 java_import(
     name = "guava_and_commons_lang_java_import",
     jars = [
-        "@com_google_guava_guava_21_0_with_file//:guava-21.0.jar",
-        "@org_apache_commons_commons_lang_3_5//:commons-lang3-3.5.jar",
+        "@rules_scala_test_maven//:com/google/guava/guava/21.0/guava-21.0.jar",
+        "@rules_scala_test_maven//:org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar",
     ],
 )
 

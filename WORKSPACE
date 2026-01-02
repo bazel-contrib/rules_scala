@@ -105,25 +105,6 @@ local_repository(
 )
 
 http_archive(
-    name = "io_bazel_rules_go",
-    sha256 = "68af54cb97fbdee5e5e8fe8d210d15a518f9d62abfd71620c3eaff3b26a5ff86",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.59.0/rules_go-v0.59.0.zip",
-        "https://github.com/bazel-contrib/rules_go/releases/download/v0.59.0/rules_go-v0.59.0.zip",
-    ],
-)
-
-load(
-    "@io_bazel_rules_go//go:deps.bzl",
-    "go_register_toolchains",
-    "go_rules_dependencies",
-)
-
-go_rules_dependencies()
-
-go_register_toolchains(version = "1.25.5")
-
-http_archive(
     name = "bazelci_rules",
     sha256 = "eca21884e6f66a88c358e580fd67a6b148d30ab57b1680f62a96c00f9bc6a07e",
     strip_prefix = "bazelci_rules-1.0.0",
@@ -132,14 +113,27 @@ http_archive(
 
 load("@bazelci_rules//:rbe_repo.bzl", "rbe_preconfig")
 
+buildifier_prebuilt_version = "8.2.0.2"
+
+http_archive(
+    name = "buildifier_prebuilt",
+    sha256 = "f98dd3d8f32661629b8cab11f02d7730bb8e03bd8af09dbbb268047889c8ff10",
+    strip_prefix = "buildifier-prebuilt-{}".format(buildifier_prebuilt_version),
+    urls = ["http://github.com/keith/buildifier-prebuilt/archive/{}.tar.gz".format(buildifier_prebuilt_version)],
+)
+
+load("@buildifier_prebuilt//:deps.bzl", "buildifier_prebuilt_deps")
+
+buildifier_prebuilt_deps()
+
+load("@buildifier_prebuilt//:defs.bzl", "buildifier_prebuilt_register_toolchains")
+
+buildifier_prebuilt_register_toolchains()
+
 rbe_preconfig(
     name = "rbe_default",
     toolchain = "ubuntu2004-bazel-java11",
 )
-
-load("//scala/private/extensions:dev_deps.bzl", "dev_deps_repositories")
-
-dev_deps_repositories()
 
 register_toolchains("//test/toolchains:java21_toolchain_definition")
 
@@ -152,3 +146,47 @@ load(
 rules_shell_dependencies()
 
 rules_shell_toolchains()
+
+rules_jvm_external_version = "6.8"
+
+http_archive(
+    name = "rules_jvm_external",
+    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
+    sha256 = "704a0197e4e966f96993260418f2542568198490456c21814f647ae7091f56f2",
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+
+rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+maven_install(
+    name = "rules_scala_test_maven",
+    artifacts = [
+        "com.github.jnr:jffi:1.3.13",
+        "com.google.guava:guava:21.0",
+        "org.apache.commons:commons-lang3:3.18.0",
+        "org.springframework:spring-core:6.2.11",
+        "org.springframework:spring-tx:6.2.11",
+        "org.typelevel:cats-core_2.12:2.13.0",
+        "org.typelevel:kind-projector_2.12.20:0.13.4",
+    ],
+    fetch_sources = True,
+    maven_install_json = "//:rules_scala_test_maven.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
+)
+
+load("@rules_scala_test_maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()
