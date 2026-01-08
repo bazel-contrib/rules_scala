@@ -45,6 +45,12 @@ single_version_override(
     version = "9.3.0",
 )
 
+bazel_dep(name = "rules_jvm_external", version = "6.9")
+single_version_override(
+    module_name = "rules_jvm_external",
+    version = "6.9",
+)
+
 bazel_dep(name = "rules_proto", version = "6.0.0")
 single_version_override(
     module_name = "rules_proto",
@@ -306,3 +312,4 @@ use_repo(
 
 bazel_dep(name = "rules_python", version = "1.7.0", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.0", dev_dependency = True)

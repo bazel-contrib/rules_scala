@@ -152,3 +152,25 @@ load(
 rules_shell_dependencies()
 
 rules_shell_toolchains()
+
+http_archive(
+    name = "aspect_bazel_lib",
+    sha256 = "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
+        "https://github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
+    ],
+)
+
+load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies", "aspect_bazel_lib_register_toolchains")
+
+aspect_bazel_lib_dependencies()
+
+aspect_bazel_lib_register_toolchains()
+
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+
+maybe(
+    host_platform_repo,
+    name = "host_platform",
+)
