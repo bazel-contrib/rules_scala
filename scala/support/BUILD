@@ -26,7 +26,6 @@ scala_library(
         ],
         any_3 = [
             "-Werror",
-            "-Wvalue-discard",
         ],
         before_2_13 = [
             "-Yno-adapted-args",
