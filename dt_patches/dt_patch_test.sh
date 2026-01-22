@@ -118,7 +118,7 @@ $runner test_compiler_patch 3.4.3
 $runner test_compiler_patch 3.5.2
 $runner test_compiler_patch 3.6.4
 $runner test_compiler_patch 3.7.4
-$runner test_compiler_patch 3.8.0
+$runner test_compiler_patch 3.8.1
 
 run_in_test_repo 'test_dt_patches' bazel shutdown
 
@@ -154,6 +154,6 @@ $runner test_compiler_srcjar 3.4.3
 $runner test_compiler_srcjar_nonhermetic 3.5.2
 $runner test_compiler_srcjar_nonhermetic 3.6.4
 $runner test_compiler_srcjar_nonhermetic 3.7.4
-$runner test_compiler_srcjar_nonhermetic 3.8.0
+$runner test_compiler_srcjar_nonhermetic 3.8.1
 
 run_in_test_repo 'test_dt_patches_user_srcjar' bazel shutdown
