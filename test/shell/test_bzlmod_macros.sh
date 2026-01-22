@@ -25,7 +25,13 @@ setup_suite() {
   setup_test_tmpdir_for_file "$original_dir" "$test_source"
   test_tmpdir="$PWD"
 
-  rules_scala_dir="$(relative_path_to_parent "$original_dir" "$test_tmpdir")"
+  if is_windows; then
+    # On Windows, use absolute Windows path for local_path_override because
+    # Bazel cannot create junctions with Unix-style paths from MSYS2.
+    rules_scala_dir="$(cygpath -w "$original_dir")"
+  else
+    rules_scala_dir="$(relative_path_to_parent "$original_dir" "$test_tmpdir")"
+  fi
   test_srcs_dir="${dir}/scala/private/macros/test"
   test_tmpdir_base="${test_tmpdir##*/}"
   test_module_bazel_regex="[^ ]+${test_tmpdir_base}/MODULE.bazel"
@@ -100,8 +106,15 @@ test_bzlmod_creates_fake_root_module_tags_when_unused_by_root_module() {
   setup_test_module
   cd "$test_tmpdir"
 
+  local test_module_dir_for_bazel="$test_module_dir"
+  if is_windows; then
+    # On Windows, use absolute Windows path for local_path_override because
+    # Bazel cannot create junctions with Unix-style paths from MSYS2.
+    test_module_dir_for_bazel="$(cygpath -w "$(cd "$test_module_dir" && pwd)")"
+  fi
+
   sed -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \
-    -e "s%\${test_module_dir}%${test_module_dir}%" \
+    -e "s%\${test_module_dir}%${test_module_dir_for_bazel}%" \
     "${test_srcs_dir}/MODULE.bzlmod_test_root_module" > 'MODULE.bazel'
 
   local target='@test_module//:print-single-test-tag-values'
