@@ -28,7 +28,8 @@ setup_suite() {
   if is_windows; then
     # On Windows, use absolute Windows path for local_path_override because
     # Bazel cannot create junctions with Unix-style paths from MSYS2.
-    rules_scala_dir="$(cygpath -w "$original_dir")"
+    # Use -m (mixed format with forward slashes) to avoid sed escaping issues.
+    rules_scala_dir="$(cygpath -m "$original_dir")"
   else
     rules_scala_dir="$(relative_path_to_parent "$original_dir" "$test_tmpdir")"
   fi
@@ -110,7 +111,8 @@ test_bzlmod_creates_fake_root_module_tags_when_unused_by_root_module() {
   if is_windows; then
     # On Windows, use absolute Windows path for local_path_override because
     # Bazel cannot create junctions with Unix-style paths from MSYS2.
-    test_module_dir_for_bazel="$(cygpath -w "$(cd "$test_module_dir" && pwd)")"
+    # Use -m (mixed format with forward slashes) to avoid sed escaping issues.
+    test_module_dir_for_bazel="$(cygpath -m "$(cd "$test_module_dir" && pwd)")"
   fi
 
   sed -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \
