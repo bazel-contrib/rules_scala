@@ -45,12 +45,9 @@ single_version_override(
     version = "9.3.0",
 )
 
-bazel_dep(name = "rules_proto", version = "6.0.0")
-single_version_override(
-    module_name = "rules_proto",
-    version = "7.1.0",
-)
-
+# TODO: remove this dep, the repo is deprecated and archived.
+# All public API symbols are aliased to @protobuf
+bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(
     name = "protobuf",
     version = "28.2",
