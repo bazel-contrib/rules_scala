@@ -15,10 +15,15 @@ common --lockfile_mode=error
 # https://github.com/bazelbuild/rules_java/releases/tag/8.12.0
 #common --repositories_without_autoloads=bazel_features_version,bazel_features_globals
 
-# Remove if protocol compiler toolchainization ever becomes the default.
+# Remove once Bazel 9 becomes the default.
 # - https://bazel.build/reference/command-line-reference#flag--incompatible_enable_proto_toolchain_resolution
-# - https://docs.google.com/document/d/1CE6wJHNfKbUPBr7-mmk_0Yo3a4TaqcTPE0OWNuQkhPs/edit
+# - https://github.com/bazelbuild/bazel/releases/tag/9.0.0
+# - https://blog.bazel.build/2026/01/20/bazel-9.html#prebuilt-protobuf-compiler
 common --incompatible_enable_proto_toolchain_resolution
+
+# Remove once protobuf 34 becomes the default.
+# - https://protobuf.dev/news/2026-01-16/
+common --@rules_scala//protoc:prefer_prebuilt_protoc
 
 build --enable_platform_specific_config
 

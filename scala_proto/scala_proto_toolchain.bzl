@@ -2,6 +2,7 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//protoc:private/toolchain_impl.bzl",
     "PROTOC_ATTR",
+    "PROTOC_FRAGMENTS",
     "PROTOC_TOOLCHAINS",
     "protoc_executable",
 )
@@ -101,6 +102,7 @@ scala_proto_toolchain = rule(
             cfg = "exec",
         ),
     } | PROTOC_ATTR,
+    fragments = PROTOC_FRAGMENTS,
     toolchains = PROTOC_TOOLCHAINS,
 )
 

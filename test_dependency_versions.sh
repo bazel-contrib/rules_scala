@@ -7,7 +7,7 @@
 # `README.md` sections:
 #
 # - Compatible Bazel versions
-# - Using a precompiled protocol compiler > Minimum dependency versions
+# - Using a prebuilt protocol compiler > Minimum dependency versions
 #
 # Does not test the latest dependency versions, as all other tests in the suite
 # already do this. Only builds with Bzlmod, as `WORKSPACE` builds are now
@@ -21,16 +21,18 @@ test_source="${dir}/${BASH_SOURCE[0]##*/}"
 . "${dir}"/test/shell/test_runner.sh
 . "${dir}"/test/shell/test_helper.sh
 
-windows_regex=''
+prebuilt_protoc_regex=''
 
 setup_suite() {
   original_dir="$PWD"
   setup_test_tmpdir_for_file "$dir" "$test_source"
   test_tmpdir="$PWD"
 
-  if is_windows && [[ -z "$RULES_SCALA_TEST_REGEX" ]]; then
-    # Windows now requires a precompiled protoc.
-    windows_regex="test_precompiled_protoc"
+  # Windows now requires a prebuilt protoc. The non-prebuilt tests on macOS run
+  # so slowly in continuous integration that we skip them in that environment.
+  if ( is_windows || ( is_macos && [[ -n "${CI:-}" ]] )) &&
+     [[ -z "$RULES_SCALA_TEST_REGEX" ]]; then
+    prebuilt_protoc_regex="test_prebuilt_protoc"
   fi
 }
 
@@ -61,6 +63,21 @@ ALL_TARGETS=(
   "${MULTI_FRAMEWORKS_TOOLCHAIN_TARGETS[@]/#/@multi_frameworks_toolchain}"
 )
 
+parse_major_and_minor_versions() {
+  local flag_name="$1"
+  local full_version="$2"
+  local major_varname="$3"
+  local minor_varname="$4"
+
+  if [[ "$full_version" =~ ^([0-9]+)\.([0-9]+)(\.[0-9]+.*)? ]]; then
+    printf -v "$major_varname" "${BASH_REMATCH[1]}"
+    printf -v "$minor_varname" "${BASH_REMATCH[2]}"
+  else
+    echo "can't parse --$flag_name: $full_version" >&2
+    exit 1
+  fi
+}
+
 do_build_and_test() {
   # These are the minimum supported dependency versions as described in
   # `README.md` and as set in the top level `MODULE.bazel` file. Update both
@@ -76,6 +93,8 @@ do_build_and_test() {
   local legacy_api=""
   local bazel_major=""
   local bazel_minor=""
+  local protobuf_major=""
+  local protobuf_minor=""
   local current
   local arg
 
@@ -103,22 +122,31 @@ do_build_and_test() {
     --rules_proto=*)
       rules_proto_version="$arg"
       ;;
-    --protoc_toolchain)
-      protoc_toolchain="true"
+    --protoc_toolchain=*)
+      protoc_toolchain="$arg"
+      case "$protoc_toolchain" in
+      rules_scala|protobuf)
+        ;;
+      *)
+        echo "unknown --protoc_toolchain value: ${arg}" >&2
+        exit 1
+        ;;
+      esac
       ;;
     --legacy_api)
       legacy_api="true"
       ;;
+    *)
+      echo "unknown flag: ${current}" >&2
+      exit 1
+      ;;
     esac
   done
 
-  if [[ "$bazelversion" =~ ^([0-9]+)\.([0-9]+)\.[0-9]+.* ]]; then
-    bazel_major="${BASH_REMATCH[1]}"
-    bazel_minor="${BASH_REMATCH[2]}"
-  else
-    echo "can't parse --bazelversion: $bazelversion" >&2
-    exit 1
-  fi
+  parse_major_and_minor_versions \
+    'bazelversion' "$bazelversion" 'bazel_major' 'bazel_minor'
+  parse_major_and_minor_versions \
+    'protobuf' "$protobuf_version" 'protobuf_major' 'protobuf_minor'
 
   set -e
   echo "$bazelversion" >.bazelversion
@@ -129,8 +157,17 @@ do_build_and_test() {
     'common --enable_platform_specific_config' \
     'common:windows --worker_quit_after_build --enable_runfiles' >.bazelrc
 
-  if [[ "$protoc_toolchain" == "true" ]]; then
+  if [[ -n "$protoc_toolchain" ]]; then
     echo 'common --incompatible_enable_proto_toolchain_resolution' >>.bazelrc
+
+    if [[ "$protoc_toolchain" == "protobuf" ]]; then
+      echo 'common --@protobuf//bazel/toolchains:prefer_prebuilt_protoc' \
+        >>.bazelrc
+    fi
+
+  elif [[ "$bazel_major" == "9" ]]; then
+    echo 'common --noincompatible_enable_proto_toolchain_resolution' >>.bazelrc
+
   elif [[ "$bazel_major" == "7" ]]; then
     printf '%s\n' \
       'common:linux --cxxopt=-std=c++17' \
@@ -149,11 +186,12 @@ do_build_and_test() {
     echo 'common --incompatible_use_plus_in_repo_names' >>.bazelrc
   fi
 
-  # Set up the `protobuf` precompiled protocol compiler toolchain patch.
-  if [[ "${protobuf_version:0:3}" =~ ^(29|[3-9][0-9]+)\. ]]; then
+  # Set up the `protobuf` prebuilt protocol compiler toolchain patch.
+  if [[ ( "$protobuf_major" -ge 29 && "$protobuf_major" -lt 33 ) ||
+        ( "$protobuf_major" -eq 33 && "$protobuf_minor" -lt 4  ) ]]; then
     cp "${dir}/protoc/0001-protobuf-19679-rm-protoc-dep.patch" ./protobuf.patch
   else
-    touch ./protobuf.patch
+    echo '' >./protobuf.patch
   fi
 
   # Render the MODULE.bazel file and create an empty top level package.
@@ -163,6 +201,10 @@ do_build_and_test() {
     -e "s%\${rules_java_version}%${rules_java_version}%" \
     -e "s%\${rules_proto_version}%${rules_proto_version}%" \
     "${dir}/deps/test/MODULE.bazel.template" >MODULE.bazel
+
+  if [[ "$protoc_toolchain" == "rules_scala" ]]; then
+    cat "${dir}/deps/test/protoc_toolchains.template" >>MODULE.bazel
+  fi
 
   # Copy files needed by the test targets
   cp "${dir}/deps/test/BUILD.bazel.test" BUILD
@@ -182,6 +224,41 @@ test_bazel_7_with_rules_java_8() {
   do_build_and_test --rules_java=8.4.0
 }
 
+test_prebuilt_protoc_rules_java_7() {
+  do_build_and_test \
+    --protoc_toolchain=rules_scala \
+    --protobuf=29.0 \
+    --rules_java=7.10.0 \
+    --rules_proto=7.0.0 \
+    --legacy_api
+}
+
+test_prebuilt_protoc_rules_java_8_3_2() {
+  do_build_and_test \
+    --protoc_toolchain=rules_scala \
+    --protobuf=29.0 \
+    --rules_java=8.3.2 \
+    --rules_proto=7.0.0
+}
+
+test_prebuilt_protoc_from_protobuf_bazel_7() {
+  do_build_and_test \
+    --protoc_toolchain=protobuf \
+    --protobuf=33.4 \
+    --rules_java=7.10.0 \
+    --rules_proto=7.1.0 \
+    --legacy_api
+}
+
+test_prebuilt_protoc_rules_java_8_3_0() {
+  do_build_and_test \
+    --protoc_toolchain=rules_scala \
+    --bazelversion=7.3.2 \
+    --protobuf=29.0 \
+    --rules_java=8.3.0 \
+    --rules_proto=7.0.0
+}
+
 test_bazel_8() {
   do_build_and_test \
     --bazelversion=8.0.0 \
@@ -190,33 +267,33 @@ test_bazel_8() {
     --rules_proto=7.0.0
 }
 
-test_precompiled_protoc_rules_java_7() {
+test_prebuilt_protoc_from_protobuf_bazel_8() {
   do_build_and_test \
-    --protoc_toolchain \
-    --protobuf=29.0 \
-    --rules_java=7.10.0 \
-    --rules_proto=7.0.0 \
-    --legacy_api
-}
-
-test_precompiled_protoc_rules_java_8_3_0() {
-  do_build_and_test \
-    --protoc_toolchain \
-    --bazelversion=7.3.2 \
-    --protobuf=29.0 \
-    --rules_java=8.3.0 \
+    --protoc_toolchain=protobuf \
+    --bazelversion=8.0.0 \
+    --protobuf=33.4 \
+    --rules_java=8.5.0 \
     --rules_proto=7.0.0
 }
 
-test_precompiled_protoc_rules_java_8_3_2() {
+test_bazel_9() {
   do_build_and_test \
-    --protoc_toolchain \
-    --protobuf=29.0 \
-    --rules_java=8.3.2 \
+    --bazelversion=9.0.0 \
+    --protobuf=33.0 \
+    --rules_java=8.14.0 \
+    --rules_proto=7.0.0
+}
+
+test_prebuilt_protoc_from_protobuf_bazel_9() {
+  do_build_and_test \
+    --protoc_toolchain=protobuf \
+    --bazelversion=9.0.0 \
+    --protobuf=33.4 \
+    --rules_java=8.14.0 \
     --rules_proto=7.0.0
 }
 
 setup_suite
-RULES_SCALA_TEST_REGEX="${RULES_SCALA_TEST_REGEX:-$windows_regex}" \
+RULES_SCALA_TEST_REGEX="${RULES_SCALA_TEST_REGEX:-$prebuilt_protoc_regex}" \
   run_tests "$test_source" "$(get_test_runner "${1:-local}")"
 teardown_suite

@@ -1,4 +1,4 @@
-"""Bazel module template for test/shell/test_deps_versions.sh tests."""
+"""Bazel module template for test_dependency_versions.sh tests."""
 
 module(name = "rules_scala_deps_versions_test")
 
@@ -46,18 +46,6 @@ single_version_override(
     patch_strip = 1,
     patches = ["//:protobuf.patch"],
     version = "${protobuf_version}",
-)
-
-scala_protoc = use_extension(
-    "@rules_scala//scala/extensions:protoc.bzl",
-    "scala_protoc",
-    dev_dependency = True,
-)
-use_repo(scala_protoc, "rules_scala_protoc_toolchains")
-
-register_toolchains(
-    "@rules_scala_protoc_toolchains//...:all",
-    dev_dependency = True,
 )
 
 scala_deps = use_extension(

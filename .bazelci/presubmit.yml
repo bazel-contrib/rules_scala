@@ -3,62 +3,62 @@ validate_config: 1
 
 matrix:
   bcr_platform: ["debian10", "macos", "ubuntu2004", "windows"]
-  bcr_bazel: [7.x, 8.x, rolling, last_green]
+  bcr_bazel: [7.x, 8.x, 9.x, rolling, last_green]
 
 tasks:
   ubuntu2004:
     name: "bazel test //test/..."
     platform: ubuntu2004
     shell_commands:
-    - mv tools/bazel.rc.buildkite tools/bazel.rc
-    - echo "import %workspace%/tools/bazel.rc" > .bazelrc
+      - mv tools/bazel.rc.buildkite tools/bazel.rc
+      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_targets:
-    - "//test/..."
+      - "//test/..."
     test_targets:
-    - "//test/..."
+      - "//test/..."
   macos:
     name: "bazel test //test/..."
     platform: macos
     shell_commands:
-    # Disable local disk caching on CI.
-    - mv tools/bazel.rc.buildkite tools/bazel.rc
-    - echo "import %workspace%/tools/bazel.rc" > .bazelrc
+      # Disable local disk caching on CI.
+      - mv tools/bazel.rc.buildkite tools/bazel.rc
+      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_targets:
-    - "//test/..."
+      - "//test/..."
     test_targets:
-    - "//test/..."
+      - "//test/..."
   test_rules_scala_linux:
     name: "./test_rules_scala"
     platform: ubuntu2004
     shell_commands:
-    # Install xmllint
-    - sudo apt update && sudo apt install --reinstall libxml2-utils -y
-    - "./test_rules_scala.sh"
+      # Install xmllint
+      - sudo apt update && sudo apt install --reinstall libxml2-utils -y
+      - "./test_rules_scala.sh"
   test_rules_scala_linux_last_green:
     name: "./test_rules_scala (last_green Bazel)"
     platform: ubuntu2004
     bazel: last_green
     shell_commands:
-    # Install xmllint
-    - sudo apt update && sudo apt install --reinstall libxml2-utils -y
-    - echo "common --lockfile_mode=update" >>.bazelrc
-    - "./test_rules_scala.sh"
+      # Install xmllint
+      - sudo apt update && sudo apt install --reinstall libxml2-utils -y
+      - echo "common --lockfile_mode=update" >>.bazelrc
+      - "./test_rules_scala.sh"
     soft_fail:
       - exit_status: "*"
   test_rules_scala_macos:
     name: "./test_rules_scala"
     platform: macos
     shell_commands:
-    - "./test_rules_scala.sh"
+      - "./test_rules_scala.sh"
   test_rules_scala_win:
     name: "./test_rules_scala"
     platform: windows
     environment:
       MSYS2_ARG_CONV_EXCL: "*"
     batch_commands:
-    - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
-    - "bash -lc \"pacman --noconfirm --needed -S libxml2\"" #tests require xmllint
-    - "bash test_rules_scala.sh"
+      - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
+      - 'bash -lc "pacman --noconfirm --needed -S libxml2"' #tests require xmllint
+      - "bash test_rules_scala.sh"
   test_coverage_linux:
     name: "./test_coverage"
     platform: ubuntu2004
@@ -73,27 +73,27 @@ tasks:
     name: "./test_reproducibility.sh"
     platform: ubuntu1804
     shell_commands:
-    - "./test_reproducibility.sh"
+      - "./test_reproducibility.sh"
   test_reproducibility_macos:
     name: "./test_reproducibility.sh"
     platform: macos
     shell_commands:
-    - "./test_reproducibility.sh"
+      - "./test_reproducibility.sh"
   versions_linux:
     name: "./test_version.sh"
     platform: ubuntu2004
     shell_commands:
-    - "./test_version.sh"
+      - "./test_version.sh"
   versions_macos:
     name: "./test_version.sh"
     platform: macos
     shell_commands:
-    - "./test_version.sh"
+      - "./test_version.sh"
   thirdparty_version_linux:
     name: "./test_thirdparty_version.sh"
     platform: ubuntu2204_java17
     shell_commands:
-    - "./test_thirdparty_version.sh"
+      - "./test_thirdparty_version.sh"
   examples_linux:
     name: "./test_examples"
     platform: ubuntu2004
@@ -108,7 +108,7 @@ tasks:
     name: "./test_lint.sh"
     platform: ubuntu2004
     shell_commands:
-    -  "./test_lint.sh"
+      - "./test_lint.sh"
   test_rules_scala_jdk21:
     name: "./test_rules_scala with jdk21"
     platform: ubuntu2004
@@ -125,26 +125,26 @@ tasks:
     name: "dt_patches/dt_patch_test"
     platform: ubuntu2004
     shell_commands:
-    - "dt_patches/dt_patch_test.sh"
+      - "dt_patches/dt_patch_test.sh"
   dependency_versions_linux:
     name: "./test_dependency_versions"
     platform: ubuntu2004
     shell_commands:
-    - "./test_dependency_versions.sh"
+      - "./test_dependency_versions.sh"
   dependency_versions_macos:
     name: "./test_dependency_versions"
     platform: macos
     shell_commands:
-    - "./test_dependency_versions.sh"
+      - "./test_dependency_versions.sh"
   dependency_versions_windows:
     name: "./test_dependency_versions"
     platform: windows
     environment:
       MSYS2_ARG_CONV_EXCL: "*"
     batch_commands:
-    - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
-    - "bash -lc \"pacman --noconfirm --needed -S libxml2\"" #tests require xmllint
-    - "bash ./test_dependency_versions.sh" # script removes ./ from BASH_SOURCE
+      - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
+      - 'bash -lc "pacman --noconfirm --needed -S libxml2"' #tests require xmllint
+      - "bash ./test_dependency_versions.sh" # script removes ./ from BASH_SOURCE
   bcr_presubmit:
     # Keep in sync with .bcr/presubmit.yml.
     name: "BCR {bcr_bazel}"

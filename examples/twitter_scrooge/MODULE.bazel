@@ -13,17 +13,6 @@ local_path_override(
     path = "../../deps/latest",
 )
 
-bazel_dep(name = "protobuf", repo_name = "com_google_protobuf")
-
-# Temporarily required for `protoc` toolchainization until
-# protocolbuffers/protobuf#19679 appears in a published release.
-single_version_override(
-    module_name = "protobuf",
-    patch_strip = 1,
-    patches = ["//:protobuf.patch"],
-    version = "33.1",
-)
-
 bazel_dep(name = "rules_jvm_external", version = "6.7")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -41,15 +30,6 @@ maven.install(
     lock_file = "//:maven_install.json",
 )
 use_repo(maven, "maven")
-
-scala_protoc = use_extension(
-    "@rules_scala//scala/extensions:protoc.bzl",
-    "scala_protoc",
-    dev_dependency = True,
-)
-use_repo(scala_protoc, "rules_scala_protoc_toolchains")
-
-register_toolchains("@rules_scala_protoc_toolchains//...:all")
 
 scala_config = use_extension(
     "@rules_scala//scala/extensions:config.bzl",

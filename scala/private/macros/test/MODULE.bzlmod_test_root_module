@@ -9,7 +9,13 @@ module(name = "test_root_module", version = "0.0.0")
 bazel_dep(name = "rules_scala")
 local_path_override(
     module_name = "rules_scala",
-    path = "${rules_scala_dir}"
+    path = "${rules_scala_dir}",
+)
+
+bazel_dep(name = "latest_dependencies")
+local_path_override(
+    module_name = "latest_dependencies",
+    path = "${latest_deps_dir}",
 )
 
 bazel_dep(name = "test_module")

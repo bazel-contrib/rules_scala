@@ -13,10 +13,14 @@ load("@platforms//host:extension.bzl", "host_platform_repo")
 # - https://github.com/bazelbuild/bazel/issues/22558
 host_platform_repo(name = "host_platform")
 
-# This is optional, but still safe to include even when not using
-# `--incompatible_enable_proto_toolchain_resolution`. Requires invoking the
-# `scala_protoc_toolchains` repo rule. Register this toolchain before any
-# others.
+# Registering @rules_scala_protoc_toolchains is optional, but still safe even
+# when not using `--incompatible_enable_proto_toolchain_resolution`. Requires
+# invoking the `scala_protoc_toolchains` repo rule. Register this toolchain
+# before any others.
+#
+# Note: These toolchains will take precedence over the @protobuf toolchains when
+# using `--@protobuf//bazel/toolchains:prefer_prebuilt_protoc`. Comment out this
+# line when using that flag.
 register_toolchains("@rules_scala_protoc_toolchains//...:all")
 
 # Required before `rules_java_dependencies` since `rules_java` 8.16.0.
@@ -57,8 +61,7 @@ load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
 rules_proto_toolchains()
 
 # Include this after loading `platforms`, `com_google_protobuf`, and
-# `rules_proto` to enable the `//protoc` precompiled protocol compiler
-# toolchains.
+# `rules_proto` to enable the `//protoc` prebuilt protocol compiler toolchains.
 load("@rules_scala//protoc:toolchains.bzl", "scala_protoc_toolchains")
 
 # This name can be anything, but we recommend `rules_scala_protoc_toolchains`.

@@ -47,11 +47,9 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        sha256 = "0c98bb704ceb4e68c92f93907951ca3c36130bc73f87264e8c0771a80362ac97",
-        strip_prefix = "protobuf-33.1",
-        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v33.1.tar.gz",
-        patches = [Label("//protoc:0001-protobuf-19679-rm-protoc-dep.patch")],
-        patch_args = ["-p1"],
+        sha256 = "136a07aad488cc502b11c4416fe4a7df2dfdea1d0833a7a8211000bf952728ba",
+        strip_prefix = "protobuf-33.4",
+        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v33.4.tar.gz",
     )
 
     maybe(

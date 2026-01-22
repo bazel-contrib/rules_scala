@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Updates `protoc/private/protoc_integrity.bzl`.
 
-`protoc_integrity.bzl` contains the mapping from supported precompiled `protoc`
+`protoc_integrity.bzl` contains the mapping from supported prebuilt `protoc`
 platforms to:
 
 - `exec_compatible_with` properties based on `@platforms`
@@ -21,6 +21,8 @@ from lib.update_integrity import (
 
 
 PROTOC_VERSIONS = [
+    "33.4",
+    # yanked: https://registry.bazel.build/modules/protobuf/33.3
     "33.2",
     "33.1",
     "33.0",
@@ -184,7 +186,7 @@ def emit_protoc_integrity_data(output_file, integrity_data):
 
 if __name__ == "__main__":
     update_integrity_file(
-        "Updates precompiled `protoc` distribution information.",
+        "Updates prebuilt `protoc` distribution information.",
         INTEGRITY_FILE,
         DATA_MARKER,
         update_protoc_integrity_data,

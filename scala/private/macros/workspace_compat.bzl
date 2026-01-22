@@ -14,11 +14,11 @@ def _bazel_worker_api_repo(name, strip_prefix):
     maybe(
         http_archive,
         name = name,
-        sha256 = "5aac6ae6a23015cc7984492a114dc539effc244ec5ac7f8f6b1539c15fb376eb",
+        sha256 = "0476fe27251cd3234b69737f8bc231cfe9912becdd620e07e2d73c87bcc7e40a",
         urls = [
-            "https://github.com/bazelbuild/bazel-worker-api/releases/download/v0.0.6/bazel-worker-api-v0.0.6.tar.gz",
+            "https://github.com/bazelbuild/bazel-worker-api/releases/download/v0.0.10/bazel-worker-api-v0.0.10.tar.gz",
         ],
-        strip_prefix = "bazel-worker-api-0.0.6/" + strip_prefix,
+        strip_prefix = "bazel-worker-api-0.0.10/" + strip_prefix,
     )
 
 def workspace_compat():

@@ -1,4 +1,4 @@
-"""Precompiled protocol compiler toolchains configuration
+"""Prebuilt protocol compiler toolchains configuration
 
 Usage:
 
@@ -49,7 +49,7 @@ _toolchains_attrs = {
         default = _toolchains_defaults["platforms"],
         doc = (
             "Operating system and architecture identifiers for " +
-            "precompiled protocol compiler releases, taken from " +
+            "prebuilt protocol compiler releases, taken from " +
             "protocolbuffers/protobuf releases file name suffixes. If " +
             "unspecified, will use the identifier matching the " +
             "`HOST_CONSTRAINTS` from `@platforms//host:constraints.bzl`." +
@@ -63,7 +63,7 @@ _toolchains_attrs = {
 _tag_classes = {
     "toolchains": tag_class(
         attrs = _toolchains_attrs,
-        doc = "Precompiled compiler toolchain options",
+        doc = "Prebuilt compiler toolchain options",
     ),
 }
 
@@ -85,7 +85,7 @@ def _scala_protoc_impl(module_ctx):
 scala_protoc = module_extension(
     implementation = _scala_protoc_impl,
     tag_classes = _tag_classes,
-    doc = "Configures precompiled protocol compiler toolchains",
+    doc = "Configures prebuilt protocol compiler toolchains",
     os_dependent = True,
     arch_dependent = True,
 )

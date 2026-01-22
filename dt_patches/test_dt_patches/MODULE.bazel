@@ -57,25 +57,7 @@ scala_deps.settings(
     validate_scala_version = False,
 )
 
-scala_protoc = use_extension(
-    "@rules_scala//scala/extensions:protoc.bzl",
-    "scala_protoc",
-    dev_dependency = True,
-)
-use_repo(scala_protoc, "rules_scala_protoc_toolchains")
-
 register_toolchains(
-    "@rules_scala_protoc_toolchains//...:all",
     "//:dt_scala_toolchain",
     dev_dependency = True,
-)
-
-# Temporarily required for `protoc` toolchainization until
-# protocolbuffers/protobuf#19679 appears in a published release.
-bazel_dep(name = "protobuf", repo_name = "com_google_protobuf")
-single_version_override(
-    module_name = "protobuf",
-    patch_strip = 1,
-    patches = ["//:protobuf.patch"],
-    version = "33.1",
 )
