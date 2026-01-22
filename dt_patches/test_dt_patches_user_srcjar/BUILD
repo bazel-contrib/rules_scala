@@ -11,7 +11,7 @@ SCALA_LIBS = ["@scala_library"] + select_for_scala_version(
     any_2 = ["@scala_reflect"],
     any_3 = [
         "@scala3_interfaces",
-        "@scala2_library",
+        "@scala3_library",
         "@tasty_core",
         "@scala_asm",
     ],

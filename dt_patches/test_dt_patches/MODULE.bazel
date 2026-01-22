@@ -41,10 +41,10 @@ use_repo(
     "scala_reflect",
     # Scala 3 specific
     "scala3_interfaces",
+    "scala3_library",
     "tasty_core",
     # Hardcoded versions
     "sbt_compiler_interface",
-    "scala2_library",
     "scala_asm",
 )
 
