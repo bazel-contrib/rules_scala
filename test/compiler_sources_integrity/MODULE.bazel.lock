@@ -208,7 +208,7 @@
   "moduleExtensions": {
     "@@rules_scala+//scala/extensions:deps.bzl%scala_deps": {
       "general": {
-        "bzlTransitiveDigest": "R/Azcnn7t08HQuDl2Jen18fmyLVoDQaqiLPf8jwqivY=",
+        "bzlTransitiveDigest": "Uor/7mlsxEr9AjU8NvIZr4Y2Lgb6PbxWOy6ACr2odXg=",
         "usagesDigest": "++Pdd9JmPaPmU/O7KE5Zg3O8ijhTJkbehSpxeui8g8o=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

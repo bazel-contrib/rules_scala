@@ -507,7 +507,7 @@
     },
     "@@rules_scala+//scala/extensions:deps.bzl%scala_deps": {
       "general": {
-        "bzlTransitiveDigest": "+HYwWeo8aAS1reeQ1JopSLU7+HyL5leaOScazD3ECAU=",
+        "bzlTransitiveDigest": "HkxJxz769jETusc4DwltK7OSUFTZvc0TpKyU2NqI048=",
         "usagesDigest": "RhEVxjy8CxkiGqP+oFg4mGxho35MdPAe4EvxntsGUHc=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
