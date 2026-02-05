@@ -10,13 +10,13 @@ module(
     compatibility_level = 7,
 )
 
-SCALA_VERSION = "2.12.20"
+SCALA_VERSION = "2.12.21"
 
 # These versions match those required by some tests, including
 # test_thirdparty_version.sh.
 SCALA_2_VERSIONS = [
     "2.11.12",
-    "2.12.20",
+    "2.12.21",
     "2.13.18",
 ]
 

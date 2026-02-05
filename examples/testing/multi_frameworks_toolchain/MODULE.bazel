@@ -2,7 +2,7 @@
 
 module(name = "multi_frameworks_toolchain")
 
-SCALA_VERSION = "2.12.20"
+SCALA_VERSION = "2.12.21"
 
 VERSION_SUFFIX = "_" + SCALA_VERSION.replace(".", "_")
 

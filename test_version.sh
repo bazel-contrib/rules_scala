@@ -2,7 +2,7 @@
 
 set -e
 
-scala_2_12_version="2.12.20"
+scala_2_12_version="2.12.21"
 scala_2_13_version="2.13.18"
 scala_3_version="3.3.7"
 

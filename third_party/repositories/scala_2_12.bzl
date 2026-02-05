@@ -3,7 +3,7 @@
 Mostly generated and updated by scripts/create_repository.py.
 """
 
-scala_version = "2.12.20"
+scala_version = "2.12.21"
 
 artifacts = {
     "com_github_bigwheel_util_backports": {
@@ -182,17 +182,17 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_compiler": {
-        "artifact": "org.scala-lang:scala-compiler:2.12.20",
-        "sha256": "c88676d75c69721b717ea6c441ece04fff262abab9d210a2936abc2be3731fa2",
+        "artifact": "org.scala-lang:scala-compiler:2.12.21",
+        "sha256": "fb1bb6b0d7e8e922f03b5294ef0af23b9d2bd1cde6819ecb820c57210db4548e",
         "deps": [
-            "@io_bazel_rules_scala_scala_xml",
             "@io_bazel_rules_scala_scala_library",
             "@io_bazel_rules_scala_scala_reflect",
+            "@io_bazel_rules_scala_scala_xml",
         ],
     },
     "io_bazel_rules_scala_scala_library": {
-        "artifact": "org.scala-lang:scala-library:2.12.20",
-        "sha256": "4d8a8f984cce31a329a24f10b0bf336f042cb62aeb435290a1b20243154cfccb",
+        "artifact": "org.scala-lang:scala-library:2.12.21",
+        "sha256": "e2f4040c95cc4dd1cfeaae38bdde596e4b36933632451efa7d8564c6a359510c",
     },
     "io_bazel_rules_scala_scala_parser_combinators": {
         "artifact": "org.scala-lang.modules:scala-parser-combinators_2.12:2.4.0",
@@ -202,8 +202,8 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_reflect": {
-        "artifact": "org.scala-lang:scala-reflect:2.12.20",
-        "sha256": "5f1914cdc7a70580ea6038d929ebb25736ecf2234f677e2d47f8a4b2bc81e1fb",
+        "artifact": "org.scala-lang:scala-reflect:2.12.21",
+        "sha256": "8b91a08ba69a0564689793e732f06768d0914ec9e90fa8c3d1b55c5bf4600c14",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
@@ -421,8 +421,8 @@ artifacts = {
         ],
     },
     "org_scala_lang_scalap": {
-        "artifact": "org.scala-lang:scalap:2.12.20",
-        "sha256": "0b1fa8a5f222fdcace7e12378241bfc3ceabfaebd000a31e865a1111428eb283",
+        "artifact": "org.scala-lang:scalap:2.12.21",
+        "sha256": "e33e12ad739cd70db536b5e305a07d3b081490863f0db67a515d41585c087605",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler",
         ],

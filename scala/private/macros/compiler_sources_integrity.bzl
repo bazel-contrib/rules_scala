@@ -93,6 +93,10 @@ COMPILER_SOURCES = {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.20/scala-compiler-2.12.20-sources.jar",
         "integrity": "sha256-B8FAyBh6e8vPznUJ608XBPy/oSrTx3mPjdyrlHfcUCg=",
     },
+    "2.12.21": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21-sources.jar",
+        "integrity": "sha256-Q5Kl+qWZKLFk4/dUgjSjsoBNzUB7FiFNARdqfx9jpfE=",
+    },
     "2.13.0": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.0/scala-compiler-2.13.0-sources.jar",
         "integrity": "sha256-CJi/+Ctl9YPhqHLK3R8H43t9oQyop2N2chZiutCobOY=",

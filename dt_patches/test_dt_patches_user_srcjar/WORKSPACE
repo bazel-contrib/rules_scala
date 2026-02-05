@@ -107,6 +107,9 @@ srcjars_by_version = {
     "2.12.20": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.20/scala-compiler-2.12.20-sources.jar?foo",
     },
+    "2.12.21": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21-sources.jar?foo",
+    },
     "2.13.11": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.11/scala-compiler-2.13.11-sources.jar?foo",
     },

@@ -93,6 +93,7 @@ $runner test_compiler_patch 2.12.17
 $runner test_compiler_patch 2.12.18
 $runner test_compiler_patch 2.12.19
 $runner test_compiler_patch 2.12.20
+$runner test_compiler_patch 2.12.21
 
 $runner test_compiler_patch 2.13.0
 $runner test_compiler_patch 2.13.1
@@ -141,6 +142,7 @@ $runner test_compiler_srcjar_nonhermetic 2.12.17
 $runner test_compiler_srcjar_nonhermetic 2.12.18
 $runner test_compiler_srcjar_nonhermetic 2.12.19
 $runner test_compiler_srcjar_nonhermetic 2.12.20
+$runner test_compiler_srcjar_nonhermetic 2.12.21
 
 $runner test_compiler_srcjar_nonhermetic 2.13.11
 $runner test_compiler_srcjar_nonhermetic 2.13.12

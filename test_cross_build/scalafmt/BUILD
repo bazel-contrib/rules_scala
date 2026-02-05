@@ -53,7 +53,7 @@ scalafmt_scala_binary(
     config = ":scala2-conf",
     format = True,
     main_class = "UnformattedBinary",
-    scala_version = "2.12.20",
+    scala_version = "2.12.21",
 )
 
 scalafmt_scala_binary(
@@ -62,7 +62,7 @@ scalafmt_scala_binary(
     config = ":scala2-conf",
     format = True,
     main_class = "UnformattedBinary",
-    scala_version = "2.12.20",
+    scala_version = "2.12.21",
 )
 
 scalafmt_scala_binary(
@@ -88,7 +88,7 @@ scalafmt_scala_test(
     srcs = ["unformatted/unformatted-test2.scala"],
     config = ":scala2-conf",
     format = True,
-    scala_version = "2.12.20",
+    scala_version = "2.12.21",
 )
 
 scalafmt_scala_test(
@@ -96,7 +96,7 @@ scalafmt_scala_test(
     srcs = ["formatted/formatted-test2.scala"],
     config = ":scala2-conf",
     format = True,
-    scala_version = "2.12.20",
+    scala_version = "2.12.21",
 )
 
 #default scala version is 3.1.3
