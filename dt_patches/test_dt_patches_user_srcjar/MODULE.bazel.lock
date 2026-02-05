@@ -260,13 +260,13 @@
             "attributes": {
               "generated_rule_name": "scala_reflect",
               "jar_urls": [
-                "https://repo.maven.apache.org/maven2/org/scala-lang/scala-reflect/2.13.17/scala-reflect-2.13.17.jar",
-                "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala-reflect/2.13.17/scala-reflect-2.13.17.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.17/scala-reflect-2.13.17.jar",
-                "https://jcenter.bintray.com/org/scala-lang/scala-reflect/2.13.17/scala-reflect-2.13.17.jar"
+                "https://repo.maven.apache.org/maven2/org/scala-lang/scala-reflect/2.13.18/scala-reflect-2.13.18.jar",
+                "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala-reflect/2.13.18/scala-reflect-2.13.18.jar",
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.18/scala-reflect-2.13.18.jar",
+                "https://jcenter.bintray.com/org/scala-lang/scala-reflect/2.13.18/scala-reflect-2.13.18.jar"
               ],
               "srcjar_urls": [],
-              "coordinates": "org.scala-lang:scala-reflect:2.13.17",
+              "coordinates": "org.scala-lang:scala-reflect:2.13.18",
               "rule_name": "scala_import",
               "rule_load": "load(\"@@rules_scala+//scala:scala_import.bzl\", \"scala_import\")",
               "licenses": [

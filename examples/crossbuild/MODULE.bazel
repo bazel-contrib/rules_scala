@@ -22,7 +22,7 @@ scala_config.settings(
     scala_version = "3.3.7",
     scala_versions = [
         "2.11.12",
-        "2.13.17",
+        "2.13.18",
         "3.3.7",
     ],
 )

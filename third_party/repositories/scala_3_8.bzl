@@ -48,8 +48,8 @@ artifacts = {
         "sha256": "84d3a150518485f8140ea99b8a985656749629f6433c92b80c75b36aba3b099b",
     },
     "com_google_protobuf_protobuf_java": {
-        "artifact": "com.google.protobuf:protobuf-java:4.33.2",
-        "sha256": "c5b582aa127fb62c5fc3077329d522dfb7930b4e9a625c08760b681b2ba5aab7",
+        "artifact": "com.google.protobuf:protobuf-java:4.33.4",
+        "sha256": "3ca892fd6ea8b37d01bb6917dbc0bf2637548b756753f65a28d4f1d4d982347f",
     },
     "com_lihaoyi_fansi": {
         "artifact": "com.lihaoyi:fansi_2.13:0.5.1",
@@ -201,8 +201,8 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_compiler_2": {
-        "artifact": "org.scala-lang:scala-compiler:2.13.17",
-        "sha256": "073ab364dc902519719bd6b9463562128abc5881d2a2e4b7a5e2d04cdd7bc025",
+        "artifact": "org.scala-lang:scala-compiler:2.13.18",
+        "sha256": "2f15891fcae7aad30a3892194fb2abb6224cf7ce5d2bd90fba7f1c48682fca21",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
             "@io_bazel_rules_scala_scala_reflect_2",
@@ -497,8 +497,8 @@ artifacts = {
         ],
     },
     "org_scala_lang_scalap": {
-        "artifact": "org.scala-lang:scalap:2.13.17",
-        "sha256": "ff41633c298d3c1c35f1e31ca5284e25115a094ed9682cdd71ced6a5d04a5165",
+        "artifact": "org.scala-lang:scalap:2.13.18",
+        "sha256": "278216a595f34d0cfb78ae710cb487f31d468fa5e883ffae8af0947b6f67c517",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler_2",
         ],

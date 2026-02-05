@@ -3,7 +3,7 @@
 Mostly generated and updated by scripts/create_repository.py.
 """
 
-scala_version = "2.13.17"
+scala_version = "2.13.18"
 
 artifacts = {
     "com_github_jnr_jffi_native": {
@@ -186,8 +186,8 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_compiler": {
-        "artifact": "org.scala-lang:scala-compiler:2.13.17",
-        "sha256": "073ab364dc902519719bd6b9463562128abc5881d2a2e4b7a5e2d04cdd7bc025",
+        "artifact": "org.scala-lang:scala-compiler:2.13.18",
+        "sha256": "2f15891fcae7aad30a3892194fb2abb6224cf7ce5d2bd90fba7f1c48682fca21",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
             "@io_bazel_rules_scala_scala_reflect",
@@ -445,8 +445,8 @@ artifacts = {
         ],
     },
     "org_scala_lang_scalap": {
-        "artifact": "org.scala-lang:scalap:2.13.17",
-        "sha256": "ff41633c298d3c1c35f1e31ca5284e25115a094ed9682cdd71ced6a5d04a5165",
+        "artifact": "org.scala-lang:scalap:2.13.18",
+        "sha256": "278216a595f34d0cfb78ae710cb487f31d468fa5e883ffae8af0947b6f67c517",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler",
         ],
@@ -572,8 +572,8 @@ artifacts = {
         ],
     },
     "org_scalameta_semanticdb_scalac": {
-        "artifact": "org.scalameta:semanticdb-scalac_2.13.17:4.13.10",
-        "sha256": "88a32438e933f3e23432bf8059d740f6fa3f11e7ba8c19474eb1f795d9c2fe3a",
+        "artifact": "org.scalameta:semanticdb-scalac_2.13.18:4.13.10",
+        "sha256": "d10285e2c958b75804a2a327e0e69eec3727ac883d37a6e1fa15d17ec2e44d39",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
@@ -606,7 +606,7 @@ artifacts = {
         "sha256": "6058d02418e4eb5f1919a1156d63d2d1b93f2c6190b1a1806ee2b73f8726a92f",
     },
     "org_typelevel_kind_projector": {
-        "artifact": "org.typelevel:kind-projector_2.13.17:0.13.4",
+        "artifact": "org.typelevel:kind-projector_2.13.18:0.13.4",
         "sha256": "e4bac237aae1a530cc5c7f0c98723a2f9e4890b8ef02a8d0aa2afa8c79dce6c0",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler",

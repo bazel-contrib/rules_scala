@@ -18,7 +18,7 @@ runner=$(get_test_runner "${1:-local}")
 $runner test_scala_version "3.8.1" # Latest Next version
 $runner test_scala_version "3.3.7" # Latest LTS version
 $runner test_scala_version "3.1.3" # First supported major for Scala 3, max supported JDK=18
-$runner test_scala_version "2.13.17"
+$runner test_scala_version "2.13.18"
 $runner test_scala_version "2.12.20"
 
 # Tests for other versions should be placed in dangerous_test_thirdparty_version.sh 

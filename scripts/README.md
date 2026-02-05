@@ -50,7 +50,7 @@ options:
   --version SCALA_VERSION
                         Scala version for which to update repository
                         information; if not provided, updates all supported
-                        versions: 2.11.12, 2.12.20, 2.13.17, 3.1.3, 3.2.2,
+                        versions: 2.11.12, 2.12.20, 2.13.18, 3.1.3, 3.2.2,
                         3.3.7, 3.4.3, 3.5.2, 3.6.4, 3.7.4, 3.8.1
   --output_dir OUTPUT_DIR
                         Directory in which to generate or update repository

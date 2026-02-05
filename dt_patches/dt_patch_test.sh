@@ -109,6 +109,7 @@ $runner test_compiler_patch 2.13.12
 $runner test_compiler_patch 2.13.14
 $runner test_compiler_patch 2.13.15
 $runner test_compiler_patch 2.13.17
+$runner test_compiler_patch 2.13.18
 
 $runner test_compiler_patch 3.1.0 # Minimal supported version
 $runner test_compiler_patch 3.1.3
@@ -146,6 +147,7 @@ $runner test_compiler_srcjar_nonhermetic 2.13.12
 $runner test_compiler_srcjar_nonhermetic 2.13.14
 $runner test_compiler_srcjar_nonhermetic 2.13.15
 $runner test_compiler_srcjar_nonhermetic 2.13.17
+$runner test_compiler_srcjar_nonhermetic 2.13.18
 
 $runner test_compiler_srcjar 3.1.3
 $runner test_compiler_srcjar 3.2.2
