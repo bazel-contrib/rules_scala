@@ -43,6 +43,13 @@ single_version_override(
     version = "1.0.0",
 )
 
+bazel_dep(name = "rules_cc", version = "0.2.16")
+bazel_dep(name = "toolchains_llvm_bootstrapped", version = "0.3.1")
+
+register_toolchains(
+    "@toolchains_llvm_bootstrapped//toolchain:all",
+)
+
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
@@ -89,6 +96,21 @@ use_repo(
     "rules_scala_toolchains",
     "scala_compiler_sources",
 )
+scala_deps.scala_native()
+
+# Unsuffixed alias repos for Scala Native artifacts. These are created by
+# repositories() for the default SCALA_VERSION and are needed by
+# //scala_native/private/linker:native_linker.
+use_repo(
+    scala_deps,
+    "org_scala_native_auxlib",
+    "org_scala_native_javalib",
+    "org_scala_native_nativelib",
+    "org_scala_native_nir",
+    "org_scala_native_scalalib",
+    "org_scala_native_tools",
+    "org_scala_native_util",
+)
 
 # Register some of our testing toolchains first when building our repo.
 register_toolchains(
@@ -100,7 +122,8 @@ register_toolchains(
 
 register_toolchains(
     "@rules_scala_toolchains//...:all",
-    "//protoc:all",  # //protoc:scala_protoc_toolchain creates a cycle
+    "//scala_native:scala_native_toolchain",
+    "//protoc:all",
 )
 
 # Dev dependencies

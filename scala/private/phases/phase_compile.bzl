@@ -134,6 +134,10 @@ def _phase_compile(
         plugins = plugins + p.semanticdb.plugin
         additional_outputs += p.semanticdb.outputs
 
+    if (hasattr(p, "native_compile")):
+        scalacopts += p.native_compile.scalacopts
+        plugins = plugins + p.native_compile.plugin
+
     out = _compile_or_empty(
         ctx,
         scalacopts,

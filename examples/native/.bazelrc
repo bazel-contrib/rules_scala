@@ -1,0 +1,3 @@
+common --tool_java_runtime_version=remotejdk_17
+common --java_runtime_version=remotejdk_17
+common --@protobuf//bazel/toolchains:prefer_prebuilt_protoc

@@ -1,0 +1,34 @@
+"""
+Test rulesets for scala native work as expected
+"""
+
+module(name = "scala_native_example")
+
+bazel_dep(
+    name = "protobuf",
+    version = "33.4",
+)
+bazel_dep(
+    name = "rules_scala",
+    version = "7.2.1",
+)
+local_path_override(
+    module_name = "rules_scala",
+    path = "../..",
+)
+
+bazel_dep(name = "toolchains_llvm_bootstrapped", version = "0.5.4")
+
+########################## Configure Scala ####################################
+scala_config = use_extension(
+    "@rules_scala//scala/extensions:config.bzl",
+    "scala_config",
+)
+scala_config.settings(scala_version = "3.8.1")
+
+scala_deps = use_extension(
+    "@rules_scala//scala/extensions:deps.bzl",
+    "scala_deps",
+)
+scala_deps.scala()
+scala_deps.scala_native()

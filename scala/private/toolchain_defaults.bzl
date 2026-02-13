@@ -17,4 +17,5 @@ TOOLCHAIN_DEFAULTS = {
     "scalafmt": _scalafmt,
     "scala_proto": _scala_proto,
     "twitter_scrooge": _twitter_scrooge,
+    "scala_native": {},
 }

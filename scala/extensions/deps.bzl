@@ -176,6 +176,9 @@ _toolchain_tag_classes = {
     "jmh": tag_class(
         doc = "Configures the Java Microbenchmark Harness",
     ),
+    "scala_native": tag_class(
+        doc = "Configures the Scala Native toolchain",
+    ),
 }
 
 def _toolchain_settings(module_ctx, tags, tc_names, toolchain_defaults):

@@ -58,6 +58,8 @@ def _scala_toolchains_repo_impl(repository_ctx):
         format_args["twitter_scrooge_opts"] = _stringify_args(
             repo_attr.twitter_scrooge_deps,
         )
+    if repo_attr.scala_native:
+        toolchains["scala_native"] = _SCALA_NATIVE_TOOLCHAIN_BUILD
 
     testing_build_args = _generate_testing_toolchain_build_file_args(repo_attr)
     if testing_build_args != None:
@@ -115,8 +117,42 @@ scala_toolchains_repo = repository_rule(
         "twitter_scrooge_deps": attr.string_dict(
             doc = "twitter_scrooge toolchain dependency provider overrides",
         ),
+        "scala_native": attr.bool(
+            doc = "Instantiate the Scala Native toolchain",
+        ),
     },
 )
+
+_SCALA_NATIVE_TOOLCHAIN_BUILD = """
+load(
+    "@rules_scala//scala_native:scala_native_toolchain.bzl",
+    "scala_native_toolchain",
+)
+load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
+load("@rules_scala//scala:scala_cross_version.bzl", "version_suffix")
+
+scala_native_toolchain(
+    name = "default_scala_native_toolchain",
+    nscplugin = "@org_scala_native_nscplugin//jar",
+    scalalib = "@org_scala_native_scalalib//jar",
+    nativelib = "@org_scala_native_nativelib//jar",
+    javalib = "@org_scala_native_javalib//jar",
+    auxlib = "@org_scala_native_auxlib//jar",
+    linker = "@org_scala_native_tools//jar",
+    linker_binary = "@rules_scala//scala_native/private/linker:native_linker",
+    test_interface = "@org_scala_native_test_interface//jar",
+    junit_runtime = "@org_scala_native_junit_runtime//jar",
+    scala_native_version = "0.5.10",
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "scala_native_toolchain",
+    toolchain = ":default_scala_native_toolchain",
+    toolchain_type = "@rules_scala//scala_native:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+"""
 
 _SCALA_TOOLCHAIN_BUILD = """
 load(
