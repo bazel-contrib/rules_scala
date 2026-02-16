@@ -50,6 +50,7 @@ setup_test_module() {
   set -e
   cp "${dir}"/.bazelversion "${test_srcs_dir}"/bzlmod_test_ext.bzl .
   sed -e "s/--lockfile_mode=error/--lockfile_mode=update/" \
+      -e "/prebuilt_protoc/d" \
       "${dir}/.bazelrc" > ./.bazelrc
   cp "${test_srcs_dir}/BUILD.bzlmod_test" 'BUILD'
 

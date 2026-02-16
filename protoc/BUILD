@@ -20,10 +20,7 @@ proto_lang_toolchain(
     visibility = ["//visibility:public"],
 )
 
-# Aliases the @protobuf >= v33.4 flag so test modules don't have to import
-# @protobuf directly to handle the flag imported from .bazelrc.
-alias(
-    name = "prefer_prebuilt_protoc",
-    actual = "@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc",
-    visibility = ["//visibility:public"],
-)
+# Note: The alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
+# was removed because it has visibility restrictions in Bzlmod mode.
+# Use --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true directly.
+# This is set automatically in rules_scala's .bazelrc.

@@ -16,12 +16,27 @@ run_in_example_dir(){
 
   set -e
   cd "examples/${test_dir}"
+  
+  # Temporarily replace .bazelrc since examples don't depend on protobuf
+  # and the prebuilt_protoc config references protobuf which isn't available
+  if [[ -f .bazelrc ]]; then
+    mv .bazelrc .bazelrc.bak
+    grep -v "import.*\.bazelrc" .bazelrc.bak > .bazelrc || true
+    # If .bazelrc is now empty or only has comments, that's fine
+  fi
+  
   "$@"
 
   # Don't shut down in `scala3` since multiple test cases run there.
   if [[ "$test_dir" != 'scala3' ]]; then
     bazel shutdown
   fi
+  
+  # Restore original .bazelrc if it was backed up
+  if [[ -f .bazelrc.bak ]]; then
+    mv .bazelrc.bak .bazelrc
+  fi
+  
   cd "$dir"
 }
 
