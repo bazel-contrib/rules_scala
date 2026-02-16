@@ -391,7 +391,7 @@ common --incompatible_enable_proto_toolchain_resolution
 
 # Will not be necessary with protobuf v34, which will default to `true`.
 # - https://protobuf.dev/news/2026-01-16/
-common --@protobuf//bazel/toolchains:prefer_prebuilt_protoc
+common --@rules_scala//protoc:prefer_prebuilt_protoc=true
 ```
 
 __Note for existing `rules_scala` prebuilt `protoc` toolchain users:__ Remove

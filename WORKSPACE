@@ -19,7 +19,7 @@ host_platform_repo(name = "host_platform")
 # before any others.
 #
 # Note: These toolchains will take precedence over the @protobuf toolchains when
-# using `--@protobuf//bazel/toolchains:prefer_prebuilt_protoc`. Comment out this
+# using `--@rules_scala//protoc:prefer_prebuilt_protoc=true`. Comment out this
 # line when using that flag.
 register_toolchains("@rules_scala_protoc_toolchains//...:all")
 

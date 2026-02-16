@@ -1,9 +1,11 @@
 """Macro to translate Bazel modules into legacy WORKSPACE compatible repos
 
-Used only for Bazel modules that don't offer a legacy WORKSPACE compatible API
-already. Originally became necessary due to:
+Used only for Bazel modules that don't offer a legacy WORKSPACE compatible API.
+Specifically, bazel_worker_api is a Bazel Central Registry module without a
+WORKSPACE-compatible setup. This workaround is required until WORKSPACE support
+is completely removed (target: Bazel 9+).
 
-- https://github.com/bazelbuild/bazel/issues/26579#issuecomment-3120862995
+TODO: Remove this file once WORKSPACE support is dropped.
 """
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
