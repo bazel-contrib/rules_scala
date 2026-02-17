@@ -26,12 +26,13 @@ common --incompatible_enable_proto_toolchain_resolution
 # Uses the protobuf prebuilt protoc instead of compiling from source.
 # In Bzlmod, this flag must reference the protobuf module directly since
 # cross-repo aliases have visibility restrictions.
-# Note: This only works when @com_google_protobuf is visible (e.g., in the
-# rules_scala repo itself or when depending on protobuf directly).
+# Only applies to builds within rules_scala itself; external tests should
+# set this in their own .bazelrc if needed.
 build:prebuilt_protoc --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
 
-# Enable prebuilt protoc for rules_scala builds (config only defined when protobuf is available)
-build --config=prebuilt_protoc
+# Note: We don't enable --config=prebuilt_protoc globally because it would
+# break nested test modules that don't depend on protobuf (e.g., examples/).
+# Instead, it's enabled in tools/bazel.rc.buildkite for CI builds.
 
 build --enable_platform_specific_config
 
