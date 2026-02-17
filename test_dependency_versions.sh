@@ -160,6 +160,16 @@ do_build_and_test() {
   if [[ -n "$protoc_toolchain" ]]; then
     echo 'common --incompatible_enable_proto_toolchain_resolution' >>.bazelrc
 
+    # abseil-cpp is a transitive dependency of protobuf when using
+    # --incompatible_enable_proto_toolchain_resolution and requires C++17.
+    printf '%s\n' \
+      'common:linux --cxxopt=-std=c++17' \
+      'common:linux --host_cxxopt=-std=c++17' \
+      'common:macos --cxxopt=-std=c++17' \
+      'common:macos --host_cxxopt=-std=c++17' \
+      'common:windows --cxxopt=/std:c++17' \
+      'common:windows --host_cxxopt=/std:c++17' >>.bazelrc
+
     if [[ "$protoc_toolchain" == "protobuf" ]]; then
       # Note: The alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
       # was removed due to Bzlmod visibility restrictions.
