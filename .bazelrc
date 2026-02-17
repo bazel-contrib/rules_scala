@@ -23,11 +23,7 @@ common --incompatible_enable_proto_toolchain_resolution
 
 # Remove once protobuf 34 becomes the default.
 # - https://protobuf.dev/news/2026-01-16/
-# Note: The previous alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
-# was removed because it has visibility restrictions in Bzlmod mode.
-# To use prebuilt protoc, set the flag directly when @com_google_protobuf is available:
-#   --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
-# This is typically only needed in CI or when explicitly depending on protobuf.
+common --@rules_scala//protoc:prefer_prebuilt_protoc
 
 build --enable_platform_specific_config
 

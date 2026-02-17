@@ -1,4 +1,8 @@
 load(
+    "@bazel_skylib//rules:common_settings.bzl",
+    "bool_flag",
+)
+load(
     "@com_google_protobuf//bazel/toolchains:proto_lang_toolchain.bzl",
     "proto_lang_toolchain",
 )
@@ -20,7 +24,12 @@ proto_lang_toolchain(
     visibility = ["//visibility:public"],
 )
 
-# Note: The alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
-# was removed because it has visibility restrictions in Bzlmod mode.
-# To use prebuilt protoc, set the flag directly when @com_google_protobuf is available:
-#   --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
+# Build setting to maintain backward compatibility with the previous alias.
+# This flag no longer has any effect since the alias to @com_google_protobuf
+# was removed due to Bzlmod visibility restrictions.
+# Kept for backward compatibility with existing .bazelrc files.
+bool_flag(
+    name = "prefer_prebuilt_protoc",
+    build_setting_default = False,
+    visibility = ["//visibility:public"],
+)
