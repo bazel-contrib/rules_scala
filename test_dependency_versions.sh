@@ -162,13 +162,13 @@ do_build_and_test() {
 
     # abseil-cpp is a transitive dependency of protobuf when using
     # --incompatible_enable_proto_toolchain_resolution and requires C++17.
+    # Use platform-specific flags because MSVC on Windows requires /std:c++17 syntax.
     printf '%s\n' \
-      'common:linux --cxxopt=-std=c++17' \
-      'common:linux --host_cxxopt=-std=c++17' \
-      'common:macos --cxxopt=-std=c++17' \
-      'common:macos --host_cxxopt=-std=c++17' \
-      'common:windows --cxxopt=/std:c++17' \
-      'common:windows --host_cxxopt=/std:c++17' >>.bazelrc
+      'build --enable_platform_specific_config' \
+      'build --cxxopt=-std=c++17' \
+      'build --host_cxxopt=-std=c++17' \
+      'build:windows --cxxopt=/std:c++17' \
+      'build:windows --host_cxxopt=/std:c++17' >>.bazelrc
 
     if [[ "$protoc_toolchain" == "protobuf" ]]; then
       # Note: The alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
@@ -184,12 +184,11 @@ do_build_and_test() {
 
   elif [[ "$bazel_major" == "7" ]]; then
     printf '%s\n' \
-      'common:linux --cxxopt=-std=c++17' \
-      'common:linux --host_cxxopt=-std=c++17' \
-      'common:macos --cxxopt=-std=c++17' \
-      'common:macos --host_cxxopt=-std=c++17' \
-      'common:windows --cxxopt=/std=c++17' \
-      'common:windows --host_cxxopt=/std=c++17' >>.bazelrc
+      'build --enable_platform_specific_config' \
+      'build --cxxopt=-std=c++17' \
+      'build --host_cxxopt=-std=c++17' \
+      'build:windows --cxxopt=/std:c++17' \
+      'build:windows --host_cxxopt=/std:c++17' >>.bazelrc
   fi
 
   if [[ "$legacy_api" == "true" ]]; then

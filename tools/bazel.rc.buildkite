@@ -14,13 +14,14 @@ common --incompatible_enable_proto_toolchain_resolution
 # Tests that need prebuilt protoc should set the flag directly:
 #   --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
 
+# Enable platform-specific config for build:windows to work automatically.
+build --enable_platform_specific_config
+
 # Required for abseil-cpp which is a transitive dependency of protobuf.
 # abseil-cpp requires C++17. Can be removed once abseil-cpp drops this requirement.
 # Use platform-specific flags because MSVC on Windows requires /std:c++17 syntax.
-build:linux --cxxopt=-std=c++17
-build:linux --host_cxxopt=-std=c++17
-build:macos --cxxopt=-std=c++17
-build:macos --host_cxxopt=-std=c++17
+build --cxxopt=-std=c++17
+build --host_cxxopt=-std=c++17
 build:windows --cxxopt=/std:c++17
 build:windows --host_cxxopt=/std:c++17
 
