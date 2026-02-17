@@ -18,11 +18,16 @@ run_in_example_dir(){
   cd "examples/${test_dir}"
   
   # Temporarily replace .bazelrc since examples don't depend on protobuf
-  # and the prebuilt_protoc config references protobuf which isn't available
+  # and the prebuilt_protoc config references protobuf which isn't available.
+  # But we need to keep C++17 flags for abseil-cpp when proto is used.
   if [[ -f .bazelrc ]]; then
     mv .bazelrc .bazelrc.bak
-    grep -v "import.*\.bazelrc" .bazelrc.bak > .bazelrc || true
-    # If .bazelrc is now empty or only has comments, that's fine
+    # Create minimal .bazelrc without the import but with C++17 flags
+    cat > .bazelrc << 'EOF'
+# C++17 required for abseil-cpp (transitive dep of protobuf)
+common --cxxopt=-std=c++17
+common --host_cxxopt=-std=c++17
+EOF
   fi
   
   "$@"

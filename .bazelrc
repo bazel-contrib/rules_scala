@@ -21,6 +21,12 @@ common --lockfile_mode=error
 # - https://blog.bazel.build/2026/01/20/bazel-9.html#prebuilt-protobuf-compiler
 common --incompatible_enable_proto_toolchain_resolution
 
+# Required for abseil-cpp which is a transitive dependency of protobuf when using
+# --incompatible_enable_proto_toolchain_resolution. abseil-cpp requires C++17.
+# These can be removed once abseil-cpp drops the C++17 requirement.
+common --cxxopt=-std=c++17
+common --host_cxxopt=-std=c++17
+
 # Remove once protobuf 34 becomes the default.
 # - https://protobuf.dev/news/2026-01-16/
 # Uses the protobuf prebuilt protoc instead of compiling from source.
