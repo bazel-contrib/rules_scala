@@ -11,8 +11,11 @@ common --incompatible_enable_proto_toolchain_resolution
 # - https://protobuf.dev/news/2026-01-16/
 build:prebuilt_protoc --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
 
-# Enable prebuilt protoc for CI builds
-build --config=prebuilt_protoc
+# Enable prebuilt protoc for CI builds on Linux and macOS.
+# Note: Windows has issues with prebuilt protoc toolchain resolution,
+# so we fall back to the default behavior there.
+build:linux --config=prebuilt_protoc
+build:macos --config=prebuilt_protoc
 
 # Required for abseil-cpp which is a dependency of protobuf when using
 # --incompatible_enable_proto_toolchain_resolution. abseil-cpp requires C++17.
