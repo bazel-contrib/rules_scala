@@ -56,6 +56,7 @@ setup_test_module() {
   
   # Also remove prebuilt_protoc from tools/bazel.rc.buildkite if it exists
   if [[ -f "${dir}/tools/bazel.rc.buildkite" ]]; then
+    mkdir -p ./tools
     sed -e "/prebuilt_protoc/d" \
         -e "/cxxopt/d" \
         "${dir}/tools/bazel.rc.buildkite" > ./tools/bazel.rc
