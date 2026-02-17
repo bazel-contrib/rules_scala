@@ -21,24 +21,13 @@ common --lockfile_mode=error
 # - https://blog.bazel.build/2026/01/20/bazel-9.html#prebuilt-protobuf-compiler
 common --incompatible_enable_proto_toolchain_resolution
 
-# Required for abseil-cpp which is a transitive dependency of protobuf when using
-# --incompatible_enable_proto_toolchain_resolution. abseil-cpp requires C++17.
-# These can be removed once abseil-cpp drops the C++17 requirement.
-common --cxxopt=-std=c++17
-common --host_cxxopt=-std=c++17
-
 # Remove once protobuf 34 becomes the default.
 # - https://protobuf.dev/news/2026-01-16/
-# Uses the protobuf prebuilt protoc instead of compiling from source.
-# In Bzlmod, this flag must reference the protobuf module directly since
-# cross-repo aliases have visibility restrictions.
-# Only applies to builds within rules_scala itself; external tests should
-# set this in their own .bazelrc if needed.
-build:prebuilt_protoc --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
-
-# Note: We don't enable --config=prebuilt_protoc globally because it would
-# break nested test modules that don't depend on protobuf (e.g., examples/).
-# Instead, it's enabled in tools/bazel.rc.buildkite for CI builds.
+# Note: The previous alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
+# was removed because it has visibility restrictions in Bzlmod mode.
+# To use prebuilt protoc, set the flag directly when @com_google_protobuf is available:
+#   --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
+# This is typically only needed in CI or when explicitly depending on protobuf.
 
 build --enable_platform_specific_config
 
@@ -46,6 +35,6 @@ build --enable_platform_specific_config
 build --tool_java_runtime_version=17
 build --java_runtime_version=17
 
-#Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting in 'file in use' errors). See Bazel Issue#10498.
+#Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting 'file in use' errors). See Bazel Issue#10498.
 
 build:windows --worker_quit_after_build --enable_runfiles 

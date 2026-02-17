@@ -9,18 +9,9 @@ common --incompatible_enable_proto_toolchain_resolution
 
 # Remove once protobuf 34 becomes the default.
 # - https://protobuf.dev/news/2026-01-16/
-build:prebuilt_protoc --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
-
-# Enable prebuilt protoc for CI builds on Linux and macOS.
-# Note: Windows has issues with prebuilt protoc toolchain resolution,
-# so we fall back to the default behavior there.
-build:linux --config=prebuilt_protoc
-build:macos --config=prebuilt_protoc
-
-# Required for abseil-cpp which is a dependency of protobuf when using
-# --incompatible_enable_proto_toolchain_resolution. abseil-cpp requires C++17.
-# These can be removed once abseil-cpp drops the C++17 requirement.
-common --cxxopt=-std=c++17
-common --host_cxxopt=-std=c++17
+# Note: The prebuilt protoc flag is not enabled globally because it requires
+# @com_google_protobuf to be visible, which is not always the case in Bzlmod.
+# Tests that need prebuilt protoc should set the flag directly:
+#   --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
 
 build --strategy=Scalac=worker --strategy=ScroogeRule=worker --worker_max_instances=3

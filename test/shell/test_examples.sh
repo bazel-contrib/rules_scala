@@ -16,32 +16,12 @@ run_in_example_dir(){
 
   set -e
   cd "examples/${test_dir}"
-  
-  # Temporarily replace .bazelrc since examples don't depend on protobuf
-  # and the prebuilt_protoc config references protobuf which isn't available.
-  # But we need to keep C++17 flags for abseil-cpp when proto is used.
-  if [[ -f .bazelrc ]]; then
-    mv .bazelrc .bazelrc.bak
-    # Create minimal .bazelrc without the import but with C++17 flags
-    cat > .bazelrc << 'EOF'
-# C++17 required for abseil-cpp (transitive dep of protobuf)
-common --cxxopt=-std=c++17
-common --host_cxxopt=-std=c++17
-EOF
-  fi
-  
   "$@"
 
   # Don't shut down in `scala3` since multiple test cases run there.
   if [[ "$test_dir" != 'scala3' ]]; then
     bazel shutdown
   fi
-  
-  # Restore original .bazelrc if it was backed up
-  if [[ -f .bazelrc.bak ]]; then
-    mv .bazelrc.bak .bazelrc
-  fi
-  
   cd "$dir"
 }
 

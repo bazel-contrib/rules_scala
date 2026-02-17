@@ -50,17 +50,7 @@ setup_test_module() {
   set -e
   cp "${dir}"/.bazelversion "${test_srcs_dir}"/bzlmod_test_ext.bzl .
   sed -e "s/--lockfile_mode=error/--lockfile_mode=update/" \
-      -e "/prebuilt_protoc/d" \
-      -e "/bazel.rc.buildkite/d" \
       "${dir}/.bazelrc" > ./.bazelrc
-  
-  # Also remove prebuilt_protoc from tools/bazel.rc.buildkite if it exists
-  if [[ -f "${dir}/tools/bazel.rc.buildkite" ]]; then
-    mkdir -p ./tools
-    sed -e "/prebuilt_protoc/d" \
-        -e "/cxxopt/d" \
-        "${dir}/tools/bazel.rc.buildkite" > ./tools/bazel.rc
-  fi
   cp "${test_srcs_dir}/BUILD.bzlmod_test" 'BUILD'
 
   sed -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \

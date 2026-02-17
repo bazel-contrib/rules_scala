@@ -161,8 +161,9 @@ do_build_and_test() {
     echo 'common --incompatible_enable_proto_toolchain_resolution' >>.bazelrc
 
     if [[ "$protoc_toolchain" == "protobuf" ]]; then
-      echo 'build:prebuilt_protoc --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true' >>.bazelrc
-      echo 'build --config=prebuilt_protoc' >>.bazelrc
+      # Note: Using the protobuf prebuilt protoc flag directly since the alias
+      # was removed due to Bzlmod visibility restrictions.
+      echo 'common --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true' >>.bazelrc
     fi
 
   elif [[ "$bazel_major" == "9" ]]; then

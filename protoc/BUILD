@@ -22,7 +22,5 @@ proto_lang_toolchain(
 
 # Note: The alias to @com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
 # was removed because it has visibility restrictions in Bzlmod mode.
-# To use prebuilt protoc, set the flag directly:
+# To use prebuilt protoc, set the flag directly when @com_google_protobuf is available:
 #   --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc=true
-# Or use the config provided by rules_scala:
-#   --config=prebuilt_protoc
