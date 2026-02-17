@@ -41,7 +41,8 @@ def protoc_executable(ctx):
 
     Returns:
         the prebuilt `protoc` executable path from the prebuilt toolchain
-        if `--incompatible_enable_proto_toolchain_resolution` is enabled,
+        if `--incompatible_enable_proto_toolchain_resolution` is enabled
+        and a prebuilt toolchain is available,
         or the path to the `protoc` compiled by `protobuf` otherwise
     """
 
@@ -51,9 +52,10 @@ def protoc_executable(ctx):
     toolchain = ctx.toolchains[PROTOC_TOOLCHAIN_TYPE]
     protoc = toolchain and toolchain.proto.proto_compiler.executable or None
 
+    # If no prebuilt toolchain is available, fall back to the legacy protoc
+    # from the protobuf repository. This can happen when:
+    # - The prebuilt protoc toolchain is not registered
+    # - We're in a test environment without the toolchain setup
     if protoc == None or protoc.owner == Label("@com_google_protobuf//:protoc"):
-        fail(
-            "Couldn't resolve prebuilt protocol compiler toolchain " +
-            "for toolchain type: " + str(PROTOC_TOOLCHAIN_TYPE),
-        )
+        return ctx.attr._protoc[DefaultInfo].files_to_run.executable
     return protoc
