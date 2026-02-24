@@ -51,7 +51,7 @@ options:
                         Scala version for which to update repository
                         information; if not provided, updates all supported
                         versions: 2.11.12, 2.12.21, 2.13.18, 3.1.3, 3.2.2,
-                        3.3.7, 3.4.3, 3.5.2, 3.6.4, 3.7.4, 3.8.1
+                        3.3.7, 3.4.3, 3.5.2, 3.6.4, 3.7.4, 3.8.2
   --output_dir OUTPUT_DIR
                         Directory in which to generate or update repository
                         files (default: .../third_party/repositories)

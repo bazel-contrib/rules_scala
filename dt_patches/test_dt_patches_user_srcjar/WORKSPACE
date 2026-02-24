@@ -154,8 +154,8 @@ srcjars_by_version = {
     "3.7.4": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.7.4/scala3-compiler_3-3.7.4-sources.jar",
     },
-    "3.8.1": {
-        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.1/scala3-compiler_3-3.8.1-sources.jar",
+    "3.8.2": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.2/scala3-compiler_3-3.8.2-sources.jar",
     },
 }
 

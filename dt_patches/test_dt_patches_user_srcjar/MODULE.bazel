@@ -185,8 +185,8 @@ scala_deps.compiler_srcjar(
     version = "3.7.4",
 )
 scala_deps.compiler_srcjar(
-    url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.1/scala3-compiler_3-3.8.1-sources.jar",
-    version = "3.8.1",
+    url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.2/scala3-compiler_3-3.8.2-sources.jar",
+    version = "3.8.2",
 )
 
 register_toolchains(
