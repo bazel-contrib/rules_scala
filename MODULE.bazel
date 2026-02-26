@@ -7,7 +7,6 @@ module(
     # - https://github.com/bazel-contrib/publish-to-bcr/blob/v1.1.0/src/domain/create-entry.ts#L176-L216
     version = "",
     bazel_compatibility = [">=7.1.0"],
-    compatibility_level = 7,
 )
 
 SCALA_VERSION = "2.12.21"
@@ -34,7 +33,7 @@ SCALA_VERSIONS = SCALA_2_VERSIONS + SCALA_3_VERSIONS
 bazel_dep(name = "bazel_skylib", version = "1.8.0")
 single_version_override(
     module_name = "bazel_skylib",
-    version = "1.8.2",
+    version = "1.9.0",
 )
 
 bazel_dep(name = "platforms", version = "0.0.9")
@@ -46,7 +45,7 @@ single_version_override(
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
-    version = "9.3.0",
+    version = "9.6.1",
 )
 
 # TODO: Remove this dep once protobuf 33.4 becomes the minimum supported
@@ -60,7 +59,7 @@ bazel_dep(
 )
 single_version_override(
     module_name = "protobuf",
-    version = "33.4",
+    version = "33.5",
 )
 
 # See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto.
@@ -245,7 +244,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_go",
-    version = "0.59.0",
+    version = "0.60.0",
     dev_dependency = True,
     repo_name = "io_bazel_rules_go",  # for com_github_bazelbuild_buildtools
 )
@@ -256,7 +255,7 @@ go_sdk = use_extension(
     "go_sdk",
     dev_dependency = True,
 )
-go_sdk.download(version = "1.25.5")
+go_sdk.download(version = "1.26.0")
 
 go_deps = use_extension(
     "@gazelle//:extensions.bzl",
@@ -275,11 +274,11 @@ go_deps = use_extension(
 # - https://go.dev/ref/mod#checksum-database
 #
 #   go list -m golang.org/x/tools@latest
-#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.38.0
+#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.42.0
 go_deps.module(
     path = "golang.org/x/tools",
-    sum = "h1:yLkxfA+Qnul4cs9QA3KnlFu0lVmd8JJfoq+E41uSutA=",
-    version = "v0.40.0",
+    sum = "h1:uNgphsn75Tdz5Ji2q36v/nsFSfR/9BRFvqhGBaJGd5k=",
+    version = "v0.42.0",
 )
 go_deps.module(
     path = "github.com/golang/protobuf",
@@ -292,5 +291,5 @@ use_repo(
     "org_golang_x_tools",
 )
 
-bazel_dep(name = "rules_python", version = "1.7.0", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.8.5", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)

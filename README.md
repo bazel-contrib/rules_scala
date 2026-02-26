@@ -1547,31 +1547,6 @@ use_repo(
 )
 ```
 
-### Bazel module compatibility levels
-
-`rules_scala` 7.0.0 will set the
-[`compatibility_level`](https://bazel.build/external/module#compatibility_level)
-value for its [`module()`](https://bazel.build/rules/lib/globals/module)
-directive. The `compatibility_level` for `rules_scala` will track major version
-numbers (per [semantic versioning](https://semver.org/)), and this `README` will
-clearly document the reason for the level bump. `compatibility_level` mismatches
-in the module graph will cause module resolution to fail, signaling the presence
-of known breaking changes.
-
-The concept of proper `compatibility_level` usage is still up for discussion in
-bazelbuild/bazel#24302. However, the policy above favors forcing module
-resolution to fail, rather than allowing a later execution step to fail with a
-potentially confusing error message. If a version bump may break builds for any
-known reason, we will explain why up front instead of waiting for users to be
-surprised.
-
-[A comment from #1647 illustrates how 'rules_erlang' fails due to
-'compatibility_level' conflicts][erlang]. The ['rules_erlang' 3.0.0 release
-notes](https://github.com/rabbitmq/rules_erlang/releases/tag/3.0.0) describe the
-breaking changes. This seems like a reasonable model to follow.
-
-[erlang]: https://github.com/bazelbuild/rules_scala/issues/1647#issuecomment-2486777859
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more info.
