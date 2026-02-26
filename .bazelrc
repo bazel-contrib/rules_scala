@@ -25,6 +25,12 @@ common --incompatible_enable_proto_toolchain_resolution
 # - https://protobuf.dev/news/2026-01-16/
 common --@rules_scala//protoc:prefer_prebuilt_protoc
 
+# Remove once bazelbuild/bazel@0b8a518ba4074d0be1dedd6a922663fd0bf1441c makes it
+# into the default release.
+# - https://bazel.build/reference/command-line-reference#common_options-flag--incompatible_no_implicit_file_export
+# - https://github.com/bazelbuild/bazel/pull/27674
+common --incompatible_no_implicit_file_export
+
 build --enable_platform_specific_config
 
 # Use Java 17+ required for Scala 3.8+
