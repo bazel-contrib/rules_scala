@@ -1,12 +1,19 @@
 """Bazel module definition for rules_scala"""
 
+# The publish-to-bcr GitHub workflow supplies the actual `version`. See:
+# - https://bazel.build/external/faq#module-versioning-best-practices
+# - https://github.com/bazel-contrib/publish-to-bcr/blob/v1.1.0/src/domain/create-entry.ts#L176-L216
+#
+# compatibility_level is a no-op in Bazel >= 8.6.0 and >= 9.1.0, but we'll keep
+# it until we stop supporting Bazel 7. See:
+# - https://github.com/bazelbuild/bazel/pull/28600
+# - https://bazel.build/release
+# - https://github.com/bazel-contrib/rules_scala/issues/1816
 module(
     name = "rules_scala",
-    # The publish-to-bcr GitHub workflow supplies the actual `version`. See:
-    # - https://bazel.build/external/faq#module-versioning-best-practices
-    # - https://github.com/bazel-contrib/publish-to-bcr/blob/v1.1.0/src/domain/create-entry.ts#L176-L216
     version = "",
     bazel_compatibility = [">=7.1.0"],
+    compatibility_level = 7,
 )
 
 SCALA_VERSION = "2.12.21"

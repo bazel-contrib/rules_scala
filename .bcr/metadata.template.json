@@ -21,5 +21,7 @@
     "github:bazel-contrib/rules_scala"
   ],
   "versions": [],
-  "yanked_versions": {}
+  "yanked_versions": {
+    "7.2.3": "removed compatibility_level too soon (https://github.com/bazel-contrib/rules_scala/issues/1816)"
+  }
 }
