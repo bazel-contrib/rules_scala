@@ -3,7 +3,7 @@ validate_config: 1
 
 matrix:
   bcr_platform: ["debian10", "macos", "ubuntu2004", "windows"]
-  bcr_bazel: [7.x, 8.x, 9.x, rolling, last_green]
+  bcr_bazel: ["7.x", "8.x", "9.x", "rolling", "last_green"]
 
 tasks:
   ubuntu2004:
