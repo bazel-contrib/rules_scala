@@ -281,13 +281,25 @@ go_deps.module(
     version = "v0.42.0",
 )
 go_deps.module(
+    path = "github.com/odvcencio/gotreesitter",
+    sum = "h1:L+EJxVoPsnfPPGaPfrd6DVRy1BI8zRRSQUitDH4vFzE=",
+    version = "v0.6.1-0.20260304061736-42d29f901563",
+)
+go_deps.module(
     path = "github.com/golang/protobuf",
     sum = "h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=",
     version = "v1.5.4",
 )
+go_deps.module(
+    path = "gopkg.in/yaml.v3",
+    sum = "h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=",
+    version = "v3.0.1",
+)
 use_repo(
     go_deps,
     "com_github_golang_protobuf",
+    "com_github_odvcencio_gotreesitter",
+    "in_gopkg_yaml_v3",
     "org_golang_x_tools",
 )
 

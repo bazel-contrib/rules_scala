@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "scalaparser",
+    srcs = ["parser.go"],
+    importpath = "github.com/bazelbuild/rules_scala/src/gazelle/private/scalaparser",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_odvcencio_gotreesitter//:gotreesitter",
+        "@com_github_odvcencio_gotreesitter//grammars",
+    ],
+)
+
+go_test(
+    name = "scalaparser_test",
+    srcs = ["parser_test.go"],
+    embed = [":scalaparser"],
+    pure = "on",
+)
