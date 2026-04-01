@@ -27,10 +27,11 @@ permissions:
 
 jobs:
   release:
-    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.2.3
+    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.4.0
     with:
       bazel_test_command: "bazel test //src/... //test/... //third_party/..."
       prerelease: false
+      draft: true
       release_files: rules_scala-*.tar.gz
       tag_name: ${{ inputs.tag_name || github.ref_name }}
 
