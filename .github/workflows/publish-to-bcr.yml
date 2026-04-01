@@ -39,6 +39,8 @@ jobs:
       # Necessary to push to the BCR fork and open a pull request.
       publish_token: ${{ secrets.bcr_publish_token }}
   finalize:
+    permissions:
+      contents: write
     needs: publish-to-bcr
     runs-on: ubuntu-latest
     steps:
