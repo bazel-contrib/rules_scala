@@ -126,7 +126,7 @@ load(
 )
 load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
 load("@rules_scala//scala:scala_cross_version.bzl", "version_suffix")
-load("@rules_scala_config//:config.bzl", "SCALA_VERSION", "SCALA_VERSIONS")
+load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
 [
     setup_scala_toolchain(
@@ -137,12 +137,19 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION", "SCALA_VERSIONS")
     for scala_version in SCALA_VERSIONS
 ]
 
+# Default dep providers used by _default_dep_providers() in scala_toolchain.bzl.
+# Uses select() so that custom scala_toolchain() callers that don't pass
+# explicit dep_providers get the correct version's deps, including when the
+# scala_version build setting is transitioned (e.g., cross-compilation).
 [
     declare_deps_provider(
         name = deps_id + "_provider",
         deps_id = deps_id,
         visibility = ["//visibility:public"],
-        deps = default_deps(deps_id, SCALA_VERSION),
+        deps = select({{
+            "@rules_scala_config//:scala_version" + version_suffix(v): default_deps(deps_id, v)
+            for v in SCALA_VERSIONS
+        }}),
     )
     for deps_id in [
         "scala_xml",

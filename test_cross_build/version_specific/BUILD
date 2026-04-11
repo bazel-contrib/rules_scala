@@ -65,3 +65,20 @@ scala_library(
     ],
     scala_version = "3.1.3",
 )
+
+# Cross-major-version targets (default 3.x -> target 2.x).
+# test_cross_build_default_2x in test_cross_build.sh builds existing 3.x
+# targets with --repo_env=SCALA_VERSION=2.13.18 to cover the reverse
+# direction (default 2.x -> target 3.x).
+
+scala_library(
+    name = "scala_2_13",
+    srcs = ["scala_2_only.scala"],
+    scala_version = "2.13.18",
+)
+
+scala_library(
+    name = "scala_2_12",
+    srcs = ["scala_2_only.scala"],
+    scala_version = "2.12.21",
+)
