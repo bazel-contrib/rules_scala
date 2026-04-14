@@ -2,25 +2,22 @@
 #
 # Script to build custom version of `JacocoCoverage_jarjar_deploy.jar` from Jacoco and Bazel repositories.
 #
-# The script has three flavours: Bazel 5, 6 and 7. Documenting the details for Bazel 7 here.
+# The script has three flavours: Bazel 5, 6, 7 (8 is treated as 7) and 9. Documenting the details for Bazel 7/8/9 here.
 #
 # The default `JacocoCoverage_jarjar_deploy.jar` has some issues:
 #
-# 1. Scala support on newer Jacoco versions (including 0.8.11) is still lacking some functionality
+# 1. Scala support on newer Jacoco versions (including 0.8.14) is still lacking some functionality
 #
 #    E.g. a lot of generated methods for case classes, lazy vals or other Scala features are causing falsely missed branches in branch coverage.
 #
 #    Proposed changes in:
-#    https://github.com/gergelyfabian/jacoco/tree/scala
-#
-#    Backported to 0.8.11 (to be usable with current Bazel):
-#    https://github.com/gergelyfabian/jacoco/tree/0.8.11-scala
+#    https://github.com/gergelyfabian/jacoco/tree/0.8.14-scala
 #
 # 2. Bazel's code for generating `JacocoCoverage_jarjar_deploy.jar` needs changes after our Jacoco changes
 #
 #    It implements an interface that we have extended, so that implementation also needs to be extended.
 #
-#    This has been added on https://github.com/gergelyfabian/bazel/tree/7.0.2_jacoco_0.8.11_scala.
+#    This has been added on https://github.com/gergelyfabian/bazel/tree/9.0.2_jacoco_0.8.14_scala.
 #
 # You can use this script to build a custom version of `JacocoCoverage_jarjar_deploy.jar`, including any fixes from the above list you wish
 # and then provide the built jar as a parameter of `java_toolchain` and/or `scala_toolchain` to use the changed behavior for coverage.
@@ -46,7 +43,7 @@ set -e
 
 # Note!!
 # Ensure Java 8 is used for building Jacoco <0.8.11 (experienced issue when using e.g. Java 17).
-# Java 17+ is needed for Jacoco 0.8.11+.
+# Java 17 is needed for Jacoco 0.8.11+.
 #
 # If it's necessary and this matches your system, you could uncomment these lines:
 #export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -72,11 +69,15 @@ bazel_major_version=$1
 if [ -z "$bazel_major_version" ]; then
   echo "Please provide Bazel major version"
   exit 1
-elif [ "$bazel_major_version" != "5" ] && [ "$bazel_major_version" != "6" ] && [ "$bazel_major_version" != "7" ]; then
+elif [[ "$bazel_major_version" -lt 5 || "$bazel_major_version" -gt 9 ]]; then
   echo "Unsupported Bazel major version: $bazel_major_version"
   exit 1
 fi
 echo "Selected Bazel major version: $bazel_major_version"
+
+if [ "$bazel_major_version" = "8" ]; then
+  bazel_major_version="7"
+fi
 
 jacoco_repo=$build_dir/jacoco
 # Take a fork for Jacoco that contains Scala fixes.
@@ -105,13 +106,20 @@ elif [ "$bazel_major_version" = "6" ]; then
   bazel_version=6.3.2
   # Version of Bazel with extending Bazel's Jacoco interface implementation for our 0.8.7-scala jacoco branch.
   bazel_branch=6.3.2_jacoco_0.8.7_scala
-else
+elif [ "$bazel_major_version" = "7" ]; then
   # Take further fixes for Scala (2.11, 2.12 and 2.13) - branch in development:
   jacoco_branch=0.8.11-scala
   jacoco_version=0.8.11
   bazel_version=7.0.2
   # Version of Bazel with extending Bazel's Jacoco interface implementation for our 0.8.11-scala jacoco branch.
   bazel_branch=7.0.2_jacoco_0.8.11_scala
+else
+  # Take further fixes for Scala (2.11, 2.12 and 2.13) - branch in development:
+  jacoco_branch=0.8.14-scala
+  jacoco_version=0.8.14
+  # Version of Bazel with extending Bazel's Jacoco interface implementation for our 0.8.14-scala jacoco branch.
+  bazel_version=10.0.0-pre.20251208.3
+  bazel_branch=10.0.0-pre.20251208.3_jacoco_0.8.14_scala
 fi
 
 JAVA_VERSION=$(java -version 2>&1 | head -1 \
@@ -123,6 +131,12 @@ if [ "$bazel_major_version" == "7" ]; then
   if [ "$JAVA_VERSION" != "17" ]; then
     echo "Unexpected java version: $JAVA_VERSION"
     echo "Please ensure this script is run with Java 17"
+    exit 1
+  fi
+elif [ "$bazel_major_version" == "9" ]; then
+  if [ "$JAVA_VERSION" != "17" ] && [ "$JAVA_VERSION" != "21" ]; then
+    echo "Unexpected java version: $JAVA_VERSION"
+    echo "Please ensure this script is run with Java 17 or 21"
     exit 1
   fi
 else
@@ -161,7 +175,12 @@ git checkout origin/$jacoco_branch
 for patch in $jacoco_patches; do
   git am $source_path/$patch
 done
-mvn clean install
+# Jacoco 0.8.14+ enforces requireMavenVersion >= 3.9.11; system mvn (e.g. 3.8.7 on Ubuntu) is too old, so use the bundled wrapper.
+if [[ "$bazel_major_version" -ge 9 ]]; then
+  ./mvnw clean install
+else
+  mvn clean install
+fi
 )
 
 (
@@ -184,7 +203,7 @@ cp lib/org.jacoco.report-* org.jacoco.report-${jacoco_version}.jar
 cd ../../..
 
 # Build JacocoRunner.
-bazel build src/java_tools/junitrunner/java/com/google/testing/coverage:$bazel_build_target
+bazel build --check_direct_dependencies=off src/java_tools/junitrunner/java/com/google/testing/coverage:$bazel_build_target
 cp bazel-bin/src/java_tools/junitrunner/java/com/google/testing/coverage/$bazel_build_target $destination_dir/
 # Make the jar writable to enable re-running the script.
 chmod +w $destination_dir/$bazel_build_target
