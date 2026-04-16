@@ -31,6 +31,7 @@ def _declare_deps_provider(macro_name, deps_id, deps, visibility):
         name = label,
         deps_id = deps_id,
         visibility = visibility,
+        testonly = True,
         deps = deps,
     )
     return ":%s" % label
@@ -89,6 +90,7 @@ def setup_scala_testing_toolchain(
         name = name + "_impl",
         dep_providers = dep_providers,
         visibility = visibility,
+        testonly = True,
     )
 
     native.toolchain(
@@ -99,5 +101,6 @@ def setup_scala_testing_toolchain(
             "@rules_scala_config//:scala_version" +
             version_suffix(scala_version),
         ],
+        testonly = True,
         visibility = visibility,
     )

@@ -2,6 +2,7 @@ load("//scala:scala.bzl", "scala_library")
 
 scala_library(
     name = "specs2_test_discovery",
+    testonly = True,
     srcs = [
         "Specs2RunnerBuilder.scala",
         "package.scala",
