@@ -160,8 +160,11 @@ public class DepsTrackingReporter extends BazelConsoleReporter {
 
     writeSdepsFile(usedDeps, unusedDeps);
 
-    Reporter reporter = this.delegateReporter != null ? this.delegateReporter : this;
-    reportDeps(usedDeps, unusedDeps, reporter, ctx);
+    // Report through `this` so the synthesized strict-deps / unused-deps
+    // errors increment the wrapper's error count that ScalacInvoker checks
+    // via `hasErrors()`. Our `doReport` override still forwards each
+    // diagnostic to `delegateReporter` for display.
+    reportDeps(usedDeps, unusedDeps, this, ctx);
   }
 
   private Dependency buildDependency(String jar, String target, Kind kind, boolean ignored) {
