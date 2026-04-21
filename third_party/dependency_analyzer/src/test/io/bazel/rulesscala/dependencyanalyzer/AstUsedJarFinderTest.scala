@@ -502,6 +502,12 @@ class AstUsedJarFinderTest extends AnyFunSuite {
     // In this case expr=foo.bar and selectors=[_], so expr does not have
     // a type which corresponds with A.
     testImport("foo.bar._", isDirect = false)
+
+    // In this case expr=foo.bar.A and selectors=[_]. The qualifier
+    // expression references A directly, and the RefTree branch in
+    // visitNode records A's defining file as part of normal subtree
+    // traversal.
+    testImport("foo.bar.A._", isDirect = true)
   }
 
   test("java interface method argument is direct") {
@@ -602,6 +608,205 @@ class AstUsedJarFinderTest extends AnyFunSuite {
           |""".stripMargin,
         expectedStrictDeps = List("UnitTests", "Category")
       )
+    }
+  }
+
+  // Asserts that an implicit val resolved from a wildcard import is
+  // recognized as a use of the providing object's jar in Scala 2.
+  // Scala 2's typer expands the resolved implicit to a fully qualified
+  // Select chain (`implicits.pkg.TCInstances.intTC` in the typed AST),
+  // so the analyzer reaches the providing object via the standard
+  // tree.tpe path. If a future typer change starts producing a bare
+  // `Ident(intTC)` instead, this test fails and the Scala 2 analyzer
+  // would need the same RefTree-based handling that
+  // dependencyanalyzer3/AstUsedJarFinder.scala has.
+  if (!isScala3) {
+    test("wildcard implicit import and implicit usage is direct (Scala 2)") {
+      withSandbox { sandbox =>
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package implicits.pkg
+            |
+            |class TC[T]
+            |
+            |object TCInstances {
+            |  implicit val intTC: TC[Int] = new TC[Int]
+            |}
+            |""".stripMargin
+        )
+
+        val bCode =
+          """
+            |import implicits.pkg.TCInstances._
+            |
+            |object B {
+            |  def needsTC[T](implicit tc: implicits.pkg.TC[T]): implicits.pkg.TC[T] = tc
+            |  val tc: implicits.pkg.TC[Int] = needsTC[Int]
+            |}
+            |""".stripMargin
+
+        sandbox.checkStrictDepsErrorsReported(
+          code = bCode,
+          expectedStrictDeps = List("implicits/pkg/TCInstances", "implicits/pkg/TC")
+        )
+      }
+    }
+  }
+
+  // Tests for Scala 3 `given` imports. See AstUsedJarFinder.scala for
+  // why these references are tracked through the symbol path rather
+  // than the type path.
+  if (isScala3) {
+    // Scala 3 puts top-level definitions in a synthetic `<source>$package`
+    // object, where `<source>` is the source file's base name. TestUtil
+    // names every compilation unit `scala_compiler_util_run_code.scala`,
+    // so top-level givens end up in `scala_compiler_util_run_code$package`.
+    val tlPackageObject = "scala_compiler_util_run_code$package"
+
+    test("package-level given import is direct (Scala 3)") {
+      // A top-level `given` brought into scope by `import pkg.given`
+      // and used through an implicit summon counts as a direct use of
+      // the package's jar. The RefTree arm in AstUsedJarFinder is what
+      // reaches that jar; the type path on its own only sees the
+      // typeclass.
+      withSandbox { sandbox =>
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.tlpkg
+            |
+            |class TC[T]
+            |""".stripMargin
+        )
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.tlinst
+            |
+            |given givens.tlpkg.TC[Int] = new givens.tlpkg.TC[Int]
+            |""".stripMargin
+        )
+
+        val bCode =
+          """
+            |import givens.tlinst.given
+            |
+            |object B:
+            |  val tc: givens.tlpkg.TC[Int] = summon[givens.tlpkg.TC[Int]]
+            |""".stripMargin
+
+        sandbox.checkStrictDepsErrorsReported(
+          code = bCode,
+          expectedStrictDeps = List(s"givens/tlinst/$tlPackageObject", "givens/tlpkg/TC")
+        )
+      }
+    }
+
+    test("object-level given import is direct (Scala 3)") {
+      // Importing givens from an object also marks the object's jar
+      // as direct. The import qualifier is a Select whose
+      // tpe.typeSymbol unwraps to the module class, so the type path
+      // alone is sufficient here.
+      withSandbox { sandbox =>
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.pkg
+            |
+            |class TC[T]
+            |
+            |object TCInstances:
+            |  given TC[Int] = new TC[Int]
+            |""".stripMargin
+        )
+
+        val bCode =
+          """
+            |import givens.pkg.TCInstances.given
+            |
+            |object B:
+            |  val tc: givens.pkg.TC[Int] = summon[givens.pkg.TC[Int]]
+            |""".stripMargin
+
+        sandbox.checkStrictDepsErrorsReported(
+          code = bCode,
+          expectedStrictDeps = List("givens/pkg/TCInstances", "givens/pkg/TC")
+        )
+      }
+    }
+
+    test("package-level given import without usage is flagged as unused (Scala 3)") {
+      // `import pkg.given` from a package with no actual implicit
+      // resolution does not count as a use of pkg's jar: removing the
+      // dep would not break compilation, since implicit search never
+      // resolves any given from it. The qualifier is a package with no
+      // associated file, and the body has no `Ident(given_X)` for the
+      // RefTree arm to record, so neither path marks the dep as used.
+      withSandbox { sandbox =>
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.tlpkg2
+            |
+            |class TC[T]
+            |""".stripMargin
+        )
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.tlinst2
+            |
+            |given givens.tlpkg2.TC[Int] = new givens.tlpkg2.TC[Int]
+            |""".stripMargin
+        )
+
+        val bCode =
+          """
+            |import givens.tlinst2.given
+            |
+            |class B
+            |""".stripMargin
+
+        sandbox.checkUnusedDepsErrorReported(
+          code = bCode,
+          expectedUnusedDeps = List(s"givens/tlinst2/$tlPackageObject")
+        )
+      }
+    }
+
+    test("by-type given import from a package is direct (Scala 3)") {
+      // `import pkg.{given TC[Int]}` is the by-type form of given
+      // import. The selector is still a GivenSelector (with a `bound`
+      // Tree), the qualifier is still a package, and the body
+      // references the given via Ident, so the same RefTree path
+      // applies as for the wildcard `.given` form.
+      withSandbox { sandbox =>
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.bytype
+            |
+            |class TC[T]
+            |""".stripMargin
+        )
+        sandbox.compileWithoutAnalyzer(
+          """
+            |package givens.bytypeinst
+            |
+            |given givens.bytype.TC[Int] = new givens.bytype.TC[Int]
+            |""".stripMargin
+        )
+
+        val bCode =
+          """
+            |import givens.bytypeinst.{given givens.bytype.TC[Int]}
+            |
+            |object B:
+            |  val tc: givens.bytype.TC[Int] = summon[givens.bytype.TC[Int]]
+            |""".stripMargin
+
+        sandbox.checkStrictDepsErrorsReported(
+          code = bCode,
+          expectedStrictDeps = List(
+            s"givens/bytypeinst/$tlPackageObject",
+            "givens/bytype/TC"
+          )
+        )
+      }
     }
   }
 

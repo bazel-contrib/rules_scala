@@ -100,7 +100,19 @@ public class DepsTrackingReporter extends BazelConsoleReporter {
     Set<String> usedTargets = new HashSet<>();
     Set<Dependency> usedDeps = new HashSet<>();
 
-    for (String jar : usedJars) {
+    // Treat AST-discovered jars as used in addition to those reported
+    // by the patched SymbolLoaders.complete hook. The hook does not
+    // fire reliably for Scala 3 `given` symbols imported via
+    // `import x.given`, so on its own it can flag a direct dep used
+    // solely to provide a given instance as unused.
+    Set<String> allUsedJars = new HashSet<>(usedJars);
+    for (String jar : astUsedJars) {
+      if (jarToTarget.containsKey(jar) || indirectJarToTarget.containsKey(jar)) {
+        allUsedJars.add(jar);
+      }
+    }
+
+    for (String jar : allUsedJars) {
       String target = jarToTarget.get(jar);
 
       if (target == null) {
@@ -297,7 +309,11 @@ public class DepsTrackingReporter extends BazelConsoleReporter {
 
   private String jarLabel(String path) throws IOException {
     try (JarFile jar = new JarFile(path)) {
-      return jar.getManifest().getMainAttributes().getValue("Target-Label");
+      // Generated jars without a MANIFEST.MF return null here; treat
+      // them the same as a manifest with no Target-Label attribute.
+      return jar.getManifest() == null
+          ? null
+          : jar.getManifest().getMainAttributes().getValue("Target-Label");
     }
   }
 
