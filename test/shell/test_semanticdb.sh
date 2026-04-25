@@ -203,7 +203,7 @@ run_semanticdb_tests() {
 
   $runner test_no_semanticdb
   $runner test_semanticdb_handles_removed_sourcefiles
+  $runner test_semanticdb_synthetics_toolchain_scalaopt
 }
 
 run_semanticdb_tests
-$runner test_semanticdb_synthetics_toolchain_scalaopt
