@@ -63,6 +63,7 @@ def _matches_for_version(scala_version, kwargs, default_value):
 def _match_one_arg(scala_version, matcher_scala_version, compare):
     # Some rudimentary version parsing to allow a lexicographical compare later.
     # Works for versions containing numbers only.
+    scala_version = scala_version.split("-")[0]
     scala_version = tuple([int(x) for x in scala_version.split(".")])
     matcher_scala_version = tuple([int(x) for x in matcher_scala_version.split("_")])
 

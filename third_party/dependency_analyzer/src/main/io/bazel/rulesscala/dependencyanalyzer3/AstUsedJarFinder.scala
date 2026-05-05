@@ -75,12 +75,26 @@ class AstUsedJarFinder {
             fullyExploreTree(expansion)
 
           case Import(qualifier, selectors) =>
+            // Resolve named selectors so `import foo.bar.A` records A
+            // as a direct dep even when A appears nowhere else. The
+            // qualifier itself is handled by the RefTree branch below
+            // when foreachSubTree visits it.
             val symbol = qualifier.symbol
             selectors.foreach { selector =>
               if selector.name != nme.WILDCARD && selector.rename != nme.WILDCARD then
                 val selected = symbol.info.member(selector.name).symbol
                 handleSymbol(selected, tree.sourcePos)
             }
+          // Record the file of the referenced symbol, in addition to
+          // the file of `tree.tpe` handled below. The two diverge for
+          // a Scala 3 `given` brought into scope by `import x.given`:
+          // the AST contains `Ident(given_X)` whose `tpe` narrows to
+          // the typeclass type, so `exploreType` only reaches the
+          // typeclass's jar. The given's defining jar (often a
+          // different dep) is reachable only via the symbol's
+          // `associatedFile`.
+          case _: RefTree =>
+            handleSymbol(tree.symbol, tree.sourcePos)
           case _ => // skip
         }
 

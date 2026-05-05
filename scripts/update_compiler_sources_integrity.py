@@ -21,9 +21,9 @@ from lib.update_integrity import (
 SCALA_VERSIONS = [
     "2.11.12",
 ] + [
-    f'2.12.{patch}' for patch in range(1, 21)  # 2.12.1 to 2.12.20
+    f'2.12.{patch}' for patch in range(1, 22)  # 2.12.1 to 2.12.21
 ] + [
-    f'2.13.{patch}' for patch in range(0, 18)  # 2.13.0 to 2.13.17
+    f'2.13.{patch}' for patch in range(0, 19)  # 2.13.0 to 2.13.18
 ] + [
     f'3.1.{patch}' for patch in range(0, 4)    # 3.1.0  to 3.1.3
 ] + [
@@ -38,6 +38,8 @@ SCALA_VERSIONS = [
     f'3.6.{patch}' for patch in range(0, 5)    # 3.6.0  to 3.6.4
 ] + [
     f'3.7.{patch}' for patch in range(0, 5)    # 3.7.0  to 3.7.4
+] + [
+    f'3.8.{patch}' for patch in range(0, 4)    # 3.8.0  to 3.8.3
 ]
 
 DATA_MARKER = "COMPILER_SOURCES = "

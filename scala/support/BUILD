@@ -9,20 +9,23 @@ scala_library(
         "-encoding",
         "UTF-8",
         "-feature",
-        "-language:existentials",
-        "-language:higherKinds",
         "-language:implicitConversions",
         "-unchecked",
-        "-Xfatal-warnings",
     ] + select_for_scala_version(
         any_2 = [
+            "-Xfatal-warnings",
             "-Xlint",
             "-Ywarn-dead-code",
             "-Ywarn-numeric-widen",
             "-Ywarn-value-discard",
+            "-language:existentials",
+            "-language:higherKinds",
         ],
         any_2_13 = [
             "-Wunused:imports",
+        ],
+        any_3 = [
+            "-Werror",
         ],
         before_2_13 = [
             "-Yno-adapted-args",

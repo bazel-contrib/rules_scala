@@ -22,11 +22,11 @@ scala_config = use_extension(
 )
 
 scala_config.settings(
-    scala_version = "2.13.17",
+    scala_version = "2.13.18",
     # No need to include `scala_version` in `scala_versions`.
     scala_versions = [
         "2.11.12",
-        "2.12.20",
+        "2.12.21",
         "3.1.3",
         "3.2.2",
         "3.3.7",
@@ -44,8 +44,8 @@ scala_config(
     # You _must_ include `scala_version` in `scala_versions`.
     scala_versions = [
         "2.11.12",
-        "2.12.20",
-        "2.13.17",
+        "2.12.21",
+        "2.13.18",
         "3.1.3",
         "3.2.2",
         "3.3.7",

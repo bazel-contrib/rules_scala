@@ -264,7 +264,15 @@ def _compile_or_empty(
         )
 
 def _build_nosrc_jar(ctx):
-    resources = [s + ":" + t for t, s in _resource_paths(ctx.files.resources, ctx.attr.resource_strip_prefix)]
+    resource_tuples = _resource_paths(ctx.files.resources, ctx.attr.resource_strip_prefix)
+    resources = [s + ":" + t for t, s in resource_tuples]
+    skip_warn_duplicate_resources = False
+    for t, _ in resource_tuples:
+        if t == "reference.conf":
+            # singlejar treats reference.conf as a duplicate when --warn_duplicate_resources is set
+            # and drops it even if it is the only resource.
+            skip_warn_duplicate_resources = True
+            break
 
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
@@ -272,7 +280,8 @@ def _build_nosrc_jar(ctx):
     args.add("--compression")
     args.add("--normalize")
     args.add("--exclude_build_data")
-    args.add("--warn_duplicate_resources")
+    if not skip_warn_duplicate_resources:
+        args.add("--warn_duplicate_resources")
     args.add("--output", ctx.outputs.jar)
     args.add_all("--resources", resources)
 

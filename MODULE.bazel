@@ -1,20 +1,29 @@
 """Bazel module definition for rules_scala"""
 
+# The publish-to-bcr GitHub workflow supplies the actual `version`. See:
+# - https://bazel.build/external/faq#module-versioning-best-practices
+# - https://github.com/bazel-contrib/publish-to-bcr/blob/v1.1.0/src/domain/create-entry.ts#L176-L216
+#
+# compatibility_level is a no-op in Bazel >= 8.6.0 and >= 9.1.0, but we'll keep
+# it until we stop supporting Bazel 7. See:
+# - https://github.com/bazelbuild/bazel/pull/28600
+# - https://bazel.build/release
+# - https://github.com/bazel-contrib/rules_scala/issues/1816
 module(
     name = "rules_scala",
-    version = "7.1.6",
+    version = "",
     bazel_compatibility = [">=7.1.0"],
     compatibility_level = 7,
 )
 
-SCALA_VERSION = "2.12.20"
+SCALA_VERSION = "2.12.21"
 
 # These versions match those required by some tests, including
 # test_thirdparty_version.sh.
 SCALA_2_VERSIONS = [
     "2.11.12",
-    "2.12.20",
-    "2.13.17",
+    "2.12.21",
+    "2.13.18",
 ]
 
 SCALA_3_VERSIONS = [
@@ -23,6 +32,7 @@ SCALA_3_VERSIONS = [
     "3.5.2",
     "3.6.4",
     "3.7.4",
+    "3.8.3",
 ]
 
 SCALA_VERSIONS = SCALA_2_VERSIONS + SCALA_3_VERSIONS
@@ -30,7 +40,7 @@ SCALA_VERSIONS = SCALA_2_VERSIONS + SCALA_3_VERSIONS
 bazel_dep(name = "bazel_skylib", version = "1.8.0")
 single_version_override(
     module_name = "bazel_skylib",
-    version = "1.8.2",
+    version = "1.9.0",
 )
 
 bazel_dep(name = "platforms", version = "0.0.9")
@@ -42,36 +52,25 @@ single_version_override(
 bazel_dep(name = "rules_java", version = "7.6.0")
 single_version_override(
     module_name = "rules_java",
-    version = "9.3.0",
+    version = "9.6.1",
 )
 
-# TODO: remove this dep, the repo is deprecated and archived.
-# All public API symbols are aliased to @protobuf
+# TODO: Remove this dep once protobuf 33.4 becomes the minimum supported
+# version. The repo is deprecated and archived and all public API symbols are
+# aliased to @protobuf.
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(
     name = "protobuf",
     version = "28.2",
     repo_name = "com_google_protobuf",
 )
-
-# Temporarily required for `protoc` toolchainization until
-# protocolbuffers/protobuf#19679 appears in a published release.
 single_version_override(
     module_name = "protobuf",
-    patch_strip = 1,
-    patches = ["//protoc:0001-protobuf-19679-rm-protoc-dep.patch"],
-    version = "33.1",
+    version = "33.5",
 )
 
 # See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto.
-bazel_dep(name = "bazel_worker_api", version = "0.0.6")
-
-scala_protoc = use_extension(
-    "//scala/extensions:protoc.bzl",
-    "scala_protoc",
-    dev_dependency = True,
-)
-use_repo(scala_protoc, "rules_scala_protoc_toolchains")
+bazel_dep(name = "bazel_worker_api", version = "0.0.10")
 
 scala_config = use_extension(
     "//scala/extensions:config.bzl",
@@ -99,18 +98,16 @@ use_repo(
 
 # Register some of our testing toolchains first when building our repo.
 register_toolchains(
-    # This is optional, but still safe to include even when not using
-    # `--incompatible_enable_proto_toolchain_resolution`. Requires invoking the
-    # `scala_protoc_toolchains` repo rule. Register this toolchain before any
-    # others.
-    "@rules_scala_protoc_toolchains//...:all",
     "//scala:unused_dependency_checker_error_toolchain",
     "//test/proto:scalapb_toolchain",
     "//test/toolchains:java21_toolchain_definition",
     dev_dependency = True,
 )
 
-register_toolchains("@rules_scala_toolchains//...:all")
+register_toolchains(
+    "@rules_scala_toolchains//...:all",
+    "//protoc:all",  # //protoc:scala_protoc_toolchain creates a cycle
+)
 
 # Dev dependencies
 
@@ -254,7 +251,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_go",
-    version = "0.59.0",
+    version = "0.60.0",
     dev_dependency = True,
     repo_name = "io_bazel_rules_go",  # for com_github_bazelbuild_buildtools
 )
@@ -265,7 +262,7 @@ go_sdk = use_extension(
     "go_sdk",
     dev_dependency = True,
 )
-go_sdk.download(version = "1.25.5")
+go_sdk.download(version = "1.26.0")
 
 go_deps = use_extension(
     "@gazelle//:extensions.bzl",
@@ -284,11 +281,11 @@ go_deps = use_extension(
 # - https://go.dev/ref/mod#checksum-database
 #
 #   go list -m golang.org/x/tools@latest
-#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.38.0
+#   curl https://sum.golang.org/lookup/golang.org/x/tools@v0.42.0
 go_deps.module(
     path = "golang.org/x/tools",
-    sum = "h1:yLkxfA+Qnul4cs9QA3KnlFu0lVmd8JJfoq+E41uSutA=",
-    version = "v0.40.0",
+    sum = "h1:uNgphsn75Tdz5Ji2q36v/nsFSfR/9BRFvqhGBaJGd5k=",
+    version = "v0.42.0",
 )
 go_deps.module(
     path = "github.com/golang/protobuf",
@@ -301,5 +298,5 @@ use_repo(
     "org_golang_x_tools",
 )
 
-bazel_dep(name = "rules_python", version = "1.7.0", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.8.5", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)

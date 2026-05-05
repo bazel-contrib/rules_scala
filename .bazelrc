@@ -15,12 +15,27 @@ common --lockfile_mode=error
 # https://github.com/bazelbuild/rules_java/releases/tag/8.12.0
 #common --repositories_without_autoloads=bazel_features_version,bazel_features_globals
 
-# Remove if protocol compiler toolchainization ever becomes the default.
+# Remove once Bazel 9 becomes the default.
 # - https://bazel.build/reference/command-line-reference#flag--incompatible_enable_proto_toolchain_resolution
-# - https://docs.google.com/document/d/1CE6wJHNfKbUPBr7-mmk_0Yo3a4TaqcTPE0OWNuQkhPs/edit
+# - https://github.com/bazelbuild/bazel/releases/tag/9.0.0
+# - https://blog.bazel.build/2026/01/20/bazel-9.html#prebuilt-protobuf-compiler
 common --incompatible_enable_proto_toolchain_resolution
 
+# Remove once protobuf 34 becomes the default.
+# - https://protobuf.dev/news/2026-01-16/
+common --@rules_scala//protoc:prefer_prebuilt_protoc
+
+# Remove once bazelbuild/bazel@0b8a518ba4074d0be1dedd6a922663fd0bf1441c makes it
+# into the default release.
+# - https://bazel.build/reference/command-line-reference#common_options-flag--incompatible_no_implicit_file_export
+# - https://github.com/bazelbuild/bazel/pull/27674
+common --incompatible_no_implicit_file_export
+
 build --enable_platform_specific_config
+
+# Use Java 17+ required for Scala 3.8+
+build --tool_java_runtime_version=17
+build --java_runtime_version=17
 
 #Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting in 'file in use' errors). See Bazel Issue#10498.
 

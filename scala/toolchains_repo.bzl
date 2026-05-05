@@ -41,9 +41,7 @@ def _stringify_args(args, indent = " " * 4):
 
 def _scala_toolchains_repo_impl(repository_ctx):
     repo_attr = repository_ctx.attr
-    format_args = {
-        "rules_scala_repo": Label("//:all").repo_name,
-    }
+    format_args = {}
     toolchains = {}
 
     if repo_attr.scala:
@@ -122,13 +120,13 @@ scala_toolchains_repo = repository_rule(
 
 _SCALA_TOOLCHAIN_BUILD = """
 load(
-    "@@{rules_scala_repo}//scala/private:macros/setup_scala_toolchain.bzl",
+    "@rules_scala//scala/private:macros/setup_scala_toolchain.bzl",
     "default_deps",
     "setup_scala_toolchain",
 )
-load("@@{rules_scala_repo}//scala:providers.bzl", "declare_deps_provider")
-load("@@{rules_scala_repo}//scala:scala_cross_version.bzl", "version_suffix")
-load("@rules_scala_config//:config.bzl", "SCALA_VERSION", "SCALA_VERSIONS")
+load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
+load("@rules_scala//scala:scala_cross_version.bzl", "version_suffix")
+load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
 [
     setup_scala_toolchain(
@@ -139,12 +137,19 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION", "SCALA_VERSIONS")
     for scala_version in SCALA_VERSIONS
 ]
 
+# Default dep providers used by _default_dep_providers() in scala_toolchain.bzl.
+# Uses select() so that custom scala_toolchain() callers that don't pass
+# explicit dep_providers get the correct version's deps, including when the
+# scala_version build setting is transitioned (e.g., cross-compilation).
 [
     declare_deps_provider(
         name = deps_id + "_provider",
         deps_id = deps_id,
         visibility = ["//visibility:public"],
-        deps = default_deps(deps_id, SCALA_VERSION),
+        deps = select({{
+            "@rules_scala_config//:scala_version" + version_suffix(v): default_deps(deps_id, v)
+            for v in SCALA_VERSIONS
+        }}),
     )
     for deps_id in [
         "scala_xml",
@@ -159,12 +164,12 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION", "SCALA_VERSIONS")
 
 _TESTING_TOOLCHAIN_BUILD = """
 load(
-    "@@{rules_scala_repo}//scala:scala_cross_version.bzl",
+    "@rules_scala//scala:scala_cross_version.bzl",
     "repositories",
     "version_suffix",
 )
 load(
-    "@@{rules_scala_repo}//testing:testing.bzl",
+    "@rules_scala//testing:testing.bzl",
     "{deps_symbols}",
     "setup_scala_testing_toolchain",
 )
@@ -185,7 +190,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
 _SCALAFMT_TOOLCHAIN_BUILD = """
 load(
-    "@@{rules_scala_repo}//scala/scalafmt/toolchain:setup_scalafmt_toolchain.bzl",
+    "@rules_scala//scala/scalafmt/toolchain:setup_scalafmt_toolchain.bzl",
     "setup_scalafmt_toolchains",
 )
 
@@ -199,15 +204,15 @@ setup_scalafmt_toolchains()
 """
 
 _SCALA_PROTO_TOOLCHAIN_BUILD = """
-load("@@{rules_scala_repo}//scala:providers.bzl", "declare_deps_provider")
+load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
 load(
-    "@@{rules_scala_repo}//scala_proto/default:default_deps.bzl",
+    "@rules_scala//scala_proto/default:default_deps.bzl",
     "DEFAULT_SCALAPB_COMPILE_DEPS",
     "DEFAULT_SCALAPB_GRPC_DEPS",
     "DEFAULT_SCALAPB_WORKER_DEPS",
 )
 load(
-    "@@{rules_scala_repo}//scala_proto:toolchains.bzl",
+    "@rules_scala//scala_proto:toolchains.bzl",
     "setup_scala_proto_toolchains",
 )
 
@@ -231,14 +236,14 @@ declare_deps_provider(
 """
 
 _JMH_TOOLCHAIN_BUILD = """
-load("@@{rules_scala_repo}//jmh/toolchain:toolchain.bzl", "setup_jmh_toolchain")
+load("@rules_scala//jmh/toolchain:toolchain.bzl", "setup_jmh_toolchain")
 
 setup_jmh_toolchain(name = "jmh_toolchain")
 """
 
 _TWITTER_SCROOGE_TOOLCHAIN_BUILD = """
 load(
-    "@@{rules_scala_repo}//twitter_scrooge/toolchain:toolchain.bzl",
+    "@rules_scala//twitter_scrooge/toolchain:toolchain.bzl",
     "setup_scrooge_toolchain",
 )
 

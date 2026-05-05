@@ -245,7 +245,10 @@ def scala_toolchains(
     )
 
 def scala_register_toolchains(name = _DEFAULT_TOOLCHAINS_REPO_NAME):
-    native.register_toolchains("@%s//...:all" % name)
+    native.register_toolchains(
+        "@%s//...:all" % name,
+        "//protoc:all",  # //protoc:scala_protoc_toolchain creates a cycle
+    )
 
 def scala_register_unused_deps_toolchains():
     native.register_toolchains(

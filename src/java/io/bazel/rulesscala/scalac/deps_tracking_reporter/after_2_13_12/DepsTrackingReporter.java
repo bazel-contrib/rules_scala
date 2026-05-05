@@ -109,7 +109,17 @@ public class DepsTrackingReporter extends ConsoleReporter {
     Set<String> usedTargets = new HashSet<>();
     Set<Dependency> usedDeps = new HashSet<>();
 
-    for (String jar : usedJars) {
+    // Treat AST-discovered jars as used in addition to those reported
+    // by the patched SymbolLoaders.complete hook. Mirrors the Scala 3
+    // copy for consistency.
+    Set<String> allUsedJars = new HashSet<>(usedJars);
+    for (String jar : astUsedJars) {
+      if (jarToTarget.containsKey(jar) || indirectJarToTarget.containsKey(jar)) {
+        allUsedJars.add(jar);
+      }
+    }
+
+    for (String jar : allUsedJars) {
       String target = jarToTarget.get(jar);
 
       if (target == null) {
@@ -157,8 +167,11 @@ public class DepsTrackingReporter extends ConsoleReporter {
 
     writeSdepsFile(usedDeps, unusedDeps);
 
-    Reporter reporter = this.delegateReporter != null ? this.delegateReporter : this;
-    reportDeps(usedDeps, unusedDeps, reporter);
+    // Report through `this` so the synthesized strict-deps / unused-deps
+    // errors increment the wrapper's error count that ScalacInvoker checks
+    // via `hasErrors()`. Our `doReport` override still forwards each
+    // diagnostic to `delegateReporter` for display.
+    reportDeps(usedDeps, unusedDeps, this);
   }
 
   private Dependency buildDependency(String jar, String target, Kind kind, boolean ignored) {
@@ -303,7 +316,11 @@ public class DepsTrackingReporter extends ConsoleReporter {
 
   private String jarLabel(String path) throws IOException {
     try (JarFile jar = new JarFile(path)) {
-      return jar.getManifest().getMainAttributes().getValue("Target-Label");
+      // Generated jars without a MANIFEST.MF return null here; treat
+      // them the same as a manifest with no Target-Label attribute.
+      return jar.getManifest() == null
+          ? null
+          : jar.getManifest().getMainAttributes().getValue("Target-Label");
     }
   }
 

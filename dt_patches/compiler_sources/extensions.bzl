@@ -11,7 +11,7 @@ load(
     _scala_2_version = "scala_version",
 )
 load(
-    "@rules_scala//third_party/repositories:scala_3_5.bzl",
+    "@rules_scala//third_party/repositories:scala_3_8.bzl",
     _scala_3_version = "scala_version",
 )
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
@@ -22,20 +22,25 @@ _IS_SCALA_3 = SCALA_VERSION.startswith("3.")
 _SCALA_2_VERSION = SCALA_VERSION if _IS_SCALA_2 else _scala_2_version
 _SCALA_3_VERSION = SCALA_VERSION if _IS_SCALA_3 else _scala_3_version
 
-_SCALA_VERSION_ARTIFACTS = {
-    "scala_compiler": "org.scala-lang:scala3-compiler_3:",
-    "scala_library": "org.scala-lang:scala3-library_3:",
-} if _IS_SCALA_3 else {
-    "scala_compiler": "org.scala-lang:scala-compiler:",
-    "scala_library": "org.scala-lang:scala-library:",
-}
+def _minor_version(version):
+    base = version.split("-")[0]
+    parts = base.split(".")
+    return int(parts[1])
+
+# Scala 3.0 - 3.7 use Scala 2.13 standard library
+# Starting Scala 3.8 scala3-library_3 is an empty jar, scala-library is used instead
+_SCALA_3_AT_LEAST_3_8 = _IS_SCALA_3 and _minor_version(SCALA_VERSION) >= 8
+_SCALA_LIBRARY_VERSION = (
+    SCALA_VERSION if (_IS_SCALA_2 or _SCALA_3_AT_LEAST_3_8) 
+    else _SCALA_2_VERSION
+)
 
 _SCALA_2_ARTIFACTS = {
     "scala_reflect": "org.scala-lang:scala-reflect:",
-    "scala2_library": "org.scala-lang:scala-library:",
 }
 
 _SCALA_3_ARTIFACTS = {
+    "scala3_library": "org.scala-lang:scala3-library_3:",
     "scala3_interfaces": "org.scala-lang:scala3-interfaces:",
     "tasty_core": "org.scala-lang:tasty-core_3:",
 }
@@ -44,7 +49,14 @@ def _versioned_artifacts(scala_version, artifacts):
     return {k: v + scala_version for k, v in artifacts.items()}
 
 COMPILER_SOURCES_ARTIFACTS = (
-    _versioned_artifacts(SCALA_VERSION, _SCALA_VERSION_ARTIFACTS) |
+    _versioned_artifacts(SCALA_VERSION, {
+        "scala_compiler": 
+            "org.scala-lang:scala3-compiler_3:" if _IS_SCALA_3 
+            else "org.scala-lang:scala-compiler:",
+    }) |
+    _versioned_artifacts(_SCALA_LIBRARY_VERSION, { 
+        "scala_library": "org.scala-lang:scala-library:"
+    }) |
     _versioned_artifacts(_SCALA_2_VERSION, _SCALA_2_ARTIFACTS) |
     _versioned_artifacts(_SCALA_3_VERSION, _SCALA_3_ARTIFACTS) |
     {

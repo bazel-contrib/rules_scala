@@ -12,6 +12,16 @@ test_fails_for_unused_dep() {
     build --extra_toolchains="//test_expect_failure/compiler_dependency_tracker:ast_plus_error" //test_expect_failure/compiler_dependency_tracker:unused_dep
 }
 
+# Scala 3 variant of test_fails_for_unused_dep. Catches the bug where the
+# Scala 3 DepsTrackingReporter routed synthesized errors to its delegate
+# only, so `hasErrors()` stayed false and the build succeeded despite
+# printing the error.
+test_scala_3_fails_for_unused_dep() {
+  action_should_fail_with_message \
+    "buildozer 'remove deps //test_expect_failure/compiler_dependency_tracker:E' //test_expect_failure/compiler_dependency_tracker:unused_dep" \
+    build --repo_env=SCALA_VERSION=3.8.3 --extra_toolchains="//test_expect_failure/compiler_dependency_tracker:ast_plus_error" //test_expect_failure/compiler_dependency_tracker:unused_dep
+}
+
 test_fails_for_missing_compile_dep() {
   action_should_fail_with_message \
     "buildozer 'add deps //test_expect_failure/compiler_dependency_tracker:E' //test_expect_failure/compiler_dependency_tracker:missing_compile_dep" \
@@ -54,9 +64,33 @@ test_no_unused_warn_when_broken() {
     build //test_expect_failure/compiler_dependency_tracker:F
 }
 
+# A Scala 3 target that uses an implicit summon resolved from a
+# `given` import builds cleanly under the ast_plus_error toolchain.
+# More targeted coverage of the underlying analyzer behavior lives in
+# the AstUsedJarFinderTest.scala unit tests.
+test_scala_3_given_import_is_not_unused() {
+  bazel build \
+    --extra_toolchains=//test_expect_failure/compiler_dependency_tracker:ast_plus_error \
+    //test_expect_failure/compiler_dependency_tracker/given_imports:user
+}
+
+# Companion negative test. The :user_missing_given_dep target has the
+# same source as :user but its deps omit the dep that provides the
+# given. Compilation must fail with a "no given instance" error,
+# anchoring the assumption that the given dep is genuinely required by
+# :user.
+test_scala_3_given_import_breaks_when_dep_removed() {
+  action_should_fail_with_message \
+    "No given instance" \
+    build --extra_toolchains=//test_expect_failure/compiler_dependency_tracker:ast_plus_error //test_expect_failure/compiler_dependency_tracker/given_imports:user_missing_given_dep
+}
+
 
 $runner test_fails_for_unused_dep
+$runner test_scala_3_fails_for_unused_dep
 $runner test_fails_for_missing_compile_dep
 $runner test_fails_for_strict_dep
 $runner test_sdeps
 $runner test_no_unused_warn_when_broken
+$runner test_scala_3_given_import_is_not_unused
+$runner test_scala_3_given_import_breaks_when_dep_removed

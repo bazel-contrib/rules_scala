@@ -1,4 +1,4 @@
-"""Precompiled protocol compiler toolchains repository rule.
+"""Prebuilt protocol compiler toolchains repository rule.
 
 To use this under `WORKSPACE`:
 

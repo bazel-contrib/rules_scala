@@ -1,6 +1,6 @@
-"""Precompiled protoc toolchains repo rule
+"""Prebuilt protoc toolchains repo rule
 
-Provides precompiled protocol compiler toolchains.
+Provides prebuilt protocol compiler toolchains.
 """
 
 load("@com_google_protobuf//:protobuf_version.bzl", "PROTOC_VERSION")
@@ -111,14 +111,14 @@ def _scala_protoc_toolchains_impl(repository_ctx):
 scala_protoc_toolchains = repository_rule(
     implementation = _scala_protoc_toolchains_impl,
     doc = (
-        "Prepares the precompiled protoc toolchain used by " +
+        "Prepares the prebuilt protoc toolchain used by " +
         "`--incompatible_enable_proto_toolchain_resolution`"
     ),
     attrs = {
         "platforms": attr.string_list(
             doc = (
                 "Operating system and architecture identifiers for " +
-                "precompiled protocol compiler releases, taken from " +
+                "prebuilt protocol compiler releases, taken from " +
                 "protocolbuffers/protobuf releases file name suffixes. If " +
                 "unspecified, will use the identifier matching the " +
                 "`HOST_CONSTRAINTS` from `@platforms//host:constraints.bzl`." +
@@ -132,19 +132,8 @@ scala_protoc_toolchains = repository_rule(
 
 _PROTOC_TOOLCHAIN_BUILD = """load(":platforms.bzl", "PROTOC_PLATFORMS")
 load(
-    "@com_google_protobuf//bazel/toolchains:proto_lang_toolchain.bzl",
-    "proto_lang_toolchain",
-)
-load(
     "@com_google_protobuf//bazel/toolchains:proto_toolchain.bzl",
     "proto_toolchain",
-)
-
-proto_lang_toolchain(
-    name = "protoc_scala_toolchain",
-    command_line = "unused-because-we-pass-protoc-to-scalapb",
-    toolchain_type = "{protoc_toolchain_type}",
-    visibility = ["//visibility:public"],
 )
 
 [

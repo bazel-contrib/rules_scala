@@ -103,6 +103,8 @@ def _jvm_import_external_impl(repository_ctx):
 
     lines.append("licenses(%s)" % repr(repository_ctx.attr.licenses))
     lines.append("")
+    lines.append("exports_files([\"%s\"])" % path)
+    lines.append("")
     lines.extend(
         _serialize_given_rule_import(
             repository_ctx.attr.rule_name,

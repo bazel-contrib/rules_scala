@@ -10,7 +10,7 @@ object ScalaVersion {
     .getOrElse(sys.error("Failed to resolve version of Scala"))
 
   def apply(versionString: String): ScalaVersion = {
-    versionString.split('.').take(3) match {
+    versionString.split("\\.|-").take(3) match {
       case Array(superMajor, major, minor) => new ScalaVersion(superMajor.toInt, major.toInt, minor.toInt)
       case _ => throw new Exception(s"Failed to parse version $versionString")
     }

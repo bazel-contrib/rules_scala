@@ -2,8 +2,8 @@
 
 set -e
 
-scala_2_12_version="2.12.20"
-scala_2_13_version="2.13.17"
+scala_2_12_version="2.12.21"
+scala_2_13_version="2.13.18"
 scala_3_version="3.3.7"
 
 SCALA_VERSION_DEFAULT=$scala_2_12_version
@@ -81,8 +81,6 @@ run_in_test_repo() {
   sed -e "s/--lockfile_mode=error/--lockfile_mode=update/" \
       ../.bazelrc > $NEW_TEST_DIR/.bazelrc
   cp ../.bazelversion scrooge_repositories.bzl $NEW_TEST_DIR/
-  cp ../protoc/0001-protobuf-19679-rm-protoc-dep.patch \
-      $NEW_TEST_DIR/protobuf.patch
 
   cd $NEW_TEST_DIR
 

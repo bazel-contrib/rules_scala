@@ -93,6 +93,10 @@ COMPILER_SOURCES = {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.20/scala-compiler-2.12.20-sources.jar",
         "integrity": "sha256-B8FAyBh6e8vPznUJ608XBPy/oSrTx3mPjdyrlHfcUCg=",
     },
+    "2.12.21": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21-sources.jar",
+        "integrity": "sha256-Q5Kl+qWZKLFk4/dUgjSjsoBNzUB7FiFNARdqfx9jpfE=",
+    },
     "2.13.0": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.0/scala-compiler-2.13.0-sources.jar",
         "integrity": "sha256-CJi/+Ctl9YPhqHLK3R8H43t9oQyop2N2chZiutCobOY=",
@@ -164,6 +168,10 @@ COMPILER_SOURCES = {
     "2.13.17": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.17/scala-compiler-2.13.17-sources.jar",
         "integrity": "sha256-57ReeT2ywMUwFb/nCOLr2C2vMTGCZv+1IH51Qp5xHuU=",
+    },
+    "2.13.18": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.18/scala-compiler-2.13.18-sources.jar",
+        "integrity": "sha256-CNmYSw6MVTvf17X6aqjB0vLxzWkEOZuaCrjro0Xe0zU=",
     },
     "3.1.0": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.1.0/scala3-compiler_3-3.1.0-sources.jar",
@@ -292,5 +300,21 @@ COMPILER_SOURCES = {
     "3.7.4": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.7.4/scala3-compiler_3-3.7.4-sources.jar",
         "integrity": "sha256-m+PTbft3H3bhAwtNASpt/WLatdD6x2YZka4fdluQGp0=",
+    },
+    "3.8.0": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.0/scala3-compiler_3-3.8.0-sources.jar",
+        "integrity": "sha256-+ddFN1eo21e40GdRoOT47edYNnWwstj9yUMI42bg1Ps=",
+    },
+    "3.8.1": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.1/scala3-compiler_3-3.8.1-sources.jar",
+        "integrity": "sha256-vKRKrFKhH8d72JR50P42HZDCzNUQ40BoB3iuCjk7Q0A=",
+    },
+    "3.8.2": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.2/scala3-compiler_3-3.8.2-sources.jar",
+        "integrity": "sha256-+bCBwxlDOBJBdtNg7sUwsgcbRsMaFiG8LKq4a5+LsAY=",
+    },
+    "3.8.3": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.3/scala3-compiler_3-3.8.3-sources.jar",
+        "integrity": "sha256-ChY8TicRAnjSTN4e1VMpdQbAx7R1nIsz5v+mSqlOPjM=",
     },
 }

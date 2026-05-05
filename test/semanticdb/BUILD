@@ -30,6 +30,21 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 
+scala_toolchain(
+    name = "semanticdb_synthetics_toolchain_impl",
+    enable_semanticdb = True,
+    scalacopts = ["-P:semanticdb:synthetics:on"],
+    semanticdb_bundle_in_jar = False,
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "semanticdb_synthetics_toolchain",
+    toolchain = ":semanticdb_synthetics_toolchain_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
 scala_library(
     name = "all_lib",
     srcs = glob(["*.scala"]),

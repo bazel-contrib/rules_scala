@@ -7,7 +7,12 @@ TAG="$1"
 VERSION="${TAG#v}"
 PREFIX="rules_scala-${VERSION}"
 ARCHIVE="rules_scala-$TAG.tar.gz"
-git archive --format=tar --prefix=${PREFIX}/ ${TAG} | gzip > $ARCHIVE
+
+# Don't archive .bazelversion symlinks, as they break Bazel as of
+# bazelbuild/bazel@f942a706a39f9803e5611b1973172ece361197ac.
+# See: https://github.com/bazelbuild/bazel-worker-api/issues/21
+git archive --format=tar --prefix=${PREFIX}/ ${TAG} ':!:**.bazelversion' |
+  gzip > $ARCHIVE
 SHA=$(shasum -a 256 $ARCHIVE | awk '{print $1}')
 
 cat << EOF

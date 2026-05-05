@@ -167,7 +167,7 @@ def _validate_scalac_srcjar(srcjar):
 
 def dt_patched_compiler_setup(scala_version, scala_compiler_srcjar = None):
     scala_major_version = extract_major_version(scala_version)
-    scala_minor_version = extract_minor_version(scala_version)
+    scala_minor_version = extract_minor_version(scala_version.split("-")[0])
     patch = Label("//dt_patches:dt_compiler_%s.patch" % scala_major_version)
 
     minor_version = int(scala_minor_version)

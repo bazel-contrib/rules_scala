@@ -16,8 +16,8 @@ import sys
 
 ROOT_SCALA_VERSIONS = [
     "2.11.12",
-    "2.12.20",
-    "2.13.17",
+    "2.12.21",
+    "2.13.18",
     "3.1.3",
     "3.2.2",
     "3.3.7", # LTS
@@ -25,19 +25,20 @@ ROOT_SCALA_VERSIONS = [
     "3.5.2",
     "3.6.4",
     "3.7.4",
+    "3.8.3",
 ]
 PARSER_COMBINATORS_VERSION = '2.4.0'
-SBT_COMPILER_INTERFACE_VERSION = '1.11.0'
-SBT_UTIL_INTERFACE_VERSION = '1.11.7'
+SBT_COMPILER_INTERFACE_VERSION = '1.12.0'
+SBT_UTIL_INTERFACE_VERSION = '1.12.4'
 SCALATEST_VERSION = "3.2.19"
-SCALAFMT_VERSION = "3.10.2"
+SCALAFMT_VERSION = "3.10.7"
 KIND_PROJECTOR_VERSION = "0.13.4"
-PROTOBUF_JAVA_VERSION = "4.33.2"
+PROTOBUF_JAVA_VERSION = "4.33.5"
 JLINE_VERSION = '3.30.6'
 SCALAPB_VERSION = '1.0.0-alpha.3'
 PROTOC_BRIDGE_VERSION = '0.9.9'
-GRPC_VERSION = '1.77.0'
-PROTO_GOOGLE_COMMON_PROTOS_VERSION = '2.63.1'
+GRPC_VERSION = '1.79.0'
+PROTO_GOOGLE_COMMON_PROTOS_VERSION = '2.66.0'
 GRPC_LIBS = ['netty', 'protobuf', 'stub']
 GUAVA_VERSION = '33.5.0-jre'
 
@@ -433,7 +434,7 @@ class ArtifactResolver:
         try:
             artifacts_file = Path(self._downloaded_artifacts_file)
             command = (
-                f'cs fetch {' '.join(root_artifacts)} --json-output-file ' +
+                f'coursier fetch {' '.join(root_artifacts)} --json-output-file ' +
                 self._downloaded_artifacts_file
             )
             self._run_command(command, 'Fetching resolved artifacts')

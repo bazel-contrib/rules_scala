@@ -89,7 +89,7 @@ pinned_maven_install()
 
 load("@rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config(scala_version = "2.12.20")
+scala_config(scala_version = "2.12.21")
 
 load(
     "@rules_scala//scala:toolchains.bzl",
