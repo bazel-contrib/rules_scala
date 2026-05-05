@@ -177,6 +177,18 @@ test_semanticdb_handles_removed_sourcefiles() {
 
 }
 
+test_semanticdb_synthetics_toolchain_scalaopt() {
+  # Regression test: building with a toolchain that sets enable_semanticdb=True and
+  # includes -P:semanticdb:synthetics:on in scalacopts should succeed. Previously it
+  # failed because scala_library_for_plugin_bootstrapping (which compiles the dep
+  # analyzer plugin) skipped phase_semanticdb, so the semanticdb plugin was never
+  # loaded but the -P:semanticdb:... flag was still forwarded to scalac.
+  set -e
+  bazel build \
+    --extra_toolchains="//test/semanticdb:semanticdb_synthetics_toolchain" \
+    //test/semanticdb:all_lib
+}
+
 run_semanticdb_tests() {
   local bundle=1;   local nobundle=0
   local scala3=3;    local scala2=2
@@ -191,6 +203,7 @@ run_semanticdb_tests() {
 
   $runner test_no_semanticdb
   $runner test_semanticdb_handles_removed_sourcefiles
+  $runner test_semanticdb_synthetics_toolchain_scalaopt
 }
 
 run_semanticdb_tests
