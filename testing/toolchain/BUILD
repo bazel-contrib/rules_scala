@@ -10,6 +10,7 @@ toolchain_type(
     testing_toolchain_deps(
         name = dep,
         deps_id = dep,
+        testonly = True,
         visibility = ["//visibility:public"],
     )
     for dep in DEP_PROVIDERS

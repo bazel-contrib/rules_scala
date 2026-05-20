@@ -7,6 +7,7 @@ java_import(
     name = "specs2",
     # `rules_java` 8.12.0 requires that `jars` not be empty. See #1741.
     jars = [":libempty.jar"],
+    testonly = True,
     exports = [
         "//testing/toolchain:specs2_classpath",
     ],
