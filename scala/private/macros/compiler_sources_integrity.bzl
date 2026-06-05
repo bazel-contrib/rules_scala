@@ -317,4 +317,8 @@ COMPILER_SOURCES = {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.3/scala3-compiler_3-3.8.3-sources.jar",
         "integrity": "sha256-ChY8TicRAnjSTN4e1VMpdQbAx7R1nIsz5v+mSqlOPjM=",
     },
+    "3.8.4": {
+        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.8.4/scala3-compiler_3-3.8.4-sources.jar",
+        "integrity": "sha256-c/KDcMSJxLGv7ckP3n5OsU/Z5Sj9OvVqUeTVYbYdzRc=",
+    },
 }
