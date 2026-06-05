@@ -152,6 +152,10 @@ artifacts = {
         "artifact": "org.ow2.asm:asm:9.0",
         "sha256": "0df97574914aee92fd349d0cb4e00f3345d45b2c239e0bb50f0a90ead47888e0",
     },
+    "io_bazel_rules_scala_org_portable_scala_portable_scala_reflect_2_13": {
+        "artifact": "org.portable-scala:portable-scala-reflect_2.13:1.1.1",
+        "sha256": "11f2f59d0c228912811095025b36ce58a025a8397851d773295c8ad7862d8488",
+    },
     "io_bazel_rules_scala_org_specs2_specs2_common": {
         "artifact": "org.specs2:specs2-common_3:jar:5.0.0-RC-21",
         "sha256": "bfbc91a136493483ed5d2beba7f48520e72b66a9987ebec5b8f0ca38bda02801",
@@ -170,6 +174,9 @@ artifacts = {
     "io_bazel_rules_scala_org_specs2_specs2_fp": {
         "artifact": "org.specs2:specs2-fp_3:jar:5.0.0-RC-21",
         "sha256": "60f26aa132decb52682bba7ce0355b0b749b1b5fe283ec8929b050bb794cc1b8",
+        "deps": [
+            "@io_bazel_rules_scala_org_portable_scala_portable_scala_reflect_2_13",
+        ],
     },
     "io_bazel_rules_scala_org_specs2_specs2_junit": {
         "artifact": "org.specs2:specs2-junit_3:jar:5.0.0-RC-21",
