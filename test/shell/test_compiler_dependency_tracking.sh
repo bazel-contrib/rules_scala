@@ -19,7 +19,7 @@ test_fails_for_unused_dep() {
 test_scala_3_fails_for_unused_dep() {
   action_should_fail_with_message \
     "buildozer 'remove deps //test_expect_failure/compiler_dependency_tracker:E' //test_expect_failure/compiler_dependency_tracker:unused_dep" \
-    build --repo_env=SCALA_VERSION=3.8.3 --extra_toolchains="//test_expect_failure/compiler_dependency_tracker:ast_plus_error" //test_expect_failure/compiler_dependency_tracker:unused_dep
+    build --repo_env=SCALA_VERSION=3.8.4 --extra_toolchains="//test_expect_failure/compiler_dependency_tracker:ast_plus_error" //test_expect_failure/compiler_dependency_tracker:unused_dep
 }
 
 test_fails_for_missing_compile_dep() {
