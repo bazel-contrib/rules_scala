@@ -35,6 +35,12 @@ capabilities as well.
 
 ## Getting started
 
+### Starter repo
+
+The fastest way to try this in an empty project is to click the green "Use this template" button on https://github.com/bazel-starters/scala.
+
+### In your project
+
 [Install Bazel][], preferably using the [Bazelisk][] wrapper. See the
 [compatible Bazel versions](#compatible-bazel-versions) section to select a suitable
 Bazel version.
