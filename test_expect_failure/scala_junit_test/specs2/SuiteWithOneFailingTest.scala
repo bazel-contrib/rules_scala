@@ -1,8 +1,8 @@
 package scalarules.test.junit.specs2
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 
-class SuiteWithOneFailingTest extends SpecWithJUnit {
+class SuiteWithOneFailingTest extends SpecificationWithJUnit {
 
   "specs2 tests" >> {
     "succeed" >> success

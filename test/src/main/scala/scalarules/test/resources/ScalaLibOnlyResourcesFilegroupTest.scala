@@ -1,8 +1,8 @@
 package scalarules.test.resources
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 
-class ScalaLibOnlyResourcesFilegroupTest extends SpecWithJUnit {
+class ScalaLibOnlyResourcesFilegroupTest extends SpecificationWithJUnit {
 
   "Scala library with no srcs and only filegroup resources" >> {
     "allow to load resources" >> {

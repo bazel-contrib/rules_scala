@@ -10,6 +10,7 @@ load(
     "scala_test",
 )
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("@rules_scala//scala:scala_cross_version_select.bzl", "select_for_scala_version")
 
 package(default_testonly = 1)
 
@@ -84,7 +85,10 @@ scala_library(
 
 scala_macro_library(
     name = "MacroTest",
-    srcs = ["MacroTest.scala"],
+    srcs = select_for_scala_version(
+        any_2 = ["MacroTest.scala"],
+        since_3 = ["MacroTest_3.scala"],
+    ),
 )
 
 scala_library(

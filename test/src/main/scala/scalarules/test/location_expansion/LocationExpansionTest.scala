@@ -1,7 +1,7 @@
 package scalarules.test.location_expansion
 
-import org.specs2.mutable.SpecWithJUnit
-class LocationExpansionTest extends SpecWithJUnit {
+import org.specs2.mutable.SpecificationWithJUnit
+class LocationExpansionTest extends SpecificationWithJUnit {
 
   "tests" >> {
     "support location expansion" >> {

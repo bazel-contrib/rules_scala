@@ -1,8 +1,8 @@
 package scalarules.test.resources
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 
-class ScalaLibResourcesFromExternalDepTest extends SpecWithJUnit {
+class ScalaLibResourcesFromExternalDepTest extends SpecificationWithJUnit {
 
   "Scala library depending on resources from external resource-only jar" >> {
     "allow to load resources" >> {

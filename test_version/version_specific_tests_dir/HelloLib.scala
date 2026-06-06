@@ -19,7 +19,7 @@ object HelloLib {
   // to just def dumb(x: Int) = x == 3
   def dumb(x: Int) = if (x == 3) true else false
 
-  def printMessage(arg: String) {
+  def printMessage(arg: String): Unit = {
     MacroTest.hello(arg == "yo")
     println(getOtherLibMessage(arg))
     println(getOtherJavaLibMessage(arg))

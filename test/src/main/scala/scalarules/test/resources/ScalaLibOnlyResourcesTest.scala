@@ -1,8 +1,8 @@
 package scalarules.test.resources
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 
-class ScalaLibOnlyResourcesTest extends SpecWithJUnit {
+class ScalaLibOnlyResourcesTest extends SpecificationWithJUnit {
 
   "Scala library with no srcs and only resources" >> {
     "allow to load resources" >> {

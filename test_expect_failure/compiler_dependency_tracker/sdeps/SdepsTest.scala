@@ -1,13 +1,13 @@
 package sdeps
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 import io.bazel.rulesscala.deps.proto.ScalaDeps
 import io.bazel.rulesscala.deps.proto.ScalaDeps.Dependency.Kind._
 import org.specs2.matcher.Matcher
 
 import java.util
 
-class SdepsTest extends SpecWithJUnit {
+class SdepsTest extends SpecificationWithJUnit {
 
   "Mixed Scala/Java source targets" should {
     val deps = loadSdeps("mixed_sources.sdeps")
