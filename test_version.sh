@@ -2,14 +2,11 @@
 
 set -e
 
-scala_versions=(
-  "2.12.21"
-  "2.13.18"
-  "3.3.7"
-  "3.8.4"
-)
+dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+# shellcheck source=./test/shell/scala_versions.sh
+. "${dir}/test/shell/scala_versions.sh"
 
-SCALA_VERSION_DEFAULT="${scala_versions[0]}"
+SCALA_VERSION_DEFAULT="${scala_2_12}"
 
 diagnostics_reporter_toolchain="//:diagnostics_reporter_toolchain"
 diagnostics_reporter_and_semanticdb_toolchain="//:diagnostics_reporter_and_semanticdb_toolchain"
@@ -163,8 +160,7 @@ if ! bazel_loc="$(type -p 'bazel')" || [[ -z "$bazel_loc" ]]; then
   echo 'Using ./tools/bazel directly for bazel calls'
 fi
 
-dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-# shellcheck source=./test_runner.sh
+# shellcheck source=./test/shell/test_runner.sh
 . "${dir}"/test/shell/test_runner.sh
 runner=$(get_test_runner "${1:-local}")
 export USE_BAZEL_VERSION=${USE_BAZEL_VERSION:-$(cat $dir/.bazelversion)}
