@@ -187,7 +187,9 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         junit_classpath = repositories(scala_version, {junit}),
         specs2_classpath = repositories(
             scala_version,
-            ["@" + id for id in specs2_artifact_ids(scala_version)],
+            ["@" + id for id in specs2_artifact_ids(scala_version)]
+            if {specs2}
+            else None,
         ),
         specs2_junit_classpath = repositories(scala_version, {specs2_junit}),
     )
