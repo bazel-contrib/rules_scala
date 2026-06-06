@@ -31,7 +31,7 @@ object FilteringBuilder {
     Specs2FilteringRunnerBuilder.f orElse JUnitFilteringRunnerBuilder.f
 }
 
-class Specs2PrefixSuffixTestDiscoveringSuite(runnerBuilder: RunnerBuilder)
+class Specs2PrefixSuffixTestDiscoveringSuite(testClass: SourceCompat.Class, runnerBuilder: RunnerBuilder)
   extends Suite(
     new FilteredRunnerBuilder(runnerBuilder, FilteringBuilder()),
     PrefixSuffixTestDiscoveringSuite.discoverClasses()) {
