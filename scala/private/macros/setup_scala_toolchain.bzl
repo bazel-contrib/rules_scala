@@ -68,7 +68,7 @@ def setup_scala_toolchain(
     )
 
     if semanticdb_deps == None:
-        semanticdb_deps = default_deps("semanticdb", scala_version)
+        semanticdb_deps = default_deps("semanticdb", scala_version) if enable_semanticdb else []
     declare_deps_provider(
         name = semanticdb_deps_provider,
         deps_id = "semanticdb",
