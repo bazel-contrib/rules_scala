@@ -174,11 +174,6 @@ def scala_toolchains(
             id: True
             for id in junit_artifact_ids()
         })
-    if specs2:
-        artifact_ids_to_fetch_sources.update({
-            id: True
-            for id in specs2_artifact_ids() + specs2_junit_artifact_ids()
-        })
     if jmh:
         artifact_ids_to_fetch_sources.update({
             id: False
@@ -208,6 +203,11 @@ def scala_toolchains(
             version_specific_artifact_ids.update({
                 id: fetch_sources
                 for id in scalafmt_artifact_ids(scala_version)
+            })
+        if specs2:
+            version_specific_artifact_ids.update({
+                id: True
+                for id in specs2_artifact_ids(scala_version) + specs2_junit_artifact_ids()
             })
 
         all_artifacts = (

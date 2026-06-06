@@ -1,12 +1,12 @@
 package io.bazel.rulesscala.test_discovery
 
 import io.bazel.rulesscala.test_discovery.ArchiveEntries.listClassFiles
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 
 import java.io.File
 import java.nio.file.Files
 
-class ArchiveEntriesTest extends SpecWithJUnit {
+class ArchiveEntriesTest extends SpecificationWithJUnit {
   "List only class files from a directory" in {
     val dir = Files.createTempDirectory("temp")
     Files.createFile(dir.resolve("SomeFile"))

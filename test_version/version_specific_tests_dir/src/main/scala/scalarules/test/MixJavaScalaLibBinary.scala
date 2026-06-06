@@ -15,7 +15,7 @@
 package scalarules.test
 
 object MixJavaScalaLibBinary {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val bar = new Bar()
     println("created an instance of a mixed java scala code from a library")
   }

@@ -1,9 +1,9 @@
 package scalarules.test.junit.specs2
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 import scalarules.test.junit.support.JUnitCompileTimeDep
 
-class JunitSpecs2Test extends SpecWithJUnit {
+class JunitSpecs2Test extends SpecificationWithJUnit {
 
   "specs2 tests" >> {
     "run smoothly in bazel" in {
@@ -17,7 +17,7 @@ class JunitSpecs2Test extends SpecWithJUnit {
   }
 }
 
-class JunitSpecs2AnotherTest extends SpecWithJUnit {
+class JunitSpecs2AnotherTest extends SpecificationWithJUnit {
 
   "other specs2 tests" >> {
     "run from another test" >> {
@@ -37,7 +37,7 @@ class JunitSpecs2AnotherTest extends SpecWithJUnit {
   }
 }
 
-class JunitSpec2RegexTest extends SpecWithJUnit {
+class JunitSpec2RegexTest extends SpecificationWithJUnit {
 
   "tests with unsafe characters" >> {
     "2 + 2 != 5" in {
@@ -50,7 +50,7 @@ class JunitSpec2RegexTest extends SpecWithJUnit {
   }
 }
 
-class JunitSpecs2ManyFragmentsTest extends SpecWithJUnit {
+class JunitSpecs2ManyFragmentsTest extends SpecificationWithJUnit {
 
   (1 to 200) foreach { i =>
     s"fragment no $i" in success

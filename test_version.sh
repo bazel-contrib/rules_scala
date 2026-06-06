@@ -2,11 +2,14 @@
 
 set -e
 
-scala_2_12_version="2.12.21"
-scala_2_13_version="2.13.18"
-scala_3_version="3.3.7"
+scala_versions=(
+  "2.12.21"
+  "2.13.18"
+  "3.3.7"
+  "3.8.4"
+)
 
-SCALA_VERSION_DEFAULT=$scala_2_12_version
+SCALA_VERSION_DEFAULT="${scala_versions[0]}"
 
 diagnostics_reporter_toolchain="//:diagnostics_reporter_toolchain"
 diagnostics_reporter_and_semanticdb_toolchain="//:diagnostics_reporter_and_semanticdb_toolchain"
@@ -111,8 +114,15 @@ test_check_module_bazel_template() {
 
 test_scala_version() {
   local SCALA_VERSION="$1"
+  local test_command="bazel test //... --repo_env=SCALA_VERSION=${SCALA_VERSION}"
 
-  run_in_test_repo "bazel test //... --repo_env=SCALA_VERSION=${SCALA_VERSION}" "scala_version" "version_specific_tests_dir/"
+  # Scrooge generates Scala 2 syntax (e.g. do-while) that does not compile on Scala 3.
+  # Scrooge compatibility is covered separately by test_twitter_scrooge_versions.
+  if [[ "$SCALA_VERSION" == 3.* ]]; then
+    test_command="${test_command} -- -//src/main/scala/scalarules/test/twitter_scrooge/..."
+  fi
+
+  run_in_test_repo "${test_command}" "scala_version" "version_specific_tests_dir/"
 }
 
 test_reporter() {
@@ -160,28 +170,16 @@ runner=$(get_test_runner "${1:-local}")
 export USE_BAZEL_VERSION=${USE_BAZEL_VERSION:-$(cat $dir/.bazelversion)}
 
 TEST_TIMEOUT=15 $runner test_check_module_bazel_template
-TEST_TIMEOUT=15 $runner test_scala_version "${scala_2_12_version}"
-TEST_TIMEOUT=15 $runner test_scala_version "${scala_2_13_version}"
+
+for scala_version in "${scala_versions[@]}"; do
+  TEST_TIMEOUT=15 $runner test_scala_version "${scala_version}"
+  TEST_TIMEOUT=15 $runner test_reporter "${scala_version}" "${no_diagnostics_reporter_toolchain}"
+  TEST_TIMEOUT=15 $runner test_reporter "${scala_version}" "${diagnostics_reporter_toolchain}"
+  TEST_TIMEOUT=15 $runner test_reporter "${scala_version}" "${diagnostics_reporter_and_semanticdb_toolchain}"
+
+  TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
+  TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain
+done
 
 TEST_TIMEOUT=15 $runner test_twitter_scrooge_versions "18.6.0"
 TEST_TIMEOUT=15 $runner test_twitter_scrooge_versions "21.2.0"
-
-TEST_TIMEOUT=15 $runner test_reporter "${scala_2_12_version}" "${no_diagnostics_reporter_toolchain}"
-TEST_TIMEOUT=15 $runner test_reporter "${scala_2_13_version}" "${no_diagnostics_reporter_toolchain}"
-TEST_TIMEOUT=15 $runner test_reporter "${scala_3_version}"    "${no_diagnostics_reporter_toolchain}"
-
-TEST_TIMEOUT=15 $runner test_reporter "${scala_2_12_version}" "${diagnostics_reporter_toolchain}"
-TEST_TIMEOUT=15 $runner test_reporter "${scala_2_13_version}" "${diagnostics_reporter_toolchain}"
-TEST_TIMEOUT=15 $runner test_reporter "${scala_3_version}"    "${diagnostics_reporter_toolchain}"
-
-TEST_TIMEOUT=15 $runner test_reporter "${scala_2_12_version}" "${diagnostics_reporter_and_semanticdb_toolchain}"
-TEST_TIMEOUT=15 $runner test_reporter "${scala_2_13_version}" "${diagnostics_reporter_and_semanticdb_toolchain}"
-TEST_TIMEOUT=15 $runner test_reporter "${scala_3_version}"    "${diagnostics_reporter_and_semanticdb_toolchain}"
-
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_12_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_13_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_3_version}"    //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain 
-
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_12_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_2_13_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain
-TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_3_version}"    //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain

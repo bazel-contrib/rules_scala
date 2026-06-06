@@ -1,8 +1,8 @@
 package coverage_specs2_with_junit
 
-import org.specs2.mutable.SpecWithJUnit
+import org.specs2.mutable.SpecificationWithJUnit
 
-class TestWithSpecs2WithJUnit extends SpecWithJUnit {
+class TestWithSpecs2WithJUnit extends SpecificationWithJUnit {
   "testA1" in {
     A1.a1(true) must be_==(B1)
   }

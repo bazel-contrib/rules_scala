@@ -15,7 +15,7 @@
 package scalarules.test
 
 object ScalaBinary {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     println(MacroTest.hello(1 + 2))
     HelloLib.printMessage("Hello");
   }
