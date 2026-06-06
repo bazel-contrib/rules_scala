@@ -63,7 +63,7 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
   override def getDescription(env: Env): Description = {
     implicit def ee: ExecutionEnv = env.specs2ExecutionEnv
     try createFilteredDescription()
-    catch { case NonFatal(t) => env.shutdown; throw t; }
+    catch { case NonFatal(t) => env.shutdown(); throw t; }
   }
 
   private def createFilteredDescription()(implicit ee: ExecutionEnv): Description = {

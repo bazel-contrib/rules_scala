@@ -24,6 +24,7 @@ scala_library(
     ),
     visibility = ["//visibility:public"],
     deps = [
+        "//scala/private/source_compat",
         "//scala/private/toolchain_deps:scala_compile_classpath",
         "//third_party/dependency_analyzer/src/main:dependency_analyzer",
     ],

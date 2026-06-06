@@ -47,8 +47,8 @@ object TestUtil extends TestUtilCommon {
   ): List[Diagnostic] = {
     // TODO: Optimize and cache global.
     val options = CommandLineParserAdapter.tokenize(compileOptions)
-    val reporter = new StoreReporter()
     val settings = new Settings(println)
+    val reporter = new StoreReporter(settings)
     val _ = new CompilerCommand(options, settings)
     settings.outputDirs.setSingleOutput(output)
 
