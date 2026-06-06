@@ -18,14 +18,21 @@ DEFAULT_SRCS = [
     Label("//src/java/io/bazel/rulesscala/scalac:scalac_files"),
 ]
 
+# Keep -source/-target 1.8 for JDK 8 toolchains; -Xlint:-options silences the
+# "source/target value 8 is obsolete" warning on newer JDKs.
+_SCALAC_JAVACOPTS = [
+    "-source",
+    "1.8",
+    "-target",
+    "1.8",
+    "-Xlint:-options",
+]
+
 def define_scalac(name = "scalac", srcs = DEFAULT_SRCS, deps = DEFAULT_SCALAC_DEPS):
     java_binary(
         name = name,
         srcs = srcs,
-        javacopts = [
-            "-source 1.8",
-            "-target 1.8",
-        ],
+        javacopts = _SCALAC_JAVACOPTS,
         main_class = "io.bazel.rulesscala.scalac.ScalacWorker",
         visibility = ["//visibility:public"],
         deps = ([
@@ -37,10 +44,7 @@ def define_scalac_bootstrap(name = "scalac_bootstrap", srcs = DEFAULT_SRCS, deps
     java_binary(
         name = name,
         srcs = srcs,
-        javacopts = [
-            "-source 1.8",
-            "-target 1.8",
-        ],
+        javacopts = _SCALAC_JAVACOPTS,
         main_class = "io.bazel.rulesscala.scalac.ScalacWorker",
         visibility = ["//visibility:public"],
         deps = deps,
