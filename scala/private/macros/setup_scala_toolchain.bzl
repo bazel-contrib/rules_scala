@@ -67,24 +67,23 @@ def setup_scala_toolchain(
         deps = parser_combinators_deps,
     )
 
+    if semanticdb_deps == None:
+        semanticdb_deps = default_deps("semanticdb", scala_version)
+    declare_deps_provider(
+        name = semanticdb_deps_provider,
+        deps_id = "semanticdb",
+        deps = semanticdb_deps,
+        visibility = visibility,
+    )
+
     dep_providers = [
         scala_xml_provider,
         parser_combinators_provider,
         scala_compile_classpath_provider,
         scala_library_classpath_provider,
         scala_macro_classpath_provider,
+        semanticdb_deps_provider,
     ]
-
-    if enable_semanticdb == True:
-        if semanticdb_deps == None:
-            semanticdb_deps = default_deps("semanticdb", scala_version)
-        declare_deps_provider(
-            name = semanticdb_deps_provider,
-            deps_id = "semanticdb",
-            deps = semanticdb_deps,
-            visibility = visibility,
-        )
-        dep_providers.append(semanticdb_deps_provider)
 
     scala_toolchain(
         name = "%s_impl" % name,

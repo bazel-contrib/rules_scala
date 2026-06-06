@@ -2,7 +2,6 @@ load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load(
     "@rules_scala_config//:config.bzl",
     "ENABLE_COMPILER_DEPENDENCY_TRACKING",
-    "SCALA_MAJOR_VERSION",
 )
 load("//scala:providers.bzl", _DepsInfo = "DepsInfo")
 
@@ -104,18 +103,16 @@ def _scala_toolchain_impl(ctx):
     return [toolchain]
 
 def _default_dep_providers():
-    dep_providers = [
-        "scala_xml",
-        "parser_combinators",
-        "scala_compile_classpath",
-        "scala_library_classpath",
-        "scala_macro_classpath",
-    ]
-    if SCALA_MAJOR_VERSION.startswith("2."):
-        dep_providers.append("semanticdb")
     return [
         "@rules_scala_toolchains//scala:%s_provider" % p
-        for p in dep_providers
+        for p in [
+            "scala_xml",
+            "parser_combinators",
+            "scala_compile_classpath",
+            "scala_library_classpath",
+            "scala_macro_classpath",
+            "semanticdb",
+        ]
     ]
 
 _scala_toolchain = rule(
