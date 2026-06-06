@@ -14,6 +14,7 @@ scala_library(
 
 scala_import(
     name = "imported_jar_with_resources",
+    testonly = True,
     jars = [
         ":jar_with_resources.jar",
     ],
