@@ -1,11 +1,13 @@
 package io.bazel.rulesscala.test_discovery
 
+import io.bazel.rulesscala.sourcecompat.SourceCompat
+
 import java.io.{File, FileInputStream}
 import java.util.jar.{JarEntry, JarInputStream}
 
 object ArchiveEntries {
-  def listClassFiles(file: File): Stream[String] = {
-    
+  def listClassFiles(file: File): SourceCompat.Stream[String] = {
+
     val allEntries = if (file.isDirectory)
       directoryEntries(file).map(_.stripPrefix(file.toString).stripPrefix("/").stripPrefix("\\"))
     else
@@ -23,15 +25,18 @@ object ArchiveEntries {
     entry
   }
 
-  private def jarEntries(jarInputStream: JarInputStream): Stream[String] =
-    Stream.continually(getJarEntryOrCloseStream(jarInputStream))
+  private def jarEntries(jarInputStream: JarInputStream): SourceCompat.Stream[String] =
+    SourceCompat.Stream.continually(getJarEntryOrCloseStream(jarInputStream))
       .takeWhile(_.nonEmpty)
       .flatten
       .map(_.getName)
 
-  private def directoryEntries(file: File): Stream[String] =
-    file.toString #:: (file.listFiles match {
-      case null => Stream.empty
-      case files => files.toStream.flatMap(directoryEntries)
-    })
+  private def directoryEntries(file: File): SourceCompat.Stream[String] =
+    SourceCompat.Stream.cons(
+      file.toString,
+      file.listFiles match {
+        case null => SourceCompat.Stream.empty
+        case files => SourceCompat.toStream(files).flatMap(directoryEntries)
+      }
+    )
 }

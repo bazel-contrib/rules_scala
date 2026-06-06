@@ -1,5 +1,6 @@
 package io.bazel.rulesscala.specs2
 
+import io.bazel.rulesscala.sourcecompat.SourceCompat
 import io.bazel.rulesscala.test_discovery.FilteredRunnerBuilder.FilteringRunnerBuilder
 import io.bazel.rulesscala.test_discovery._
 import org.junit.runner.notification.RunNotifier
@@ -16,7 +17,7 @@ import org.specs2.specification.process.Stats
 
 import java.util
 import java.util.regex.Pattern
-import scala.collection.JavaConverters._
+import io.bazel.rulesscala.sourcecompat.SourceCompat.JavaConversions._
 import scala.collection.immutable.Iterable
 import scala.language.reflectiveCalls
 import scala.util.Try
@@ -30,7 +31,7 @@ object FilteringBuilder {
     Specs2FilteringRunnerBuilder.f orElse JUnitFilteringRunnerBuilder.f
 }
 
-class Specs2PrefixSuffixTestDiscoveringSuite(suite: Class[Any], runnerBuilder: RunnerBuilder)
+class Specs2PrefixSuffixTestDiscoveringSuite(testClass: SourceCompat.Class, runnerBuilder: RunnerBuilder)
   extends Suite(
     new FilteredRunnerBuilder(runnerBuilder, FilteringBuilder()),
     PrefixSuffixTestDiscoveringSuite.discoverClasses()) {
@@ -48,12 +49,12 @@ class Specs2PrefixSuffixTestDiscoveringSuite(suite: Class[Any], runnerBuilder: R
 
 object Specs2FilteringRunnerBuilder {
   val f: FilteringRunnerBuilder = {
-    case (parentRunner: org.specs2.runner.JUnitRunner, testClass: Class[_], pattern: Pattern) =>
+    case (parentRunner: org.specs2.runner.JUnitRunner, testClass: SourceCompat.Class, pattern: Pattern) =>
       new FilteredSpecs2ClassRunner(parentRunner, testClass, pattern)
   }
 }
 
-class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, testClass: Class[_], testFilter: Pattern)
+class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, testClass: SourceCompat.Class, testFilter: Pattern)
   extends org.specs2.runner.JUnitRunner(testClass) {
 
   //taking it from parent so not to initialize test classes multiple times
@@ -96,24 +97,24 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
     else sanitized
   }
 
-  private def createDescriptionTree(implicit ee: ExecutionEnv): TreeLoc[(Fragment, Description)] =
+  private def createDescriptionTree(ee: ExecutionEnv): TreeLoc[(Fragment, Description)] =
     Try(allDescriptions[specs2_v4].createDescriptionTree(specStructure)(ee))
       .getOrElse(allDescriptions[specs2_v3].createDescriptionTree(specStructure))
 
-  private def allFragmentDescriptions(implicit ee: ExecutionEnv): Map[Fragment, Description] =
+  private def allFragmentDescriptions(ee: ExecutionEnv): Map[Fragment, Description] =
     flattenLeft(createDescriptionTree(ee).toTree).toMap
 
-  private def flattenLeft(tree: Tree[(Fragment, Description)]): Stream[(Fragment, Description)] =
-    squishLeft(tree, Stream.Empty)
+  private def flattenLeft(tree: Tree[(Fragment, Description)]): SourceCompat.Stream[(Fragment, Description)] =
+    squishLeft(tree, SourceCompat.Stream.empty)
 
-  private def squishLeft(tree: Tree[(Fragment, Description)], xs: Stream[(Fragment, Description)]): Stream[(Fragment, Description)] =
-    Stream.cons(tree.rootLabel, tree.subForest.reverse.foldLeft(xs)((s, t) => squishLeft(t, s)))
+  private def squishLeft(tree: Tree[(Fragment, Description)], xs: SourceCompat.Stream[(Fragment, Description)]): SourceCompat.Stream[(Fragment, Description)] =
+    SourceCompat.Stream.cons(tree.rootLabel, tree.subForest.reverse.foldLeft(xs)((s, t) => squishLeft(t, s)))
 
   /**
    * Creates a mapping from sanitized example fragment name to original (un-sanitized) text.
    */
   private def specs2FragmentNamesBySanitizedName(implicit ee: ExecutionEnv): Map[String, String] =
-    allFragmentDescriptions
+    allFragmentDescriptions(ee)
       .keys
       .map(fragment => fragment.description.show)
       .map(description => sanitize(description) -> description)

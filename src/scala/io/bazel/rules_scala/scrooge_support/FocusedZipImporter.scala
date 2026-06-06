@@ -64,8 +64,6 @@ case class FocusedZipImporter(focus: Option[File], zips: List[File], zipFiles: L
       FileContents(importer, Source.fromInputStream(zipFile.getInputStream(entry), "UTF-8").mkString, Some(entry.getName))
     }
 
-  private[this] def canResolve(filename: String): Boolean = resolve(filename).isDefined
-
   override def getResolvedPath(filename: String): Option[String] =
     resolve(filename).map { case (_, zf, _) =>
       new File(zf.getName, toZipEntryPath(filename)).getCanonicalPath

@@ -13,6 +13,7 @@ import io.bazel.rulesscala.scalac.reporter.DepsTrackingReporter
 
 import java.util.Locale
 import scala.jdk.CollectionConverters.*
+import scala.annotation.nowarn
 
 class DependencyAnalyzer extends StandardPlugin:
   override val name: String = "dependency-analyzer"
@@ -22,6 +23,7 @@ class DependencyAnalyzer extends StandardPlugin:
       "dependencies which are directly included in the code, or " +
       "including unused dependencies."
 
+  @nowarn("cat=deprecation")
   override def init(options: List[String]): List[PluginPhase] = {
     given DependencyAnalyzerSettings = DependencyAnalyzerSettings.parseSettings(options, error = msg => println(msg))
     // We want to perform analysis after inlining and splicing (macro interpretation) is finished

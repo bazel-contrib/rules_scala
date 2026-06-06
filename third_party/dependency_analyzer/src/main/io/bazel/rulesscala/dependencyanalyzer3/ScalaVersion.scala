@@ -1,7 +1,5 @@
 package io.bazel.rulesscala.dependencyanalyzer
 
-import scala.annotation.tailrec
-import scala.util.Using
 import dotty.tools.dotc
 
 object ScalaVersion {

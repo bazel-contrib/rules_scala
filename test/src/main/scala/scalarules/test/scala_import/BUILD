@@ -29,6 +29,7 @@ scala_library(
 
 scala_import(
     name = "imported_genericlib_jar",
+    testonly = True,
     jars = [
         ":generic_scalalib.jar",
     ],

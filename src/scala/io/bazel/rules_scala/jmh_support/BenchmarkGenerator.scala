@@ -1,14 +1,15 @@
 package io.bazel.rules_scala.jmh_support
 
+import io.bazel.rulesscala.sourcecompat.SourceCompat
+
 import java.net.URLClassLoader
 
-import scala.collection.JavaConverters._
 import org.openjdk.jmh.generators.core.{FileSystemDestination, GeneratorSource, BenchmarkGenerator => JMHGenerator}
 import org.openjdk.jmh.generators.asm.ASMGeneratorSource
 import org.openjdk.jmh.generators.reflection.RFGeneratorSource
 import java.net.URI
 
-import scala.collection.JavaConverters._
+import io.bazel.rulesscala.sourcecompat.SourceCompat.JavaConversions._
 import java.nio.file.{FileSystems, Files, Path}
 
 import io.bazel.rulesscala.jar.JarCreator
@@ -131,8 +132,8 @@ object BenchmarkGenerator {
   }
 
   private def constructJar(output: Path, fileDir: Path): Unit = {
-    val creator = new JarCreator(output.toAbsolutePath.toFile.toString)
-    creator.addDirectory(fileDir.toFile)
+    val creator = new JarCreator(output.toAbsolutePath)
+    creator.addDirectory(fileDir)
     creator.execute
   }
 
@@ -182,7 +183,7 @@ object BenchmarkGenerator {
     }
   }
 
-  private def classByPath(path: Path, cl: ClassLoader): Option[Class[_]] = {
+  private def classByPath(path: Path, cl: ClassLoader): Option[SourceCompat.Class] = {
     val separator = path.getFileSystem.getSeparator
     var s = path.toString
       .stripPrefix(separator)

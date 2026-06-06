@@ -45,6 +45,9 @@ scala_library(
 scala_library(
     name = "scalapb_worker_lib",
     srcs = ["ScalaPBWorker.scala"],
+    scalacopts = select_for_scala_version(
+        since_3_4 = ["-source:3.3"],
+    ),
     visibility = ["//visibility:public"],
     deps = [
         "//scala_proto:scalapb_worker_deps",

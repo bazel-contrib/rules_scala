@@ -10,8 +10,10 @@ scala_library(
         "//scala/private/toolchain_deps:scala_xml",
     ],
     visibility = ["//visibility:public"],
+    exports = ["//scala/private/source_compat"],
     deps = [
         "//scala/private/toolchain_deps:scala_xml",
+        "//scala/private/source_compat",
         "//src/java/io/bazel/rulesscala/test_discovery",
         "//testing/toolchain:junit_classpath",
         "//testing/toolchain:specs2_classpath",

@@ -1,16 +1,16 @@
 package io.bazel.rulesscala.utils
 
 import dotty.tools.dotc.config.CommandLineParser
-import dotty.tools.dotc.{Compiler, Driver}
+import dotty.tools.dotc.Compiler
 import dotty.tools.dotc.core.Contexts.*
 import dotty.tools.dotc.reporting.{StoreReporter, Diagnostic as CompilerDiagnostic}
 import dotty.tools.dotc.util.{NoSourcePosition, SourceFile, SourcePosition as CompilerSourcePosition}
 import dotty.tools.io.{Directory, PlainDirectory, VirtualDirectory}
 
-import java.nio.file.{Path, Paths}
+import java.nio.file.Path
 
 object TestUtil extends TestUtilCommon {
-  class CompatSourcePosition(underlying: CompilerSourcePosition)(using Context)
+  class CompatSourcePosition(underlying: CompilerSourcePosition)
       extends SourcePosition {
     override def isDefined = underlying.exists
     export underlying.{line, column}
