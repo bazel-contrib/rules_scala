@@ -53,16 +53,9 @@ test_produces_semanticdb(){
     exit 1
   fi
 
-  if [ $is_bundle -eq 0 ]; then
-    if [[ $semanticdb_target_root == "" ]]; then
-      echo "Error: SemanticdbInfo.target_root expected to have a value"
-      exit 1
-    fi
-  else
-    if [[ $semanticdb_target_root != "" ]]; then
-      echo "Error: SemanticdbInfo.target_root expected to be empty string"
-      exit 1
-    fi
+  if [[ $semanticdb_target_root == "" ]]; then
+    echo "Error: SemanticdbInfo.target_root expected to have a value"
+    exit 1
   fi
 
   if [[ $scala_majver == 3 ]] && [[ $semanticdb_pluginjarpath != "" ]]; then
@@ -74,19 +67,16 @@ test_produces_semanticdb(){
     exit 1
   fi
 
-  if [ $is_bundle -eq 0 ]; then
+  semanticdb_path="$(bazel info execution_root)/${semanticdb_target_root}/META-INF/semanticdb/test/semanticdb/"
 
-    semanticdb_path="$(bazel info execution_root)/${semanticdb_target_root}/META-INF/semanticdb/test/semanticdb/"
+  for arg in $FILES
+    do
+      if ! [ -f "${semanticdb_path}${arg}" ]; then
+        echo "Error: Expected Semanticdb file not found: ${semanticdb_path}${arg}"
+        exit 1;
 
-    for arg in $FILES
-      do
-        if ! [ -f "${semanticdb_path}${arg}" ]; then
-          echo "Error: Expected Semanticdb file not found: ${semanticdb_path}${arg}"
-          exit 1;
-
-        fi
-      done
-  fi
+      fi
+    done
 
   local JAR="$(bazel info bazel-bin)/test/semanticdb/all_lib.jar"
 

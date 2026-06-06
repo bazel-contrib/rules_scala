@@ -60,7 +60,7 @@ def phase_semanticdb(ctx, p):
 
         semanticdb_provider = SemanticdbInfo(
             semanticdb_enabled = True,
-            target_root = None if toolchain.semanticdb_bundle_in_jar else semanticdb_target_root,
+            target_root = semanticdb_target_root,
             is_bundled_in_jar = toolchain.semanticdb_bundle_in_jar,
             plugin_jar = plugin_jar,
         )
