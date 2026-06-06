@@ -12,7 +12,7 @@ import org.specs2.control.Action
 import org.specs2.fp.Tree.Node
 import org.specs2.fp.{Tree, TreeLoc}
 import org.specs2.main.{Arguments, CommandLine, Select}
-import org.specs2.specification.core.{Env, Fragment, SpecificationStructure}
+import org.specs2.specification.core.{Env, Fragment, SpecStructure, SpecificationStructure}
 import org.specs2.specification.process.Stats
 
 import java.util
@@ -61,13 +61,12 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
   override lazy val specification: SpecificationStructure = parentRunner.specification
 
   override def getDescription(env: Env): Description = {
-    implicit def ee: ExecutionEnv = env.specs2ExecutionEnv
-    try createFilteredDescription()
-    catch { case NonFatal(t) => env.shutdown(); throw t; }
+    try createFilteredDescription(specStructure, env.specs2ExecutionEnv)
+    catch { case NonFatal(t) => env.shutdown; throw t; }
   }
 
-  private def createFilteredDescription()(implicit ee: ExecutionEnv): Description = {
-    val descTree = createDescriptionTree.map(_._2)
+  private def createFilteredDescription(specStructure: SpecStructure, ee: ExecutionEnv): Description = {
+    val descTree = createDescriptionTree(ee).map(_._2)
 
     def bottomUp[A, B](t: Tree[A], f: ((A, Iterable[B]) => B)): Tree[B] = {
       val tbs = t.subForest.map(t => bottomUp(t, f))
@@ -98,12 +97,12 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
     else sanitized
   }
 
-  private def createDescriptionTree(implicit ee: ExecutionEnv): TreeLoc[(Fragment, Description)] =
+  private def createDescriptionTree(ee: ExecutionEnv): TreeLoc[(Fragment, Description)] =
     Try(allDescriptions[specs2_v4].createDescriptionTree(specStructure)(ee))
       .getOrElse(allDescriptions[specs2_v3].createDescriptionTree(specStructure))
 
-  private def allFragmentDescriptions(implicit ee: ExecutionEnv): Map[Fragment, Description] =
-    flattenLeft(createDescriptionTree.toTree).toMap
+  private def allFragmentDescriptions(ee: ExecutionEnv): Map[Fragment, Description] =
+    flattenLeft(createDescriptionTree(ee).toTree).toMap
 
   private def flattenLeft(tree: Tree[(Fragment, Description)]): SourceCompat.Stream[(Fragment, Description)] =
     squishLeft(tree, SourceCompat.Stream.empty)
@@ -115,7 +114,7 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
    * Creates a mapping from sanitized example fragment name to original (un-sanitized) text.
    */
   private def specs2FragmentNamesBySanitizedName(implicit ee: ExecutionEnv): Map[String, String] =
-    allFragmentDescriptions
+    allFragmentDescriptions(ee)
       .keys
       .map(fragment => fragment.description.show)
       .map(description => sanitize(description) -> description)
