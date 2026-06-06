@@ -10,6 +10,7 @@ scala_library(
         "//scala/private/toolchain_deps:scala_xml",
     ],
     visibility = ["//visibility:public"],
+    exports = ["//scala/private/source_compat"],
     deps = [
         "//scala/private/toolchain_deps:scala_xml",
         "//scala/private/source_compat",

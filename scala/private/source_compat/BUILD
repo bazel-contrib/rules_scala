@@ -8,9 +8,5 @@ scala_library(
         between_2_13_and_3 = ["scala2_13/SourceCompat.scala"],
         since_3 = ["scala3/SourceCompat.scala"],
     ),
-    visibility = [
-        "//scala:__subpackages__",
-        "//src:__subpackages__",
-        "//third_party:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
 )
