@@ -9,6 +9,7 @@ scala_library(
     ],
     deps = [
         "//jmh:benchmark_generator",
+        "//scala/private/source_compat",
     ],
 )
 

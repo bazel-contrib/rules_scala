@@ -1,5 +1,6 @@
 package io.bazel.rulesscala.test_discovery
 
+import io.bazel.rulesscala.sourcecompat.SourceCompat
 import io.bazel.rulesscala.test_discovery.ArchiveEntries.listClassFiles
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,7 +47,7 @@ object PrefixSuffixTestDiscoveringSuite {
   private val runWithAnnotation = classOf[RunWith]
   private val testAnnotation = classOf[Test]
 
-  private[rulesscala] def discoverClasses(): Array[Class[_]] = {
+  private[rulesscala] def discoverClasses(): Array[SourceCompat.Class] = {
     val archives = archivesPath.split(',').filter(_.nonEmpty)
     val classes = archives.map(new File(_)).flatMap(discoverClassesIn).distinct
     if (classes.isEmpty)
@@ -59,7 +60,7 @@ object PrefixSuffixTestDiscoveringSuite {
     classes
   }
 
-  private def discoverClassesIn(file: File): Stream[Class[_]] = {
+  private def discoverClassesIn(file: File): Stream[SourceCompat.Class] = {
     val classes = discoverClasses(listClassFiles(file), prefixes, suffixesWithClassSuffix)
 
     if (printDiscoveredClasses) {
@@ -71,7 +72,7 @@ object PrefixSuffixTestDiscoveringSuite {
 
   private def discoverClasses(entries: Stream[String],
                               prefixes: Set[String],
-                              suffixes: Set[String]): Stream[Class[_]] =
+                              suffixes: Set[String]): Stream[SourceCompat.Class] =
     matchingEntries(entries, prefixes, suffixes)
       .map(dropFileSuffix)
       .map(fileToClassFormat)
@@ -126,27 +127,27 @@ object PrefixSuffixTestDiscoveringSuite {
   private def printDiscoveredClasses: Boolean =
     System.getProperty("bazel.discover.classes.print.discovered").toBoolean
 
-  private def concreteClasses(testClass: Class[_]): Boolean =
+  private def concreteClasses(testClass: SourceCompat.Class): Boolean =
     !Modifier.isAbstract(testClass.getModifiers)
 
   private def innerClasses(testClassName: String): Boolean =
     testClassName.contains('$')
 
-  private def containsTests(testClass: Class[_]): Boolean =
+  private def containsTests(testClass: SourceCompat.Class): Boolean =
     annotatedWithRunWith(testClass) || hasTestAnnotatedMethodsInClassHierarchy(testClass)
 
-  private def annotatedWithRunWith(testClass: Class[_]) =
+  private def annotatedWithRunWith(testClass: SourceCompat.Class) =
     testClass.getAnnotation(runWithAnnotation) != null
 
   @tailrec
-  private def hasTestAnnotatedMethodsInClassHierarchy(testClass: Class[_]): Boolean =
+  private def hasTestAnnotatedMethodsInClassHierarchy(testClass: SourceCompat.Class): Boolean =
     Option(testClass) match {
       case None => false
       case Some(currentTestClass) if hasTestAnnotatedMethodsInCurrentClass(currentTestClass) => true
       case Some(currentTestClass) => hasTestAnnotatedMethodsInClassHierarchy(currentTestClass.getSuperclass)
     }
 
-  private def hasTestAnnotatedMethodsInCurrentClass(testClass: Class[_]): Boolean =
+  private def hasTestAnnotatedMethodsInCurrentClass(testClass: SourceCompat.Class): Boolean =
     testClass.getDeclaredMethods.exists { method =>
       method.getAnnotations.exists { (annotation: Annotation) =>
         testAnnotation.isAssignableFrom(annotation.annotationType)

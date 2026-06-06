@@ -1,5 +1,7 @@
 package io.bazel.rules_scala.jmh_support
 
+import io.bazel.rulesscala.sourcecompat.SourceCompat
+
 import java.net.URLClassLoader
 
 import org.openjdk.jmh.generators.core.{FileSystemDestination, GeneratorSource, BenchmarkGenerator => JMHGenerator}
@@ -181,7 +183,7 @@ object BenchmarkGenerator {
     }
   }
 
-  private def classByPath(path: Path, cl: ClassLoader): Option[Class[_]] = {
+  private def classByPath(path: Path, cl: ClassLoader): Option[SourceCompat.Class] = {
     val separator = path.getFileSystem.getSeparator
     var s = path.toString
       .stripPrefix(separator)

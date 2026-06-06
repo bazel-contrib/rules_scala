@@ -1,5 +1,6 @@
 package io.bazel.rulesscala.specs2
 
+import io.bazel.rulesscala.sourcecompat.SourceCompat
 import io.bazel.rulesscala.test_discovery.FilteredRunnerBuilder.FilteringRunnerBuilder
 import io.bazel.rulesscala.test_discovery._
 import org.junit.runner.notification.RunNotifier
@@ -48,12 +49,12 @@ class Specs2PrefixSuffixTestDiscoveringSuite(runnerBuilder: RunnerBuilder)
 
 object Specs2FilteringRunnerBuilder {
   val f: FilteringRunnerBuilder = {
-    case (parentRunner: org.specs2.runner.JUnitRunner, testClass: Class[_], pattern: Pattern) =>
+    case (parentRunner: org.specs2.runner.JUnitRunner, testClass: SourceCompat.Class, pattern: Pattern) =>
       new FilteredSpecs2ClassRunner(parentRunner, testClass, pattern)
   }
 }
 
-class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, testClass: Class[_], testFilter: Pattern)
+class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, testClass: SourceCompat.Class, testFilter: Pattern)
   extends org.specs2.runner.JUnitRunner(testClass) {
 
   //taking it from parent so not to initialize test classes multiple times

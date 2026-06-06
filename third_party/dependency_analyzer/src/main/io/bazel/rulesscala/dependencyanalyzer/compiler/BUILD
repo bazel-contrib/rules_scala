@@ -10,6 +10,7 @@ scala_library_for_plugin_bootstrapping(
             # Silence migration warnings when using Scala 3.4+
             "-Wconf:msg=Alphanumeric method .* is not declared infix:s",
             "-Wconf:cat=deprecation:s",
+            "-Wconf:msg=unused:s"
         ],
     ),
     visibility = ["//visibility:public"],

@@ -1,6 +1,7 @@
 package io.bazel.rulesscala.test_discovery
 
 import FilteredRunnerBuilder.FilteringRunnerBuilder
+import io.bazel.rulesscala.sourcecompat.SourceCompat
 
 import java.lang.annotation.Annotation
 import java.util
@@ -13,14 +14,14 @@ import org.junit.runners.model.{FrameworkMethod, RunnerBuilder, TestClass}
 import scala.collection.JavaConverters._
 
 object FilteredRunnerBuilder {
-  type FilteringRunnerBuilder = PartialFunction[(Runner, Class[_], Pattern), Runner]
+  type FilteringRunnerBuilder = PartialFunction[(Runner, SourceCompat.Class, Pattern), Runner]
 }
 
 class FilteredRunnerBuilder(builder: RunnerBuilder, filteringRunnerBuilder: FilteringRunnerBuilder) extends RunnerBuilder {
   // Defined by --test_filter bazel flag.
   private val maybePattern = sys.env.get("TESTBRIDGE_TEST_ONLY").map(Pattern.compile)
 
-  override def runnerForClass(testClass: Class[_]): Runner = {
+  override def runnerForClass(testClass: SourceCompat.Class): Runner = {
     val runner = builder.runnerForClass(testClass)
     maybePattern.flatMap(pattern =>
       filteringRunnerBuilder.lift((runner, testClass, pattern))
@@ -28,8 +29,8 @@ class FilteredRunnerBuilder(builder: RunnerBuilder, filteringRunnerBuilder: Filt
   }
 }
 
-private[rulesscala] class FilteredTestClass(testClass: Class[_], pattern: Pattern) extends TestClass(testClass) {
-  override def getAnnotatedMethods(aClass: Class[_ <: Annotation]): util.List[FrameworkMethod] = {
+private[rulesscala] class FilteredTestClass(testClass: SourceCompat.Class, pattern: Pattern) extends TestClass(testClass) {
+  override def getAnnotatedMethods(aClass: SourceCompat.ClassOf[Annotation]): util.List[FrameworkMethod] = {
     val methods = super.getAnnotatedMethods(aClass)
     if (aClass == classOf[Test])
       methods.asScala.filter(method => methodMatchesPattern(method, pattern)).asJava
@@ -48,11 +49,11 @@ object JUnitFilteringRunnerBuilder {
   private final val TestClassField = "testClass"
 
   val f: FilteringRunnerBuilder = {
-    case (runner: BlockJUnit4ClassRunner, testClass: Class[_], pattern: Pattern) =>
+    case (runner: BlockJUnit4ClassRunner, testClass: SourceCompat.Class, pattern: Pattern) =>
       replaceRunnerTestClass(runner, testClass, pattern)
   }
 
-  private def replaceRunnerTestClass(runner: BlockJUnit4ClassRunner, testClass: Class[_], pattern: Pattern) = {
+  private def replaceRunnerTestClass(runner: BlockJUnit4ClassRunner, testClass: SourceCompat.Class, pattern: Pattern) = {
     allFieldsOf(runner.getClass)
       .find(f => f.getName == TestClassField || f.getName == TestClassFieldPreJUnit4_12)
       .foreach(field => {
@@ -62,8 +63,8 @@ object JUnitFilteringRunnerBuilder {
     runner
   }
 
-  private def allFieldsOf(clazz: Class[_]) = {
-    def supers(cl: Class[_]): List[Class[_]] = {
+  private def allFieldsOf(clazz: SourceCompat.Class) = {
+    def supers(cl: SourceCompat.Class): List[SourceCompat.Class] = {
       if (cl == null) Nil else cl :: supers(cl.getSuperclass)
     }
 
