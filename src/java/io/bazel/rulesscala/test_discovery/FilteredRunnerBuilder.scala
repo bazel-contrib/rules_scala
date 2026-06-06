@@ -11,7 +11,7 @@ import org.junit.runner.Runner
 import org.junit.runners.BlockJUnit4ClassRunner
 import org.junit.runners.model.{FrameworkMethod, RunnerBuilder, TestClass}
 
-import scala.collection.JavaConverters._
+import io.bazel.rulesscala.sourcecompat.SourceCompat.JavaConversions._
 
 object FilteredRunnerBuilder {
   type FilteringRunnerBuilder = PartialFunction[(Runner, SourceCompat.Class, Pattern), Runner]

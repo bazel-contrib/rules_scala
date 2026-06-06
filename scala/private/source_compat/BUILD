@@ -4,7 +4,8 @@ load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
 scala_library(
     name = "source_compat",
     srcs = select_for_scala_version(
-        before_3 = ["scala2/SourceCompat.scala"],
+        before_2_13 = ["scala2_12/SourceCompat.scala"],
+        between_2_13_and_3 = ["scala2_13/SourceCompat.scala"],
         since_3 = ["scala3/SourceCompat.scala"],
     ),
     visibility = [

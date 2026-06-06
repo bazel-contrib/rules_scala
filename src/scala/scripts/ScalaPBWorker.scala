@@ -5,15 +5,21 @@ import java.net.URLClassLoader
 import java.nio.file.{Files, Paths}
 
 import io.bazel.rulesscala.worker.Worker
-import protocbridge.{ProtocBridge, ProtocCodeGenerator}
+import protocbridge.{ProtocBridge, ProtocCodeGenerator, ProtocRunner}
 
 import scala.sys.process._
 
 object ScalaPBWorker extends Worker.Interface {
 
-  private val protoc = {
-    val executable = sys.props.getOrElse("PROTOC", sys.error("PROTOC not supplied"))
-    (args: Seq[String]) => Process(executable, args).!(ProcessLogger(stderr.println(_)))
+  private val protocRunner: ProtocRunner[Int] = ProtocRunner.fromFunction {
+    case (args, extraEnv) =>
+      val executable = sys.props.getOrElse("PROTOC", sys.error("PROTOC not supplied"))
+      Process(
+        command = Seq(executable) ++ args,
+        cwd = None,
+        extraEnv = extraEnv: _*,
+      )
+      .!(ProcessLogger(stderr.println(_)))
   }
 
   private val classes = {
@@ -39,7 +45,7 @@ object ScalaPBWorker extends Worker.Interface {
   def main(args: Array[String]): Unit = Worker.workerMain(args, ScalaPBWorker)
 
   def work(args: Array[String]): Unit = {
-    val code = ProtocBridge.runWithGenerators(protoc, generators, args)
+    val code = ProtocBridge.runWithGenerators(protocRunner, generators, args.toIndexedSeq)
     if (code != 0) {
       sys.error(s"Exit with code $code")
     }

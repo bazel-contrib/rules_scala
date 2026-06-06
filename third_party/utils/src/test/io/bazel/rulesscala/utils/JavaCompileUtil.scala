@@ -36,7 +36,7 @@ object JavaCompileUtil {
     fileManager.close()
     // If there's a compilation error, display error messages and fail the test
     if (!success) {
-      import scala.collection.JavaConverters._
+      import io.bazel.rulesscala.sourcecompat.SourceCompat.JavaConversions._
       for (diagnostic <- diagnostics.getDiagnostics.asScala) {
         println("Code: " + diagnostic.getCode)
         println("Kind: " + diagnostic.getKind)

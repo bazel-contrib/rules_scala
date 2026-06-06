@@ -9,7 +9,7 @@ import org.openjdk.jmh.generators.asm.ASMGeneratorSource
 import org.openjdk.jmh.generators.reflection.RFGeneratorSource
 import java.net.URI
 
-import scala.collection.JavaConverters._
+import io.bazel.rulesscala.sourcecompat.SourceCompat.JavaConversions._
 import java.nio.file.{FileSystems, Files, Path}
 
 import io.bazel.rulesscala.jar.JarCreator
@@ -132,8 +132,8 @@ object BenchmarkGenerator {
   }
 
   private def constructJar(output: Path, fileDir: Path): Unit = {
-    val creator = new JarCreator(output.toAbsolutePath.toFile.toString)
-    creator.addDirectory(fileDir.toFile)
+    val creator = new JarCreator(output.toAbsolutePath)
+    creator.addDirectory(fileDir)
     creator.execute
   }
 

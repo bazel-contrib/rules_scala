@@ -17,7 +17,7 @@ import org.specs2.specification.process.Stats
 
 import java.util
 import java.util.regex.Pattern
-import scala.collection.JavaConverters._
+import io.bazel.rulesscala.sourcecompat.SourceCompat.JavaConversions._
 import scala.collection.immutable.Iterable
 import scala.language.reflectiveCalls
 import scala.util.Try
@@ -105,11 +105,11 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
   private def allFragmentDescriptions(implicit ee: ExecutionEnv): Map[Fragment, Description] =
     flattenLeft(createDescriptionTree.toTree).toMap
 
-  private def flattenLeft(tree: Tree[(Fragment, Description)]): Stream[(Fragment, Description)] =
-    squishLeft(tree, Stream.Empty)
+  private def flattenLeft(tree: Tree[(Fragment, Description)]): SourceCompat.Stream[(Fragment, Description)] =
+    squishLeft(tree, SourceCompat.Stream.empty)
 
-  private def squishLeft(tree: Tree[(Fragment, Description)], xs: Stream[(Fragment, Description)]): Stream[(Fragment, Description)] =
-    Stream.cons(tree.rootLabel, tree.subForest.reverse.foldLeft(xs)((s, t) => squishLeft(t, s)))
+  private def squishLeft(tree: Tree[(Fragment, Description)], xs: SourceCompat.Stream[(Fragment, Description)]): SourceCompat.Stream[(Fragment, Description)] =
+    SourceCompat.Stream.cons(tree.rootLabel, tree.subForest.reverse.foldLeft(xs)((s, t) => squishLeft(t, s)))
 
   /**
    * Creates a mapping from sanitized example fragment name to original (un-sanitized) text.

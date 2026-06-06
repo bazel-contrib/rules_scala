@@ -60,7 +60,7 @@ object PrefixSuffixTestDiscoveringSuite {
     classes
   }
 
-  private def discoverClassesIn(file: File): Stream[SourceCompat.Class] = {
+  private def discoverClassesIn(file: File): SourceCompat.Stream[SourceCompat.Class] = {
     val classes = discoverClasses(listClassFiles(file), prefixes, suffixesWithClassSuffix)
 
     if (printDiscoveredClasses) {
@@ -70,9 +70,9 @@ object PrefixSuffixTestDiscoveringSuite {
     classes
   }
 
-  private def discoverClasses(entries: Stream[String],
+  private def discoverClasses(entries: SourceCompat.Stream[String],
                               prefixes: Set[String],
-                              suffixes: Set[String]): Stream[SourceCompat.Class] =
+                              suffixes: Set[String]): SourceCompat.Stream[SourceCompat.Class] =
     matchingEntries(entries, prefixes, suffixes)
       .map(dropFileSuffix)
       .map(fileToClassFormat)
@@ -81,9 +81,9 @@ object PrefixSuffixTestDiscoveringSuite {
       .filter(concreteClasses)
       .filter(containsTests)
 
-  private def matchingEntries(entries: Stream[String],
+  private def matchingEntries(entries: SourceCompat.Stream[String],
                               prefixes: Set[String],
-                              suffixes: Set[String]): Stream[String] =
+                              suffixes: Set[String]): SourceCompat.Stream[String] =
     entries
       .filter(entry => endsWith(suffixes)(entry) || startsWith(prefixes)(entry))
 
