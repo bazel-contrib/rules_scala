@@ -6,7 +6,7 @@ import org.scalafmt.sysops.PlatformFileOps
 
 object ScalafmtAdapter {
     def readFile(file: File)(implicit codec: scala.io.Codec): String =
-        PlatformFileOps.readFile(file.toPath())(codec)
+        PlatformFileOps.readFile(file.toPath())
 
     def parseConfigFile(configFile: File): ScalafmtConfig =
         ScalafmtConfig.fromHoconFile(configFile.toPath()).get

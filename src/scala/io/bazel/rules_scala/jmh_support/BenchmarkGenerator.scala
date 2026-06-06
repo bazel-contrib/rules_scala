@@ -2,7 +2,6 @@ package io.bazel.rules_scala.jmh_support
 
 import java.net.URLClassLoader
 
-import scala.collection.JavaConverters._
 import org.openjdk.jmh.generators.core.{FileSystemDestination, GeneratorSource, BenchmarkGenerator => JMHGenerator}
 import org.openjdk.jmh.generators.asm.ASMGeneratorSource
 import org.openjdk.jmh.generators.reflection.RFGeneratorSource

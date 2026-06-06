@@ -18,7 +18,7 @@ object ScroogeWorker extends Worker.Interface {
   def deleteDir(path: Path): Unit =
     try DeleteRecursively.run(path)
     catch {
-      case e: Exception => ()
+      case _: Exception => ()
     }
 
   def work(args: Array[String]): Unit = {

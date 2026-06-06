@@ -17,7 +17,8 @@ object ScalafmtWorker extends Worker.Interface {
     val namespace = argName.zip(argFile).toMap
 
     val sourceFile = namespace.getOrElse("input", new File(""))
-    val source = ScalafmtAdapter.readFile(sourceFile)(Codec.UTF8)
+    implicit val codec: Codec = Codec.UTF8
+    val source = ScalafmtAdapter.readFile(sourceFile)
 
     val configFile = namespace.getOrElse("config", new File(""))
     val config = ScalafmtAdapter.parseConfigFile(configFile)

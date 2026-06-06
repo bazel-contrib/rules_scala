@@ -11,7 +11,7 @@ import org.specs2.control.Action
 import org.specs2.fp.Tree.Node
 import org.specs2.fp.{Tree, TreeLoc}
 import org.specs2.main.{Arguments, CommandLine, Select}
-import org.specs2.specification.core.{Env, Fragment, SpecStructure, SpecificationStructure}
+import org.specs2.specification.core.{Env, Fragment, SpecificationStructure}
 import org.specs2.specification.process.Stats
 
 import java.util
@@ -30,7 +30,7 @@ object FilteringBuilder {
     Specs2FilteringRunnerBuilder.f orElse JUnitFilteringRunnerBuilder.f
 }
 
-class Specs2PrefixSuffixTestDiscoveringSuite(suite: Class[Any], runnerBuilder: RunnerBuilder)
+class Specs2PrefixSuffixTestDiscoveringSuite(runnerBuilder: RunnerBuilder)
   extends Suite(
     new FilteredRunnerBuilder(runnerBuilder, FilteringBuilder()),
     PrefixSuffixTestDiscoveringSuite.discoverClasses()) {
@@ -60,12 +60,13 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
   override lazy val specification: SpecificationStructure = parentRunner.specification
 
   override def getDescription(env: Env): Description = {
-    try createFilteredDescription(specStructure, env.specs2ExecutionEnv)
+    implicit def ee: ExecutionEnv = env.specs2ExecutionEnv
+    try createFilteredDescription()
     catch { case NonFatal(t) => env.shutdown; throw t; }
   }
 
-  private def createFilteredDescription(specStructure: SpecStructure, ee: ExecutionEnv): Description = {
-    val descTree = createDescriptionTree(ee).map(_._2)
+  private def createFilteredDescription()(implicit ee: ExecutionEnv): Description = {
+    val descTree = createDescriptionTree.map(_._2)
 
     def bottomUp[A, B](t: Tree[A], f: ((A, Iterable[B]) => B)): Tree[B] = {
       val tbs = t.subForest.map(t => bottomUp(t, f))
@@ -101,7 +102,7 @@ class FilteredSpecs2ClassRunner(parentRunner: org.specs2.runner.JUnitRunner, tes
       .getOrElse(allDescriptions[specs2_v3].createDescriptionTree(specStructure))
 
   private def allFragmentDescriptions(implicit ee: ExecutionEnv): Map[Fragment, Description] =
-    flattenLeft(createDescriptionTree(ee).toTree).toMap
+    flattenLeft(createDescriptionTree.toTree).toMap
 
   private def flattenLeft(tree: Tree[(Fragment, Description)]): Stream[(Fragment, Description)] =
     squishLeft(tree, Stream.Empty)

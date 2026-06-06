@@ -38,7 +38,7 @@ import scala.annotation.tailrec
 @RunWith(classOf[PrefixSuffixTestDiscoveringSuite])
 class DiscoveredTestSuite
 
-class PrefixSuffixTestDiscoveringSuite(testClass: Class[Any], builder: RunnerBuilder)
+class PrefixSuffixTestDiscoveringSuite(builder: RunnerBuilder)
   extends Suite(new FilteredRunnerBuilder(builder, JUnitFilteringRunnerBuilder.f), PrefixSuffixTestDiscoveringSuite.discoverClasses())
 
 object PrefixSuffixTestDiscoveringSuite {
