@@ -356,6 +356,8 @@ class ArtifactLabelMaker:
         "com.github.spullara.mustache.java:compiler":
             "io_bazel_rules_scala_mustache",
         "org.apache.thrift:libthrift": "libthrift",
+        "org.portable-scala:portable-scala-reflect":
+            "io_bazel_rules_scala_org_portable_scala_portable_scala_reflect_2_13",
     }
 
     _SCALA_LANG_GROUPS = set(['org.scala-lang', 'org.scala-lang.modules'])
