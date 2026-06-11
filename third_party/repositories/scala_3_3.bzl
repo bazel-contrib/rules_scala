@@ -3,7 +3,7 @@
 Mostly generated and updated by scripts/create_repository.py.
 """
 
-scala_version = "3.3.7"
+scala_version = "3.3.8"
 
 artifacts = {
     "com_github_jnr_jffi_native": {
@@ -152,10 +152,6 @@ artifacts = {
         "artifact": "org.ow2.asm:asm:9.0",
         "sha256": "0df97574914aee92fd349d0cb4e00f3345d45b2c239e0bb50f0a90ead47888e0",
     },
-    "io_bazel_rules_scala_org_portable_scala_portable_scala_reflect_2_13": {
-        "artifact": "org.portable-scala:portable-scala-reflect_2.13:1.1.1",
-        "sha256": "11f2f59d0c228912811095025b36ce58a025a8397851d773295c8ad7862d8488",
-    },
     "io_bazel_rules_scala_org_specs2_specs2_common": {
         "artifact": "org.specs2:specs2-common_3:jar:5.0.0-RC-21",
         "sha256": "bfbc91a136493483ed5d2beba7f48520e72b66a9987ebec5b8f0ca38bda02801",
@@ -175,7 +171,7 @@ artifacts = {
         "artifact": "org.specs2:specs2-fp_3:jar:5.0.0-RC-21",
         "sha256": "60f26aa132decb52682bba7ce0355b0b749b1b5fe283ec8929b050bb794cc1b8",
         "deps": [
-            "@io_bazel_rules_scala_org_portable_scala_portable_scala_reflect_2_13",
+            "@org_portable_scala_portable_scala_reflect",
         ],
     },
     "io_bazel_rules_scala_org_specs2_specs2_junit": {
@@ -193,12 +189,12 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_asm": {
-        "artifact": "org.scala-lang.modules:scala-asm:9.8.0-scala-1",
-        "sha256": "86af037580bdf9ce9c05f8b2afd734daf1a8564c38cd10ca5d08bf81508ad2e4",
+        "artifact": "org.scala-lang.modules:scala-asm:9.9.0-scala-1",
+        "sha256": "75ac366e8ecb691e06a7e85041eed0f67919a646e5262fa0901225698c104375",
     },
     "io_bazel_rules_scala_scala_compiler": {
-        "artifact": "org.scala-lang:scala3-compiler_3:3.3.7",
-        "sha256": "e15fed89fb45248550c8227ea407c0eb496a6afb7bdf7abba4285d2fe55baf44",
+        "artifact": "org.scala-lang:scala3-compiler_3:3.3.8",
+        "sha256": "89de0156398ce8547656bb2324ff2fbcfd7a85d7da065df4e01a85d949d081b8",
         "deps": [
             "@io_bazel_rules_scala_scala_asm",
             "@io_bazel_rules_scala_scala_interfaces",
@@ -221,12 +217,12 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_interfaces": {
-        "artifact": "org.scala-lang:scala3-interfaces:3.3.7",
-        "sha256": "f57f897043efda83576b5c18ce01df5a5a1c2033eeb26224fc2a8d1fb779f82c",
+        "artifact": "org.scala-lang:scala3-interfaces:3.3.8",
+        "sha256": "a7734cf3b9ccb6ab2597b279421bb29471da7c6d7bacfc947600883de4eeb3eb",
     },
     "io_bazel_rules_scala_scala_library": {
-        "artifact": "org.scala-lang:scala3-library_3:3.3.7",
-        "sha256": "a16e046f4a9df9e0d0e0bc54bf6298c94d7d867457f7b3b68291a88c568b92d0",
+        "artifact": "org.scala-lang:scala3-library_3:3.3.8",
+        "sha256": "2c6eace9158df8ee4485a06128a479d968c1ebfc83ae9b1a394b58429f0d1492",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
         ],
@@ -257,8 +253,8 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scala_tasty_core": {
-        "artifact": "org.scala-lang:tasty-core_3:3.3.7",
-        "sha256": "0748cd71c48398888313cb3c00b8aad39bd02f94d43cbca657d52903517a1e5a",
+        "artifact": "org.scala-lang:tasty-core_3:3.3.8",
+        "sha256": "e3a0ba5b0eed0ec5e0b5c29234abce911577d5571366ab75f11c52924874a945",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
@@ -498,6 +494,10 @@ artifacts = {
     "org_jspecify_jspecify": {
         "artifact": "org.jspecify:jspecify:1.0.0",
         "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
+    },
+    "org_portable_scala_portable_scala_reflect": {
+        "artifact": "org.portable-scala:portable-scala-reflect_2.13:1.1.1",
+        "sha256": "11f2f59d0c228912811095025b36ce58a025a8397851d773295c8ad7862d8488",
     },
     "org_scala_lang_modules_scala_collection_compat": {
         "artifact": "org.scala-lang.modules:scala-collection-compat_2.13:2.14.0",
