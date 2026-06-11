@@ -58,6 +58,16 @@ scala_deps.overridden_artifact(
     ],
 )
 scala_deps.overridden_artifact(
+    name = "io_bazel_rules_scala_scala_interfaces",
+    artifact = "org.scala-lang:scala3-interfaces:3.3.4",
+    sha256 = "fe056c10a217353e14aa62076d2bbd957ebd82e02fb445ca5546ae8ea9d40caa",
+)
+scala_deps.overridden_artifact(
+    name = "io_bazel_rules_scala_scala_tasty_core",
+    artifact = "org.scala-lang:tasty-core_3:3.3.4",
+    sha256 = "13d44693d6f2d38e0595954d11234c0373d6d0e689a8151b06878c5b631d57d5",
+)
+scala_deps.overridden_artifact(
     name = "io_bazel_rules_scala_scala_library_2",
     artifact = "org.scala-lang:scala-library:2.13.14",
     sha256 = "43e0ca1583df1966eaf02f0fbddcfb3784b995dd06bfc907209347758ce4b7e3",
