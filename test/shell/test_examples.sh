@@ -46,7 +46,7 @@ test_scala3_2_example() {
 }
 
 test_scala3_3_example() {
-  run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.3.7 //...
+  run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.3.8 //...
 }
 
 test_scala3_4_example() {

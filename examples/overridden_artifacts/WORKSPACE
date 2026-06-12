@@ -57,7 +57,7 @@ scala_protoc_toolchains(name = "rules_scala_protoc_toolchains")
 
 load("@rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config(scala_version = "3.3.7")
+scala_config(scala_version = "3.3.8")
 
 load(
     "@rules_scala//scala:toolchains.bzl",
@@ -89,6 +89,14 @@ scala_toolchains(
                 "@org_jline_jline_terminal_jni",
                 "@org_scala_sbt_compiler_interface",
             ],
+        },
+        "io_bazel_rules_scala_scala_interfaces": {
+            "artifact": "org.scala-lang:scala3-interfaces:3.3.4",
+            "sha256": "fe056c10a217353e14aa62076d2bbd957ebd82e02fb445ca5546ae8ea9d40caa",
+        },
+        "io_bazel_rules_scala_scala_tasty_core": {
+            "artifact": "org.scala-lang:tasty-core_3:3.3.4",
+            "sha256": "13d44693d6f2d38e0595954d11234c0373d6d0e689a8151b06878c5b631d57d5",
         },
         "io_bazel_rules_scala_scala_library_2": {
             "artifact": "org.scala-lang:scala-library:2.13.14",
