@@ -101,7 +101,20 @@ class ScalacWorker implements Worker.Interface {
     String[] jarCreatorArgs = {
         "-m", ops.manifestPath, "-t", ops.stampLabel, outputJarPath.toString(), classes.toString()
     };
-    JarCreator.main(jarCreatorArgs);
+    // Call buildJar directly rather than JarCreator.main: main() catches
+    // IOException and calls System.exit(1), which from inside a persistent
+    // worker tears down the JVM mid-request, bypassing
+    // Worker.persistentWorkerMain's catch (Exception e) block. The JVM dies
+    // before the WorkResponse is written; bb_worker sees EOF on the codec
+    // and reports an unhealthy_release back to Bazel as
+    // codes.Unavailable, which is retried up to --remote_retries and
+    // eventually surfaces as EXECUTION_FAILED_CATASTROPHICALLY with no
+    // actionable diagnostic. buildJar throws IOException, which work()
+    // already declares (`throws Exception`); the exception then propagates
+    // to Worker.persistentWorkerMain's catch block, which records
+    // exit_code=1 in the WorkResponse and keeps the JVM alive for the
+    // next request.
+    JarCreator.buildJar(jarCreatorArgs);
   }
 
   private static Path clearWorkDirectory(Path output, String label, String folderName) throws IOException {
