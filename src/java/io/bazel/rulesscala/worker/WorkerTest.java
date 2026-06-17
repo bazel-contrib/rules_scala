@@ -1,7 +1,6 @@
 package io.bazel.rulesscala.worker;
 
 import com.google.devtools.build.lib.worker.WorkerProtocol;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -11,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -24,8 +22,6 @@ public class WorkerTest {
   @Test
   public void testPersistentWorkerNoStdin() throws Exception {
     try (PersistentWorkerHelper helper = new PersistentWorkerHelper(); ) {
-      WorkerProtocol.WorkRequest.newBuilder().build().writeDelimitedTo(helper.requestOut);
-
       final AtomicInteger result = new AtomicInteger();
       Worker.Interface worker =
           new Worker.Interface() {
@@ -35,8 +31,12 @@ public class WorkerTest {
             }
           };
 
-      helper.runWorker(worker);
-      assert (result.get() == -1);
+      helper.start(worker);
+      WorkerProtocol.WorkRequest.newBuilder().build().writeDelimitedTo(helper.requestOut);
+      WorkerProtocol.WorkResponse.parseDelimitedFrom(helper.responseIn);
+      helper.stop();
+
+      assertEquals(-1, result.get());
     }
   }
 
@@ -64,24 +64,36 @@ public class WorkerTest {
 
       Files.write(tmpFile, contents.getBytes(StandardCharsets.UTF_8));
 
+      helper.start(worker);
       WorkerProtocol.WorkRequest.newBuilder()
           .addArguments("@" + tmpFile)
           .build()
           .writeDelimitedTo(helper.requestOut);
 
-      helper.runWorker(worker);
-
       WorkerProtocol.WorkResponse response =
           WorkerProtocol.WorkResponse.parseDelimitedFrom(helper.responseIn);
+      helper.stop();
 
       assertEquals(0, response.getExitCode());
-      assertEquals(contents, response.getOutput());
+      // WorkRequestHandler trims the captured System.out/System.err before
+      // attaching it to WorkResponse.output, so the trailing line separator
+      // is dropped on the wire.
+      assertEquals(contents.trim(), response.getOutput());
     } finally {
       Files.deleteIfExists(tmpFile);
     }
   }
 
-  /** A helper to manage IO when testing a persistent worker. */
+  /**
+   * A helper to manage IO when testing a persistent worker.
+   *
+   * <p>{@code WorkRequestHandler} dispatches each request to its own thread and exits the
+   * read loop on stdin EOF, interrupting any active request threads. Tests therefore must
+   * not pre-close stdin before the request has been handled. The shape is: {@link #start}
+   * the worker in a background thread, write the request via {@link #requestOut}, read
+   * the response from {@link #responseIn}, then {@link #stop} (closes stdin so the
+   * handler's read loop exits cleanly and joins the worker thread).
+   */
   private final class PersistentWorkerHelper implements AutoCloseable {
 
     public final PipedInputStream workerIn;
@@ -93,6 +105,9 @@ public class WorkerTest {
     private final InputStream stdin;
     private final PrintStream stdout;
     private final PrintStream stderr;
+
+    private Thread workerThread;
+    private Exception workerError;
 
     public PersistentWorkerHelper() throws IOException {
       this.workerIn = new PipedInputStream();
@@ -108,10 +123,26 @@ public class WorkerTest {
       System.setOut(new PrintStream(this.workerOut));
     }
 
-    public void runWorker(Worker.Interface worker) throws Exception {
-      // otherwise the worker will poll indefinitely
+    public void start(Worker.Interface worker) {
+      this.workerThread =
+          new Thread(
+              () -> {
+                try {
+                  Worker.workerMain(new String[] {"--persistent_worker"}, worker);
+                } catch (Exception e) {
+                  workerError = e;
+                }
+              },
+              "test-persistent-worker");
+      this.workerThread.start();
+    }
+
+    public void stop() throws Exception {
       this.requestOut.close();
-      Worker.workerMain(new String[] {"--persistent_worker"}, worker);
+      this.workerThread.join();
+      if (workerError != null) {
+        throw workerError;
+      }
     }
 
     public void close() {
@@ -136,65 +167,5 @@ public class WorkerTest {
       System.setOut(this.stdout);
       System.setErr(this.stderr);
     }
-  }
-
-  private static void fill(ByteArrayOutputStream baos, int amount) {
-    for (int i = 0; i < amount; i++) {
-      baos.write(0);
-    }
-  }
-
-  @Test
-  public void testBufferWriteReadAndReset() throws Exception {
-    Worker.SmartByteArrayOutputStream baos = new Worker.SmartByteArrayOutputStream();
-    PrintStream out = new PrintStream(baos);
-
-    out.print("hello, world");
-    assert (baos.toString("UTF-8").equals("hello, world"));
-    assert (!baos.isOversized());
-
-    fill(baos, 300);
-    assert (baos.isOversized());
-    baos.reset();
-
-    out.print("goodbye, world");
-    assert (baos.toString("UTF-8").equals("goodbye, world"));
-    assert (!baos.isOversized());
-  }
-
-  @AfterClass
-  public static void teardown() {
-  }
-
-  // Copied/modified from Bazel's MoreAsserts
-  //
-  // Note: this goes away soon-ish, as JUnit 4.13 was recently
-  // released and includes assertThrows
-  public static <T extends Throwable> T assertThrows(
-      Class<T> expectedThrowable, ThrowingRunnable runnable) {
-    try {
-      runnable.run();
-    } catch (Throwable actualThrown) {
-      if (expectedThrowable.isInstance(actualThrown)) {
-        @SuppressWarnings("unchecked")
-        T retVal = (T) actualThrown;
-        return retVal;
-      } else {
-        throw new AssertionError(
-            String.format(
-                "expected %s to be thrown, but %s was thrown",
-                expectedThrowable.getSimpleName(), actualThrown.getClass().getSimpleName()),
-            actualThrown);
-      }
-    }
-    String mismatchMessage =
-        String.format(
-            "expected %s to be thrown, but nothing was thrown", expectedThrowable.getSimpleName());
-    throw new AssertionError(mismatchMessage);
-  }
-
-  // see note on assertThrows
-  public interface ThrowingRunnable {
-    void run() throws Throwable;
   }
 }

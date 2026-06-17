@@ -72,6 +72,10 @@ single_version_override(
 # See //src/java/io/bazel/rulesscala/worker:worker_protocol_java_proto.
 bazel_dep(name = "bazel_worker_api", version = "0.0.10")
 
+# WorkRequestHandler-based persistent worker dispatch. See
+# //src/java/io/bazel/rulesscala/worker:Worker.java.
+bazel_dep(name = "bazel_worker_java", version = "0.0.10")
+
 scala_config = use_extension(
     "//scala/extensions:config.bzl",
     "scala_config",
