@@ -6,6 +6,7 @@ load(
     "scala_doc",
     "scala_junit_test",
     "scala_library",
+    "scala_library_for_plugin_bootstrapping",
     "scala_library_suite",
     "scala_macro_library",
     "scala_repl",
@@ -751,6 +752,76 @@ scala_library(
         "-Xfatal-warnings",
     ],
     deps = [":InlinableExported"],
+)
+
+# Regression targets for the "scalac" exec_group. Each sets a scalac.*
+# exec_property, which Bazel validates against the rule's exec_groups at
+# analysis time. Removing the exec_group from a rule fails these targets.
+# See docs/scalac_exec_group.md.
+#
+# The `manual` tag on the *_test targets keeps `bazel test //test/...`
+# from executing them — they exist to be analyzed, not run.
+#
+# test/shell/test_scalac_exec_group.sh additionally verifies via `bazel
+# aquery` that the property actually reaches the Scalac action, which
+# catches removal of `exec_group = "scalac"` from ctx.actions.run in
+# compile_scala.
+
+_SCALAC_EXEC_GROUP_PROPS = {"scalac.cpu": "1"}
+
+scala_library(
+    name = "ScalacExecGroupLib",
+    srcs = ["Runtime.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
+)
+
+scala_macro_library(
+    name = "ScalacExecGroupMacro",
+    srcs = ["MacroTest.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
+)
+
+scala_library_for_plugin_bootstrapping(
+    name = "ScalacExecGroupLibForPluginBootstrapping",
+    srcs = ["Runtime.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
+)
+
+scala_binary(
+    name = "ScalacExecGroupBinary",
+    srcs = ["ScalaBinary.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
+    main_class = "scalarules.test.ScalaBinary",
+    deps = [
+        ":HelloLib",
+        ":MacroTest",
+    ],
+)
+
+scala_test(
+    name = "ScalacExecGroupTest",
+    size = "small",
+    srcs = ["HelloLibTest.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
+    tags = ["manual"],
+    deps = [":HelloLib"],
+)
+
+scala_junit_test(
+    name = "ScalacExecGroupJunitTest",
+    size = "small",
+    srcs = ["src/main/scala/scalarules/test/junit/JunitNoTestEnvironmentTest.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
+    suffixes = ["Test"],
+    tags = ["manual"],
+)
+
+# scala_repl only invokes Scalac when srcs are present, so give this target
+# a source to exercise the compile path.
+scala_repl(
+    name = "ScalacExecGroupRepl",
+    srcs = ["A.scala"],
+    exec_properties = _SCALAC_EXEC_GROUP_PROPS,
 )
 
 TEST_ENV = {

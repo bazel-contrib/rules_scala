@@ -224,6 +224,10 @@ def make_scala_proto_aspect(*extras):
             extras_phases(extras),
             *[extra["attrs"] for extra in extras if "attrs" in extra]
         ),
+        # Required so `compile_scala` can create the Scalac action with
+        # `exec_group = "scalac"`. Not user-configurable: Bazel does not
+        # propagate target-level exec_properties to aspect actions.
+        exec_groups = {"scalac": exec_group()},
         toolchains = [
             "//scala:toolchain_type",
             "//scala_proto:toolchain_type",
