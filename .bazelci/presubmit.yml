@@ -6,6 +6,23 @@ matrix:
   bcr_bazel: [7.x, 8.x, 9.x, rolling, last_green]
 
 tasks:
+  analyze_all:
+    # Loading + analysis of the whole repo (no execution). This is the cheap
+    # tripwire for wildcard-only breakages (e.g. a visibility/alias regression)
+    # that never surface when CI only builds //test/..., since a plain
+    # `bazel build //...` is not otherwise exercised anywhere. test_expect_failure/
+    # is excluded: its targets are negative tests meant to fail (some already at
+    # analysis) and are exercised explicitly by the shell scripts instead.
+    name: "bazel build //... --nobuild"
+    platform: ubuntu2004
+    shell_commands:
+      - mv tools/bazel.rc.buildkite tools/bazel.rc
+      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
+    build_flags:
+      - "--nobuild"
+    build_targets:
+      - "//..."
+      - "-//test_expect_failure/..."
   ubuntu2004:
     name: "bazel test //test/..."
     platform: ubuntu2004
@@ -13,7 +30,13 @@ tasks:
       - mv tools/bazel.rc.buildkite tools/bazel.rc
       - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_targets:
-      - "//test/..."
+      # Build everything buildable, not just //test/.... The only wildcard
+      # exclusion is test_expect_failure/, whose targets are negative tests
+      # meant to fail compilation (exercised explicitly by the shell scripts).
+      # Other conditional targets (manual_test/*, test_statsfile empty-stats
+      # genrule) are tagged "manual" and thus already skipped by wildcards.
+      - "//..."
+      - "-//test_expect_failure/..."
     test_targets:
       - "//test/..."
   macos:
@@ -24,7 +47,8 @@ tasks:
       - mv tools/bazel.rc.buildkite tools/bazel.rc
       - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_targets:
-      - "//test/..."
+      - "//..."
+      - "-//test_expect_failure/..."
     test_targets:
       - "//test/..."
   test_rules_scala_linux:
