@@ -24,7 +24,7 @@ tasks:
       - "//..."
       - "-//test_expect_failure/..."
   ubuntu2004:
-    name: "bazel test //test/..."
+    name: "bazel test //..."
     platform: ubuntu2004
     shell_commands:
       - mv tools/bazel.rc.buildkite tools/bazel.rc
@@ -38,9 +38,14 @@ tasks:
       - "//..."
       - "-//test_expect_failure/..."
     test_targets:
-      - "//test/..."
+      # Mirror build_targets: run every test except the test_expect_failure/
+      # negative tests (exercised explicitly by the shell scripts). Beyond
+      # //test/... this also covers e.g. //third_party/dependency_analyzer/...,
+      # the //src/java worker/compileoptions unit tests and //tools:lint_check.
+      - "//..."
+      - "-//test_expect_failure/..."
   macos:
-    name: "bazel test //test/..."
+    name: "bazel test //..."
     platform: macos
     shell_commands:
       # Disable local disk caching on CI.
@@ -50,7 +55,8 @@ tasks:
       - "//..."
       - "-//test_expect_failure/..."
     test_targets:
-      - "//test/..."
+      - "//..."
+      - "-//test_expect_failure/..."
   test_rules_scala_linux:
     name: "./test_rules_scala"
     platform: ubuntu2004
