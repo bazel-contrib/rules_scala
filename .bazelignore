@@ -20,3 +20,10 @@ test_cross_build
 third_party/test/example_external_workspace
 third_party/test/new_local_repo
 third_party/test/proto
+
+# Fixture trees that test_version.sh copies into a standalone workspace before
+# building. Their BUILD files use root-relative labels (e.g. //src/main/...) and
+# @rules_scala external references that only resolve once the directory is the
+# workspace root, so they must not be loaded as packages of this repo.
+test_version/test_reporter
+test_version/version_specific_tests_dir

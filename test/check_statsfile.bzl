@@ -2,9 +2,14 @@ def check_statsfile(target):
     _check_statsfile(target, "!")
 
 def check_statsfile_empty(target):
-    _check_statsfile(target)
+    # This only holds under a stats-file-disabled toolchain (see the explicit
+    # --extra_toolchains build in test_rules_scala.sh); under the default
+    # toolchain the stats file is populated and the genrule fails. Tag it
+    # "manual" so wildcard builds (e.g. `bazel build //...`) skip it while the
+    # explicit build still works.
+    _check_statsfile(target, tags = ["manual"])
 
-def _check_statsfile(target, predicate = ""):
+def _check_statsfile(target, predicate = "", tags = []):
     statsfile = ":%s.statsfile" % target
     outfile = "%s.statsfile.good" % target
 
@@ -24,5 +29,6 @@ fi
         outs = [outfile],
         tools = [statsfile],
         cmd = cmd,
+        tags = tags,
         visibility = ["//visibility:public"],
     )
