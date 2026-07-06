@@ -1,0 +1,1 @@
+Build failure during macro expansion. You may have declared a target containing a macro as a `scala_library` target instead of a `scala_macro_library` target

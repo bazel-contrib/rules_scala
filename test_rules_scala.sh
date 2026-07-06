@@ -64,4 +64,3 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_semanticdb.sh
 . "${test_dir}"/test_scaladoc.sh
 . "${test_dir}"/test_invalid_scalacopts.sh
-. "${test_dir}"/test_macros.sh

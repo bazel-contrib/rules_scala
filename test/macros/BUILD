@@ -1,4 +1,9 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_library", "scala_macro_library")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
+
+package(default_testonly = 1)
 
 scala_library(
     name = "incorrect-macro",
@@ -59,4 +64,55 @@ scala_library(
     name = "macro-export-user",
     srcs = ["MacroExportUser.scala"],
     deps = [":macro-exporter"],
+)
+
+build_test(
+    name = "correct_macro_user_build_test",
+    size = "medium",
+    targets = [":correct-macro-user"],
+)
+
+build_test(
+    name = "macro_with_dependencies_user_build_test",
+    size = "medium",
+    targets = [":macro-with-dependencies-user"],
+)
+
+# Regression test for https://github.com/bazel-contrib/rules_scala/issues/1819:
+# a consumer of a scala_library that exports a scala_macro_library must still
+# compile (the exported macro must not be reduced to an ijar).
+build_test(
+    name = "macro_export_user_build_test",
+    size = "medium",
+    targets = [":macro-export-user"],
+)
+
+expect_build_failure_test(
+    name = "incorrect_macro_user_build_test",
+    expect = [":incorrect_macro_user_expected_error.txt"],
+    target = "//test/macros:incorrect-macro-user",
+)
+
+# Regression test for https://github.com/bazel-contrib/rules_scala/issues/1819:
+# scala_macro_library must not emit an ijar, since ijar strips the macro
+# implementations that consumers need at compile time. Checked across the
+# Scala 2.x versions where ijar interpolation applies.
+sh_test(
+    name = "scala_macro_library_no_ijar_test",
+    size = "large",
+    srcs = ["expect_no_ijar.sh"],
+    args = [
+        "//test/macros:correct-macro",
+        "test/macros/correct-macro-ijar.jar",
+        "2.12.21",
+        "2.13.18",
+    ],
+    data = [
+        "//:MODULE.bazel",
+        "//test/expect_build_failure:nested_bazel.sh",
+    ],
+    tags = [
+        "local",
+        "requires-network",
+    ],
 )
