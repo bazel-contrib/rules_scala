@@ -251,6 +251,7 @@ def _scala_macro_library_impl(ctx):
 _scala_macro_library_attrs = {
     "main_class": attr.string(),
     "exports": attr.label_list(allow_files = False),
+    "build_ijar": attr.bool(default = False),
 }
 
 _scala_macro_library_attrs.update(implicit_deps)
