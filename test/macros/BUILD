@@ -46,17 +46,3 @@ scala_library(
         ":macro-with-dependencies",
     ],
 )
-
-# Issue #1819: when a scala_library exports a scala_macro_library, consumers only see
-# the ijar on the compile classpath. Ijar strips macro implementations, causing
-# ClassFormatError during macro expansion on Scala 2.x.
-scala_library(
-    name = "macro-exporter",
-    exports = [":correct-macro"],
-)
-
-scala_library(
-    name = "macro-export-user",
-    srcs = ["MacroExportUser.scala"],
-    deps = [":macro-exporter"],
-)
