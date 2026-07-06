@@ -396,6 +396,10 @@ class ArtifactResolver:
         self._downloaded_artifacts_file = downloaded_artifacts_file
         self._artifact_cache = {}
 
+        # Populated by `resolve_artifacts`: maps `group:artifact:version` to the
+        # sha256 of that artifact's `-sources.jar` (when one is published).
+        self.srcjar_checksums = {}
+
     def resolve_artifacts(
         self, root_artifacts, current_artifacts
     ) -> List[ResolvedArtifact]:
@@ -413,6 +417,7 @@ class ArtifactResolver:
                 date versions of the `root_artifacts` and their dependencies
         """
         artifacts_data = self._fetch_artifacts_data(root_artifacts)
+        self.srcjar_checksums = self._fetch_srcjar_checksums(root_artifacts)
         current_artifacts_map = self._create_current_artifacts_map(
             current_artifacts
         )
@@ -432,13 +437,66 @@ class ArtifactResolver:
 
         return resolved
 
-    def _fetch_artifacts_data(self, root_artifacts):
+    def _fetch_srcjar_checksums(self, root_artifacts) -> Dict[str, str]:
+        """Resolves the `-sources.jar` sha256 for the artifact graph.
+
+        Runs a second `coursier fetch` restricted to the `sources` classifier.
+        This is best-effort: artifacts that publish no sources jar are simply
+        absent from the returned map (and coursier reports them only as
+        warnings, so the fetch as a whole still succeeds).
+
+        Args:
+            root_artifacts: the Maven coordinates of artifacts to resolve
+
+        Returns:
+            a map from `group:artifact:version` to the sha256 of its
+                `-sources.jar`
+        """
+        try:
+            data = self._fetch_artifacts_data(
+                root_artifacts, classifier='sources'
+            )
+        except CreateRepositoryError as err:
+            print(f'  WARNING: could not resolve sources jars: {err}')
+            return {}
+
+        checksums = {}
+
+        for artifact in data['dependencies']:
+            src_file = artifact.get('file')
+
+            if not src_file:
+                continue
+
+            coord = self._strip_classifier(artifact['coord'])
+
+            with open(src_file, 'rb') as f:
+                checksums[coord] = hashlib.sha256(f.read()).hexdigest()
+
+        return checksums
+
+    @staticmethod
+    def _strip_classifier(coord):
+        """Normalizes `group:artifact:jar:sources:version` coordinates.
+
+        Coursier reports classified artifacts with extra components (e.g.
+        `org.scala-lang:scala-library:jar:sources:2.12.21`). The groupId and
+        artifactId are always the first two components and the version the last,
+        so drop everything in between to recover the plain
+        `group:artifact:version` form used to key artifacts elsewhere.
+        """
+        parts = coord.split(':')
+        return f'{parts[0]}:{parts[1]}:{parts[-1]}'
+
+    def _fetch_artifacts_data(self, root_artifacts, classifier=None):
         try:
             artifacts_file = Path(self._downloaded_artifacts_file)
             command = (
                 f'coursier fetch {' '.join(root_artifacts)} --json-output-file ' +
                 self._downloaded_artifacts_file
             )
+            if classifier:
+                command += f' --classifier {classifier}'
             self._run_command(command, 'Fetching resolved artifacts')
 
             with open(artifacts_file, 'r', encoding='utf-8') as f:
@@ -537,6 +595,9 @@ class ArtifactUpdater:
             labeler,
         )
         self._update_artifacts(original_artifacts, resolved_artifacts)
+        self._apply_srcjar_checksums(
+            original_artifacts, self._resolver.srcjar_checksums
+        )
         self._write_to_file(original_artifacts, scala_version, file_path)
 
     def _get_original_artifacts(self, file_path, labeler):
@@ -659,7 +720,59 @@ class ArtifactUpdater:
                 del metadata['testonly']
 
     @staticmethod
+    def _apply_srcjar_checksums(artifacts, srcjar_checksums):
+        """Backfills each artifact's `srcjar_sha256` from `srcjar_checksums`.
+
+        Unlike `_update_artifacts`, this touches every entry (not just those
+        whose version changed), so it also records the sources hash for
+        artifacts already pinned at their latest version. Recording the hash
+        lets Bazel serve the `-sources.jar` from the repository cache instead of
+        re-downloading it. Entries whose coordinates have no published sources
+        jar (hence are absent from `srcjar_checksums`) get any stale
+        `srcjar_sha256` removed.
+
+        Args:
+            artifacts: the artifact repository dictionary to update in place
+            srcjar_checksums: a map from `group:artifact:version` to the sha256
+                of that artifact's `-sources.jar`
+        """
+        for metadata in artifacts.values():
+            srcjar_sha256 = srcjar_checksums.get(metadata.get('artifact'))
+
+            if srcjar_sha256:
+                metadata['srcjar_sha256'] = srcjar_sha256
+            elif 'srcjar_sha256' in metadata:
+                del metadata['srcjar_sha256']
+
+    # Canonical order of keys within a single artifact's metadata block. Any
+    # keys not listed here are appended afterwards in their existing order.
+    _METADATA_KEY_ORDER = [
+        'testonly',
+        'artifact',
+        'sha256',
+        'srcjar_sha256',
+        'deps',
+        'runtime_deps',
+    ]
+
+    @staticmethod
+    def _order_metadata_keys(metadata):
+        ordered = {
+            key: metadata[key]
+            for key in ArtifactUpdater._METADATA_KEY_ORDER
+            if key in metadata
+        }
+        for key, value in metadata.items():
+            if key not in ordered:
+                ordered[key] = value
+        return ordered
+
+    @staticmethod
     def _write_to_file(artifact_dict, scala_version, file):
+        artifact_dict = {
+            label: ArtifactUpdater._order_metadata_keys(metadata)
+            for label, metadata in artifact_dict.items()
+        }
         artifacts = (
             json.dumps(dict(sorted(artifact_dict.items())), indent=4)
                 .replace('true', 'True')

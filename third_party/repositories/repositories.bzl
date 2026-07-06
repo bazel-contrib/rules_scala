@@ -135,6 +135,10 @@ def repositories(
             name = artifact_repo_name,
             artifact = artifacts[id]["artifact"],
             artifact_sha256 = artifacts[id]["sha256"],
+            # Pinning the sources jar hash lets Bazel serve it from the
+            # repository cache instead of re-downloading it. Empty when unknown
+            # or when the artifact publishes no sources jar.
+            srcjar_sha256 = artifacts[id].get("srcjar_sha256", ""),
             licenses = ["notice"],
             server_urls = maven_servers,
             deps = [dep + suffix for dep in artifacts[id].get("deps", [])],
