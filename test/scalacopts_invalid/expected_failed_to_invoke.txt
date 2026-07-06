@@ -1,0 +1,1 @@
+Failed to invoke Scala compiler, ensure passed options are valid
