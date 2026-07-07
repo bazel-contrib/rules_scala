@@ -74,18 +74,6 @@ test_benchmark_jmh() {
   exit 0
 }
 
-test_benchmark_jmh_failure() {
-  set +e
-
-  bazel build test_expect_failure/jmh:jmh_reports_failure
-  if [ $? -eq 0 ]; then
-    echo "'bazel build test_expect_failure/jmh:jmh_reports_failure' should have failed."
-    exit 1
-  fi
-
-  exit 0
-}
-
 scala_test_test_filters() {
     # test package wildcard (both)
     local output=$(bazel test \
@@ -133,7 +121,6 @@ $runner test_disappearing_class
 $runner test_transitive_deps
 $runner test_repl
 $runner test_benchmark_jmh
-$runner test_benchmark_jmh_failure
 $runner scala_test_test_filters
 $runner test_multi_service_manifest
 

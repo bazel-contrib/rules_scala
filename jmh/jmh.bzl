@@ -65,6 +65,10 @@ def scala_benchmark_jmh(**kw):
     generator_type = kw.get("generator_type", "reflection")
     lib = "%s_generator" % name
     testonly = kw.get("testonly", False)
+    # Forward tags to every generated target. Otherwise e.g. `tags = ["manual"]`
+    # would be silently dropped, and a wildcard build would still materialize the
+    # intermediate codegen/lib targets (relevant for fixtures meant to fail).
+    tags = kw.get("tags", [])
     scalacopts = kw.get("scalacopts", [])
     main_class = kw.get("main_class", "org.openjdk.jmh.Main")
     runtime_jdk = kw.get(
@@ -82,6 +86,7 @@ def scala_benchmark_jmh(**kw):
         resource_jars = kw.get("resource_jars", []),
         visibility = ["//visibility:public"],
         testonly = testonly,
+        tags = tags,
         unused_dependency_checker_mode = "off",
     )
 
@@ -91,6 +96,7 @@ def scala_benchmark_jmh(**kw):
         src = lib,
         generator_type = generator_type,
         testonly = testonly,
+        tags = tags,
         runtime_jdk = runtime_jdk,
     )
     compiled_lib = name + "_compiled_benchmark_lib"
@@ -103,6 +109,7 @@ def scala_benchmark_jmh(**kw):
         ],
         resource_jars = ["%s_resources.jar" % codegen],
         testonly = testonly,
+        tags = tags,
         unused_dependency_checker_mode = "off",
     )
     scala_binary(
@@ -114,6 +121,7 @@ def scala_benchmark_jmh(**kw):
         data = data,
         main_class = main_class,
         testonly = testonly,
+        tags = tags,
         unused_dependency_checker_mode = "off",
         runtime_jdk = runtime_jdk,
     )

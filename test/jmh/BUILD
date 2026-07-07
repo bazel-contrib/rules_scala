@@ -64,3 +64,7 @@ scala_test(
     main_class = "org.openjdk.jmh.Main",
     deps = [":test_benchmark"],
 )
+
+# The invalid-benchmark build-failure test lives in //test/jmh/reports_failure so
+# that this package does not load @rules_shell (a dev-only dependency): this
+# package is built as an external-module consumer by test_dependency_versions.sh.
