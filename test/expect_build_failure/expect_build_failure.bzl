@@ -18,6 +18,7 @@ def expect_build_failure_test(
         name,
         target,
         build_args = [],
+        worker_sandboxing = False,
         expect = [],
         reject = [],
         size = "large",
@@ -30,6 +31,12 @@ def expect_build_failure_test(
         target: label whose `bazel build` must fail.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
             (e.g. `"--repo_env=SCALA_VERSION=2.13.18"`).
+        worker_sandboxing: if True, pass `--worker_sandboxing` to the nested
+            `bazel build` -- but only on non-Windows, since Bazel worker
+            sandboxing is not implemented on Windows (mirrors the historical
+            guard in test/shell/test_persistent_worker.sh; without it the nested
+            scalac worker fails to start with a missing-JVM error instead of
+            producing the compile failure under test).
         expect: file labels whose (newline-stripped) contents must appear in the
             build output. Automatically added to the test's `data`.
         reject: file labels whose (newline-stripped) contents must NOT appear in
@@ -48,6 +55,11 @@ def expect_build_failure_test(
         args += ["--expect-file", "$(rootpath %s)" % expect_file]
     for reject_file in reject:
         args += ["--reject-file", "$(rootpath %s)" % reject_file]
+    if worker_sandboxing:
+        args = args + select({
+            "@platforms//os:windows": [],
+            "//conditions:default": ["--build-arg", "--worker_sandboxing"],
+        })
 
     # Both entries must be in the test's runfiles (a file reaches runfiles only if
     # it is a declared dependency):

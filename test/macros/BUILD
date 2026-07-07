@@ -116,3 +116,50 @@ sh_test(
         "requires-network",
     ],
 )
+
+# Migrated from test/shell/test_persistent_worker.sh
+# (test_persistent_worker_handles_exception_in_macro_invocation and
+# test_persistent_worker_handles_stack_overflow_exception).
+#
+# These macros throw during expansion (a plain exception, and a StackOverflowError).
+# The Scalac persistent worker must surface a clean build failure rather than
+# crashing, so the sh_tests assert the build fails with the expected message and
+# WITHOUT the "---8<---" worker-crash marker. The fixtures are tagged "manual" so
+# wildcard `bazel build //...` skips them.
+scala_macro_library(
+    name = "bad_macro",
+    srcs = ["BadMacro.scala"],
+    tags = ["manual"],
+)
+
+scala_library(
+    name = "bad_macro_invocation",
+    srcs = ["BadMacroInvocation.scala"],
+    tags = ["manual"],
+    deps = [":bad_macro"],
+)
+
+scala_library(
+    name = "stack_overflow_macro_invocation",
+    srcs = ["StackOverflowMacroInvocation.scala"],
+    tags = ["manual"],
+    deps = [":bad_macro"],
+)
+
+expect_build_failure_test(
+    name = "bad_macro_invocation_worker_build_test",
+    build_args = ["--strategy=Scalac=worker"],
+    expect = ["expected_macro_expansion_failure.txt"],
+    reject = ["rejected_worker_crash.txt"],
+    target = "//test/macros:bad_macro_invocation",
+    worker_sandboxing = True,
+)
+
+expect_build_failure_test(
+    name = "stack_overflow_macro_invocation_worker_build_test",
+    build_args = ["--strategy=Scalac=worker"],
+    expect = ["expected_stack_overflow_failure.txt"],
+    reject = ["rejected_worker_crash.txt"],
+    target = "//test/macros:stack_overflow_macro_invocation",
+    worker_sandboxing = True,
+)
