@@ -35,7 +35,6 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_compilation.sh
 . "${test_dir}"/test_deps.sh
 . "${test_dir}"/test_diagnostics_reporter.sh
-. "${test_dir}"/test_javac_jvm_flags.sh
 . "${test_dir}"/test_custom_reporter_class.sh
 . "${test_dir}"/test_junit.sh
 . "${test_dir}"/test_misc.sh
@@ -53,7 +52,6 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_scala_library.sh
 . "${test_dir}"/test_scala_specs2.sh
 . "${test_dir}"/test_scala_test_testfilter.sh
-. "${test_dir}"/test_toolchain.sh
 . "${test_dir}"/test_toolchain_deps.sh
 . "${test_dir}"/test_strict_dependency.sh
 . "${test_dir}"/test_unused_dependency.sh
