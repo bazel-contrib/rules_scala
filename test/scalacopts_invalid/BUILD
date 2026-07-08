@@ -1,5 +1,3 @@
-# Migrated from test/shell/test_invalid_scalacopts.sh.
-#
 # `//test_expect_failure/scalacopts_invalid:empty` is a `scala_library` with an
 # invalid `-source:not-existing` scalacopt, so it is expected to fail to build.
 # Bazel has no native "expect build failure" rule, so each test drives a nested

@@ -1,9 +1,6 @@
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
-# Migrated from test/shell/test_javac_jvm_flags.sh and
-# test/shell/test_scalac_jvm_flags.sh.
-#
 # Each library sets an intentionally broken JVM flag (-Xmx1M, or an args-file
 # flag that must be `$(location ...)`-expanded) so compilation fails. The
 # fixtures are tagged "manual" so wildcard `bazel build //...` skips them; the
@@ -60,7 +57,7 @@ scala_library(
 [
     expect_build_failure_test(
         name = name + "_build_test",
-        target = "//test/toolchains/compilers_jvm_flags:" + name,
+        target = ":" + name,
     )
     for name in [
         "can_configure_jvm_flags_for_scalac",
@@ -74,7 +71,7 @@ scala_library(
         name = name + "_build_test",
         build_args = ["--verbose_failures"],
         expect = [message],
-        target = "//test/toolchains/compilers_jvm_flags:" + name,
+        target = ":" + name,
     )
     for name, message in [
         ("can_expand_jvm_flags_for_scalac", "expected_scalac_expand.txt"),

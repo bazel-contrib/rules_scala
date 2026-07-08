@@ -1,9 +1,6 @@
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
-# Migrated from test/shell/test_toolchain.sh
-# (java_toolchain_javacopts_are_used / java_toolchain_javacopts_can_be_overridden).
-#
 # The fixtures fail to compile once an invalid javac flag reaches the compiler
 # (either via `--javacopt` on the command line, or a bad target `javacopts`).
 # They are tagged "manual" so wildcard builds skip them; the sh_tests drive a
@@ -29,12 +26,12 @@ expect_build_failure_test(
         "--verbose_failures",
     ],
     expect = ["expected_invalid_flag.txt"],
-    target = "//test/toolchains/compilers_javac_opts:can_configure_jvm_flags_for_javac_via_javacopts",
+    target = ":can_configure_jvm_flags_for_javac_via_javacopts",
 )
 
 expect_build_failure_test(
     name = "javac_javacopts_can_be_overridden_build_test",
     build_args = ["--verbose_failures"],
     expect = ["expected_invalid_target.txt"],
-    target = "//test/toolchains/compilers_javac_opts:can_override_default_toolchain_flags_for_javac_via_javacopts",
+    target = ":can_override_default_toolchain_flags_for_javac_via_javacopts",
 )

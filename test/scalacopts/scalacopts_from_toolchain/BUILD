@@ -2,8 +2,6 @@ load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
-# Migrated from test/shell/test_toolchain.sh (test_scalaopts_from_scala_toolchain).
-#
 # `failing_scala_toolchain` adds scalacopts = ["-Ywarn-unused"]; combined with
 # the target's own -Xfatal-warnings, the unused val in ClassWithUnused.scala
 # becomes a fatal warning, so `failing_build` fails to compile when that
@@ -34,5 +32,5 @@ scala_library(
 expect_build_failure_test(
     name = "scalacopts_from_toolchain_fails_build_test",
     build_args = ["--extra_toolchains=//test/scalacopts/scalacopts_from_toolchain:failing_scala_toolchain"],
-    target = "//test/scalacopts/scalacopts_from_toolchain:failing_build",
+    target = ":failing_build",
 )

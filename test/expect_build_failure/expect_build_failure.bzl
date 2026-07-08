@@ -28,7 +28,8 @@ def expect_build_failure_test(
 
     Args:
         name: test target name.
-        target: label whose `bazel build` must fail.
+        target: label whose `bazel build` must fail. A package-relative label
+            (`":foo"` or `"foo"`) is resolved against this package.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
             (e.g. `"--repo_env=SCALA_VERSION=2.13.18"`).
         worker_sandboxing: if True, pass `--worker_sandboxing` to the nested
@@ -48,7 +49,17 @@ def expect_build_failure_test(
             sandbox.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
-    args = ["--target", target]
+    # The nested `bazel build` runs from the workspace root, so a package-relative
+    # label must be absolutized against this package first -- otherwise it would
+    # resolve against the root package.
+    if target.startswith("//") or target.startswith("@"):
+        absolute_target = target
+    elif target.startswith(":"):
+        absolute_target = "//%s%s" % (native.package_name(), target)
+    else:
+        absolute_target = "//%s:%s" % (native.package_name(), target)
+
+    args = ["--target", absolute_target]
     for build_arg in build_args:
         args += ["--build-arg", build_arg]
     for expect_file in expect:

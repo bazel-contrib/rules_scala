@@ -2,9 +2,6 @@ load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
-# Migrated from test/shell/test_scalac_jvm_flags.sh
-# (test_scalac_jvm_flags_from_scala_toolchain_fails).
-#
 # `failing_scala_toolchain` sets scalac_jvm_flags = ["-Xmx1M"], which is not
 # enough heap for scalac, so `empty_build` fails to compile when that toolchain
 # is registered. `empty_build` compiles fine under the default toolchain, so it
@@ -33,5 +30,5 @@ scala_library(
 expect_build_failure_test(
     name = "scalac_jvm_flags_from_toolchain_fails_build_test",
     build_args = ["--extra_toolchains=//test/toolchains/scalac_jvm_opts:failing_scala_toolchain"],
-    target = "//test/toolchains/scalac_jvm_opts:empty_build",
+    target = ":empty_build",
 )
