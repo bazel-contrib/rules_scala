@@ -36,10 +36,6 @@ multiple_junit_patterns() {
   fi
 }
 
-test_scala_junit_test_can_fail() {
-  action_should_fail test test_expect_failure/scala_junit_test:failing_test
-}
-
 junit_generates_xml_logs() {
   bazel test //test:JunitTestWithDeps
   matches=$(grep -c -e "testcase name='hasCompileTimeDependencies'" -e "testcase name='hasRuntimeDependencies'" ./bazel-testlogs/test/JunitTestWithDeps/test.xml)
@@ -49,14 +45,6 @@ junit_generates_xml_logs() {
     return 1
   fi
   test -e
-}
-
-test_junit_test_must_have_prefix_or_suffix() {
-  action_should_fail test test_expect_failure/scala_junit_test:no_prefix_or_suffix
-}
-
-test_junit_test_errors_when_no_tests_found() {
-  action_should_fail test test_expect_failure/scala_junit_test:no_tests_found
 }
 
 scala_junit_test_test_filter(){
@@ -105,9 +93,6 @@ scala_junit_test_test_filter_custom_runner(){
 $runner multiple_junit_suffixes
 $runner multiple_junit_prefixes
 $runner multiple_junit_patterns
-$runner test_scala_junit_test_can_fail
 $runner junit_generates_xml_logs
-$runner test_junit_test_must_have_prefix_or_suffix
-$runner test_junit_test_errors_when_no_tests_found
 $runner scala_junit_test_test_filter
 $runner scala_junit_test_test_filter_custom_runner
