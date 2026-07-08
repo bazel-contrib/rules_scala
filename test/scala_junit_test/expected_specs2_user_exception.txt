@@ -1,0 +1,1 @@
+org.specs2.control.UserException: cannot create an instance for class scalarules.test.junit.specs2.FailingTest

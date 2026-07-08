@@ -181,41 +181,6 @@ scala_specs2_junit_test_test_filter_match_multiple_methods(){
   done
 }
 
-scala_specs2_exception_in_initializer_without_filter(){
-  expected_message="org.specs2.control.UserException: cannot create an instance for class scalarules.test.junit.specs2.FailingTest"
-  test_command="test_expect_failure/scala_junit_test:specs2_failing_test"
-
-  test_expect_failure_with_message "$expected_message" "$test_command"
-}
-
-scala_specs2_exception_in_initializer_terminates_without_timeout(){
-  local output=$(bazel test \
-    --test_output=streamed \
-    --test_timeout=10 \
-    '--test_filter=scalarules.test.junit.specs2.FailingTest#' \
-    test_expect_failure/scala_junit_test:specs2_failing_test)
-  local expected=(
-      "org.specs2.control.UserException: cannot create an instance for class scalarules.test.junit.specs2.FailingTest")
-  local unexpected=(
-      "TIMEOUT")
-  for method in "${expected[@]}"; do
-    if ! grep "$method" <<<$output; then
-      echo "output:"
-      echo "$output"
-      echo "Expected $method in output, but was not found."
-      exit 1
-    fi
-  done
-  for method in "${unexpected[@]}"; do
-    if grep "$method" <<<$output; then
-      echo "output:"
-      echo "$output"
-      echo "Not expecting $method in output, but was found."
-      exit 1
-    fi
-  done
-}
-
 scala_specs2_all_tests_show_in_the_xml(){
   bazel test \
     --nocache_test_results \
@@ -254,13 +219,13 @@ scala_specs2_only_failed_test_shows_in_the_xml(){
   --nocache_test_results \
   --test_output=streamed \
   '--test_filter=scalarules.test.junit.specs2.SuiteWithOneFailingTest#specs2 tests::fail$' \
-  test_expect_failure/scala_junit_test:specs2_failing_test
+  test/scala_junit_test:specs2_failing_test
   echo "got results"
-  matches=$(grep -c -e "testcase name='specs2 tests::fail'" -e "testcase name='specs2 tests::succeed'" ./bazel-testlogs/test_expect_failure/scala_junit_test/specs2_failing_test/test.xml)
+  matches=$(grep -c -e "testcase name='specs2 tests::fail'" -e "testcase name='specs2 tests::succeed'" ./bazel-testlogs/test/scala_junit_test/specs2_failing_test/test.xml)
   if [ $matches -eq 1 ]; then
     return 0
   else
-    echo "Expecting only one result, found more than one. Please check './bazel-testlogs/test_expect_failure/scala_junit_test/specs2_failing_test/test.xml'"
+    echo "Expecting only one result, found more than one. Please check './bazel-testlogs/test/scala_junit_test/specs2_failing_test/test.xml'"
   return 1
   fi
 }
@@ -272,8 +237,6 @@ $runner scala_specs2_junit_test_test_filter_exact_match
 $runner scala_specs2_junit_test_test_filter_exact_match_unsafe_characters
 $runner scala_specs2_junit_test_test_filter_exact_match_escaped_and_sanitized
 $runner scala_specs2_junit_test_test_filter_match_multiple_methods
-$runner scala_specs2_exception_in_initializer_without_filter
-$runner scala_specs2_exception_in_initializer_terminates_without_timeout
 $runner scala_specs2_all_tests_show_in_the_xml
 $runner scala_specs2_only_filtered_test_shows_in_the_xml
 $runner scala_specs2_only_failed_test_shows_in_the_xml
