@@ -1,0 +1,1 @@
+error: [strict] Using type example.A from an indirect dependency

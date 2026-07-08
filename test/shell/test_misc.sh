@@ -23,37 +23,13 @@ test_disappearing_class() {
   set -e
 }
 
-test_transitive_deps() {
-  set +e
-
-  bazel build test_expect_failure/transitive/scala_to_scala:d
-  if [ $? -eq 0 ]; then
-    echo "'bazel build test_expect_failure/transitive/scala_to_scala:d' should have failed."
-    exit 1
-  fi
-
-  expected_message="error: [strict] Using type example.A from an indirect dependency"
-  output=$(bazel build test_expect_failure/transitive/java_to_scala:d 2>&1)
-  if [ $? -eq 0 ] || [[ "$output" != *"$expected_message"* ]]; then
-    echo "'bazel build test_expect_failure/transitive/java_to_scala:d' should have failed with message '$expected_message'."
-    exit 1
-  fi
-
-  bazel build test_expect_failure/transitive/scala_to_java:d
-  if [ $? -eq 0 ]; then
-    echo "'bazel build test_transitive_deps/scala_to_java:d' should have failed."
-    exit 1
-  fi
-
-  set -e
-  exit 0
-}
-
 test_repl() {
   local query_results=$(bazel query 'kind(scala_repl, //test/...)')
-  #local query_results="${query_results//$'\r'}" #make sure \r is removed so bash can parse args correctly on windows
 
-  bazel build "${query_results//$'\r'}"  #make sure \r is removed so bash can parse args correctly on windows
+  # Leave unquoted so the newline-separated targets word-split into separate
+  # build args; `//$'\r'` strips the carriage returns Bazel emits on Windows so
+  # bash can parse the args correctly there.
+  bazel build ${query_results//$'\r'}
   echo "import scalarules.test._; HelloLib.printMessage(\"foo\")" | bazel-bin/test/HelloLibRepl -Xnojline | grep "foo java" &&
   echo "import scalarules.test._; TestUtil.foo" | bazel-bin/test/HelloLibTestRepl -Xnojline | grep "bar" &&
   echo "import scalarules.test._; ScalaLibBinary.main(Array())" | bazel-bin/test/ScalaLibBinaryRepl -Xnojline | grep "A hui hou" &&
@@ -118,7 +94,6 @@ xmllint_test() {
 }
 
 $runner test_disappearing_class
-$runner test_transitive_deps
 $runner test_repl
 $runner test_benchmark_jmh
 $runner scala_test_test_filters
