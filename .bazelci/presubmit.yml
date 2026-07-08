@@ -72,6 +72,14 @@ tasks:
       # Install xmllint
       - sudo apt update && sudo apt install --reinstall libxml2-utils -y
       - echo "common --lockfile_mode=update" >>.bazelrc
+      # The nested-Bazel tests (expect_build_failure_test etc.) shell out to
+      # `bazel` from inside a test action. bazelisk prepends the dir holding the
+      # resolved binary (here the downloaded last_green build) to PATH so nested
+      # invocations reuse it -- but last_green's Bazel uses a static action PATH
+      # by default, which drops that dir and makes the nested `bazel` unresolvable
+      # (`env: 'bazel': No such file`). Forward the client PATH into test actions
+      # so the nested calls find last_green, as released-Bazel steps already do.
+      - echo "test --test_env=PATH" >>.bazelrc
       - "./test_rules_scala.sh"
     soft_fail:
       - exit_status: "*"
