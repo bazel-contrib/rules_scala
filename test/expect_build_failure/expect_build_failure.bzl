@@ -72,6 +72,18 @@ def expect_build_failure_test(
             "//conditions:default": ["--build-arg", "--worker_sandboxing"],
         })
 
+    # The nested `bazel build` reads the *real* source tree, not the runfiles, so
+    # `target` and its sources are not otherwise inputs of this `sh_test`: without
+    # help Bazel would serve a cached PASS even after the code under test changed
+    # (a false green). We can't just add `target` to `data` -- it is expected to
+    # fail to build, which would break this test's own build -- and a macro can't
+    # introspect a target's `srcs`. So glob every source file in this package and
+    # declare it as runfiles: editing any of them changes the test's cache key and
+    # forces a re-run. This covers the common case of a fixture whose sources live
+    # alongside its BUILD file; a `target` in another package is not tracked (pass
+    # its sources via `data` if you need that).
+    code_under_test = native.glob(["**/*"], allow_empty = True)
+
     # Both entries must be in the test's runfiles (a file reaches runfiles only if
     # it is a declared dependency):
     #   - MODULE.bazel: the helper has no other way to find the *real* source
@@ -84,10 +96,23 @@ def expect_build_failure_test(
     data = [
         "//:MODULE.bazel",
         _NESTED_BAZEL_LIB,
-    ] + expect + reject + kwargs.pop("data", [])
+    ] + expect + reject + code_under_test + kwargs.pop("data", [])
+
+    # De-duplicate by canonical label: `code_under_test` re-lists files that are
+    # also named explicitly (e.g. the expect/reject `.txt`s, passed as `:foo.txt`),
+    # and Bazel rejects a label that resolves to the same target twice in `data`.
+    # Compare canonical labels so `foo`, `:foo` and `//pkg:foo` collapse to one.
     deduped_data = []
+    seen = {}
     for entry in data:
-        if entry not in deduped_data:
+        if entry.startswith("//") or entry.startswith("@"):
+            key = entry
+        elif entry.startswith(":"):
+            key = "//%s%s" % (native.package_name(), entry)
+        else:
+            key = "//%s:%s" % (native.package_name(), entry)
+        if key not in seen:
+            seen[key] = True
             deduped_data.append(entry)
 
     sh_test(
