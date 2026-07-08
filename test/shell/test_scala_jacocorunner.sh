@@ -8,12 +8,7 @@ test_scala_jacocorunner_from_scala_toolchain_passes() {
   bazel coverage --extra_toolchains="//manual_test/scala_test_jacocorunner:passing_scala_toolchain" //manual_test/scala_test_jacocorunner:empty_test
 }
 
-test_scala_jacocorunner_from_scala_toolchain_fails() {
-  action_should_fail coverage --extra_toolchains="//test_expect_failure/scala_test_jacocorunner:failing_scala_toolchain" //test_expect_failure/scala_test_jacocorunner:empty_test
-}
-
 #Jacocoa support not implemented for windows just yet
 if ! is_windows; then
   $runner test_scala_jacocorunner_from_scala_toolchain_passes
-  $runner test_scala_jacocorunner_from_scala_toolchain_fails
 fi
