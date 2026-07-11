@@ -91,6 +91,7 @@ public final class Worker {
           WorkerProtocol.WorkResponse.newBuilder()
               .setExitCode(code)
               .setOutput(outStream.toString())
+              .setRequestId(request.getRequestId())
               .build()
               .writeDelimitedTo(stdout);
 
