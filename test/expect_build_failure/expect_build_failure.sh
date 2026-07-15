@@ -1,24 +1,34 @@
 #!/usr/bin/env bash
 #
-# Verifies that `bazel build` of a target fails, and that the combined build
-# output contains every expected message and none of the rejected messages.
+# Runs a nested `bazel <command>` (build/test/coverage) of a target, asserts it
+# fails (or, with --expect-success, succeeds), and that the combined output
+# contains every expected message and none of the rejected messages.
 #
-# The nested `bazel build` (and the rationale for it) lives in the shared
+# The nested `bazel` invocation (and the rationale for it) lives in the shared
 # nested_bazel.sh helper this script sources.
 #
 # Usage:
 #   expect_build_failure.sh --target <label> \
-#       [--build-arg <flag>]... \
+#       [--command <build|test|coverage>] \
+#       [--expect-success] \
+#       [--env <KEY=VALUE>]... \
+#       [--bazel-arg <flag>]... \
 #       [--expect-file <path>]... \
 #       [--reject-file <path>]...
 #
-#   --target       the label to build; the build is expected to fail.
-#   --build-arg    extra option forwarded to the nested `bazel build` (e.g.
-#                  `--repo_env=SCALA_VERSION=2.13.18`); repeatable.
-#   --expect-file  file whose (newline-stripped) contents must appear in the
-#                  build output; repeatable.
-#   --reject-file  file whose (newline-stripped) contents must NOT appear in the
-#                  build output; repeatable.
+#   --target          the label to act on.
+#   --command         the bazel subcommand to run; defaults to `build`.
+#   --expect-success  assert the invocation succeeds; by default it must fail.
+#   --env             KEY=VALUE exported into the nested `bazel` client env before
+#                     the invocation (e.g. to feed a target's `env_inherit`);
+#                     repeatable.
+#   --bazel-arg       extra option forwarded to the nested `bazel <command>` (e.g.
+#                     `--repo_env=SCALA_VERSION=2.13.18` or `--extra_toolchains=...`);
+#                     repeatable.
+#   --expect-file     file whose (newline-stripped) contents must appear in the
+#                     output; repeatable.
+#   --reject-file     file whose (newline-stripped) contents must NOT appear in the
+#                     output; repeatable.
 #
 # Messages are passed as files rather than inline strings because Bazel subjects
 # `sh_test` `args` to Bourne tokenization, which would split messages that
@@ -34,7 +44,9 @@ orig_pwd="${PWD}"
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
 
 target=""
-build_args=()
+command="build"
+expect_success="false"
+bazel_args=()
 expect_files=()
 reject_files=()
 
@@ -44,8 +56,22 @@ while [[ "$#" -gt 0 ]]; do
       target="$2"
       shift 2
       ;;
-    --build-arg)
-      build_args+=("$2")
+    --command)
+      command="$2"
+      shift 2
+      ;;
+    --expect-success)
+      expect_success="true"
+      shift
+      ;;
+    --env)
+      # Exported here so it reaches the nested `bazel` client (nested_bazel_run
+      # only prepends HOME, preserving the rest of the environment).
+      export "${2?--env requires KEY=VALUE}"
+      shift 2
+      ;;
+    --bazel-arg)
+      bazel_args+=("$2")
       shift 2
       ;;
     --expect-file)
@@ -90,17 +116,27 @@ _resolve_message_file() {
 
 nested_bazel_setup "rules_scala_expect_build_failure_output_base"
 
-output="$(nested_bazel_run build ${build_args[@]+"${build_args[@]}"} "${target}" 2>&1)" && {
-  echo "Expected build of \"${target}\" to fail, but it succeeded." >&2
+set +e
+output="$(nested_bazel_run "${command}" ${bazel_args[@]+"${bazel_args[@]}"} "${target}" 2>&1)"
+status=$?
+set -e
+
+if [[ "${expect_success}" == "true" && "${status}" -ne 0 ]]; then
+  echo "Expected \`bazel ${command}\` of \"${target}\" to succeed, but it failed (exit ${status})." >&2
   echo "${output}" >&2
   exit 1
-}
+fi
+if [[ "${expect_success}" != "true" && "${status}" -eq 0 ]]; then
+  echo "Expected \`bazel ${command}\` of \"${target}\" to fail, but it succeeded." >&2
+  echo "${output}" >&2
+  exit 1
+fi
 
 for expect_file in ${expect_files[@]+"${expect_files[@]}"}; do
   resolved="$(_resolve_message_file "${expect_file}")"
   expected_message="$(tr -d '\n' <"${resolved}")"
   if ! grep --quiet --fixed-strings -- "${expected_message}" <<<"${output}"; then
-    echo "Build failed as expected, but output did not contain the expected message." >&2
+    echo "Nested \`bazel ${command}\` finished as expected, but output did not contain the expected message." >&2
     echo "Expected (from ${expect_file}): ${expected_message}" >&2
     echo "Output:" >&2
     echo "${output}" >&2
@@ -112,7 +148,7 @@ for reject_file in ${reject_files[@]+"${reject_files[@]}"}; do
   resolved="$(_resolve_message_file "${reject_file}")"
   rejected_message="$(tr -d '\n' <"${resolved}")"
   if grep --quiet --fixed-strings -- "${rejected_message}" <<<"${output}"; then
-    echo "Build failed as expected, but output contained a message that should be absent." >&2
+    echo "Nested \`bazel ${command}\` finished as expected, but output contained a message that should be absent." >&2
     echo "Rejected (from ${reject_file}): ${rejected_message}" >&2
     echo "Output:" >&2
     echo "${output}" >&2
