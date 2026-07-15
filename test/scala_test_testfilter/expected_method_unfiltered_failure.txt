@@ -1,0 +1,1 @@
+method test 2 should be excluded
