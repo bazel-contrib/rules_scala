@@ -145,6 +145,10 @@ def scala_library_suite(
         visibility = visibility,
         exports = exports + ts,
         deps = ts,
+        # Forward tags to the aggregate target too (children already get them via
+        # **kwargs), so e.g. `tags = ["manual"]` can keep the whole suite -- which
+        # depends on every child -- out of wildcard builds.
+        tags = kwargs.get("tags", []),
     )
 
 ##
