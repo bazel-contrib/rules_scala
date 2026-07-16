@@ -28,3 +28,21 @@ expect_test_failure_test(
     expect = ["expected_missing_env.txt"],
     target = ":inherit_a",
 )
+
+# `inherit_greeting` asserts `greeting` equals "hello world" -- a value with a
+# space. It exercises that `expect_test_success_test`'s `env` survives the Bourne
+# tokenization Bazel applies to `sh_test` `args`: an unquoted `greeting=hello
+# world` would be split into two args and the helper would reject the stray
+# `world`.
+scala_test(
+    name = "inherit_greeting",
+    srcs = ["SpacedEnvTest.scala"],
+    env_inherit = ["greeting"],
+    tags = ["manual"],
+)
+
+expect_test_success_test(
+    name = "inherited_spaced_environment_test",
+    env = {"greeting": "hello world"},
+    target = ":inherit_greeting",
+)
