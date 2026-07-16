@@ -50,7 +50,13 @@ def _nested_bazel_test(
     if expect_success:
         args += ["--expect-success"]
     for key in env:
-        args += ["--env", "%s=%s" % (key, env[key])]
+        value = env[key]
+        # Same Bourne-tokenization guard as bazel_args below: an env value with a
+        # space would otherwise be split into two `sh_test` args, and the helper
+        # would reject the stray token.
+        if " " in value:
+            value = "'%s'" % value
+        args += ["--env", "%s=%s" % (key, value)]
     for bazel_arg in bazel_args:
         # Bazel applies Bourne tokenization to `sh_test` `args`, which would split
         # a flag containing spaces (e.g. `--test_arg=test 1`) into two tokens.
