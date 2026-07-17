@@ -56,16 +56,25 @@ test_source="${dir}/test/shell/${BASH_SOURCE[0]#*test/shell/}"
 #   scala_version: value to force via --repo_env=SCALA_VERSION (must be one
 #     this checkout's third_party repos carry -- see SCALA_VERSIONS in the
 #     root MODULE.bazel).
-#   targets: space-separated Bazel target(s) to test in the consumer repo,
-#     e.g. "//foo:bar //foo:bar_test".
+#   targets: space-separated Bazel target pattern(s) to test in the consumer
+#     repo, e.g. "//... -//foo/bar/...". Prefer a broad pattern (e.g. `//...`)
+#     with explicit negative patterns for known-bad exclusions, rather than a
+#     hand-picked allowlist: a consumer's own test suite is exactly what's
+#     likely to notice a regression we didn't think to write a rules_scala-
+#     side test for, and an allowlist silently stops covering new code the
+#     consumer adds.
 #   patch_fn: name of a function (or "") to call, with the consumer repo as
 #     cwd, to work around consumer-specific quirks before building.
+#   extra_bazel_flags: space-separated extra flags (or "") to pass to the
+#     `bazel test` invocation, for consumer-specific environment quirks (e.g.
+#     `--sandbox_writable_path=...`).
 _downstream_build() {
   local consumer_repo="$1"
   local consumer_sha="$2"
   local scala_version="$3"
   local targets="$4"
   local patch_fn="${5:-}"
+  local extra_bazel_flags="${6:-}"
 
   local rules_scala_dir="$dir"
   local work_dir
@@ -92,9 +101,10 @@ EOF
   fi
 
   REPIN=1 bazel run --repo_env=SCALA_VERSION="$scala_version" @maven//:pin
-  # shellcheck disable=SC2086 # intentional word-splitting: `targets` is
-  # meant to be multiple space-separated Bazel targets.
-  bazel test --test_output=errors --repo_env=SCALA_VERSION="$scala_version" $targets
+  # shellcheck disable=SC2086 # intentional word-splitting: `extra_bazel_flags`
+  # and `targets` are each meant to expand to multiple words/patterns.
+  bazel test --test_output=errors --repo_env=SCALA_VERSION="$scala_version" \
+    $extra_bazel_flags -- $targets
 }
 
 # joern's MODULE.bazel pulls two of its own dependencies (`codepropertygraph`,
@@ -105,6 +115,10 @@ EOF
 # `url.<base>.insteadOf` config -- scoped to this process only, via
 # `GIT_CONFIG_GLOBAL` -- makes git use anonymous HTTPS instead, without
 # touching joern's MODULE.bazel or this machine's real git config.
+#
+# Also creates `~/.shiftleft`: javasrc2cpg's tests write there (outside the
+# sandbox), and the directory must already exist for
+# `--sandbox_writable_path` (below) to let that write through.
 _downstream_joern_use_https_git() {
   local rewrite_config
   rewrite_config="$(mktemp)"
@@ -113,18 +127,29 @@ _downstream_joern_use_https_git() {
     insteadOf = git@github.com:
 EOF
   export GIT_CONFIG_GLOBAL="$rewrite_config"
+
+  mkdir -p "${HOME}/.shiftleft"
 }
 
-# Pinned to the tip of `master` as of 2026-07-16. Tests both the library
-# (compilation) and its `tests` target (rules_scala's scala_test runner
-# actually executing joern's own test suite against this checkout).
+# Pinned to the tip of `master` as of 2026-07-16. `//...` (minus the
+# exclusions below), tested rather than just built -- a consumer's own test
+# suite is exactly what's likely to notice a rules_scala regression we didn't
+# think to write a test for ourselves, and it automatically covers new code
+# joern adds later instead of silently stopping at a hand-picked target list.
+#
+# Excluded, and why (none of these are rules_scala's concern -- each needs an
+# external tool or filesystem access this environment doesn't have/allow):
+#   - php2cpg: needs a real `php` binary on PATH.
+#   - rust2cpg: needs `cargo`/`rustc` on PATH.
+#   - swiftsrc2cpg: times out (its own native toolchain setup, not investigated).
 _test_downstream_joern() {
   _downstream_build \
     "https://github.com/joernio/joern.git" \
     "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1" \
     "3.7.4" \
-    "//semanticcpg:semanticcpg //semanticcpg:tests" \
-    "_downstream_joern_use_https_git"
+    "//... -//joern-cli/frontends/php2cpg/... -//joern-cli/frontends/rust2cpg/... -//joern-cli/frontends/swiftsrc2cpg/..." \
+    "_downstream_joern_use_https_git" \
+    "--sandbox_writable_path=${HOME}/.shiftleft"
 }
 
 run_tests "$test_source" "$(get_test_runner "${1:-local}")"
