@@ -6,16 +6,23 @@
 # ship.
 #
 # Every test function here is prefixed with `_` (see test_runner.sh's
-# `_skip_test`), so `run_tests` skips them by default -- these clone a large
-# external repo and fetch its Maven dependencies, which is slow and
-# network-dependent, so they are not yet wired into `.bazelci/presubmit.yml`.
-# Run one explicitly with, e.g.:
+# `_skip_test`), so `run_tests` skips them by default -- cloning a large
+# external repo and fetching its Maven dependencies is slow and
+# network-dependent, so this doesn't run on ordinary PRs. Run one explicitly:
 #
 #   RULES_SCALA_TEST_ONLY=_test_downstream_joern ./test_downstream.sh
 #
-# To promote a test to run automatically in CI: drop its `_` prefix and add a
-# task for it (calling this script) to `.bazelci/presubmit.yml`, same as any
-# other `test_*.sh` here.
+# `.bazelci/presubmit.yml`'s `downstream_linux` task runs this script on
+# every PR too, but with nothing selected it's a no-op. To actually run it
+# against a given PR/commit, rebuild that step in Buildkite ("New Build")
+# with a custom environment variable: RULES_SCALA_TEST_REGEX=_test_downstream
+#
+# To promote a test to run automatically everywhere: drop its `_` prefix.
+#
+# To add a consumer: write a `_test_downstream_<name>` function calling
+# `_downstream_build` (see its Args below), run it locally with
+# RULES_SCALA_TEST_ONLY first to work out what breaks before it's someone
+# else's problem in CI.
 
 set -euo pipefail
 
