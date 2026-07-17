@@ -4,4 +4,4 @@ set -e
 
 test_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/test/shell
 
-. "${test_dir}"/test_dogfood.sh
+. "${test_dir}"/test_downstream.sh
