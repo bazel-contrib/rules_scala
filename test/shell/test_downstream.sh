@@ -152,4 +152,65 @@ _test_downstream_joern() {
     "--sandbox_writable_path=${HOME}/.shiftleft"
 }
 
+# databricks/dicer pins `protobuf` to an exact version (with a local patch,
+# for an unrelated legacy Python-toolchain registration bug) via its own
+# root-module `single_version_override`. `single_version_override` /
+# `multiple_version_override` directives are only honored from the *root*
+# module of a build -- and once we build from inside dicer's checkout,
+# dicer's own MODULE.bazel *is* the root, so this checkout's own
+# `single_version_override(protobuf, "33.5")` (see root MODULE.bazel) is
+# silently ignored in favor of dicer's "30.2". The scalapb/protoc tooling
+# rules_scala's `scala_proto` extension bundles is generated against 33.5's
+# gencode, so building against 30.2's older runtime fails hard at codegen
+# time ("Detected incompatible Protobuf Gencode/Runtime versions"). Fix: take
+# over dicer's override ourselves, bumping it to what this checkout expects
+# and dropping its now-inapplicable patch.
+_downstream_dicer_bump_protobuf() {
+  awk '
+    /^single_version_override\($/ { buffering = 1; n = 0; buf[n++] = $0; next }
+    buffering {
+      buf[n++] = $0
+      if ($0 == ")") {
+        is_protobuf = 0
+        for (i = 0; i < n; i++) if (buf[i] ~ /module_name = "protobuf"/) is_protobuf = 1
+        if (is_protobuf) {
+          print "single_version_override("
+          print "    module_name = \"protobuf\","
+          print "    version = \"33.5\","
+          print ")"
+        } else {
+          for (i = 0; i < n; i++) print buf[i]
+        }
+        buffering = 0
+        next
+      }
+      next
+    }
+    { print }
+  ' MODULE.bazel >MODULE.bazel.tmp
+  mv MODULE.bazel.tmp MODULE.bazel
+}
+
+# Pinned to the tip of `master` as of 2026-07-16. `//...` (minus the
+# exclusions below) -- unlike joern, dicer exercises rules_scala's
+# `scala_proto`/ScalaPB (gRPC) codegen path and pins Scala 2.12, neither of
+# which joern's Scala-3-only, proto-free tree covers at all.
+#
+# Excluded, and why (an environment limitation of this sandbox, not
+# rules_scala's concern): `caching/util:etcd_suite`,
+# `dicer/common:etcd_bootstrapper_test`, and everything under
+# `dicer/assigner/...` spin up a downloaded `etcd_release` binary
+# (`//bazel:etcd.bzl`) that exits with code 126 (looks like a missing
+# darwin-arm64 build of that specific etcd release) on this machine --
+# plausibly fine on a Linux CI runner; worth re-checking there rather than
+# assuming this exclusion holds everywhere.
+_test_downstream_dicer() {
+  _downstream_build \
+    "https://github.com/databricks/dicer.git" \
+    "5cce7985352c51c00890ca1bdb2c3667a3102569" \
+    "2.12.21" \
+    "//... -//dicer/assigner/... -//caching/util:etcd_suite -//dicer/common:etcd_bootstrapper_test" \
+    "_downstream_dicer_bump_protobuf"
+}
+
 run_tests "$test_source" "$(get_test_runner "${1:-local}")"
