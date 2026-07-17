@@ -26,7 +26,7 @@ test_source="${dir}/test/shell/${BASH_SOURCE[0]#*test/shell/}"
 
 # Clones `consumer_repo` at the exact pinned commit `consumer_sha` (never a
 # floating branch tip -- an unrelated upstream break in a consumer shouldn't
-# make our CI flaky) and builds `target` against this rules_scala checkout,
+# make our CI flaky) and tests `targets` against this rules_scala checkout,
 # working around whatever friction points a given consumer's Bzlmod setup has
 # (e.g. Scala patch-version drift, stale Maven lockfiles, or a consumer's own
 # quirks handled via `patch_fn`):
@@ -39,6 +39,15 @@ test_source="${dir}/test/shell/${BASH_SOURCE[0]#*test/shell/}"
 #      Bazel version than the consumer was pinned against -- repinned
 #      unconditionally rather than trusting the checked-in lockfile.
 #
+# Uses `bazel test`, not `bazel build`: a plain build only proves the code
+# still compiles under this checkout, but says nothing about whether
+# rules_scala's test-running machinery (test discovery, the scala_test/
+# scala_junit_test runner, etc.) still behaves correctly at runtime -- and a
+# real consumer's own test suite is exactly the thing likely to notice a
+# regression we didn't think to write a rules_scala-side test for. `bazel
+# test` on a non-test target (e.g. a plain scala_library) just builds it, so
+# `targets` can freely mix library and test targets.
+#
 # Args:
 #   consumer_repo: git URL to clone.
 #   consumer_sha: exact commit SHA to fetch (works even if it's not the tip
@@ -47,14 +56,15 @@ test_source="${dir}/test/shell/${BASH_SOURCE[0]#*test/shell/}"
 #   scala_version: value to force via --repo_env=SCALA_VERSION (must be one
 #     this checkout's third_party repos carry -- see SCALA_VERSIONS in the
 #     root MODULE.bazel).
-#   target: Bazel target(s) to build in the consumer repo, e.g. "//foo:bar".
+#   targets: space-separated Bazel target(s) to test in the consumer repo,
+#     e.g. "//foo:bar //foo:bar_test".
 #   patch_fn: name of a function (or "") to call, with the consumer repo as
 #     cwd, to work around consumer-specific quirks before building.
 _downstream_build() {
   local consumer_repo="$1"
   local consumer_sha="$2"
   local scala_version="$3"
-  local target="$4"
+  local targets="$4"
   local patch_fn="${5:-}"
 
   local rules_scala_dir="$dir"
@@ -82,9 +92,9 @@ EOF
   fi
 
   REPIN=1 bazel run --repo_env=SCALA_VERSION="$scala_version" @maven//:pin
-  # shellcheck disable=SC2086 # intentional word-splitting: `target` may be
-  # multiple space-separated Bazel targets.
-  bazel build --repo_env=SCALA_VERSION="$scala_version" $target
+  # shellcheck disable=SC2086 # intentional word-splitting: `targets` is
+  # meant to be multiple space-separated Bazel targets.
+  bazel test --test_output=errors --repo_env=SCALA_VERSION="$scala_version" $targets
 }
 
 # joern's MODULE.bazel pulls two of its own dependencies (`codepropertygraph`,
@@ -105,13 +115,15 @@ EOF
   export GIT_CONFIG_GLOBAL="$rewrite_config"
 }
 
-# Pinned to the tip of `master` as of 2026-07-16.
+# Pinned to the tip of `master` as of 2026-07-16. Tests both the library
+# (compilation) and its `tests` target (rules_scala's scala_test runner
+# actually executing joern's own test suite against this checkout).
 _test_downstream_joern() {
   _downstream_build \
     "https://github.com/joernio/joern.git" \
     "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1" \
     "3.7.4" \
-    "//semanticcpg:semanticcpg" \
+    "//semanticcpg:semanticcpg //semanticcpg:tests" \
     "_downstream_joern_use_https_git"
 }
 
