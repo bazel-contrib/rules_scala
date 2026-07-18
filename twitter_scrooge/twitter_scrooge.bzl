@@ -342,6 +342,10 @@ scrooge_scala_aspect = aspect(
             ),
         },
     ),
+    # Required so `compile_scala` can create the Scalac action with
+    # `exec_group = "scalac"`. Not user-configurable: Bazel does not
+    # propagate target-level exec_properties to aspect actions.
+    exec_groups = {"scalac": exec_group()},
     provides = [ScroogeAspectInfo],
     required_aspect_providers = common_aspect_providers,
     toolchains = common_toolchains,

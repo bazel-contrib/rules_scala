@@ -144,6 +144,7 @@ def make_scala_junit_test(*extras):
             "//testing/toolchain:testing_toolchain_type",
             "@bazel_tools//tools/jdk:toolchain_type",
         ],
+        exec_groups = {"scalac": exec_group()},
         cfg = scala_version_transition,
         provides = [JavaInfo],
         implementation = _scala_junit_test_impl,

@@ -97,6 +97,7 @@ def make_scala_binary(*extras):
             "//scala:toolchain_type",
             "@bazel_tools//tools/jdk:toolchain_type",
         ],
+        exec_groups = {"scalac": exec_group()},
         cfg = scala_version_transition,
         provides = [JavaInfo],
         implementation = _scala_binary_impl,
