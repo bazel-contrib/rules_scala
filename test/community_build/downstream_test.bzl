@@ -49,10 +49,14 @@ def downstream_test(
         name = name,
         srcs = ["//test/community_build:downstream_test_driver.sh"],
         args = [
+            "--marker-rootpath",
             "$(rootpath @{}//_bazel_native_marker:marker.txt)".format(repo_name),
+            "--scala-version",
             scala_version,
+            "--output-base-name",
             name,
-            extra_bazel_flags,
+        ] + (["--extra-bazel-flags", extra_bazel_flags] if extra_bazel_flags else []) + [
+            "--",
         ] + targets,
         data = [
             "@{}//_bazel_native_marker:marker.txt".format(repo_name),

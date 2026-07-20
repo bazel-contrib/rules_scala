@@ -1,18 +1,13 @@
 # See README.md in this directory for what these are and how to run one.
 #
 # scala_version below duplicates the pin in the root MODULE.bazel's
-# downstream_consumers.consumer(...) call for the same repo_name -- it can't
-# be loaded from the fetched repo instead (e.g. via a generated
-# @joern//_bazel_native_marker:version.bzl, which is how an earlier version of
-# this file did it): a `load()` on a label under an external repo forces
-# Bazel to fetch that repo while just *loading this package*, unconditionally
-# and regardless of the `manual` tag on the targets below -- so a plain
-# `bazel build //...`/`bazel query //...` (this repo's own CI runs those
-# wildcards) cloned both consumers on every invocation. Keep the two literals
-# below in sync with MODULE.bazel by hand.
+# downstream_consumers.consumer(...) call for the same repo_name, kept in
+# sync by hand -- it can't be load()-ed from the fetched repo instead, since
+# a load() on an external-repo label forces Bazel to fetch that repo just to
+# *load this package*, regardless of the `manual` tag on the targets below.
 load(":downstream_test.bzl", "downstream_test")
 
-exports_files(["downstream_test_driver.sh"])
+exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 
 # joern is Scala-3-only and uses only scala_library/scala_test throughout its
 # tree.
@@ -39,21 +34,18 @@ downstream_test(
 # never touches, so this is a second, non-redundant consumer rather than a
 # duplicate of joern_test.
 #
-# Excluded: `caching/util:etcd_suite`, `dicer/common:etcd_bootstrapper_test`,
-# and everything under `dicer/assigner/...`. All of them spin up a downloaded
-# `etcd_release` binary (`//bazel:etcd.bzl`) that exits with code 126 on this
-# machine -- looks like a missing darwin-arm64 build of that specific etcd
-# release, an environment limitation, not rules_scala's concern. Plausibly
-# fine on a Linux CI runner; worth re-checking there rather than assuming
-# this exclusion holds everywhere.
+# Unlike joern above, nothing is excluded here: `caching/util:etcd_suite`,
+# `dicer/common:etcd_bootstrapper_test`, and `dicer/assigner/...` each need
+# a downloaded `etcd_release` binary (`//bazel:etcd.bzl`) hardcoded to a
+# linux-amd64 release, so it should run fine on this repo's own linux-amd64
+# CI -- it only fails locally, with "etcd exited with code 126", on other
+# architectures (e.g. darwin-arm64). Unconfirmed on real CI, though: this
+# target has no active CI trigger yet (still `manual`, see README).
 downstream_test(
     name = "dicer_test",
     repo_name = "dicer",
     scala_version = "2.12.21",
     targets = [
         "//...",
-        "-//dicer/assigner/...",
-        "-//caching/util:etcd_suite",
-        "-//dicer/common:etcd_bootstrapper_test",
     ],
 )

@@ -8,7 +8,7 @@ def _downstream_consumer_repository_impl(repository_ctx):
     repository_ctx.execute(["git", "remote", "add", "origin", remote])
     result = repository_ctx.execute(
         ["git", "fetch", "--quiet", "--depth", "1", "origin", commit],
-        timeout = 600,
+        timeout = 20,
     )
     if result.return_code != 0:
         fail("git fetch failed for %s @ %s:\n%s" % (remote, commit, result.stderr))
@@ -30,10 +30,8 @@ local_path_override(
 )
 '''.format(rules_scala_dir = rules_scala_dir))
 
-    for cmd in repository_ctx.attr.patch_cmds:
-        result = repository_ctx.execute(["bash", "-c", cmd])
-        if result.return_code != 0:
-            fail("patch_cmd failed: %s\n%s" % (cmd, result.stderr))
+    for patch in repository_ctx.attr.patches:
+        repository_ctx.patch(patch, strip = 1)
 
     # A downstream_test's `sh_test` needs a real Bazel dependency edge on this
     # repo, so Bazel fetches it before the test runs -- but referencing any
@@ -55,59 +53,9 @@ _downstream_consumer_repository = repository_rule(
     attrs = {
         "remote": attr.string(mandatory = True),
         "commit": attr.string(mandatory = True),
-        "patch_cmds": attr.string_list(default = []),
+        "patches": attr.label_list(default = []),
     },
 )
-
-# databricks/dicer pins `protobuf` to an exact version (with a local patch,
-# for an unrelated legacy Python-toolchain registration bug) via its own
-# root-module `single_version_override`. `single_version_override` is only
-# honored from the *root* module of a build -- and once we build from inside
-# dicer's checkout, dicer's own MODULE.bazel *is* the root, so this
-# checkout's own `single_version_override(protobuf, "33.5")` is silently
-# ignored in favor of dicer's "30.2". The scalapb/protoc tooling
-# rules_scala's `scala_proto` extension bundles is generated against 33.5's
-# gencode, so building against 30.2's older runtime fails hard at codegen
-# time. Fix: take over dicer's override, bumping it to what this checkout
-# expects and dropping its now-inapplicable patch.
-_DICER_PROTOBUF_OVERRIDE_PATCH_CMD = """awk '
-  /^single_version_override\\($/ { buffering = 1; n = 0; buf[n++] = $0; next }
-  buffering {
-    buf[n++] = $0
-    if ($0 == ")") {
-      is_protobuf = 0
-      for (i = 0; i < n; i++) if (buf[i] ~ /module_name = "protobuf"/) is_protobuf = 1
-      if (is_protobuf) {
-        print "single_version_override("
-        print "    module_name = \\"protobuf\\","
-        print "    version = \\"33.5\\","
-        print ")"
-      } else {
-        for (i = 0; i < n; i++) print buf[i]
-      }
-      buffering = 0
-      next
-    }
-    next
-  }
-  { print }
-' MODULE.bazel > MODULE.bazel.tmp && mv MODULE.bazel.tmp MODULE.bazel"""
-
-# Per-consumer patch_cmds, keyed by the name each is declared under in
-# MODULE.bazel -- keeps consumer-specific quirks (and the shell one-liners
-# implementing them) out of MODULE.bazel entirely, since `load()` isn't
-# allowed there and it has no other way to pull in a value defined here.
-_CONSUMER_PATCH_CMDS = {
-    "dicer": [
-        _DICER_PROTOBUF_OVERRIDE_PATCH_CMD,
-        # The awk pass above exits 0 even when its pattern matches nothing --
-        # if dicer ever reformats its override block, the rewrite silently
-        # no-ops and the failure shows up much later as an opaque protobuf
-        # gencode/runtime mismatch inside the nested build. Assert the bump
-        # actually landed, so a drifted upstream fails right here instead.
-        '''grep -q 'version = "33.5"' MODULE.bazel''',
-    ],
-}
 
 def _downstream_consumers_impl(module_ctx):
     for mod in module_ctx.modules:
@@ -116,7 +64,7 @@ def _downstream_consumers_impl(module_ctx):
                 name = consumer.name,
                 remote = consumer.remote,
                 commit = consumer.commit,
-                patch_cmds = _CONSUMER_PATCH_CMDS.get(consumer.name, []),
+                patches = consumer.patches,
             )
 
 downstream_consumers = module_extension(
@@ -126,6 +74,7 @@ downstream_consumers = module_extension(
             "name": attr.string(mandatory = True),
             "remote": attr.string(mandatory = True),
             "commit": attr.string(mandatory = True),
+            "patches": attr.label_list(default = []),
         }),
     },
 )

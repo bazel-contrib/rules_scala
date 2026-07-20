@@ -5,16 +5,46 @@
 # against *this* rules_scala checkout via the `local_path_override` that
 # repository rule already wrote into the consumer's MODULE.bazel.
 #
-# Usage: downstream_test_driver.sh <marker-rootpath> <scala-version> \
-#   <output-base-name> <extra-bazel-flags> <target-pattern>...
+# Usage: downstream_test_driver.sh --marker-rootpath <path> --scala-version <v> \
+#   --output-base-name <name> [--extra-bazel-flags <flags>] -- <target-pattern>...
+#
+# Named flags because Bazel/rules_shell silently drops or mangles blank
+# `args` entries -- same convention as test/expect_build_failure/expect_build_failure.sh.
 
 set -euo pipefail
 
-marker_rootpath="$1"
-scala_version="$2"
-output_base_name="$3"
-extra_bazel_flags="$4"
-shift 4
+marker_rootpath=""
+scala_version=""
+output_base_name=""
+extra_bazel_flags=""
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    --marker-rootpath)
+      marker_rootpath="$2"
+      shift 2
+      ;;
+    --scala-version)
+      scala_version="$2"
+      shift 2
+      ;;
+    --output-base-name)
+      output_base_name="$2"
+      shift 2
+      ;;
+    --extra-bazel-flags)
+      extra_bazel_flags="$2"
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      exit 2
+      ;;
+  esac
+done
 targets=("$@")
 
 srcdir="${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}"
