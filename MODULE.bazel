@@ -311,12 +311,10 @@ downstream_consumers.consumer(
     name = "joern",
     remote = "https://github.com/joernio/joern.git",
     commit = "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
-    scala_version = "3.7.4",
 )
 downstream_consumers.consumer(
     name = "dicer",
     remote = "https://github.com/databricks/dicer.git",
     commit = "5cce7985352c51c00890ca1bdb2c3667a3102569",
-    scala_version = "2.12.21",
 )
 use_repo(downstream_consumers, "joern", "dicer")

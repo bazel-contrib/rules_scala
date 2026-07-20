@@ -1,7 +1,16 @@
 # See README.md in this directory for what these are and how to run one.
+#
+# scala_version below duplicates the pin in the root MODULE.bazel's
+# downstream_consumers.consumer(...) call for the same repo_name -- it can't
+# be loaded from the fetched repo instead (e.g. via a generated
+# @joern//_bazel_native_marker:version.bzl, which is how an earlier version of
+# this file did it): a `load()` on a label under an external repo forces
+# Bazel to fetch that repo while just *loading this package*, unconditionally
+# and regardless of the `manual` tag on the targets below -- so a plain
+# `bazel build //...`/`bazel query //...` (this repo's own CI runs those
+# wildcards) cloned both consumers on every invocation. Keep the two literals
+# below in sync with MODULE.bazel by hand.
 load(":downstream_test.bzl", "downstream_test")
-load("@joern//_bazel_native_marker:version.bzl", JOERN_SCALA_VERSION = "SCALA_VERSION")
-load("@dicer//_bazel_native_marker:version.bzl", DICER_SCALA_VERSION = "SCALA_VERSION")
 
 exports_files(["downstream_test_driver.sh"])
 
@@ -16,7 +25,7 @@ exports_files(["downstream_test_driver.sh"])
 downstream_test(
     name = "joern_test",
     repo_name = "joern",
-    scala_version = JOERN_SCALA_VERSION,
+    scala_version = "3.7.4",
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
@@ -40,7 +49,7 @@ downstream_test(
 downstream_test(
     name = "dicer_test",
     repo_name = "dicer",
-    scala_version = DICER_SCALA_VERSION,
+    scala_version = "2.12.21",
     targets = [
         "//...",
         "-//dicer/assigner/...",
