@@ -14,6 +14,7 @@ load(
     "scala_test_suite",
 )
 load("//scala:scala_cross_version.bzl", "repositories")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_success_test")
 load(":check_statsfile.bzl", "check_statsfile")
 load(":env_vars.bzl", "env_vars")
 
@@ -185,6 +186,14 @@ scala_library(
         "ExportOnly",
         "UnusedLib",
     ],
+)
+
+expect_build_success_test(
+    name = "unused_dependency_checker_mode_warn_test",
+    build_args = ["--extra_toolchains=//test/toolchains:high_level_direct_deps"],
+    expect = ["expected_unused_dependency_checker_warning.txt"],
+    target = ":UnusedDependencyCheckerWarn",
+    warmup_build_args = ["--extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_warn"],
 )
 
 # Test of library without src
