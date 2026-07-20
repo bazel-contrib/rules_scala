@@ -27,11 +27,6 @@ bazel test --test_env=PATH //test/community_build:joern_test //test/community_bu
 (`--test_env=PATH`: the nested `bazel` invocation needs the *consumer's*
 pinned Bazel version, not this checkout's -- see `downstream_test_driver.sh`.)
 
-On a PR's Buildkite build, click "Run downstream tests?" to run both without
-a local checkout -- see `.bazelci/downstream.yml` and the `downstream_block`
-task in `.bazelci/presubmit.yml`. Leaving it unclicked doesn't affect the
-build's own pass/fail status.
-
 Each run executes for real, never from Bazel's test-result cache (the
 targets are tagged `external`): the nested build reads this checkout's live
 source tree, so rules_scala's own sources are code under test without being
