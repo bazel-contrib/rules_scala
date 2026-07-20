@@ -25,6 +25,16 @@
 #   --bazel-arg       extra option forwarded to the nested `bazel <command>` (e.g.
 #                     `--repo_env=SCALA_VERSION=2.13.18` or `--extra_toolchains=...`);
 #                     repeatable.
+#   --warmup-bazel-arg  option for a throwaway `bazel build` of `target` run
+#                     before the real invocation, under different flags than
+#                     `--bazel-arg`; repeatable. Its result is discarded. Exists
+#                     because the nested output base's on-disk action cache
+#                     persists across separate invocations of this same test: a
+#                     prior run that already built `target` with the exact same
+#                     `--bazel-arg`s can leave a cache hit that silently skips
+#                     recompilation (and so reprints no warning) on a later run.
+#                     Building under different flags first forces the later,
+#                     real invocation to actually execute.
 #   --expect-file     file whose (newline-stripped) contents must appear in the
 #                     output; repeatable.
 #   --reject-file     file whose (newline-stripped) contents must NOT appear in the
@@ -47,6 +57,7 @@ target=""
 command="build"
 expect_success="false"
 bazel_args=()
+warmup_bazel_args=()
 expect_files=()
 reject_files=()
 
@@ -72,6 +83,10 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --bazel-arg)
       bazel_args+=("$2")
+      shift 2
+      ;;
+    --warmup-bazel-arg)
+      warmup_bazel_args+=("$2")
       shift 2
       ;;
     --expect-file)
@@ -115,6 +130,10 @@ _resolve_message_file() {
 }
 
 nested_bazel_setup "rules_scala_expect_build_failure_output_base"
+
+if [[ "${#warmup_bazel_args[@]}" -gt 0 ]]; then
+  nested_bazel_run build ${warmup_bazel_args[@]+"${warmup_bazel_args[@]}"} "${target}" >/dev/null 2>&1 || true
+fi
 
 set +e
 output="$(nested_bazel_run "${command}" ${bazel_args[@]+"${bazel_args[@]}"} "${target}" 2>&1)"
