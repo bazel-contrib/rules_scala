@@ -8,6 +8,8 @@ instead of hand-assembling the script's raw args, `$(rootpath ...)` expansions,
 runfiles, and boilerplate tags on every call.
 
 - `expect_build_failure_test` asserts a `bazel build` fails.
+- `expect_build_success_test` asserts a `bazel build` succeeds (e.g. a fixture
+  that only builds under a specific flag or toolchain override).
 - `expect_test_failure_test` asserts a `bazel test` (or `bazel coverage`) fails.
 - `expect_test_success_test` asserts a `bazel test` succeeds (e.g. a fixture that
   only passes under a specific `--test_filter` or inherited env var).
@@ -172,6 +174,57 @@ def expect_build_failure_test(
         target = target,
         bazel_args = build_args,
         expect_success = False,
+        env = {},
+        worker_sandboxing = worker_sandboxing,
+        expect = expect,
+        reject = reject,
+        size = size,
+        tags = tags,
+        **kwargs
+    )
+
+def expect_build_success_test(
+        name,
+        target,
+        build_args = [],
+        worker_sandboxing = False,
+        expect = [],
+        reject = [],
+        size = "large",
+        tags = ["local", "requires-network"],
+        **kwargs):
+    """Declares an `sh_test` asserting that `bazel build` of `target` succeeds.
+
+    Same plumbing as `expect_build_failure_test`, but the nested `bazel build` is
+    expected to pass. Useful for a fixture that only builds successfully with a
+    specific flag or toolchain override (e.g. a rule-level override winning over
+    a failing toolchain default), optionally combined with `expect`/`reject` to
+    assert a warning was (or wasn't) printed.
+
+    Args:
+        name: test target name.
+        target: label whose nested `bazel build` must succeed. A package-relative
+            label (`":foo"` or `"foo"`) is resolved against this package. The
+            caller must tag this fixture `"manual"`: it only builds successfully
+            with the flags this wrapper supplies, so a plain wildcard
+            `bazel build //...` would run it without them and fail.
+        build_args: extra flags forwarded verbatim to the nested `bazel build`
+            (e.g. `"--extra_toolchains=//some:toolchain"`).
+        worker_sandboxing: see `expect_build_failure_test`.
+        expect: file labels whose (newline-stripped) contents must appear in the
+            build output. Automatically added to the test's `data`.
+        reject: file labels whose (newline-stripped) contents must NOT appear in
+            the build output. Automatically added to the test's `data`.
+        size: test size; defaults to `"large"`.
+        tags: test tags; defaults to `["local", "requires-network"]`.
+        **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
+    """
+    _nested_bazel_test(
+        name = name,
+        command = "build",
+        target = target,
+        bazel_args = build_args,
+        expect_success = True,
         env = {},
         worker_sandboxing = worker_sandboxing,
         expect = expect,

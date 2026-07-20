@@ -4,18 +4,6 @@ dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . "${dir}"/test_helper.sh
 runner=$(get_test_runner "${1:-local}")
 
-test_unused_dependency_checker_mode_from_scala_toolchain() {
-  action_should_fail build --extra_toolchains="//test_expect_failure/unused_dependency_checker:failing_scala_toolchain" //test_expect_failure/unused_dependency_checker:toolchain_failing_build
-}
-
-test_unused_dependency_checker_mode_set_in_rule() {
-  action_should_fail build //test_expect_failure/unused_dependency_checker:failing_build
-}
-
-test_unused_dependency_checker_mode_override_toolchain() {
-  bazel build --extra_toolchains="//test_expect_failure/unused_dependency_checker:failing_scala_toolchain" //test_expect_failure/unused_dependency_checker:toolchain_override
-}
-
 test_succeeds_with_warning() {
   cmd=$1
   expected=$2
@@ -87,9 +75,6 @@ test_unused_deps_filter_included_target() {
     "eq"
 }
 
-$runner test_unused_dependency_checker_mode_from_scala_toolchain
-$runner test_unused_dependency_checker_mode_set_in_rule
-$runner test_unused_dependency_checker_mode_override_toolchain
 $runner test_unused_dependency_checker_mode_warn
 $runner test_unused_dependency_fails_even_if_also_exists_in_plus_one_deps
 $runner test_plus_one_ast_analyzer_unused_deps_error
