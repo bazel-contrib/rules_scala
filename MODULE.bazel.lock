@@ -145,35 +145,39 @@
   },
   "selectedYankedVersions": {},
   "moduleExtensions": {
-    "@@pybind11_bazel+//:internal_configure.bzl%internal_configure_extension": {
+    "//test/community_build:downstream_repository.bzl%downstream_consumers": {
       "general": {
-        "bzlTransitiveDigest": "ITysE3qT9ee8ipAmrQmkGImmq2UkzlEY/ZI2L3+wmI8=",
-        "usagesDigest": "D1r3lfzMuUBFxgG8V6o0bQTLMk3GkaGOaPzw53wrwyw=",
-        "recordedFileInputs": {
-          "@@pybind11_bazel+//MODULE.bazel": "e6f4c20442eaa7c90d7190d8dc539d0ab422f95c65a57cc59562170c58ae3d34"
-        },
+        "bzlTransitiveDigest": "0ECqwqUdZZSRjqFPFB8AqVtOfVdXJYEfxzEf9wrUcW4=",
+        "usagesDigest": "qmvoV+eb9UUmw9p/4OKrMmqCqSO95k3igTSu3y482qA=",
+        "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
-          "pybind11": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
+          "joern": {
+            "bzlFile": "@@//test/community_build:downstream_repository.bzl",
+            "ruleClassName": "_downstream_consumer_repository",
             "attributes": {
-              "build_file": "@@pybind11_bazel+//:pybind11-BUILD.bazel",
-              "strip_prefix": "pybind11-2.12.0",
-              "urls": [
-                "https://github.com/pybind/pybind11/archive/v2.12.0.zip"
+              "remote": "https://github.com/joernio/joern.git",
+              "commit": "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
+              "scala_version": "3.7.4",
+              "patch_cmds": []
+            }
+          },
+          "dicer": {
+            "bzlFile": "@@//test/community_build:downstream_repository.bzl",
+            "ruleClassName": "_downstream_consumer_repository",
+            "attributes": {
+              "remote": "https://github.com/databricks/dicer.git",
+              "commit": "5cce7985352c51c00890ca1bdb2c3667a3102569",
+              "scala_version": "2.12.21",
+              "patch_cmds": [
+                "awk '\n  /^single_version_override\\($/ { buffering = 1; n = 0; buf[n++] = $0; next }\n  buffering {\n    buf[n++] = $0\n    if ($0 == \")\") {\n      is_protobuf = 0\n      for (i = 0; i < n; i++) if (buf[i] ~ /module_name = \"protobuf\"/) is_protobuf = 1\n      if (is_protobuf) {\n        print \"single_version_override(\"\n        print \"    module_name = \\\"protobuf\\\",\"\n        print \"    version = \\\"33.5\\\",\"\n        print \")\"\n      } else {\n        for (i = 0; i < n; i++) print buf[i]\n      }\n      buffering = 0\n      next\n    }\n    next\n  }\n  { print }\n' MODULE.bazel > MODULE.bazel.tmp && mv MODULE.bazel.tmp MODULE.bazel",
+                "grep -q 'version = \"33.5\"' MODULE.bazel"
               ]
             }
           }
         },
-        "recordedRepoMappingEntries": [
-          [
-            "pybind11_bazel+",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
+        "recordedRepoMappingEntries": []
       }
     },
     "@@rules_apple+//apple:apple.bzl%provisioning_profile_repository_extension": {
