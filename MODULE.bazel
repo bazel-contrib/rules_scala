@@ -300,3 +300,23 @@ use_repo(
 
 bazel_dep(name = "rules_python", version = "1.8.5", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
+
+# Fetches real external consumers for downstream tests. See
+# test/community_build/README.md for what these are and how they work.
+downstream_consumers = use_extension(
+    "//test/community_build:downstream_repository.bzl",
+    "downstream_consumers",
+)
+downstream_consumers.consumer(
+    name = "joern",
+    remote = "https://github.com/joernio/joern.git",
+    commit = "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
+    scala_version = "3.7.4",
+)
+downstream_consumers.consumer(
+    name = "dicer",
+    remote = "https://github.com/databricks/dicer.git",
+    commit = "5cce7985352c51c00890ca1bdb2c3667a3102569",
+    scala_version = "2.12.21",
+)
+use_repo(downstream_consumers, "joern", "dicer")
