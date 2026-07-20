@@ -1,0 +1,1 @@
+warning: Target '//test/plus_one_deps/with_unused_deps:c' is specified as a dependency to //test/plus_one_deps/with_unused_deps:a but isn't used, please remove it from the deps.
