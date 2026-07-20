@@ -6,6 +6,8 @@ match a version this checkout's third_party repos carry), then runs a
 nested `bazel test` against `targets`.
 """
 
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
 def downstream_test(
         name,
         repo_name,
@@ -43,7 +45,7 @@ def downstream_test(
             fetches external repos and must run outside the sandbox.
         **kwargs: forwarded to the underlying `sh_test`.
     """
-    native.sh_test(
+    sh_test(
         name = name,
         srcs = ["//test/community_build:downstream_test_driver.sh"],
         args = [
