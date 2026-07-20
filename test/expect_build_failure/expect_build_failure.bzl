@@ -14,7 +14,7 @@ runfiles, and boilerplate tags on every call.
 - `expect_test_success_test` asserts a `bazel test` succeeds (e.g. a fixture that
   only passes under a specific `--test_filter` or inherited env var).
 
-All three share the same script and nested-Bazel plumbing.
+All four share the same script and nested-Bazel plumbing.
 """
 
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
@@ -40,7 +40,6 @@ def _nested_bazel_test(
         command,
         target,
         bazel_args,
-        warmup_bazel_args,
         expect_success,
         env,
         worker_sandboxing,
@@ -48,6 +47,7 @@ def _nested_bazel_test(
         reject,
         size,
         tags,
+        warmup_bazel_args = [],
         **kwargs):
     args = ["--command", command, "--target", _absolutize(target)]
     if expect_success:
@@ -178,7 +178,6 @@ def expect_build_failure_test(
         command = "build",
         target = target,
         bazel_args = build_args,
-        warmup_bazel_args = [],
         expect_success = False,
         env = {},
         worker_sandboxing = worker_sandboxing,
@@ -290,7 +289,6 @@ def expect_test_failure_test(
         command = command,
         target = target,
         bazel_args = bazel_args,
-        warmup_bazel_args = [],
         expect_success = False,
         env = {},
         worker_sandboxing = worker_sandboxing,
@@ -344,7 +342,6 @@ def expect_test_success_test(
         command = "test",
         target = target,
         bazel_args = bazel_args,
-        warmup_bazel_args = [],
         expect_success = True,
         env = env,
         worker_sandboxing = worker_sandboxing,
