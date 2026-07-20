@@ -195,3 +195,41 @@ tasks:
       - "//..."
     soft_fail:
       - exit_status: "*"
+  downstream_block:
+    # Uploads a Buildkite "block" step so the downstream tests in
+    # test/community_build/ (slow, network-dependent) can be triggered from
+    # this build's UI instead of running on every PR. Nothing depends_on the
+    # block, so leaving it unclicked doesn't affect this build's pass/fail
+    # status (blocked_state defaults to "passed", and GitHub reports blocked
+    # builds as "success" unless blocked_builds_as_pending is set, which it
+    # isn't).
+    #
+    # Reuses bazelci.py's own runner_step() for the actual test step, so it
+    # gets the same docker/plugin config as every other task. That task
+    # lives in downstream.yml, not here, so it's never auto-run.
+    name: "Upload downstream-tests block step"
+    platform: ubuntu2004
+    shell_commands:
+      - |
+        python3 - <<'PYEOF' | buildkite-agent pipeline upload
+        import sys
+        import yaml
+
+        sys.path.insert(0, ".")
+        import bazelci
+
+        step = bazelci.runner_step(
+            platform="ubuntu2004",
+            task="downstream_linux",
+            task_name="Downstream tests (joern, dicer)",
+            file_config=".bazelci/downstream.yml",
+        )
+        step["depends_on"] = "block-downstream"
+
+        print(yaml.dump({
+            "steps": [
+                {"block": "Run downstream tests?", "key": "block-downstream"},
+                step,
+            ],
+        }))
+        PYEOF

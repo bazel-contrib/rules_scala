@@ -1,0 +1,22 @@
+---
+# Task definition for the downstream tests in test/community_build/ (see its
+# README). Deliberately kept out of presubmit.yml's own `tasks:` -- every
+# entry there is unconditionally run on every build, and these tests clone
+# real external projects and are slow/network-dependent, so they're meant to
+# be triggered manually instead. presubmit.yml's `downstream_block` task
+# uploads a Buildkite "block" step wired to run this task's `runner_step`
+# only once someone clicks it; this file is never read by the normal,
+# always-run pipeline generation.
+
+tasks:
+  downstream_linux:
+    name: "Downstream tests (joern, dicer)"
+    platform: ubuntu2004
+    shell_commands:
+      - mv tools/bazel.rc.buildkite tools/bazel.rc
+      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
+      # The nested `bazel test`/`bazel run` invocations inside
+      # test/community_build's driver script need this checkout's Bazel on
+      # PATH -- see test/community_build/downstream_test_driver.sh.
+      - echo "test --test_env=PATH" >> .bazelrc
+      - bazel test --test_output=errors //test/community_build:joern_test //test/community_build:dicer_test
