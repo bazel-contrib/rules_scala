@@ -216,14 +216,10 @@ def expect_build_success_test(
             `bazel build //...` would run it without them and fail.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
             (e.g. `"--extra_toolchains=//some:toolchain"`).
-        warmup_build_args: if non-empty, flags for a throwaway `bazel build` of
-            `target` run (and discarded) before the real one, under different
-            flags than `build_args`. Needed when asserting on `expect`/`reject`
-            for a *successful* build: unlike a failure, a successful action can
-            be served from the nested output base's on-disk cache on a later
-            run of this same test, silently skipping recompilation (and so
-            reprinting no warning). Building under different flags first avoids
-            that.
+        warmup_build_args: flags for a throwaway `bazel build` of `target` run
+            (and discarded) before the real one, under different flags than
+            `build_args`. See `--warmup-bazel-arg` in expect_build_failure.sh
+            for why a successful build needs this and a failing one doesn't.
         worker_sandboxing: see `expect_build_failure_test`.
         expect: file labels whose (newline-stripped) contents must appear in the
             build output. Automatically added to the test's `data`.
