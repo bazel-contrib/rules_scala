@@ -50,13 +50,11 @@ appears, add it.
 ## Adding a consumer
 
 1. Declare it in the root `MODULE.bazel`, via
-   `downstream_consumers.consumer(name = ..., remote = ..., commit = ...,
-   scala_version = ...)` -- this is the one place a consumer's pin lives.
+   `downstream_consumers.consumer(name = ..., remote = ..., commit = ...)`.
 2. If it needs consumer-specific patching (e.g. dicer's protobuf-version
    override), add it to `_CONSUMER_PATCH_CMDS` in `downstream_repository.bzl`,
    keyed by name.
-3. Add a `downstream_test(...)` target in `BUILD`, `load()`-ing its
-   `scala_version` from `@<name>//_bazel_native_marker:version.bzl` (see the
-   existing targets) rather than repeating the pin as a separate literal,
-   with a target pattern (prefer `//...` plus negative patterns for
-   known-bad exclusions over a hand-picked allowlist).
+3. Add a `downstream_test(...)` target in `BUILD`, with its `scala_version`
+   as a literal matching the `MODULE.bazel` pin (see the existing targets
+   and the comment above them) and a target pattern (prefer `//...` plus
+   negative patterns for known-bad exclusions over a hand-picked allowlist).
