@@ -51,10 +51,10 @@ appears, add it.
 
 1. Declare it in the root `MODULE.bazel`, via
    `downstream_consumers.consumer(name = ..., remote = ..., commit = ...)`.
-2. If it needs consumer-specific patching (e.g. dicer's protobuf-version
-   override), add it to `_CONSUMER_PATCH_CMDS` in `downstream_repository.bzl`,
-   keyed by name.
-3. Add a `downstream_test(...)` target in `BUILD`, with its `scala_version`
+   If it needs consumer-specific patching (e.g. dicer's protobuf-version
+   override), add a patch file and pass it via that same call's `patches`
+   arg (like `http_archive`'s).
+2. Add a `downstream_test(...)` target in `BUILD`, with its `scala_version`
    as a literal matching the `MODULE.bazel` pin (see the existing targets
    and the comment above them) and a target pattern (prefer `//...` plus
    negative patterns for known-bad exclusions over a hand-picked allowlist).

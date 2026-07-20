@@ -315,6 +315,7 @@ downstream_consumers.consumer(
 downstream_consumers.consumer(
     name = "dicer",
     commit = "5cce7985352c51c00890ca1bdb2c3667a3102569",
+    patches = ["//test/community_build:dicer_protobuf_version.patch"],
     remote = "https://github.com/databricks/dicer.git",
 )
 use_repo(downstream_consumers, "dicer", "joern")
