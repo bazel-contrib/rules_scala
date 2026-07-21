@@ -62,3 +62,14 @@ expect_build_success_test(
     build_args = ["--extra_toolchains=//test/unused_dependency_checker:failing_scala_toolchain"],
     target = ":toolchain_override",
 )
+
+# `target` lives in //test, not this package: its sources aren't tracked as
+# this test's runfiles (see expect_build_failure.bzl), so an edit there won't
+# force a re-run. The fixture is long-standing and rarely touched.
+expect_build_success_test(
+    name = "mode_warn_test",
+    build_args = ["--extra_toolchains=//test/toolchains:high_level_direct_deps"],
+    expect = ["expected_unused_dependency_checker_warning.txt"],
+    target = "//test:UnusedDependencyCheckerWarn",
+    warmup_build_args = ["--extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_warn"],
+)
