@@ -50,5 +50,4 @@ expect_build_success_test(
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
     expect = ["expected_unused_deps_warning.txt"],
     target = ":a",
-    warmup_build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
 )
