@@ -144,5 +144,11 @@ nested_bazel_run() {
     cmd=(env "HOME=${_nested_bazel_real_home}" "${cmd[@]}")
   fi
 
-  "${cmd[@]}"
+  # On Windows this script runs under MSYS2 bash, which auto-converts
+  # POSIX-path-looking argv entries (e.g. a bare `//pkg:target` label) before
+  # exec'ing a native Windows binary like bazel.exe -- corrupting it (observed:
+  # `//test:Foo` arrived at Bazel as `/test:Foo`). Disabling MSYS's argv path
+  # conversion for this exec is the standard fix; harmless everywhere else,
+  # since non-MSYS shells don't read these variables.
+  MSYS2_ARG_CONV_EXCL='*' MSYS_NO_PATHCONV=1 "${cmd[@]}"
 }
