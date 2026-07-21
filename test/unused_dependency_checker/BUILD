@@ -71,5 +71,4 @@ expect_build_success_test(
     build_args = ["--extra_toolchains=//test/toolchains:high_level_direct_deps"],
     expect = ["expected_unused_dependency_checker_warning.txt"],
     target = "//test:UnusedDependencyCheckerWarn",
-    warmup_build_args = ["--extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_warn"],
 )
