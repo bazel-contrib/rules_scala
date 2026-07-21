@@ -65,6 +65,7 @@ public class WorkerTest {
       Files.write(tmpFile, contents.getBytes(StandardCharsets.UTF_8));
 
       WorkerProtocol.WorkRequest.newBuilder()
+          .setRequestId(42)
           .addArguments("@" + tmpFile)
           .build()
           .writeDelimitedTo(helper.requestOut);
@@ -76,6 +77,7 @@ public class WorkerTest {
 
       assertEquals(0, response.getExitCode());
       assertEquals(contents, response.getOutput());
+      assertEquals(42, response.getRequestId());
     } finally {
       Files.deleteIfExists(tmpFile);
     }
