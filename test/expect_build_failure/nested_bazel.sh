@@ -145,10 +145,12 @@ nested_bazel_run() {
   fi
 
   # On Windows this script runs under MSYS2 bash, which auto-converts
-  # POSIX-path-looking argv entries (e.g. a bare `//pkg:target` label) before
-  # exec'ing a native Windows binary like bazel.exe -- corrupting it (observed:
-  # `//test:Foo` arrived at Bazel as `/test:Foo`). Disabling MSYS's argv path
-  # conversion for this exec is the standard fix; harmless everywhere else,
-  # since non-MSYS shells don't read these variables.
-  MSYS2_ARG_CONV_EXCL='*' MSYS_NO_PATHCONV=1 "${cmd[@]}"
+  # POSIX-path-looking argv entries before exec'ing a native Windows binary
+  # like bazel.exe. A bare `//pkg:target` label gets corrupted by this (observed:
+  # arrived at Bazel as `/pkg:target`), but `--output_base=/tmp/...` above
+  # *needs* the same conversion to become a real Windows path -- so disabling
+  # it outright (tried first) broke that instead. MSYS2_ARG_CONV_EXCL only
+  # excludes args matching a given prefix, leaving everything else (like
+  # /tmp/...) converted as before.
+  MSYS2_ARG_CONV_EXCL='//' "${cmd[@]}"
 }
