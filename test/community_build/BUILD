@@ -18,24 +18,20 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 #   - rust2cpg needs `cargo`/`rustc` on PATH.
 #   - swiftsrc2cpg times out (its own native toolchain setup, not investigated).
 #
-# jssrc2cpg:tests is medium-sized (300s default) and runs close to that
-# limit even on its own; contending with the rest of this repo's own test
-# suite for CPU on the same CI machine pushes it over. Bump the moderate
-# bucket rather than touch joern's own test size -- and this sh_test's own
-# size with it (enormous, 3600s default), since the nested run (all 9
-# frontends, one now taking up to 900s alone) can exceed the "large" 900s
-# default in total.
-#
-# Linux-only: on macOS CI, x2cpg/kotlin2cpg/jssrc2cpg run right at the
-# 900s edge and flip between passing and TIMEOUT run to run -- confirmed
-# clean on linux (build #6360), never confirmed stable on macOS.
+# Two independent timeouts are in play here: extra_bazel_flags's
+# --test_timeout bounds each individual test inside joern's own nested
+# bazel invocation; size bounds this whole sh_test action (git fetch plus
+# all 9 nested frontends combined). Under CI contention, jssrc2cpg
+# (medium, 300s default) and x2cpg/kotlin2cpg (large, 900s default) all
+# run close to their own bucket, so bump moderate and long together
+# rather than touch joern's own test sizes. size = "enormous" covers the
+# outer action's total separately.
 downstream_test(
     name = "joern_test",
     repo_name = "joern",
     scala_version = "3.7.4",
-    extra_bazel_flags = "--test_timeout=60,900,900,3600",
+    extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
     size = "enormous",
-    target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
@@ -44,18 +40,15 @@ downstream_test(
     ],
 )
 
-# dicer exercises rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
-# pins Scala 2.12 -- both are things joern's Scala-3-only, proto-free tree
-# never touches, so this is a second, non-redundant consumer rather than a
-# duplicate of joern_test.
+# dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
+# Scala 2.12 -- neither exercised by joern_test above (Scala 3, proto-free).
 #
 # Unlike joern above, nothing is excluded here: `caching/util:etcd_suite`,
 # `dicer/common:etcd_bootstrapper_test`, and `dicer/assigner/...` each need
 # a downloaded `etcd_release` binary (`//bazel:etcd.bzl`) hardcoded to a
-# linux-amd64 release -- confirmed passing clean on this repo's own
-# linux-amd64 CI (build #6360). Linux-only for that reason: the etcd
-# binary can't run at all on other architectures ("etcd exited with code
-# 126", e.g. darwin-arm64).
+# linux-amd64 release, so this is linux-only: the binary can't execute at
+# all on other architectures ("etcd exited with code 126", e.g.
+# darwin-arm64).
 #
 # size = "enormous" for the same reason as joern_test above: 163 nested
 # tests, several of them minutes-long, can exceed this sh_test's own
