@@ -22,19 +22,20 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 # limit even on its own; contending with the rest of this repo's own test
 # suite for CPU on the same CI machine pushes it over. Bump the moderate
 # bucket rather than touch joern's own test size -- and this sh_test's own
-# default ("large", 900s) with it, since the nested run (all 9 frontends,
-# one now taking up to 900s alone) can exceed that in total.
+# size with it (enormous, 3600s default), since the nested run (all 9
+# frontends, one now taking up to 900s alone) can exceed the "large" 900s
+# default in total.
 #
-# Linux-only: on macOS CI, x2cpg/kotlin2cpg/jssrc2cpg run right at this
-# same 900s edge and flip between passing and TIMEOUT run to run --
-# confirmed clean on linux (build #6360), never confirmed stable on macOS.
+# Linux-only: on macOS CI, x2cpg/kotlin2cpg/jssrc2cpg run right at the
+# 900s edge and flip between passing and TIMEOUT run to run -- confirmed
+# clean on linux (build #6360), never confirmed stable on macOS.
 downstream_test(
     name = "joern_test",
     repo_name = "joern",
     scala_version = "3.7.4",
     extra_bazel_flags = "--test_timeout=60,900,900,3600",
+    size = "enormous",
     target_compatible_with = ["@platforms//os:linux"],
-    timeout = "eternal",
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
@@ -56,15 +57,15 @@ downstream_test(
 # binary can't run at all on other architectures ("etcd exited with code
 # 126", e.g. darwin-arm64).
 #
-# timeout = "eternal" for the same reason as joern_test above: 163 nested
-# tests, several of them minutes-long, can exceed this sh_test's own default
-# ("large", 900s) in total.
+# size = "enormous" for the same reason as joern_test above: 163 nested
+# tests, several of them minutes-long, can exceed this sh_test's own
+# "large" (900s) default in total.
 downstream_test(
     name = "dicer_test",
     repo_name = "dicer",
     scala_version = "2.12.21",
+    size = "enormous",
     target_compatible_with = ["@platforms//os:linux"],
-    timeout = "eternal",
     targets = [
         "//...",
     ],
