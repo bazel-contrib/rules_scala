@@ -15,7 +15,9 @@ def downstream_test(
         targets,
         extra_bazel_flags = "",
         size = "large",
-        tags = ["manual", "external", "local", "requires-network"],
+        # TEMP (throwaway verify branch): dropped "manual" so ubuntu2004/macos
+        # CI's `bazel test //...` actually picks these up for once.
+        tags = ["external", "local", "requires-network"],
         **kwargs):
     """Declares an `sh_test` testing `targets` in the `repo_name` external repo.
 
