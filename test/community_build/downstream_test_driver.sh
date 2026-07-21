@@ -115,25 +115,39 @@ if [[ -d "${repository_cache}" ]]; then
 fi
 _nested_bazel_common_opts+=("--symlink_prefix=${_nested_bazel_output_base}/convenience_symlinks/")
 
-# Some consumers' own tests write to `~/.shiftleft` (e.g. joern's
-# javasrc2cpg), outside the sandbox. Harmless no-op for consumers that don't
-# need it, so it's unconditional rather than per-consumer configuration.
+# Some consumers' own build/test actions write outside the sandbox: joern's
+# javasrc2cpg to `~/.shiftleft`, and its codepropertygraph dep's run_codegen
+# genrule shells out to scalafmt's dynamic Coursier downloader, which writes
+# to `~/.cache/coursier`. Harmless no-op for consumers that don't need it, so
+# it's unconditional rather than per-consumer configuration.
 if [[ -n "${_nested_bazel_real_home}" ]]; then
-  mkdir -p "${_nested_bazel_real_home}/.shiftleft"
-  _nested_bazel_common_opts+=("--sandbox_writable_path=${_nested_bazel_real_home}/.shiftleft")
+  mkdir -p "${_nested_bazel_real_home}/.shiftleft" "${_nested_bazel_real_home}/.cache/coursier"
+  _nested_bazel_common_opts+=(
+    "--sandbox_writable_path=${_nested_bazel_real_home}/.shiftleft"
+    "--sandbox_writable_path=${_nested_bazel_real_home}/.cache/coursier"
+  )
 fi
 
 # Some consumers (e.g. joern) `git_override` their own deps via
 # `git@github.com:...` (SSH), which fails without an SSH key/known-hosts
-# entry even though the repos are public. Rewrite SSH GitHub URLs to
-# anonymous HTTPS for every git operation this nested invocation makes --
-# harmless no-op for consumers that don't need it.
-git_config_global="$(mktemp)"
-cat >"${git_config_global}" <<'EOF'
+# entry even though the repos are public (worse, some CI images don't even
+# have an `ssh` binary to fail cleanly with -- "cannot run ssh: No such file
+# or directory"). Rewrite SSH GitHub URLs to anonymous HTTPS for every git
+# operation this nested invocation makes -- harmless no-op for consumers
+# that don't need it. Via XDG_CONFIG_HOME rather than GIT_CONFIG_GLOBAL: the
+# latter needs git 2.32+ and some CI images' older git predates it (confirmed:
+# it fetched one of joern's two git_override deps and silently ignored it for
+# the other); git has honored $XDG_CONFIG_HOME/git/config since ~2012, and it
+# applies *alongside* (not instead of) the user's own ~/.gitconfig, so this
+# never touches a real dev machine's dotfiles.
+xdg_config_home="/tmp/${output_base_name}_xdg_config"
+mkdir -p "${xdg_config_home}/git"
+cat >"${xdg_config_home}/git/config" <<'EOF'
 [url "https://github.com/"]
     insteadOf = git@github.com:
 EOF
-export GIT_CONFIG_GLOBAL="${git_config_global}"
+export XDG_CONFIG_HOME="${xdg_config_home}"
+_nested_bazel_common_opts+=("--repo_env=XDG_CONFIG_HOME=${xdg_config_home}")
 
 # bazelisk always prepends the directory of its already-resolved binary
 # (a path through its download cache, e.g. .../bazelisk/downloads/sha256/...)

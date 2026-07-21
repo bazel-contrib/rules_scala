@@ -17,10 +17,24 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 #   - php2cpg needs a real `php` binary on PATH.
 #   - rust2cpg needs `cargo`/`rustc` on PATH.
 #   - swiftsrc2cpg times out (its own native toolchain setup, not investigated).
+#
+# jssrc2cpg:tests is medium-sized (300s default) and runs close to that
+# limit even on its own; contending with the rest of this repo's own test
+# suite for CPU on the same CI machine pushes it over. Bump the moderate
+# bucket rather than touch joern's own test size -- and this sh_test's own
+# default ("large", 900s) with it, since the nested run (all 9 frontends,
+# one now taking up to 900s alone) can exceed that in total.
+#
+# Linux-only: on macOS CI, x2cpg/kotlin2cpg/jssrc2cpg run right at this
+# same 900s edge and flip between passing and TIMEOUT run to run --
+# confirmed clean on linux (build #6360), never confirmed stable on macOS.
 downstream_test(
     name = "joern_test",
     repo_name = "joern",
     scala_version = "3.7.4",
+    extra_bazel_flags = "--test_timeout=60,900,900,3600",
+    target_compatible_with = ["@platforms//os:linux"],
+    timeout = "eternal",
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
@@ -37,14 +51,20 @@ downstream_test(
 # Unlike joern above, nothing is excluded here: `caching/util:etcd_suite`,
 # `dicer/common:etcd_bootstrapper_test`, and `dicer/assigner/...` each need
 # a downloaded `etcd_release` binary (`//bazel:etcd.bzl`) hardcoded to a
-# linux-amd64 release, so it should run fine on this repo's own linux-amd64
-# CI -- it only fails locally, with "etcd exited with code 126", on other
-# architectures (e.g. darwin-arm64). Unconfirmed on real CI, though: this
-# target has no active CI trigger yet (still `manual`, see README).
+# linux-amd64 release -- confirmed passing clean on this repo's own
+# linux-amd64 CI (build #6360). Linux-only for that reason: the etcd
+# binary can't run at all on other architectures ("etcd exited with code
+# 126", e.g. darwin-arm64).
+#
+# timeout = "eternal" for the same reason as joern_test above: 163 nested
+# tests, several of them minutes-long, can exceed this sh_test's own default
+# ("large", 900s) in total.
 downstream_test(
     name = "dicer_test",
     repo_name = "dicer",
     scala_version = "2.12.21",
+    target_compatible_with = ["@platforms//os:linux"],
+    timeout = "eternal",
     targets = [
         "//...",
     ],
