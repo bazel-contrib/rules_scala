@@ -18,6 +18,12 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 #   - rust2cpg needs `cargo`/`rustc` on PATH.
 #   - swiftsrc2cpg times out (its own native toolchain setup, not investigated).
 #
+# Windows-incompatible: the driver copies joern's fetched repo out with
+# `cp -R`, and joern's own tree contains symlinks (CLI wrapper scripts,
+# frontend binaries) that Windows can't create without elevated
+# privileges -- fails with "cannot create symbolic link ... No such file
+# or directory" for each one.
+#
 # Two independent timeouts are in play here: extra_bazel_flags's
 # --test_timeout bounds each individual test inside joern's own nested
 # bazel invocation; size bounds this whole sh_test action (git fetch plus
@@ -32,6 +38,10 @@ downstream_test(
     scala_version = "3.7.4",
     extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
     size = "enormous",
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
