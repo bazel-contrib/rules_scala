@@ -1,13 +1,10 @@
 # See README.md in this directory for what these are and how to run one.
 #
-# scala_version below duplicates the pin in the root MODULE.bazel's
-# downstream_consumers.consumer(...) call for the same repo_name, kept in
-# sync by hand -- it can't be load()-ed from the fetched repo instead, since
-# a load() on an external-repo label forces Bazel to fetch that repo just to
-# *load this package*, regardless of the `manual` tag on the targets below.
+# scala_version below must match MODULE.bazel's consumer(...) pin -- can't
+# load() it instead, that would fetch the repo just to load this package.
 load(":downstream_test.bzl", "downstream_test")
 
-exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch", "joern_resolve_timeout.patch"])
+exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 
 # joern is Scala-3-only and uses only scala_library/scala_test throughout its
 # tree.
@@ -21,15 +18,13 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch", "joe
 #
 # macOS-incompatible: unreliable network for this repo's own macOS CI, not
 # joern's fault. Tried excluding just kotlin2cpg/x2cpg (their Gradle
-# download) and bumping maven.install()'s resolve_timeout 600s -> 1800s
-# (see joern_resolve_timeout.patch) for the coursier repin -- builds #6380
-# and #6382 both still timed out repinning @maven, right at whatever the
-# ceiling was. Not chasing a third number; macOS drops joern_test entirely.
+# download) and bumping maven.install()'s coursier-repin resolve_timeout
+# 600s -> 1800s -- builds #6380 and #6382 both still timed out repinning
+# @maven, right at whatever the ceiling was. Not chasing a third number;
+# macOS drops joern_test entirely.
 #
-# Two independent timeouts: extra_bazel_flags's --test_timeout bounds each
-# nested test; size bounds this whole sh_test action. jssrc2cpg hit 1108s
-# under CI contention in build #6372, so moderate is bumped past that.
-# size = "enormous" covers the outer action separately.
+# extra_bazel_flags's --test_timeout bounds each nested test, not size
+# (which bounds this whole sh_test action).
 downstream_test(
     name = "joern_test",
     repo_name = "joern",

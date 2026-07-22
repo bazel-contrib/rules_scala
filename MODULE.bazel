@@ -310,7 +310,6 @@ downstream_consumers = use_extension(
 downstream_consumers.consumer(
     name = "joern",
     commit = "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
-    patches = ["//test/community_build:joern_resolve_timeout.patch"],
     remote = "https://github.com/joernio/joern.git",
 )
 downstream_consumers.consumer(
