@@ -6,11 +6,9 @@ scala_test(
 )
 
 # `b` doesn't declare a dep on scalatest, only on `:a`; scalatest is built into
-# the scala_test rule itself. The test asserting the unused-dependency checker
-# doesn't falsely flag scalatest as an unused dep lives in
-# //test/unused_dependency_checker (not here) so that this package does not
-# load @rules_shell (a dev-only dependency, invisible when rules_scala is
-# consumed as a module) -- matching //test/jmh's precedent.
+# the scala_test rule itself. Its unused-dependency-checker test lives in
+# //test/unused_dependency_checker (not here) so this package doesn't load
+# @rules_shell -- see //test/jmh's precedent.
 scala_test(
     name = "b",
     srcs = ["B.scala"],
