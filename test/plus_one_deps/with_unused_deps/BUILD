@@ -45,6 +45,8 @@ expect_build_failure_test(
     name = "ast_analyzer_unused_deps_strict_deps_error_test",
     build_args = ["--extra_toolchains=//scala:minimal_direct_source_deps"],
     expect = ["expected_unused_dep_error.txt"],
+    # Seen timing out on Windows CI queuing for the shared nested-bazel lock.
+    size = "enormous",
     target = ":a",
 )
 
