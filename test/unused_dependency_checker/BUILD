@@ -72,3 +72,11 @@ expect_build_success_test(
     expect = ["expected_unused_dependency_checker_warning.txt"],
     target = "//test:UnusedDependencyCheckerWarn",
 )
+
+# `target` lives in //test/scala_test, not this package: see the comment above
+# on mode_warn_test.
+expect_build_success_test(
+    name = "ast_analyzer_no_scalatest_unused_dep_warning_test",
+    build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_error"],
+    target = "//test/scala_test:b",
+)

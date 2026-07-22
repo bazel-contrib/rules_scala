@@ -1,0 +1,1 @@
+buildozer 'remove deps //test/plus_one_deps/with_unused_deps:c' //test/plus_one_deps/with_unused_deps:a

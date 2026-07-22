@@ -5,6 +5,10 @@ scala_test(
     srcs = ["A.scala"],
 )
 
+# `b` doesn't declare a dep on scalatest, only on `:a`; scalatest is built into
+# the scala_test rule itself. Its unused-dependency-checker test lives in
+# //test/unused_dependency_checker (not here) so this package doesn't load
+# @rules_shell -- see //test/jmh's precedent.
 scala_test(
     name = "b",
     srcs = ["B.scala"],
