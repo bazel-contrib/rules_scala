@@ -12,26 +12,23 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
 # joern is Scala-3-only and uses only scala_library/scala_test throughout its
 # tree.
 #
-# The following are excluded because each needs something this environment
-# doesn't have -- none of it is rules_scala's concern:
-#   - php2cpg needs a real `php` binary on PATH.
-#   - rust2cpg needs `cargo`/`rustc` on PATH.
-#   - swiftsrc2cpg times out (its own native toolchain setup, not investigated).
+# Excluded everywhere -- none of it is rules_scala's concern: php2cpg needs
+# `php` on PATH, rust2cpg needs `cargo`/`rustc`, swiftsrc2cpg times out (own
+# native toolchain, not investigated).
 #
-# Windows-incompatible: the driver copies joern's fetched repo out with
-# `cp -R`, and joern's own tree contains symlinks (CLI wrapper scripts,
-# frontend binaries) that Windows can't create without elevated
-# privileges -- fails with "cannot create symbolic link ... No such file
-# or directory" for each one.
+# Windows-incompatible: the driver's `cp -R` can't recreate joern's symlinks
+# (CLI wrappers, frontend binaries) without elevated privileges.
 #
-# Two independent timeouts are in play here: extra_bazel_flags's
-# --test_timeout bounds each individual test inside joern's own nested
-# bazel invocation; size bounds this whole sh_test action (git fetch plus
-# all 9 nested frontends combined). Under CI contention, jssrc2cpg
-# (medium, 300s default) and x2cpg/kotlin2cpg (large, 900s default) all
-# run close to their own bucket, so bump moderate and long together
-# rather than touch joern's own test sizes. size = "enormous" covers the
-# outer action's total separately.
+# kotlin2cpg/x2cpg excluded on macOS only: their dependency-resolver-v2
+# tests fetch a ~140MB Gradle distribution over the network, uncached
+# between CI runs, and reliably time out on macOS CI (the same download
+# takes ~8s on a fast connection -- it's the CI network, not CPU). Linux
+# and Windows don't hit this.
+#
+# Two independent timeouts: extra_bazel_flags's --test_timeout bounds each
+# nested test; size bounds this whole sh_test action. jssrc2cpg hit 1108s
+# under CI contention in build #6372, so moderate is bumped past that.
+# size = "enormous" covers the outer action separately.
 downstream_test(
     name = "joern_test",
     repo_name = "joern",
@@ -47,7 +44,13 @@ downstream_test(
         "-//joern-cli/frontends/php2cpg/...",
         "-//joern-cli/frontends/rust2cpg/...",
         "-//joern-cli/frontends/swiftsrc2cpg/...",
-    ],
+    ] + select({
+        "@platforms//os:macos": [
+            "-//joern-cli/frontends/kotlin2cpg/...",
+            "-//joern-cli/frontends/x2cpg/...",
+        ],
+        "//conditions:default": [],
+    }),
 )
 
 # dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
