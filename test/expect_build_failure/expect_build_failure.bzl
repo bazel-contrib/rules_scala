@@ -51,6 +51,11 @@ def _nested_bazel_test(
     args = ["--command", command, "--target", _absolutize(target)]
     if expect_success:
         args += ["--expect-success"]
+
+        # Without a clean, a cached build can silently skip recompiling and
+        # miss printing the warning we're about to check for.
+        if expect or reject:
+            args += ["--clean-before-build"]
     for key in env:
         value = env[key]
         # Same Bourne-tokenization guard as bazel_args below: an env value with a

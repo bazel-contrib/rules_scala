@@ -25,6 +25,15 @@
 #   --bazel-arg       extra option forwarded to the nested `bazel <command>` (e.g.
 #                     `--repo_env=SCALA_VERSION=2.13.18` or `--extra_toolchains=...`);
 #                     repeatable.
+#   --clean-before-build  run `bazel clean` (no --expunge) against the nested
+#                     output base before the real invocation. The caller
+#                     (expect_build_success_test) passes this whenever it also
+#                     has expect/reject files: unlike a failure, a successful
+#                     action can be served from the nested output base's
+#                     on-disk cache on a later run of this same test, silently
+#                     skipping recompilation and so reprinting no output to
+#                     check. `bazel clean` clears that without re-fetching the
+#                     external repos the nested output base keeps warm.
 #   --expect-file     file whose (newline-stripped) contents must appear in the
 #                     output; repeatable.
 #   --reject-file     file whose (newline-stripped) contents must NOT appear in the
@@ -46,6 +55,7 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 target=""
 command="build"
 expect_success="false"
+clean_before_build="false"
 bazel_args=()
 expect_files=()
 reject_files=()
@@ -62,6 +72,10 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --expect-success)
       expect_success="true"
+      shift
+      ;;
+    --clean-before-build)
+      clean_before_build="true"
       shift
       ;;
     --env)
@@ -116,16 +130,7 @@ _resolve_message_file() {
 
 nested_bazel_setup "rules_scala_expect_build_failure_output_base"
 
-# The nested output base's on-disk action cache persists across separate
-# invocations of this same test: a prior run that already built `target` with
-# these exact args can leave a cache hit that silently skips recompilation --
-# fine when we only check the exit code, but a real problem when asserting on
-# output content (below), since a cache hit reprints nothing. `bazel clean`
-# (no --expunge) clears the action cache and build outputs without touching
-# the fetched external repos, so it's cheap and doesn't defeat the shared
-# output base's purpose (see nested_bazel_setup).
-if [[ "${expect_success}" == "true" ]] &&
-  { [[ "${#expect_files[@]}" -gt 0 ]] || [[ "${#reject_files[@]}" -gt 0 ]]; }; then
+if [[ "${clean_before_build}" == "true" ]]; then
   nested_bazel_run clean >/dev/null 2>&1
 fi
 

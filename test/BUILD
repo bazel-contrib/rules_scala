@@ -188,10 +188,9 @@ scala_library(
 )
 
 # The warn-mode test for this fixture lives in //test/unused_dependency_checker
-# (not here) so that this package does not load @rules_shell (a dev-only
-# dependency, invisible when rules_scala is consumed as a module): //test is
-# built by test_dependency_versions.sh as an external-module consumer (e.g.
-# //test:ScalaDocTestLibsOnly).
+# (not here) so this package doesn't load @rules_shell (a dev-only dependency,
+# invisible when rules_scala is consumed as a module) -- see //test/jmh's
+# precedent.
 
 # Test of library without src
 scala_library(
