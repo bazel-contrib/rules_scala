@@ -7,7 +7,7 @@
 # *load this package*, regardless of the `manual` tag on the targets below.
 load(":downstream_test.bzl", "downstream_test")
 
-exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
+exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch", "joern_resolve_timeout.patch"])
 
 # joern is Scala-3-only and uses only scala_library/scala_test throughout its
 # tree.
