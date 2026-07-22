@@ -187,6 +187,11 @@ scala_library(
     ],
 )
 
+# The warn-mode test for this fixture lives in //test/unused_dependency_checker
+# (not here) so this package doesn't load @rules_shell (a dev-only dependency,
+# invisible when rules_scala is consumed as a module) -- see //test/jmh's
+# precedent.
+
 # Test of library without src
 scala_library(
     name = "ExportOnly",

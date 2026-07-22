@@ -144,5 +144,13 @@ nested_bazel_run() {
     cmd=(env "HOME=${_nested_bazel_real_home}" "${cmd[@]}")
   fi
 
-  "${cmd[@]}"
+  # On Windows this script runs under MSYS2 bash, which auto-converts
+  # POSIX-path-looking argv entries before exec'ing a native Windows binary
+  # like bazel.exe. A bare `//pkg:target` label gets corrupted by this (observed:
+  # arrived at Bazel as `/pkg:target`), but `--output_base=/tmp/...` above
+  # *needs* the same conversion to become a real Windows path -- so disabling
+  # it outright (tried first) broke that instead. MSYS2_ARG_CONV_EXCL only
+  # excludes args matching a given prefix, leaving everything else (like
+  # /tmp/...) converted as before.
+  MSYS2_ARG_CONV_EXCL='//' "${cmd[@]}"
 }
