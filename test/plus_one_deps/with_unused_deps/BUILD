@@ -30,18 +30,21 @@ scala_library(
 expect_build_failure_test(
     name = "unused_dep_fails_with_toolchain_unused_error_test",
     build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps_with_unused_error"],
+    expect = ["expected_unused_dep_error.txt"],
     target = ":a",
 )
 
 expect_build_failure_test(
     name = "ast_analyzer_unused_deps_error_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_error"],
+    expect = ["expected_unused_dep_error.txt"],
     target = ":a",
 )
 
 expect_build_failure_test(
     name = "ast_analyzer_unused_deps_strict_deps_error_test",
     build_args = ["--extra_toolchains=//scala:minimal_direct_source_deps"],
+    expect = ["expected_unused_dep_error.txt"],
     target = ":a",
 )
 
