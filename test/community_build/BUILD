@@ -19,11 +19,12 @@ exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch", "joe
 # Windows-incompatible: the driver's `cp -R` can't recreate joern's symlinks
 # (CLI wrappers, frontend binaries) without elevated privileges.
 #
-# kotlin2cpg/x2cpg excluded on macOS only: their dependency-resolver-v2
-# tests fetch a ~140MB Gradle distribution over the network, uncached
-# between CI runs, and reliably time out on macOS CI (the same download
-# takes ~8s on a fast connection -- it's the CI network, not CPU). Linux
-# and Windows don't hit this.
+# macOS-incompatible: unreliable network for this repo's own macOS CI, not
+# joern's fault. Tried excluding just kotlin2cpg/x2cpg (their Gradle
+# download) and bumping maven.install()'s resolve_timeout 600s -> 1800s
+# (see joern_resolve_timeout.patch) for the coursier repin -- builds #6380
+# and #6382 both still timed out repinning @maven, right at whatever the
+# ceiling was. Not chasing a third number; macOS drops joern_test entirely.
 #
 # Two independent timeouts: extra_bazel_flags's --test_timeout bounds each
 # nested test; size bounds this whole sh_test action. jssrc2cpg hit 1108s
@@ -35,22 +36,13 @@ downstream_test(
     scala_version = "3.7.4",
     extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
     size = "enormous",
-    target_compatible_with = select({
-        "@platforms//os:windows": ["@platforms//:incompatible"],
-        "//conditions:default": [],
-    }),
+    target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
         "-//joern-cli/frontends/rust2cpg/...",
         "-//joern-cli/frontends/swiftsrc2cpg/...",
-    ] + select({
-        "@platforms//os:macos": [
-            "-//joern-cli/frontends/kotlin2cpg/...",
-            "-//joern-cli/frontends/x2cpg/...",
-        ],
-        "//conditions:default": [],
-    }),
+    ],
 )
 
 # dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
