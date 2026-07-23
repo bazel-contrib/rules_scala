@@ -12,17 +12,3 @@ toolchain(
     toolchain_type = "//scala:toolchain_type",
     visibility = ["//visibility:public"],
 )
-
-scala_toolchain(
-    name = "plus_one_deps_with_unused_error_impl",
-    dependency_mode = "plus-one",
-    unused_dependency_checker_mode = "error",
-    visibility = ["//visibility:public"],
-)
-
-toolchain(
-    name = "plus_one_deps_with_unused_error",
-    toolchain = "plus_one_deps_with_unused_error_impl",
-    toolchain_type = "//scala:toolchain_type",
-    visibility = ["//visibility:public"],
-)

@@ -1,14 +1,21 @@
-# `//test_expect_failure/scalacopts_invalid:empty` is a `scala_library` with an
-# invalid `-source:not-existing` scalacopt, so it is expected to fail to build.
-# Bazel has no native "expect build failure" rule, so each test drives a nested
-# `bazel build` (per Scala version) via expect_build_failure_test and asserts the
-# compiler error is surfaced cleanly (no raw `ScalacWorker` stack trace).
+# `:empty` is a `scala_library` with an invalid `-source:not-existing` scalacopt,
+# so it is expected to fail to build. Bazel has no native "expect build failure"
+# rule, so each test drives a nested `bazel build` (per Scala version) via
+# expect_build_failure_test and asserts the compiler error is surfaced cleanly
+# (no raw `ScalacWorker` stack trace).
 
+load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
 package(default_testonly = 1)
 
-_TARGET = "//test_expect_failure/scalacopts_invalid:empty"
+# Tagged "manual" so wildcard builds skip this deliberately-broken library.
+scala_library(
+    name = "empty",
+    srcs = ["Empty.scala"],
+    scalacopts = ["-source:not-existing"],
+    tags = ["manual"],
+)
 
 [
     expect_build_failure_test(
@@ -19,7 +26,7 @@ _TARGET = "//test_expect_failure/scalacopts_invalid:empty"
             "expected_failed_to_invoke.txt",
         ],
         reject = ["rejected_scalacworker_stacktrace.txt"],
-        target = _TARGET,
+        target = ":empty",
     )
     for scala_version, version_specific_message in [
         ("2.12.21", "expected_bad_option.txt"),
