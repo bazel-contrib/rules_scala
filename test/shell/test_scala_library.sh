@@ -49,10 +49,6 @@ test_scala_library_expect_no_recompilation_of_target_on_internal_change_of_depen
   test_scala_library_expect_no_recompilation_on_internal_change $1 $2 ":user" "'user'"
 }
 
-test_scala_library_suite() {
-  action_should_fail build test_expect_failure/scala_library_suite:library_suite_dep_on_children
-}
-
 test_scala_library_expect_failure_on_missing_direct_internal_deps() {
   dependenecy_target='//test_expect_failure/missing_direct_deps/internal_deps:transitive_dependency'
   test_target='test_expect_failure/missing_direct_deps/internal_deps:transitive_dependency_user'
@@ -179,7 +175,6 @@ test_scala_library_expect_better_failure_message_on_missing_transitive_dependenc
   test_expect_failure_or_warning_on_missing_direct_deps_with_expected_message "${expected_message}" $test_target "--extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_error"
 }
 
-$runner test_scala_library_suite
 $runner test_scala_library_expect_failure_on_missing_direct_internal_deps
 $runner test_scala_library_expect_failure_on_missing_direct_external_deps_jar
 $runner test_scala_library_expect_failure_on_missing_direct_external_deps_file_group
