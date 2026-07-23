@@ -186,7 +186,7 @@ REPIN=1 nested_bazel_run run --repo_env=SCALA_VERSION="${scala_version}" @maven/
 # (not just a hardcoded "maven_install.json" at the root -- e.g. dicer's
 # lives at "bazel:maven_install.json" instead) actually exists, in case a
 # consumer's own maven.install() ever silently no-ops on repin.
-while IFS= read -r lock_label; do
+grep -oE 'lock_file = "//[^"]*"' MODULE.bazel | sed -E 's/lock_file = "(.*)"/\1/' | while IFS= read -r lock_label; do
   # //bazel:maven_install.json -> bazel/maven_install.json
   # //:maven_install.json -> maven_install.json (root package)
   slash="/"
@@ -197,7 +197,7 @@ while IFS= read -r lock_label; do
     echo "${lockfile} missing (or empty) after repin -- treating as a real failure" >&2
     exit 1
   fi
-done < <(grep -oE 'lock_file = "//[^"]*"' MODULE.bazel | sed -E 's/lock_file = "(.*)"/\1/')
+done
 
 # shellcheck disable=SC2086 # intentional word-splitting: extra_bazel_flags
 # and targets are each meant to expand to multiple words/patterns.
