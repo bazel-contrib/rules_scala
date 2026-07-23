@@ -145,35 +145,36 @@
   },
   "selectedYankedVersions": {},
   "moduleExtensions": {
-    "@@pybind11_bazel+//:internal_configure.bzl%internal_configure_extension": {
+    "//test/community_build:downstream_repository.bzl%downstream_consumers": {
       "general": {
-        "bzlTransitiveDigest": "ITysE3qT9ee8ipAmrQmkGImmq2UkzlEY/ZI2L3+wmI8=",
-        "usagesDigest": "D1r3lfzMuUBFxgG8V6o0bQTLMk3GkaGOaPzw53wrwyw=",
-        "recordedFileInputs": {
-          "@@pybind11_bazel+//MODULE.bazel": "e6f4c20442eaa7c90d7190d8dc539d0ab422f95c65a57cc59562170c58ae3d34"
-        },
+        "bzlTransitiveDigest": "u4XWOdvXQcrc3UcTZHfK+mVfuzHEPHV5LvbJzmr0D/0=",
+        "usagesDigest": "ylTxWZOsS2rL1viJm4oKFPgAglCgWPpVd5YJ+CTGZTU=",
+        "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
-          "pybind11": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
+          "joern": {
+            "bzlFile": "@@//test/community_build:downstream_repository.bzl",
+            "ruleClassName": "_downstream_consumer_repository",
             "attributes": {
-              "build_file": "@@pybind11_bazel+//:pybind11-BUILD.bazel",
-              "strip_prefix": "pybind11-2.12.0",
-              "urls": [
-                "https://github.com/pybind/pybind11/archive/v2.12.0.zip"
+              "remote": "https://github.com/joernio/joern.git",
+              "commit": "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
+              "patches": []
+            }
+          },
+          "dicer": {
+            "bzlFile": "@@//test/community_build:downstream_repository.bzl",
+            "ruleClassName": "_downstream_consumer_repository",
+            "attributes": {
+              "remote": "https://github.com/databricks/dicer.git",
+              "commit": "5cce7985352c51c00890ca1bdb2c3667a3102569",
+              "patches": [
+                "@@//test/community_build:dicer_protobuf_version.patch"
               ]
             }
           }
         },
-        "recordedRepoMappingEntries": [
-          [
-            "pybind11_bazel+",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
+        "recordedRepoMappingEntries": []
       }
     },
     "@@rules_apple+//apple:apple.bzl%provisioning_profile_repository_extension": {
