@@ -1,0 +1,1 @@
+is not under the specified prefix wrong_prefix to strip
