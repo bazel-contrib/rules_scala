@@ -1,5 +1,3 @@
-# Migrated from test/shell/test_scala_library_jar.sh.
-
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
 package(default_testonly = 1)
