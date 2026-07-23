@@ -15,7 +15,7 @@ def downstream_test(
         targets,
         extra_bazel_flags = "",
         size = "large",
-        tags = ["manual", "external", "local", "requires-network"],
+        tags = ["external", "local", "requires-network"],
         **kwargs):
     """Declares an `sh_test` testing `targets` in the `repo_name` external repo.
 
@@ -29,10 +29,7 @@ def downstream_test(
         size: test size; defaults to "large" (nested Bazel invocation, cold
             Maven/git fetch on first run).
         tags: test tags; defaults to
-            `["manual", "external", "local", "requires-network"]`.
-            `manual` keeps this out of `bazel test //...` (this repo's own CI
-            tasks run that wildcard, and cloning + testing a full external
-            project on every PR is slow and network-dependent). `external`
+            `["external", "local", "requires-network"]`. `external`
             disables test-result caching: the nested build reads this
             checkout's *live* source tree via `local_path_override`, so
             rules_scala's sources are code under test without being declared
