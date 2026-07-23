@@ -1,3 +1,0 @@
-package test_expect_failure.scalacopts_invalid
-
-class Empty

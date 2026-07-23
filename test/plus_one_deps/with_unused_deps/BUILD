@@ -1,5 +1,23 @@
 load("//scala:scala.bzl", "scala_library")
+load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+
+# Plus-one dependency mode with the unused-dependency checker set to "error".
+# Registered per-test via `--extra_toolchains` (not by default), so `:a`'s unused
+# direct dep on `:c` is reported as an error.
+scala_toolchain(
+    name = "plus_one_deps_with_unused_error_impl",
+    dependency_mode = "plus-one",
+    unused_dependency_checker_mode = "error",
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "plus_one_deps_with_unused_error",
+    toolchain = "plus_one_deps_with_unused_error_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
 
 # `a` directly depends on both `b` and `c`, but only uses `b` in its source; `c`
 # is also reachable transitively through `b`. Under "plus-one" dependency mode
@@ -29,7 +47,7 @@ scala_library(
 
 expect_build_failure_test(
     name = "unused_dep_fails_with_toolchain_unused_error_test",
-    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps_with_unused_error"],
+    build_args = ["--extra_toolchains=//test/plus_one_deps/with_unused_deps:plus_one_deps_with_unused_error"],
     expect = ["expected_unused_dep_error.txt"],
     target = ":a",
 )
