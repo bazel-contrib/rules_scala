@@ -15,7 +15,7 @@ def downstream_test(
         targets,
         extra_bazel_flags = "",
         size = "large",
-        tags = ["external", "local", "requires-network"],
+        tags = ["external", "local", "requires-network", "no-last-green"],
         **kwargs):
     """Declares an `sh_test` testing `targets` in the `repo_name` external repo.
 
@@ -29,9 +29,9 @@ def downstream_test(
         size: test size; defaults to "large" (nested Bazel invocation, cold
             Maven/git fetch on first run).
         tags: test tags; defaults to
-            `["external", "local", "requires-network"]`. `external`
-            disables test-result caching: the nested build reads this
-            checkout's *live* source tree via `local_path_override`, so
+            `["external", "local", "requires-network", "no-last-green"]`.
+            `external` disables test-result caching: the nested build reads
+            this checkout's *live* source tree via `local_path_override`, so
             rules_scala's sources are code under test without being declared
             inputs of this `sh_test` -- a cached PASS would survive edits to
             them and go stale (the same unsound-caching trap
@@ -40,6 +40,10 @@ def downstream_test(
             a BUILD-file glob's reach). `local` and `requires-network` match
             `expect_build_failure_test`'s rationale -- the nested build
             fetches external repos and must run outside the sandbox.
+            `no-last-green` excludes these from the last_green Bazel CI step
+            (via `--test_tag_filters`): a third-party consumer isn't expected
+            to build against an unreleased Bazel, so failures there are noise,
+            not a rules_scala regression.
         **kwargs: forwarded to the underlying `sh_test`.
     """
     sh_test(

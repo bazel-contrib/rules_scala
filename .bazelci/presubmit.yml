@@ -80,6 +80,10 @@ tasks:
       # (`env: 'bazel': No such file`). Forward the client PATH into test actions
       # so the nested calls find last_green, as released-Bazel steps already do.
       - echo "test --test_env=PATH" >>.bazelrc
+      # Downstream consumer tests aren't expected to build against an
+      # unreleased Bazel; skip them so a green here means an actual
+      # last_green regression, not third-party noise.
+      - echo "test --test_tag_filters=-no-last-green" >>.bazelrc
       - "./test_rules_scala.sh"
     soft_fail:
       - exit_status: "*"
