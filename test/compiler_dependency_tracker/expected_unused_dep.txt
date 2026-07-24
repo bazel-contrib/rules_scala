@@ -1,0 +1,1 @@
+buildozer 'remove deps //test/compiler_dependency_tracker:E' //test/compiler_dependency_tracker:unused_dep
