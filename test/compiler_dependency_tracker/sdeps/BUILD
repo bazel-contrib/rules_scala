@@ -1,4 +1,5 @@
 load("//scala:scala.bzl", "scala_library", "scala_specs2_junit_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_test_success_test")
 
 scala_library(
     name = "only_scala_sources",
@@ -46,6 +47,9 @@ scala_library(
     srcs = ["IgnoredScalaDep.scala"],
 )
 
+# The `.sdeps` resources are only emitted by an ast-plus toolchain, so this test
+# passes only under ast_plus_warn. Tagged "manual" so a wildcard `bazel test`
+# skips it; run explicitly (with the toolchain) by the :sdeps target below.
 scala_specs2_junit_test(
     name = "sdeps_test",
     srcs = ["SdepsTest.scala"],
@@ -54,8 +58,15 @@ scala_specs2_junit_test(
         ":only_scala_sources.sdeps",
     ],
     suffixes = ["Test"],
+    tags = ["manual"],
     deps = [
         "//src/java/io/bazel/rulesscala/scalac/reporter:scala_deps_java_proto",
         "@com_google_protobuf//:protobuf_java",
     ],
+)
+
+expect_test_success_test(
+    name = "sdeps",
+    bazel_args = ["--extra_toolchains=//test/compiler_dependency_tracker:ast_plus_warn"],
+    target = ":sdeps_test",
 )
