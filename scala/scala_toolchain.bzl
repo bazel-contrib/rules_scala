@@ -80,6 +80,7 @@ def _scala_toolchain_impl(ctx):
 
     toolchain = platform_common.ToolchainInfo(
         scalacopts = ctx.attr.scalacopts,
+        plugins = ctx.attr.plugins,
         dep_providers = ctx.attr.dep_providers,
         dependency_mode = dependency_mode,
         strict_deps_mode = strict_deps_mode,
@@ -119,6 +120,10 @@ _scala_toolchain = rule(
     _scala_toolchain_impl,
     attrs = {
         "scalacopts": attr.string_list(),
+        "plugins": attr.label_list(
+            doc = "Compiler plugins to be enabled for all scala targets using this toolchain",
+            allow_files = [".jar"],
+        ),
         "dep_providers": attr.label_list(
             default = _default_dep_providers(),
             providers = [_DepsInfo],

@@ -125,7 +125,12 @@ def _phase_compile(
     jars2labels = p.collect_jars.jars2labels.jars_to_labels
     deps_providers = p.collect_jars.deps_providers
     default_classpath = p.scalac_provider.default_classpath
-    plugins = ctx.attr.plugins
+
+    # Merge toolchain plugins with target-specific plugins
+    toolchain = ctx.toolchains["//scala:toolchain_type"]
+    toolchain_plugins = getattr(toolchain, "plugins", [])
+    plugins = toolchain_plugins + ctx.attr.plugins
+
     additional_outputs = []
     scalacopts = p.scalacopts
 
