@@ -95,11 +95,14 @@ expect_build_failure_test(
 expect_build_failure_test(
     name = "scala_3_fails_for_unused_dep",
     build_args = [
-        # Scala 3 LTS: its compiler runs on Java 8+, unlike recent 3.x (3.8.4's
-        # compiler is Java 17 bytecode). The nested `bazel test //...` runs under
-        # the CI agent's local JDK (Java 11 on the macOS runner), so a newer 3.x
-        # would fail to start there. The bug under test is not version-specific.
-        "--repo_env=SCALA_VERSION=3.3.8",
+        # PROBE (option B): keep 3.8.4 but pin the nested build fully to Java 17
+        # (language + runtime, tool + target) so it is self-consistent regardless
+        # of the outer task's JDK.
+        "--repo_env=SCALA_VERSION=3.8.4",
+        "--java_language_version=17",
+        "--java_runtime_version=17",
+        "--tool_java_language_version=17",
+        "--tool_java_runtime_version=17",
         _AST_PLUS_ERROR,
     ],
     expect = ["expected_unused_dep.txt"],
