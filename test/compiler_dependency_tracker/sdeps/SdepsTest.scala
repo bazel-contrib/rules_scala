@@ -50,7 +50,7 @@ class SdepsTest extends SpecificationWithJUnit {
   }
 
   def loadSdeps(resource: String): util.List[ScalaDeps.Dependency] = {
-    val prefix = "/test_expect_failure/compiler_dependency_tracker/sdeps/"
+    val prefix = "/test/compiler_dependency_tracker/sdeps/"
     val is = getClass.getResourceAsStream(prefix + resource)
     ScalaDeps.Dependencies.parseFrom(is).getDependencyList
   }
