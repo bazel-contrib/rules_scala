@@ -8,11 +8,13 @@ proto_library(
     name = "user",
     srcs = glob(["*.proto"]),
     strip_import_prefix = "",
-    deps = ["//test_expect_failure/proto_source_root/dependency"],
+    deps = ["//test/proto_source_root/dependency"],
 )
 
+# Tagged "manual" so wildcard builds skip it; built by //test/proto_source_root.
 scala_proto_library(
     name = "user_scala",
+    tags = ["manual"],
     visibility = ["//visibility:public"],
     deps = [":user"],
 )
