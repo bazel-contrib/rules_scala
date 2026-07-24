@@ -1,0 +1,1 @@
+buildozer 'add deps //test/compiler_dependency_tracker:E' //test/compiler_dependency_tracker:missing_source_dep
