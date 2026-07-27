@@ -98,7 +98,19 @@ nested_bazel_setup() {
   local parent_output_base
   parent_output_base="$(_nested_bazel_find_parent_output_base)"
 
-  _nested_bazel_output_base="/tmp/${output_base_name}"
+  # Under `bazel test //...` these nested `bazel` invocations would all contend
+  # for a single output base's lock and serialize. Spread them across a few bases,
+  # keyed by a stable hash of the test target, so they run in parallel.
+  local lanes=2
+  local lane=0
+  if [[ -n "${TEST_TARGET:-}" ]]; then
+    # Pick the lane by a cheap stable hash of the target: cksum prints
+    # "<CRC32> <byte count>", so take the CRC and reduce it modulo the lane count.
+    local target_crc
+    target_crc="$(printf '%s' "${TEST_TARGET}" | cksum | cut -d' ' -f1)"
+    lane=$((target_crc % lanes))
+  fi
+  _nested_bazel_output_base="/tmp/${output_base_name}_lane${lane}"
   mkdir -p "${_nested_bazel_output_base}"
   cd "${NESTED_BAZEL_WORKSPACE}"
 
@@ -123,6 +135,9 @@ nested_bazel_setup() {
   # Keep the nested build's convenience symlinks out of the workspace so they do
   # not clobber the parent invocation's `bazel-bin` etc.
   _nested_bazel_common_opts+=("--symlink_prefix=${_nested_bazel_output_base}/convenience_symlinks/")
+  # Shared across the lanes so they reuse each other's compiled actions instead of
+  # each rebuilding the toolchain from scratch.
+  _nested_bazel_common_opts+=("--disk_cache=/tmp/${output_base_name}_disk_cache")
 }
 
 # Runs `bazel <subcommand> [args...]` against the nested output base, inserting
