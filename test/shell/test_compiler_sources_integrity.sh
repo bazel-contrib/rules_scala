@@ -39,14 +39,6 @@ setup_suite() {
   original_dir="$PWD"
   cd "${dir}/test/compiler_sources_integrity"
 
-  local bk_bazel_rc="${dir}/tools/bazel.rc"
-
-  if [[ -f "$bk_bazel_rc" ]]; then
-    # test_rules_scala_jdk21 from .bazelci/presubmit.yml needs this.
-    mkdir tools
-    cp "${bk_bazel_rc}" tools/
-  fi
-
   # The behavior we're testing must not rely on repos generated during previous
   # builds or test runs.
   _clean

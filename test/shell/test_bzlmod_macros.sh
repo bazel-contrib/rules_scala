@@ -30,14 +30,6 @@ setup_suite() {
   test_srcs_dir="${dir}/scala/private/macros/test"
   test_tmpdir_base="${test_tmpdir##*/}"
   test_module_bazel_regex="[^ ]+${test_tmpdir_base}/MODULE.bazel"
-
-  local bk_bazel_rc="${dir}/tools/bazel.rc"
-
-  if [[ -f "$bk_bazel_rc" ]]; then
-    # test_rules_scala_jdk21 from .bazelci/presubmit.yml needs this.
-    mkdir tools
-    cp "${bk_bazel_rc}" tools/
-  fi
 }
 
 teardown_suite() {

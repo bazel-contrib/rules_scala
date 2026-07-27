@@ -15,9 +15,6 @@ tasks:
     # analysis) and are exercised explicitly by the shell scripts instead.
     name: "bazel build //... --nobuild"
     platform: ubuntu2004
-    shell_commands:
-      - mv tools/bazel.rc.buildkite tools/bazel.rc
-      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_flags:
       - "--nobuild"
     build_targets:
@@ -26,9 +23,6 @@ tasks:
   ubuntu2004:
     name: "bazel test //..."
     platform: ubuntu2004
-    shell_commands:
-      - mv tools/bazel.rc.buildkite tools/bazel.rc
-      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_targets:
       # Build everything buildable, not just //test/.... The only wildcard
       # exclusion is test_expect_failure/, whose targets are negative tests
@@ -47,10 +41,6 @@ tasks:
   macos:
     name: "bazel test //..."
     platform: macos
-    shell_commands:
-      # Disable local disk caching on CI.
-      - mv tools/bazel.rc.buildkite tools/bazel.rc
-      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
     build_targets:
       - "//..."
       - "-//test_expect_failure/..."
@@ -156,8 +146,6 @@ tasks:
     platform: ubuntu2004
     shell_commands:
       - sudo apt update && sudo apt install -y libxml2-utils
-      - mv tools/bazel.rc.buildkite tools/bazel.rc
-      - echo "import %workspace%/tools/bazel.rc" > .bazelrc
       - echo "build --java_language_version=21" >> .bazelrc
       - echo "build --java_runtime_version=21" >> .bazelrc
       - echo "build --tool_java_language_version=21" >> .bazelrc
