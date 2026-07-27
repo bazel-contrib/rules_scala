@@ -98,7 +98,16 @@ nested_bazel_setup() {
   local parent_output_base
   parent_output_base="$(_nested_bazel_find_parent_output_base)"
 
-  _nested_bazel_output_base="/tmp/${output_base_name}"
+  # PROBE: spread nested invocations across K output bases (each with its own
+  # lock), keyed by a stable hash of the test target, so they run in parallel
+  # instead of serializing on one shared lock. The shared --disk_cache (below)
+  # lets the lanes reuse each other's compiled actions, bounding the extra cost.
+  local lanes=4
+  local lane=0
+  if [[ -n "${TEST_TARGET:-}" ]]; then
+    lane=$(( $(printf '%s' "${TEST_TARGET}" | cksum | cut -d' ' -f1) % lanes ))
+  fi
+  _nested_bazel_output_base="/tmp/${output_base_name}_lane${lane}"
   mkdir -p "${_nested_bazel_output_base}"
   cd "${NESTED_BAZEL_WORKSPACE}"
 
@@ -123,6 +132,9 @@ nested_bazel_setup() {
   # Keep the nested build's convenience symlinks out of the workspace so they do
   # not clobber the parent invocation's `bazel-bin` etc.
   _nested_bazel_common_opts+=("--symlink_prefix=${_nested_bazel_output_base}/convenience_symlinks/")
+  # PROBE: shared across all lanes so parallel output bases reuse each other's
+  # compiled actions instead of each redoing the toolchain build.
+  _nested_bazel_common_opts+=("--disk_cache=/tmp/${output_base_name}_disk_cache")
 }
 
 # Runs `bazel <subcommand> [args...]` against the nested output base, inserting
