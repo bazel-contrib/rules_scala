@@ -102,7 +102,7 @@ nested_bazel_setup() {
   # lock), keyed by a stable hash of the test target, so they run in parallel
   # instead of serializing on one shared lock. The shared --disk_cache (below)
   # lets the lanes reuse each other's compiled actions, bounding the extra cost.
-  local lanes=4
+  local lanes=2
   local lane=0
   if [[ -n "${TEST_TARGET:-}" ]]; then
     lane=$(( $(printf '%s' "${TEST_TARGET}" | cksum | cut -d' ' -f1) % lanes ))
