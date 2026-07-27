@@ -1,5 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_binary")
 load("//scala:scala.bzl", "scala_binary", "scala_library")
+load("//test:no_exec_config_deps_test.bzl", "no_exec_config_deps_test")
 load("//test/src/main/scala/scalarules/test/twitter_scrooge:twitter_scrooge_test.bzl", "twitter_scrooge_test_suite")
 load("//twitter_scrooge:twitter_scrooge.bzl", "scrooge_java_library", "scrooge_scala_library")
 
@@ -225,11 +226,16 @@ scala_library(
 )
 
 scala_binary(
-    name = "test_binary_to_ensure_no_host_deps",
+    name = "test_binary_to_ensure_no_exec_deps",
     main_class = "scalarules.test.twitter_scrooge.JustScrooge2b",
     deps = [
         ":justscrooge2b",
     ],
+)
+
+no_exec_config_deps_test(
+    name = "no_exec_deps_test",
+    target_under_test = ":test_binary_to_ensure_no_exec_deps",
 )
 
 scala_binary(
