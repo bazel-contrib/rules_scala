@@ -132,7 +132,10 @@ def _nested_bazel_test(
         srcs = [_HELPER],
         args = args,
         data = deduped_data,
-        tags = tags,
+        # Each of these runs a nested `bazel` that takes the shared nested output
+        # base's lock. Run them one at a time (`exclusive`) so they do not queue
+        # behind each other and blow the test timeout.
+        tags = tags + ["exclusive"],
         **kwargs
     )
 
