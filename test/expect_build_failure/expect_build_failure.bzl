@@ -132,7 +132,10 @@ def _nested_bazel_test(
         srcs = [_HELPER],
         args = args,
         data = deduped_data,
-        tags = tags,
+        # EXPERIMENT (do not merge): gate how many nested tests run at once via a
+        # custom resource instead of `exclusive`, so the queue wait sits in the
+        # scheduler (not against each test's timeout) while keeping one output base.
+        tags = tags + ["resources:bazel_instance:1"],
         **kwargs
     )
 
