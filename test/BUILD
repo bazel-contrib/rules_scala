@@ -15,6 +15,7 @@ load(
 )
 load("//scala:scala_cross_version.bzl", "repositories")
 load(":check_statsfile.bzl", "check_statsfile")
+load(":no_exec_config_deps_test.bzl", "detects_exec_config_deps_test", "exec_config_dep_leak")
 load(":env_vars.bzl", "env_vars")
 
 package(
@@ -27,6 +28,13 @@ _JUNIT_DEPS = repositories(
     [
         "@io_bazel_rules_scala_junit_junit",
     ],
+)
+
+exec_config_dep_leak(name = "exec_config_dep_leak")
+
+detects_exec_config_deps_test(
+    name = "detects_exec_config_deps_test",
+    target_under_test = ":exec_config_dep_leak",
 )
 
 # The examples below show how to combine Scala and Java rules.
