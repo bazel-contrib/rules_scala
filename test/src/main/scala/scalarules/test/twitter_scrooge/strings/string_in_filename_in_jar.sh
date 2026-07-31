@@ -22,7 +22,15 @@ fi
 
 dir="$(dirname $4)"
 jar_file="$dir/$2"
-jar tf ${jar_file} | grep -q $3
+
+# A jar that could not be read prints an empty listing, which is what a jar
+# missing the name looks like, so a "false" expectation would pass for free.
+if ! jar_listing="$(jar tf "${jar_file}")" ; then
+  echo "ERROR: Could not list ${jar_file}."
+  exit 1
+fi
+
+printf '%s\n' "${jar_listing}" | grep -q $3
 file_is_in_jar=$?
 
 if [ $file_is_in_jar -eq 0 ] ; then
