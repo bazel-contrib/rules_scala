@@ -1,0 +1,1 @@
+buildozer 'remove deps //test/compiler_dependency_tracker/sdeps:scala_unused_dep' //test/compiler_dependency_tracker/sdeps:only_scala_sources

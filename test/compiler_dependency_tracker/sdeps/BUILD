@@ -1,5 +1,5 @@
 load("//scala:scala.bzl", "scala_library", "scala_specs2_junit_test")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_test_success_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_test_success_test")
 
 # Both carry an unused dep, which only warns under ast_plus_warn and errors under
 # the default toolchain, so a wildcard build must skip them.
@@ -67,6 +67,14 @@ scala_specs2_junit_test(
         "//src/java/io/bazel/rulesscala/scalac/reporter:scala_deps_java_proto",
         "@com_google_protobuf//:protobuf_java",
     ],
+)
+
+# Pins the reason the fixtures are tagged manual: the unused dep they carry for
+# the sdeps test is an error under the default toolchain.
+expect_build_failure_test(
+    name = "unused_dep_fails_under_default_toolchain",
+    expect = ["expected_unused_dep.txt"],
+    target = ":only_scala_sources",
 )
 
 expect_test_success_test(
