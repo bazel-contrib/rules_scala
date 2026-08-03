@@ -124,6 +124,29 @@ sh_test(
     ],
 )
 
+genrule(
+    name = "fake_signed_jar",
+    srcs = ["fake_signature.txt"],
+    outs = ["fake_signed.jar"],
+    cmd = "$(location @bazel_tools//tools/zip:zipper) c $@ META-INF/FOO.RSA=$(location fake_signature.txt)",
+    tools = ["@bazel_tools//tools/zip:zipper"],
+)
+
+sh_test(
+    name = "no_sig_required_failures",
+    srcs = ["no_sigs_required_failures.sh"],
+    args = [
+        "$(rootpath no_sigs.sh)",
+        "$(rootpath :jar_lister)",
+        "$(rootpath :fake_signed_jar)",
+    ],
+    data = [
+        "no_sigs.sh",
+        ":fake_signed_jar",
+        ":jar_lister",
+    ],
+)
+
 py_binary(
     name = "py_resource_binary",
     srcs = ["py_resource.py"],

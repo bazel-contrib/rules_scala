@@ -1,0 +1,2 @@
+Filler for a jar entry named META-INF/*.RSA. A real signature block is PKCS#7;
+no_sigs.sh only looks at entry names, so the content never matters.
