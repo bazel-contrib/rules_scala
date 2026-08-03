@@ -12,6 +12,7 @@ load(
     "//scala_proto:scala_proto_toolchain.bzl",
     "scala_proto_toolchain",
 )
+load("//test:no_exec_config_deps_test.bzl", "no_exec_config_deps_test")
 load(":default_outputs_test.bzl", "default_outputs_test")
 
 scala_proto_toolchain(
@@ -124,10 +125,15 @@ scala_proto_library(
 )
 
 scala_binary(
-    name = "test_binary_to_ensure_no_host_deps",
+    name = "test_binary_to_ensure_no_exec_deps",
     main_class = "a.b.c",
     visibility = ["//visibility:public"],
     deps = [":test_proto_nogrpc"],
+)
+
+no_exec_config_deps_test(
+    name = "no_exec_deps_test",
+    target_under_test = ":test_binary_to_ensure_no_exec_deps",
 )
 
 scala_proto_library(
