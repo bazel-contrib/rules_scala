@@ -20,7 +20,7 @@ if test "$should_be_in_file" != "true" -a "$should_be_in_file" != "false" ; then
   exit 1
 fi
 
-dir="$(dirname $4)"
+dir="$(dirname "$4")"
 jar_file="$dir/$2"
 
 # A jar that could not be read prints an empty listing, which is what a jar
@@ -30,8 +30,14 @@ if ! jar_listing="$(jar tf "${jar_file}")" ; then
   exit 1
 fi
 
-printf '%s\n' "${jar_listing}" | grep -q $3
+printf '%s\n' "${jar_listing}" | grep -qF -- "$3"
 file_is_in_jar=$?
+
+# grep exits 2 on error, which the "false" branch below would accept as a pass.
+if [ $file_is_in_jar -gt 1 ] ; then
+  echo "ERROR: Could not search ${jar_file} for $3."
+  exit 1
+fi
 
 if [ $file_is_in_jar -eq 0 ] ; then
   if test "$should_be_in_file" = "true" ; then
