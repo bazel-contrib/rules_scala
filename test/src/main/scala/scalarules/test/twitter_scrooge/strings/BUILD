@@ -29,6 +29,13 @@ sh_test(
 )
 
 sh_test(
+    name = "string_in_file_required_failures",
+    srcs = ["string_in_file_required_failures.sh"],
+    args = ["$(rootpath string_in_file.sh)"],
+    data = ["string_in_file.sh"],
+)
+
+sh_test(
     name = "java_jar_on_classpath_in_scrooges",
     srcs = ["string_in_file.sh"],
     args = [
