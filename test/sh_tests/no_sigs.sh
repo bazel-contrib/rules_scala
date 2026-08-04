@@ -3,7 +3,9 @@
 set -euo pipefail
 
 lister="$1"
-jar="$2"
+# The py_binary launcher does not run with the test's working directory on
+# Windows, so a rootpath argument has to be made absolute before it is passed on.
+jar="${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/$2"
 
 # A listing that never got produced looks the same as a jar without signature
 # files, so a lister that failed would pass this test for free.
