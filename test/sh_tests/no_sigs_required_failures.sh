@@ -9,7 +9,7 @@ signed_jar="$3"
 expect_rejected() {
   local jar="$1" expected="$2" output
 
-  if output="$("${script}" "${lister}" "${jar}" 2>&1)" ; then
+  if output="$(bash "${script}" "${lister}" "${jar}" 2>&1)" ; then
     echo "ERROR: ${script} accepted ${jar}. Output: ${output}" >&2
     exit 1
   fi

@@ -128,7 +128,7 @@ genrule(
     name = "fake_signed_jar",
     srcs = ["fake_signature.txt"],
     outs = ["fake_signed.jar"],
-    cmd = "$(location @bazel_tools//tools/zip:zipper) c $@ META-INF/FOO.RSA=$(location fake_signature.txt)",
+    cmd = "$(execpath @bazel_tools//tools/zip:zipper) c $@ META-INF/FOO.RSA=$(execpath fake_signature.txt)",
     tools = ["@bazel_tools//tools/zip:zipper"],
 )
 
