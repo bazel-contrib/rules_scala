@@ -4,6 +4,8 @@ load("//scala:scala.bzl", "scala_test")
 
 package(default_testonly = 1)
 
+exports_files(["string_in_filename_in_jar.sh"])
+
 genrule(
     name = "MixJavaScalaLibTestOutputs",
     outs = ["mix_java_scala_lib_test_rule_outputs.txt"],

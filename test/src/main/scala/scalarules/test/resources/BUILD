@@ -1,3 +1,4 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_library", "scala_specs2_junit_test", "scala_test")
 
 scala_library(
@@ -13,6 +14,32 @@ scala_library(
 filegroup(
     name = "resource-fg",
     srcs = glob(["**/*.txt"]),
+)
+
+sh_test(
+    name = "direct_file_resources_in_jar_without_srcs",
+    size = "small",
+    srcs = ["//test/sh_tests:string_in_filename_in_jar.sh"],
+    args = [
+        "true",
+        "noSrcsWithDirectFileResources.jar",
+        "resource.txt",
+        "$(rootpath :noSrcsWithDirectFileResources.jar)",
+    ],
+    data = [":noSrcsWithDirectFileResources.jar"],
+)
+
+sh_test(
+    name = "filegroup_resources_in_jar_without_srcs",
+    size = "small",
+    srcs = ["//test/sh_tests:string_in_filename_in_jar.sh"],
+    args = [
+        "true",
+        "noSrcsWithFilegroupResources.jar",
+        "resource.txt",
+        "$(rootpath :noSrcsWithFilegroupResources.jar)",
+    ],
+    data = [":noSrcsWithFilegroupResources.jar"],
 )
 
 scala_specs2_junit_test(
