@@ -29,6 +29,13 @@ sh_test(
 )
 
 sh_test(
+    name = "string_in_file_required_failures",
+    srcs = ["string_in_file_required_failures.sh"],
+    args = ["$(rootpath string_in_file.sh)"],
+    data = ["string_in_file.sh"],
+)
+
+sh_test(
     name = "java_jar_on_classpath_in_scrooges",
     srcs = ["string_in_file.sh"],
     args = [
@@ -41,7 +48,7 @@ sh_test(
 
 sh_test(
     name = "thrift999_in_namespace_in_java_jar",
-    srcs = ["string_in_filename_in_jar.sh"],
+    srcs = ["//test/sh_tests:string_in_filename_in_jar.sh"],
     args = [
         "true",
         "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
@@ -53,7 +60,7 @@ sh_test(
 
 sh_test(
     name = "thrift5_not_in_namespace_in_java_jar",
-    srcs = ["string_in_filename_in_jar.sh"],
+    srcs = ["//test/sh_tests:string_in_filename_in_jar.sh"],
     args = [
         "false",
         "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
