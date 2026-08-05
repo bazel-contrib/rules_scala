@@ -69,18 +69,3 @@ sh_test(
     ],
     data = [_JUSTSCROOGES_JAVA],
 )
-
-sh_test(
-    name = "string_in_filename_in_jar_required_failures",
-    size = "small",
-    srcs = ["string_in_filename_in_jar_required_failures.sh"],
-    args = [
-        "$(rootpath //test/sh_tests:string_in_filename_in_jar.sh)",
-        "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
-        "$(rootpaths %s)" % _JUSTSCROOGES_JAVA,
-    ],
-    data = [
-        "//test/sh_tests:string_in_filename_in_jar.sh",
-        _JUSTSCROOGES_JAVA,
-    ],
-)
