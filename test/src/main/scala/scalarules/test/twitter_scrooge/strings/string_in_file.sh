@@ -19,7 +19,17 @@ if test "$should_be_in_file" != "true" -a "$should_be_in_file" != "false" ; then
   exit 1
 fi
 
-if grep -q $2 $3 ; then
+grep -q $2 $3
+string_is_in_file=$?
+
+# grep exits 2 when it could not read the file, which lands in the same branch
+# as "not found", so a "false" expectation would pass for free.
+if [ $string_is_in_file -gt 1 ] ; then
+  echo "ERROR: Could not search $3 for $2."
+  exit 1
+fi
+
+if [ $string_is_in_file -eq 0 ] ; then
   if test "$should_be_in_file" = "true" ; then
     exit 0
   else
