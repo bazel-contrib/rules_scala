@@ -106,6 +106,24 @@ sh_test(
     ],
 )
 
+# Checks that string_in_filename_in_jar.sh (which tests for a filename inside
+# a jar) itself fails loudly when its inputs are bad, instead of reporting a
+# false pass.
+sh_test(
+    name = "string_in_filename_in_jar_required_failures",
+    size = "small",
+    srcs = ["string_in_filename_in_jar_required_failures.sh"],
+    args = [
+        "$(rootpath string_in_filename_in_jar.sh)",
+        "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
+        "$(rootpaths //test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_java)",
+    ],
+    data = [
+        "string_in_filename_in_jar.sh",
+        "//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_java",
+    ],
+)
+
 py_binary(
     name = "py_resource_binary",
     srcs = ["py_resource.py"],
