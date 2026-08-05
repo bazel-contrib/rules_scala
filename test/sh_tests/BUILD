@@ -106,6 +106,9 @@ sh_test(
     ],
 )
 
+# Checks that string_in_filename_in_jar.sh (which tests for a filename inside
+# a jar) itself fails loudly when its inputs are bad, instead of reporting a
+# false pass.
 sh_test(
     name = "string_in_filename_in_jar_required_failures",
     size = "small",
