@@ -56,7 +56,11 @@ _PASSING = "--extra_toolchains=//test/toolchains/scala_test_jvm_flags:passing_sc
 
 expect_test_failure_test(
     name = "scala_test_jvm_flags_from_toolchain_fails_test",
-    bazel_args = [_FAILING],
+    bazel_args = [
+        _FAILING,
+        "--test_output=errors",
+    ],
+    expect = ["expected_too_small_heap.txt"],
     target = ":empty_test",
 )
 
