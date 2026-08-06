@@ -1,0 +1,1 @@
+Classpath resource file classpath-resource has a namespace conflict with another file: classpath-resource
