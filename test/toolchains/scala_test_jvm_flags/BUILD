@@ -34,15 +34,18 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 
-# This and `empty_overriding_test` are tagged "manual" so wildcard test runs skip
-# them. They pass under the default toolchain too, so the tag saves a redundant
-# run rather than avoiding a failure.
+# A trivial passing test; under the failing toolchain above its JVM can't start,
+# so `bazel test` fails. Tagged "manual" so wildcard test runs skip the fixture
+# (with the default toolchain it would just pass); the sh_test drives a nested
+# `bazel test` with the failing toolchain and asserts the failure.
 scala_test(
     name = "empty_test",
     srcs = ["EmptyTest.scala"],
     tags = ["manual"],
 )
 
+# Rule-level `jvm_flags` overrides the toolchain's, so this passes even under
+# `failing_scala_toolchain`.
 scala_test(
     name = "empty_overriding_test",
     srcs = ["EmptyTest.scala"],

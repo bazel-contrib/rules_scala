@@ -36,15 +36,19 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 
-# This and the fixtures below it are tagged "manual" so wildcard builds skip
-# them. They compile under the default toolchain too, so the tag saves a
-# redundant build rather than avoiding a failure.
+# `failing_scala_toolchain` sets scalac_jvm_flags = ["-Xmx1M"], which is not
+# enough heap for scalac, so `empty_build` fails to compile when that toolchain
+# is registered. `empty_build` compiles fine under the default toolchain, so it
+# is tagged "manual" to keep it out of wildcard builds; the sh_test registers
+# the failing toolchain via --extra_toolchains in a nested `bazel build`.
 scala_library(
     name = "empty_build",
     srcs = ["Empty.scala"],
     tags = ["manual"],
 )
 
+# Rule-level `scalac_jvm_flags` overrides the toolchain's, so this compiles even
+# under `failing_scala_toolchain`.
 scala_library(
     name = "empty_overriding_build",
     srcs = ["Empty.scala"],
