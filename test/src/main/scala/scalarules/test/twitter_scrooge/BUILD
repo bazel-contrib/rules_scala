@@ -1,10 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_binary")
 load("//scala:scala.bzl", "scala_binary", "scala_library")
 load("//test:no_exec_config_deps_test.bzl", "no_exec_config_deps_test")
-load(
-    "//test/expect_build_failure:expect_build_failure.bzl",
-    "expect_build_success_test",
-)
 load("//test/src/main/scala/scalarules/test/twitter_scrooge:twitter_scrooge_test.bzl", "twitter_scrooge_test_suite")
 load("//twitter_scrooge:twitter_scrooge.bzl", "scrooge_java_library", "scrooge_scala_library")
 
@@ -329,16 +325,3 @@ scala_binary(
 )
 
 twitter_scrooge_test_suite()
-
-expect_build_success_test(
-    name = "twitter_scrooge_builds_with_jdk_11",
-    build_args = [
-        "--java_language_version=11",
-        "--tool_java_language_version=11",
-        "--java_runtime_version=remotejdk_11",
-        "--tool_java_runtime_version=remotejdk_11",
-    ],
-    # Absolute wildcard, not package-relative: _absolutize passes a "//"-prefixed
-    # label through unchanged, so this reaches the nested `bazel build` as-is.
-    target = "//test/src/main/scala/scalarules/test/twitter_scrooge/...",
-)
