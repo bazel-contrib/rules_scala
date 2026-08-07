@@ -147,7 +147,7 @@ def expect_build_failure_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
         **kwargs):
     """Declares an `sh_test` asserting that `bazel build` of `target` fails.
 
@@ -171,7 +171,7 @@ def expect_build_failure_test(
             the build output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"` (the nested Bazel invocation is
             slow and, on a cold cache, serializes on the shared output base).
-        tags: test tags; defaults to `["local", "requires-network"]` because the
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]` because the
             nested `bazel build` fetches external repos and must run outside the
             sandbox.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
@@ -199,7 +199,7 @@ def expect_build_success_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
         **kwargs):
     """Declares an `sh_test` asserting that `bazel build` of `target` succeeds.
 
@@ -228,7 +228,7 @@ def expect_build_success_test(
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the build output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"`.
-        tags: test tags; defaults to `["local", "requires-network"]`.
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -255,7 +255,7 @@ def expect_test_failure_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
         **kwargs):
     """Declares an `sh_test` asserting that `bazel test`/`coverage` of `target` fails.
 
@@ -278,7 +278,7 @@ def expect_test_failure_test(
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"`.
-        tags: test tags; defaults to `["local", "requires-network"]`.
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -305,7 +305,7 @@ def expect_test_success_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
         **kwargs):
     """Declares an `sh_test` asserting that `bazel test` of `target` succeeds.
 
@@ -331,7 +331,7 @@ def expect_test_success_test(
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"`.
-        tags: test tags; defaults to `["local", "requires-network"]`.
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
