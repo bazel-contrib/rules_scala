@@ -127,6 +127,16 @@ sh_test(
     ],
 )
 
+# Checks that string_in_file.sh itself fails loudly when it can't read the
+# file, instead of reporting a false pass.
+sh_test(
+    name = "string_in_file_required_failures",
+    size = "small",
+    srcs = ["string_in_file_required_failures.sh"],
+    args = ["$(rootpath string_in_file.sh)"],
+    data = ["string_in_file.sh"],
+)
+
 genrule(
     name = "fake_signed_jar",
     srcs = ["fake_signature.txt"],
