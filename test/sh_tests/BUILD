@@ -4,7 +4,10 @@ load("//scala:scala.bzl", "scala_test")
 
 package(default_testonly = 1)
 
-exports_files(["string_in_filename_in_jar.sh"])
+exports_files([
+    "string_in_file.sh",
+    "string_in_filename_in_jar.sh",
+])
 
 genrule(
     name = "MixJavaScalaLibTestOutputs",
