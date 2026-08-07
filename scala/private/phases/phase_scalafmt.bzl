@@ -74,9 +74,9 @@ def _write_empty_content(ctx, output_runner):
 
 def _format_args(ctx, src, file):
     args = ctx.actions.args()
-    args.add(ctx.file.config.path)
-    args.add(src.path)
-    args.add(file.path)
+    args.add(ctx.file.config)
+    args.add(src)
+    args.add(file)
     args.set_param_file_format("multiline")
     args.use_param_file("@%s", use_always = True)
     return args

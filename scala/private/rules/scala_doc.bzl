@@ -99,7 +99,10 @@ def _scala_doc_impl(ctx):
     args.add("-usejavacp")
     args.add("-nowarn")  # turn off warnings for now since they can obscure actual errors for large scala_doc targets
     args.add_all(ctx.attr.scalacopts)
-    args.add("-d", output_path.path)
+    # output_path is a directory, and Args#add rejects those because they may expand to
+    # multiple values. add_all with expand_directories = False passes it as one mapped path.
+    args.add("-d")
+    args.add_all([output_path], expand_directories = False)
     args.add_all(plugins, format_each = "-Xplugin:%s")
     args.add_joined("-classpath", classpath, join_with = ctx.configuration.host_path_separator)
     args.add_all(src_files)

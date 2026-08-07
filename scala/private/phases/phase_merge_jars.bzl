@@ -20,7 +20,7 @@ def merge_jars_to_output(ctx, output, jars):
 
     if main_class:
         args.add_all(["--main_class", main_class])
-    args.add_all(["--output", output.path])
+    args.add("--output", output)
 
     args.set_param_file_format("multiline")
     args.use_param_file("@%s")
