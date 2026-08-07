@@ -1,0 +1,42 @@
+load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load("//scala:scala.bzl", "scala_library")
+
+# Toolchain WITH the kind-projector plugin
+scala_toolchain(
+    name = "with_plugin_impl",
+    plugins = ["@org_typelevel_kind_projector//jar"],
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "with_plugin",
+    toolchain = ":with_plugin_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
+# Toolchain WITHOUT the plugin (but otherwise identical)
+scala_toolchain(
+    name = "without_plugin_impl",
+    # No plugins attribute
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "without_plugin",
+    toolchain = ":without_plugin_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
+# Test that requires kind-projector plugin
+scala_library(
+    name = "requires_plugin",
+    srcs = ["RequiresPlugin.scala"],
+)
+
+# Test that doesn't require any plugin
+scala_library(
+    name = "no_plugin_needed",
+    srcs = ["NoPlugin.scala"],
+)
