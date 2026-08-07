@@ -34,10 +34,11 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 
-# A trivial passing test; under the failing toolchain above its JVM can't start,
-# so `bazel test` fails. Tagged "manual" so wildcard test runs skip the fixture
-# (with the default toolchain it would just pass); the sh_test drives a nested
-# `bazel test` with the failing toolchain and asserts the failure.
+# A trivial passing test; under `failing_scala_toolchain` its JVM can't start, so
+# `bazel test` fails. Tagged "manual" so wildcard test runs skip the fixture (it
+# passes under the default toolchain too); the two tests below drive a nested
+# `bazel test` with `failing_scala_toolchain` and `passing_scala_toolchain`
+# respectively.
 scala_test(
     name = "empty_test",
     srcs = ["EmptyTest.scala"],

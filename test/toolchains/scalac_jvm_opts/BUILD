@@ -39,8 +39,9 @@ toolchain(
 # `failing_scala_toolchain` sets scalac_jvm_flags = ["-Xmx1M"], which is not
 # enough heap for scalac, so `empty_build` fails to compile when that toolchain
 # is registered. `empty_build` compiles fine under the default toolchain, so it
-# is tagged "manual" to keep it out of wildcard builds; the sh_test registers
-# the failing toolchain via --extra_toolchains in a nested `bazel build`.
+# is tagged "manual" to keep it out of wildcard builds; the two tests below
+# register `failing_scala_toolchain` and `passing_scala_toolchain` respectively
+# via --extra_toolchains in a nested `bazel build`.
 scala_library(
     name = "empty_build",
     srcs = ["Empty.scala"],
