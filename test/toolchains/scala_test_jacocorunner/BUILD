@@ -36,7 +36,11 @@ expect_test_failure_test(
     # Jacoco coverage support is not implemented on Windows (mirrors the
     # is_windows guard in the former test/shell/test_scala_jacocorunner.sh).
     command = "coverage",
-    bazel_args = ["--extra_toolchains=//test/toolchains/scala_test_jacocorunner:failing_scala_toolchain"],
+    bazel_args = [
+        "--extra_toolchains=//test/toolchains/scala_test_jacocorunner:failing_scala_toolchain",
+        "--test_output=errors",
+    ],
+    expect = ["expected_missing_jacocorunner.txt"],
     target = ":empty_test",
     target_compatible_with = select({
         "@platforms//os:windows": ["@platforms//:incompatible"],
