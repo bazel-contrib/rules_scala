@@ -1,5 +1,9 @@
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load(
+    "//test/expect_build_failure:expect_build_failure.bzl",
+    "expect_build_success_test",
+)
 load("//test/semanticdb:rules.bzl", "semanticdb_vars_script")
 
 scala_toolchain(
@@ -75,3 +79,26 @@ scala_library(
         allow_empty = True,
     ),
 )
+
+# Scala versions the toolchain_deps semanticdb classpath is resolved against,
+# mirroring test/shell/scala_versions.sh.
+_TOOLCHAIN_DEPS_SCALA_VERSIONS = [
+    "2.12.21",
+    "2.13.18",
+    "3.3.8",
+    "3.8.4",
+]
+
+[
+    expect_build_success_test(
+        name = "toolchain_deps_semanticdb_builds_scala_" + scala_version.replace(".", "_"),
+        build_args = ["--repo_env=SCALA_VERSION=" + scala_version],
+        # //scala/private/toolchain_deps is production code, not a fixture in this
+        # package, so the macro's automatic glob of this package's sources does not
+        # cover it. Depend on the built target directly so a change to its .bzl
+        # sources still invalidates this test's cache key.
+        data = ["//scala/private/toolchain_deps:semanticdb"],
+        target = "//scala/private/toolchain_deps:semanticdb",
+    )
+    for scala_version in _TOOLCHAIN_DEPS_SCALA_VERSIONS
+]
