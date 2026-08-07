@@ -36,7 +36,6 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_custom_reporter_class.sh
 . "${test_dir}"/test_junit.sh
 . "${test_dir}"/test_misc.sh
-. "${test_dir}"/test_phase.sh
 . "${test_dir}"/test_scalafmt.sh
 . "${test_dir}"/test_scala_binary.sh
 . "${test_dir}"/test_scala_classpath.sh

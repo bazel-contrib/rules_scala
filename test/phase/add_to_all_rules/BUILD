@@ -1,3 +1,4 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load(
     "//test/phase/add_to_all_rules:phase_add_to_all_rules_test.bzl",
     "add_to_all_rules_scala_binary",
@@ -57,3 +58,27 @@ add_to_all_rules_scala_repl(
     srcs = ["PhaseLibrary.scala"],
     custom_content = "This is custom content in repl",
 )
+
+# args go through shell tokenization, so a message with spaces needs quoting
+# or it silently splits into several argv words.
+[
+    sh_test(
+        name = target + "CustomOutputTest",
+        srcs = ["//test/sh_tests:string_in_file.sh"],
+        args = [
+            "true",
+            "'%s'" % message,
+            "$(rootpath %s.custom-output)" % target,
+        ],
+        data = ["%s.custom-output" % target],
+    )
+    for target, message in [
+        ("PhaseBinary", "This is custom content"),
+        ("PhaseLibrary", "This is custom content in library"),
+        ("PhaseLibraryForPluginBootstrapping", "This is custom content in library_for_plugin_bootstrapping"),
+        ("PhaseMacroLibrary", "This is custom content in macro_library"),
+        ("PhaseTest", "This is custom content in test"),
+        ("PhaseJunitTest", "This is custom content in junit_test"),
+        ("PhaseRepl", "This is custom content in repl"),
+    ]
+]

@@ -4,7 +4,10 @@ load("//scala:scala.bzl", "scala_test")
 
 package(default_testonly = 1)
 
-exports_files(["string_in_filename_in_jar.sh"])
+exports_files([
+    "string_in_file.sh",
+    "string_in_filename_in_jar.sh",
+])
 
 genrule(
     name = "MixJavaScalaLibTestOutputs",
@@ -122,6 +125,16 @@ sh_test(
         "string_in_filename_in_jar.sh",
         "//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_java",
     ],
+)
+
+# Checks that string_in_file.sh itself fails loudly when it can't read the
+# file, instead of reporting a false pass.
+sh_test(
+    name = "string_in_file_required_failures",
+    size = "small",
+    srcs = ["string_in_file_required_failures.sh"],
+    args = ["$(rootpath string_in_file.sh)"],
+    data = ["string_in_file.sh"],
 )
 
 genrule(

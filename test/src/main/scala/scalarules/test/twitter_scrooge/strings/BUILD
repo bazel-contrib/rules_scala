@@ -8,7 +8,7 @@ _JUSTSCROOGES_JAVA = _PARENT + ":justscrooges_java"
 
 sh_test(
     name = "libthrift2_a_not_on_classpath",
-    srcs = ["string_in_file.sh"],
+    srcs = ["//test/sh_tests:string_in_file.sh"],
     args = [
         "false",
         "libthrift2_a",
@@ -19,7 +19,7 @@ sh_test(
 
 sh_test(
     name = "java_jar_not_on_classpath",
-    srcs = ["string_in_file.sh"],
+    srcs = ["//test/sh_tests:string_in_file.sh"],
     args = [
         "false",
         "_java.jar",
@@ -29,15 +29,8 @@ sh_test(
 )
 
 sh_test(
-    name = "string_in_file_required_failures",
-    srcs = ["string_in_file_required_failures.sh"],
-    args = ["$(rootpath string_in_file.sh)"],
-    data = ["string_in_file.sh"],
-)
-
-sh_test(
     name = "java_jar_on_classpath_in_scrooges",
-    srcs = ["string_in_file.sh"],
+    srcs = ["//test/sh_tests:string_in_file.sh"],
     args = [
         "true",
         "_java.jar",
