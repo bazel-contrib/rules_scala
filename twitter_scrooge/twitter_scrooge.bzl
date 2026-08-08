@@ -17,9 +17,6 @@ load(
 load("//thrift:thrift.bzl", "merge_thrift_infos")
 load("//thrift:thrift_info.bzl", "ThriftInfo")
 
-def _colon_paths(data):
-    return ":".join([f.path for f in sorted(data)])
-
 ScroogeAspectInfo = provider(fields = [
     "thrift_info",
     "src_jars",
@@ -49,45 +46,50 @@ def _generate_jvm_code(ctx, label, compile_thrifts, include_thrifts, jar_output,
     # and drop it off on the other side
     # https://github.com/bazelbuild/bazel/issues/3329
     worker_arg_pad = "_"
-    path_content = "\n".join([
-        worker_arg_pad + _colon_paths(ps)
-        for ps in [compile_thrifts, include_thrifts, [], []]
-    ])
 
     compiler_args = getattr(ctx.rule.attr, "compiler_args", [])
     lang_flag = ["--language", language]
     flags = compiler_args + lang_flag
 
-    worker_content = "{output}\n{paths}\n{flags}".format(
-        output = jar_output.path,
-        paths = path_content,
-        flags = worker_arg_pad + ":".join(flags),
+    # Built with Args rather than written with ctx.actions.write so that Bazel materializes the
+    # file at execution time, which is when path mapping rewrites paths. A file written at
+    # analysis time embeds unmapped paths that the mapper never sees.
+    args = ctx.actions.args()
+    args.set_param_file_format("multiline")
+    args.use_param_file("@%s", use_always = True)
+    args.add(jar_output)
+    args.add_joined(
+        sorted(compile_thrifts),
+        join_with = ":",
+        format_joined = worker_arg_pad + "%s",
+        omit_if_empty = False,
     )
+    args.add_joined(
+        sorted(include_thrifts),
+        join_with = ":",
+        format_joined = worker_arg_pad + "%s",
+        omit_if_empty = False,
+    )
+    args.add(worker_arg_pad)
+    args.add(worker_arg_pad)
+    args.add(worker_arg_pad + ":".join(flags))
 
-    # Since we may want to generate several languages from this thrift target,
-    # we need to mix the language into the worker input file.
-    argfile = ctx.actions.declare_file(
-        "{}_{}_worker_input".format(label.name, language),
-        sibling = jar_output,
-    )
-    ctx.actions.write(output = argfile, content = worker_content)
     ctx.actions.run(
         executable = ctx.executable._pluck_scrooge_scala,
-        inputs = compile_thrifts + include_thrifts + [argfile],
+        inputs = compile_thrifts + include_thrifts,
         outputs = [jar_output],
         mnemonic = "ScroogeRule",
         progress_message = "creating scrooge files %s" % ctx.label,
         execution_requirements = {"supports-workers": "1"},
-        #  when we run with a worker, the `@argfile.path` is removed and passed
-        #  line by line as arguments in the protobuf. In that case,
-        #  the rest of the arguments are passed to the process that
-        #  starts up and stays resident.
+        #  when we run with a worker, the param file is removed and its lines are
+        #  passed as arguments in the protobuf. In that case, the rest of the
+        #  arguments are passed to the process that starts up and stays resident.
 
         # In either case (worker or not), they will be jvm flags which will
         # be correctly handled since the executable is a jvm app that will
         # consume the flags on startup.
         #arguments = ["--jvm_flag=%s" % flag for flag in ctx.attr.jvm_flags] +
-        arguments = ["@" + argfile.path],
+        arguments = [args],
     )
 
 def _compiled_jar_file(actions, scrooge_jar):
