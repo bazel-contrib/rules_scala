@@ -133,8 +133,16 @@ test_diagnostic_proto_files() {
   local SCALA_VERSION="$1"
   local SCALA_TOOLCHAIN="$2"
 
-  compilation_should_fail build --build_event_publish_all_actions -k --repo_env=SCALA_VERSION=${SCALA_VERSION} --extra_toolchains=${SCALA_TOOLCHAIN} //test_expect_failure/diagnostics_reporter:all
-  diagnostics_output="$(bazel info bazel-bin)/test_expect_failure/diagnostics_reporter"
+  # Listed explicitly, not as //test/diagnostics_reporter:all: 3 of these 5
+  # fixtures are tagged "manual" (they don't compile under the default
+  # toolchain), and a package's :all wildcard excludes manual targets too.
+  compilation_should_fail build -k --repo_env=SCALA_VERSION=${SCALA_VERSION} --extra_toolchains=${SCALA_TOOLCHAIN} \
+    //test/diagnostics_reporter:error_file \
+    //test/diagnostics_reporter:two_errors_file \
+    //test/diagnostics_reporter:warning_file \
+    //test/diagnostics_reporter:error_and_warning_file \
+    //test/diagnostics_reporter:info_file
+  diagnostics_output="$(bazel info bazel-bin)/test/diagnostics_reporter"
   bazel run --repo_env=SCALA_VERSION=${SCALA_VERSION} //test/diagnostics_reporter:diagnostics_reporter_test "$diagnostics_output"
 }
 
@@ -173,8 +181,8 @@ for scala_version in "${scala_versions[@]}"; do
   TEST_TIMEOUT=15 $runner test_reporter "${scala_version}" "${diagnostics_reporter_toolchain}"
   TEST_TIMEOUT=15 $runner test_reporter "${scala_version}" "${diagnostics_reporter_and_semanticdb_toolchain}"
 
-  TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_toolchain
-  TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_version}" //test_expect_failure/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain
+  TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_version}" //test/diagnostics_reporter:diagnostics_reporter_toolchain
+  TEST_TIMEOUT=15 $runner test_diagnostic_proto_files "${scala_version}" //test/diagnostics_reporter:diagnostics_reporter_and_semanticdb_toolchain
 done
 
 TEST_TIMEOUT=15 $runner test_twitter_scrooge_versions "18.6.0"
