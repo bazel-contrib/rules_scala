@@ -22,6 +22,9 @@ expect_build_success_test(
     # scrooge sources (:twitter_scrooge_tests itself is package-private) so a
     # source change still invalidates this test's cache key.
     data = ["//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_scala_and_java"],
+    # The target below is a pattern, so name one concrete label it builds for the
+    # action fingerprint that keys this test.
+    fingerprint_target = "//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_scala_and_java",
     # Absolute wildcard, not package-relative: _absolutize passes a "//"-prefixed
     # label through unchanged, so this reaches the nested `bazel build` as-is.
     target = "//test/src/main/scala/scalarules/test/twitter_scrooge/...",

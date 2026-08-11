@@ -1,3 +1,4 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_library_suite")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 
@@ -35,4 +36,19 @@ scala_library_suite(
 expect_build_failure_test(
     name = "scala_library_suite_invalid_source_build_test",
     target = ":library_suite_with_invalid_source",
+)
+
+# The fingerprint that keys the test above has to reach the actions of the
+# fixture's *dependencies*: a suite compiles in its children and only merges
+# their jars, so a fingerprint of the suite target alone carries no Scalac
+# command line and a rules change would not invalidate anything.
+sh_test(
+    name = "fingerprint_reaches_dependency_actions",
+    srcs = ["//test/sh_tests:string_in_file.sh"],
+    args = [
+        "true",
+        "Scalac",
+        "$(rootpath :scala_library_suite_dep_on_children_build_test_fixture_actions)",
+    ],
+    data = [":scala_library_suite_dep_on_children_build_test_fixture_actions"],
 )

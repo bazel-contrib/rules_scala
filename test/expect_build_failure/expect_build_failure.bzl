@@ -21,14 +21,64 @@ A label inside a `build_args`/`bazel_args` flag value (e.g.
 `target`, it is not absolutized against the caller's package, because the
 nested `bazel` runs from the workspace root. Always write such a label out in
 full, even for a toolchain defined in the same package as the caller.
+
+Cacheability
+------------
+The nested `bazel` builds from the git checkout on disk, not from the runfiles
+the outer Bazel handed this test. So the files that decide whether the test
+passes are not inputs of the test, and Bazel would serve a stale pass. These
+tests therefore name those files by hand:
+
+- the fixture's own package (globbed below);
+- the toolchains a `--extra_toolchains` flag registers, by analysing the
+  fixture under them (see collect_actions.bzl);
+- the repo `.bazelrc`, which CI steps append to, so two steps that differ only
+  by those lines no longer share one result;
+- `MODULE.bazel` and its lock, which fix the dependency versions;
+- `.bazelversion`, which picks the Bazel binary the nested build runs;
+- the jars of the compiler and of the test runners, because the fixture's
+  command line carries their paths and not their content;
+- a fingerprint of the actions the fixture and its dependencies run (see
+  collect_actions.bzl). This is what makes an edit to the rules re-run the test.
+
+Editing `.bazelversion` re-runs the tests. What that file cannot catch is a CI
+step which leaves it alone and points bazelisk at another binary. One step does
+that (`last_green`), and it keeps its own cache key regardless, because it
+appends three flags to `.bazelrc`, which is on the list above.
+
+Outside the list is whatever the network serves while external repositories are
+fetched. `MODULE.bazel.lock` pins the versions, so what is exposed is a flaky
+download rather than a silent change in what is being tested. Catching an input
+nobody thought of would take a run with `--nocache_test_results` on the branch
+we merge into, which means a step in `.bazelci/presubmit.yml`; this change does
+not touch CI configuration.
+
+A fixture that fails during analysis never runs an action, so there is nothing
+to fingerprint and no honest cache key for it. Assert on such a target with
+expect_analysis_failure_test, which asks Bazel directly.
 """
 
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("//test/expect_build_failure:collect_actions.bzl", "fixture_actions")
 
 _HELPER = "//test/expect_build_failure:expect_build_failure.sh"
 
 # Sourced at runtime by _HELPER, so it must be present in the test's runfiles.
 _NESTED_BAZEL_LIB = "//test/expect_build_failure:nested_bazel.sh"
+
+# The nested `bazel` runs the compiler this repo builds, so a change in its Java
+# sources changes what the test exercises. The command line only carries the
+# jar's path, so the jar itself has to be an input for its content to count.
+_SCALAC_JAR = "//src/java/io/bazel/rulesscala/scalac:scalac_deploy.jar"
+
+# The compiler jar above does not pull in the test runners, and a nested
+# `bazel test` runs through them, so their content decides its outcome too.
+_RUNNER_JARS = [
+    "//src/java/io/bazel/rulesscala/test_discovery:test_discovery.jar",
+    "//src/java/io/bazel/rulesscala/specs2:specs2_test_discovery.jar",
+    "//src/java/io/bazel/rulesscala/scala_test:librunner.jar",
+    "//src/java/io/bazel/rulesscala/coverage/instrumenter:instrumenter.jar",
+]
 
 def _absolutize(target):
     # The nested `bazel <command>` runs from the workspace root, so a
@@ -53,6 +103,7 @@ def _nested_bazel_test(
         reject,
         size,
         tags,
+        fingerprint_target,
         bazel_arg_files = [],
         **kwargs):
     args = ["--command", command, "--target", _absolutize(target)]
@@ -115,10 +166,44 @@ def _nested_bazel_test(
     #     directory the nested `bazel <command>` must run in. See
     #     _nested_bazel_find_workspace in nested_bazel.sh.
     #   - nested_bazel.sh: sourced at runtime by the helper script.
+    # Everything the nested `bazel` reads and this test's own key would
+    # otherwise miss: the repo `.bazelrc` (CI steps append to it, so two steps
+    # would otherwise share one cached result), the resolved dependency
+    # versions, the Bazel version bazelisk picks, and the compiler jar.
     data = [
         "//:MODULE.bazel",
+        "//:MODULE.bazel.lock",
+        "//:.bazelrc",
+        "//:.bazelversion",
+        _SCALAC_JAR,
         _NESTED_BAZEL_LIB,
-    ] + expect + reject + bazel_arg_files + code_under_test + kwargs.pop("data", [])
+    ] + _RUNNER_JARS + expect + reject + bazel_arg_files + code_under_test + kwargs.pop("data", [])
+    # The fingerprint below is taken under these, so that a change in a toolchain
+    # the nested build registers re-runs the test.
+    extra_toolchains = [
+        arg[len("--extra_toolchains="):]
+        for arg in bazel_args
+        if arg.startswith("--extra_toolchains=")
+    ]
+
+    # `target` may be a pattern, which has no single configured target to read
+    # actions from. Rather than leave such a test without a key, ask for one
+    # concrete target the pattern builds.
+    fingerprint_target = fingerprint_target or target
+    if "..." in fingerprint_target or fingerprint_target.endswith((":all", ":*")):
+        fail("target %s is a pattern; pass fingerprint_target with one concrete label it builds, so a rules change still invalidates %s" % (target, name))
+    fixture_actions(
+        name = "%s_fixture_actions" % name,
+        target = fingerprint_target,
+        extra_toolchains = extra_toolchains,
+        testonly = True,
+    )
+    data.append(":%s_fixture_actions" % name)
+
+    # `no-sandbox` rather than `local`: both run the nested `bazel` outside the
+    # sandbox, which is all it needs, but a `local` result is also kept out of
+    # the shared cache. `no-remote-exec` because it reads this machine's tree.
+    execution_tags = tags + ["exclusive", "no-remote-exec"]
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
     # also named explicitly (e.g. the expect/reject `.txt`s, passed as `:foo.txt`),
@@ -143,10 +228,10 @@ def _nested_bazel_test(
         srcs = [_HELPER],
         args = args,
         data = deduped_data,
-        # Each of these runs a nested `bazel` that takes the shared nested output
-        # base's lock. Run them one at a time (`exclusive`) so they do not queue
-        # behind each other and blow the test timeout.
-        tags = tags + ["exclusive"],
+        # `exclusive`: each runs a nested `bazel` that takes the shared output
+        # base's lock, so running them one at a time keeps them off each other's
+        # timeout.
+        tags = execution_tags,
         **kwargs
     )
 
@@ -158,7 +243,8 @@ def expect_build_failure_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
+        fingerprint_target = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel build` of `target` fails.
 
@@ -182,9 +268,11 @@ def expect_build_failure_test(
             the build output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"` (the nested Bazel invocation is
             slow and, on a cold cache, serializes on the shared output base).
-        tags: test tags; defaults to `["local", "requires-network"]` because the
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]` because the
             nested `bazel build` fetches external repos and must run outside the
             sandbox.
+        fingerprint_target: label whose actions key this test, when `target` is a
+            pattern rather than one label. Defaults to `target`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -199,6 +287,7 @@ def expect_build_failure_test(
         reject = reject,
         size = size,
         tags = tags,
+        fingerprint_target = fingerprint_target,
         **kwargs
     )
 
@@ -210,7 +299,8 @@ def expect_build_success_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
+        fingerprint_target = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel build` of `target` succeeds.
 
@@ -239,7 +329,9 @@ def expect_build_success_test(
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the build output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"`.
-        tags: test tags; defaults to `["local", "requires-network"]`.
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
+        fingerprint_target: label whose actions key this test, when `target` is a
+            pattern rather than one label. Defaults to `target`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -254,6 +346,7 @@ def expect_build_success_test(
         reject = reject,
         size = size,
         tags = tags,
+        fingerprint_target = fingerprint_target,
         **kwargs
     )
 
@@ -266,7 +359,8 @@ def expect_test_failure_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
+        fingerprint_target = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel test`/`bazel coverage` of `target` fails.
 
@@ -289,7 +383,9 @@ def expect_test_failure_test(
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"`.
-        tags: test tags; defaults to `["local", "requires-network"]`.
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
+        fingerprint_target: label whose actions key this test, when `target` is a
+            pattern rather than one label. Defaults to `target`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -304,6 +400,7 @@ def expect_test_failure_test(
         reject = reject,
         size = size,
         tags = tags,
+        fingerprint_target = fingerprint_target,
         **kwargs
     )
 
@@ -318,7 +415,8 @@ def expect_test_success_test(
         expect = [],
         reject = [],
         size = "large",
-        tags = ["local", "requires-network"],
+        tags = ["no-sandbox", "requires-network"],
+        fingerprint_target = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel test`/`bazel coverage` of `target` succeeds.
 
@@ -352,7 +450,9 @@ def expect_test_success_test(
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the output. Automatically added to the test's `data`.
         size: test size; defaults to `"large"`.
-        tags: test tags; defaults to `["local", "requires-network"]`.
+        tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
+        fingerprint_target: label whose actions key this test, when `target` is a
+            pattern rather than one label. Defaults to `target`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -368,5 +468,6 @@ def expect_test_success_test(
         reject = reject,
         size = size,
         tags = tags,
+        fingerprint_target = fingerprint_target,
         **kwargs
     )
