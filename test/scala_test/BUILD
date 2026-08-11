@@ -11,6 +11,7 @@ scala_test(
 # @rules_shell -- see //test/jmh's precedent.
 scala_test(
     name = "b",
+    visibility = ["//test:__subpackages__"],
     srcs = ["B.scala"],
     deps = [":a"],
 )
