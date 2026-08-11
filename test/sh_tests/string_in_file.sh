@@ -15,11 +15,11 @@ should_be_in_file=$1
 
 if test "$should_be_in_file" != "true" -a "$should_be_in_file" != "false" ; then
   echo "ERROR: Please use only (\"true\" or \"false\") to specify whether you need the substring to be in the file."
-  echo "Refer to test/src/main/scala/scalarules/test/twitter_scrooge/string_in_file.sh for documentation."
+  echo "Refer to test/sh_tests/string_in_file.sh for documentation."
   exit 1
 fi
 
-grep -q $2 $3
+grep -q -F -- "$2" "$3"
 string_is_in_file=$?
 
 # grep exits 2 when it could not read the file, which lands in the same branch
