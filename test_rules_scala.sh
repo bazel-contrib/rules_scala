@@ -31,7 +31,6 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_env_attribute_expansion.sh
 . "${test_dir}"/test_compiler_sources_integrity.sh
 . "${test_dir}"/test_build_event_protocol.sh
-. "${test_dir}"/test_compilation.sh
 . "${test_dir}"/test_diagnostics_reporter.sh
 . "${test_dir}"/test_custom_reporter_class.sh
 . "${test_dir}"/test_junit.sh

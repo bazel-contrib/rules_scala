@@ -1,0 +1,47 @@
+load("//scala:scala.bzl", "scala_library")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+
+# Make sure plus-one deps that arrive via a direct dep's `exports` propagate too
+# (in addition to the plus-one-dep outputs). All libraries are tagged "manual"
+# so a default-toolchain wildcard build skips them; the nested build below names
+# :test_target explicitly and supplies the plus-one toolchain.
+scala_library(
+    name = "test_target",
+    srcs = ["A.scala"],
+    tags = ["manual"],
+    deps = [":direct_dep"],
+)
+
+scala_library(
+    name = "direct_dep",
+    srcs = ["B.scala"],
+    tags = ["manual"],
+    deps = [":plus_one_dep"],
+)
+
+scala_library(
+    name = "plus_one_dep",
+    srcs = ["C.scala"],
+    exports = ["exported_dep"],
+    tags = ["manual"],
+    deps = [":exported_dep"],
+)
+
+scala_library(
+    name = "exported_dep",
+    srcs = ["D.scala"],
+    tags = ["manual"],
+)
+
+expect_build_success_test(
+    name = "plus_one_deps_exports_of_deps_test",
+    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    target = ":test_target",
+)
+
+# Negative control: without the plus-one toolchain, `test_target` cannot see the
+# export of its plus-one dep, so the build must fail.
+expect_build_failure_test(
+    name = "plus_one_deps_exports_of_deps_undefined_fails_test",
+    target = ":test_target",
+)

@@ -1,0 +1,41 @@
+load("//scala:scala.bzl", "scala_library")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+
+# Plus-one dependency mode lets `a` use a symbol from `c` (a dependency of its
+# direct dep `b`); under the default toolchain that transitive use is a
+# strict-deps error. The libraries are tagged "manual" so a plain wildcard build
+# (default toolchain) skips the ones that only compile under plus-one mode; the
+# nested `bazel build` in the tests below names them explicitly (which bypasses
+# "manual") and supplies the plus-one toolchain.
+scala_library(
+    name = "a",
+    srcs = ["A.scala"],
+    tags = ["manual"],
+    deps = [":b"],
+)
+
+scala_library(
+    name = "b",
+    srcs = ["B.scala"],
+    tags = ["manual"],
+    deps = [":c"],
+)
+
+scala_library(
+    name = "c",
+    srcs = ["C.scala"],
+    tags = ["manual"],
+)
+
+expect_build_success_test(
+    name = "plus_one_deps_internal_deps_test",
+    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    target = ":a",
+)
+
+# Negative control: without the plus-one toolchain, `a`'s transitive use of `c`
+# is a strict-deps error, so the build must fail.
+expect_build_failure_test(
+    name = "plus_one_deps_internal_deps_undefined_fails_test",
+    target = ":a",
+)

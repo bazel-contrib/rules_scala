@@ -1,0 +1,78 @@
+load("//scala:scala.bzl", "scala_library")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+
+# Make sure plus-one deps reachable through a direct dep's exports propagate too,
+# both when the export is a pure facade (no srcs) and when it is a real dep. All
+# libraries are tagged "manual" so a default-toolchain wildcard build skips them;
+# the nested builds below name the top targets explicitly and supply the
+# plus-one toolchain.
+
+# example with target only in exports
+scala_library(
+    name = "test_target_using_facade",
+    srcs = ["A.scala"],
+    tags = ["manual"],
+    deps = [":facade"],
+)
+
+scala_library(
+    name = "facade",
+    tags = ["manual"],
+    exports = [":direct_dep"],
+)
+
+# example with target in deps & exports
+scala_library(
+    name = "test_target",
+    srcs = ["A.scala"],
+    tags = ["manual"],
+    deps = [":direct_dep"],
+)
+
+scala_library(
+    name = "direct_dep",
+    srcs = ["B.scala"],
+    tags = ["manual"],
+    exports = [":exported_dep"],
+    deps = [":exported_dep"],
+)
+
+# common
+scala_library(
+    name = "exported_dep",
+    srcs = ["C.scala"],
+    tags = ["manual"],
+    deps = [":plus_one_dep_of_exported"],
+)
+
+scala_library(
+    name = "plus_one_dep_of_exported",
+    srcs = ["D.scala"],
+    tags = ["manual"],
+)
+
+expect_build_success_test(
+    name = "plus_one_deps_deps_of_exports_facade_test",
+    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    target = ":test_target_using_facade",
+)
+
+# Negative control: without the plus-one toolchain, the plus-one dep hanging off
+# the exported (hence direct) dep is invisible, so the build must fail.
+expect_build_failure_test(
+    name = "plus_one_deps_deps_of_exports_facade_undefined_fails_test",
+    target = ":test_target_using_facade",
+)
+
+expect_build_success_test(
+    name = "plus_one_deps_deps_of_exports_test",
+    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    target = ":test_target",
+)
+
+# Negative control: as above, but reaching the exported dep through `deps` +
+# `exports` rather than a pure facade.
+expect_build_failure_test(
+    name = "plus_one_deps_deps_of_exports_undefined_fails_test",
+    target = ":test_target",
+)
