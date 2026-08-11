@@ -80,8 +80,7 @@ scala_library(
     ),
 )
 
-# Scala versions the toolchain_deps semanticdb classpath is resolved against,
-# mirroring test/shell/scala_versions.sh.
+# Scala versions the toolchain_deps semanticdb classpath is resolved against.
 _TOOLCHAIN_DEPS_SCALA_VERSIONS = [
     "2.12.21",
     "2.13.18",

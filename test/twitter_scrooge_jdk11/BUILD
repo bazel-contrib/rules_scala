@@ -4,11 +4,12 @@ load(
 )
 
 # Not declared in test/src/main/scala/scalarules/test/twitter_scrooge itself:
-# that package's :twitter_scrooge_tests is built directly (as a non-root bzlmod
-# dependency) by test_dependency_versions.sh, where rules_shell -- a
-# dev_dependency in the root MODULE.bazel -- is invisible. Loading this
-# macro's `@rules_shell` reference from that package broke that job. This
-# package is not part of that consumer target closure.
+# rules_shell is a dev_dependency in the root MODULE.bazel, so it is invisible
+# whenever something else consumes rules_scala as a non-root bzlmod
+# dependency. test_dependency_versions.sh does exactly that, building
+# :twitter_scrooge_tests directly, so loading this macro's `@rules_shell`
+# reference from that same package broke test_dependency_versions.sh's build.
+# This package isn't part of that build's target closure.
 expect_build_success_test(
     name = "twitter_scrooge_builds_with_jdk_11",
     build_args = [
