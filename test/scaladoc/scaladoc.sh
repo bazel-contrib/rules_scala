@@ -48,15 +48,14 @@ fi
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
 nested_bazel_setup "rules_scala_scaladoc_test_output_base"
 
-BUILD_OUTPUT=$(nested_bazel_run build ${TARGET} --extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn)
-if [[ $? -ne 0 ]]; then
+if ! BUILD_OUTPUT=$(nested_bazel_run build "${TARGET}" --extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn 2>&1); then
     echo "Build of ${TARGET} failed:" >&2
     echo "${BUILD_OUTPUT}" >&2
     exit 1
 fi
 
 # Resolve the real workspace-relative output path via bazel-bin, not cquery symlinks.
-cquery_relpath=$(nested_bazel_run cquery ${TARGET} --extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn --output=files)
+cquery_relpath=$(nested_bazel_run cquery "${TARGET}" --extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn --output=files)
 bazel_bin=$(nested_bazel_run info --extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn bazel-bin)
 SCALADOC_DIR="${bazel_bin}/${cquery_relpath#*/bin/}"
 
