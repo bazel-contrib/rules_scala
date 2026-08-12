@@ -52,7 +52,7 @@ the way to catch an input nobody thought to declare.
 
 ## When you add a test here
 
-Nothing in a caller has to know about caching. Two things are worth knowing:
+Nothing in a caller has to know about caching. Three things are worth knowing:
 
 - If the fixture lives in another package, make it visible to yours; the
   fingerprint is a real dependency edge, unlike the label string the nested
@@ -60,6 +60,23 @@ Nothing in a caller has to know about caching. Two things are worth knowing:
 - A nested build runs with a scrubbed `HOME`, so your `~/.bazelrc` is ignored.
   If you need it (a download proxy, say), set
   `RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1`. Any failing nested build says so.
+- Analysis fails if the fingerprint carries no rules_scala action, because such
+  a fingerprint cannot notice a change in the rules and the test it keys would
+  stay green through a regression. Either point `fingerprint_target` at a label
+  the nested build really compiles, or say why you cannot with
+  `no_fingerprint_reason`, which tags the test `external` so it re-runs every
+  time rather than being served a pass it cannot vouch for. Seven tests do that
+  today: `scala_proto` generates through an aspect of its own, whose actions
+  this aspect cannot read, and the `semanticdb` fixtures only build toolchain
+  deps, so they compile nothing at all.
+
+What the fingerprint does not see: an action that writes a file instead of
+running a command line (`ctx.actions.write`, template expansion) contributes its
+mnemonic and nothing else, which is 446 of the 5135 lines it collects today. A
+change to what such an action writes leaves the fingerprint identical. Declaring
+those files instead would put output paths -- and with them the configuration --
+back into the key, which is what makes the tests re-run under every flag the
+outer build sets.
 
 ## Registering a toolchain
 
