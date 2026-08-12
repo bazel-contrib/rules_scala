@@ -1,0 +1,1 @@
+buildozer 'add deps //test_expect_failure/missing_direct_deps/internal_deps:transitive_dependency' //test_expect_failure/missing_direct_deps/internal_deps:transitive_dependency_user
