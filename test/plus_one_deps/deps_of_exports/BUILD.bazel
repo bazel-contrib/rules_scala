@@ -57,21 +57,18 @@ expect_build_success_test(
     target = ":test_target_using_facade",
 )
 
-# Negative control: without the plus-one toolchain, the plus-one dep hanging off
-# the exported (hence direct) dep is invisible, so the build must fail.
-expect_build_failure_test(
-    name = "plus_one_deps_deps_of_exports_facade_undefined_fails_test",
-    target = ":test_target_using_facade",
-)
-
 expect_build_success_test(
     name = "plus_one_deps_deps_of_exports_test",
     build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":test_target",
 )
 
-# Negative control: as above, but reaching the exported dep through `deps` +
-# `exports` rather than a pure facade.
+# Negative control: without the plus-one toolchain, the plus-one dep hanging off
+# the exported (hence direct) dep is invisible, so the build must fail. One
+# control covers the package: :test_target_using_facade shares :direct_dep with
+# :test_target and would fail at that same shared compile, so a second control on
+# it would be a duplicate -- the facade re-export path is exercised by the
+# positive facade test above.
 expect_build_failure_test(
     name = "plus_one_deps_deps_of_exports_undefined_fails_test",
     target = ":test_target",
