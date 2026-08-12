@@ -20,7 +20,10 @@ load(":env_vars.bzl", "env_vars")
 
 package(
     default_testonly = 1,
-    default_visibility = ["//test/sh_tests:__pkg__"],
+    default_visibility = [
+        "//test/scala_junit_test:__pkg__",
+        "//test/sh_tests:__pkg__",
+    ],
 )
 
 _JUNIT_DEPS = repositories(

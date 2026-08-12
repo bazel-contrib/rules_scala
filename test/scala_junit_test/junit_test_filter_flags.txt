@@ -1,0 +1,1 @@
+--test_filter=scalarules.test.junit.FirstFilterTest#(method1|method2)$|scalarules.test.junit.SecondFilterTest#(method2|method3)$

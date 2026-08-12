@@ -1,0 +1,1 @@
+scalarules.test.junit.SecondFilterTest#method2

@@ -1,0 +1,1 @@
+scalarules.test.junit.JunitSuffixE2E
