@@ -1,0 +1,1 @@
+buildozer 'add deps //test/strict_dependency/scala_import:guava' //test/strict_dependency/scala_import:scala_import_propagates_compile_deps

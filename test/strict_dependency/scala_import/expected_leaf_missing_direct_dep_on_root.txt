@@ -1,0 +1,1 @@
+buildozer 'add deps //test/strict_dependency/scala_import:root_for_scala_import_passes_labels_of_direct_deps' //test/strict_dependency/scala_import:leaf_for_scala_import_passes_labels_of_direct_deps

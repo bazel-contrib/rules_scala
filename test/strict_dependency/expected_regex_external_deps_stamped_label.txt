@@ -1,0 +1,1 @@
+buildozer 'add deps @@?[a-z_.~+-]*io_bazel_rules_scala_guava[_0-9]*//:io_bazel_rules_scala_guava[_0-9]*' //test_expect_failure/missing_direct_deps/external_deps:java_lib_with_a_transitive_external_dep

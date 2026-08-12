@@ -25,7 +25,7 @@ custom_stamping_convention = rule(
 
 _custom_phases = {
     "phase_providers": [
-        "//test_expect_failure/missing_direct_deps/scala_proto_deps:phase_custom_stamping",
+        "//test/strict_dependency/scala_proto_deps:phase_custom_stamping",
     ],
 }
 

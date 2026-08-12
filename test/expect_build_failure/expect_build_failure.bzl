@@ -48,6 +48,8 @@ def _nested_bazel_test(
         size,
         tags,
         bazel_arg_files = [],
+        expect_regex = [],
+        reject_regex = [],
         **kwargs):
     args = ["--command", command, "--target", _absolutize(target)]
     if expect_success:
@@ -55,7 +57,7 @@ def _nested_bazel_test(
 
         # Without a clean, a cached build can silently skip recompiling and
         # miss printing the warning we're about to check for.
-        if expect or reject:
+        if expect or reject or expect_regex or reject_regex:
             args += ["--clean-before-build"]
     for key in env:
         value = env[key]
@@ -80,6 +82,10 @@ def _nested_bazel_test(
         args += ["--expect-file", "$(rootpath %s)" % expect_file]
     for reject_file in reject:
         args += ["--reject-file", "$(rootpath %s)" % reject_file]
+    for expect_regex_file in expect_regex:
+        args += ["--expect-regex-file", "$(rootpath %s)" % expect_regex_file]
+    for reject_regex_file in reject_regex:
+        args += ["--reject-regex-file", "$(rootpath %s)" % reject_regex_file]
     if worker_sandboxing:
         args = args + select({
             "@platforms//os:windows": [],
@@ -112,7 +118,7 @@ def _nested_bazel_test(
     data = [
         "//:MODULE.bazel",
         _NESTED_BAZEL_LIB,
-    ] + expect + reject + bazel_arg_files + code_under_test + kwargs.pop("data", [])
+    ] + expect + reject + expect_regex + reject_regex + bazel_arg_files + code_under_test + kwargs.pop("data", [])
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
     # also named explicitly (e.g. the expect/reject `.txt`s, passed as `:foo.txt`),
@@ -151,6 +157,8 @@ def expect_build_failure_test(
         worker_sandboxing = False,
         expect = [],
         reject = [],
+        expect_regex = [],
+        reject_regex = [],
         size = "large",
         tags = ["local", "requires-network"],
         **kwargs):
@@ -163,7 +171,9 @@ def expect_build_failure_test(
             must tag this fixture `"manual"`: it is expected to fail to build and
             would otherwise break a plain wildcard `bazel build //...`.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
-            (e.g. `"--repo_env=SCALA_VERSION=2.13.18"`).
+            (e.g. `"--repo_env=SCALA_VERSION=2.13.18"`). A label embedded in a
+            flag value (e.g. `--extra_toolchains=//pkg:toolchain`) is not
+            absolutized like `target` is -- see `expect_build_success_test`.
         worker_sandboxing: if True, pass `--worker_sandboxing` to the nested
             `bazel build` -- but only on non-Windows, since Bazel worker
             sandboxing is not implemented on Windows (mirrors the historical
@@ -174,6 +184,14 @@ def expect_build_failure_test(
             build output. Automatically added to the test's `data`.
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the build output. Automatically added to the test's `data`.
+        expect_regex: file labels whose (newline-stripped) contents is an
+            extended regex that must match the build output. Use only when the
+            exact text isn't stable across the Bazel-version matrix this test
+            runs under (e.g. a bzlmod canonical repo name); prefer `expect` for
+            anything that is otherwise a fixed string. Automatically added to
+            the test's `data`.
+        reject_regex: same as `expect_regex`, but the regex must NOT match.
+            Automatically added to the test's `data`.
         size: test size; defaults to `"large"` (the nested Bazel invocation is
             slow and, on a cold cache, serializes on the shared output base).
         tags: test tags; defaults to `["local", "requires-network"]` because the
@@ -191,6 +209,8 @@ def expect_build_failure_test(
         worker_sandboxing = worker_sandboxing,
         expect = expect,
         reject = reject,
+        expect_regex = expect_regex,
+        reject_regex = reject_regex,
         size = size,
         tags = tags,
         **kwargs
@@ -203,6 +223,8 @@ def expect_build_success_test(
         worker_sandboxing = False,
         expect = [],
         reject = [],
+        expect_regex = [],
+        reject_regex = [],
         size = "large",
         tags = ["local", "requires-network"],
         **kwargs):
@@ -226,12 +248,21 @@ def expect_build_success_test(
             with the flags this wrapper supplies, so a plain wildcard
             `bazel build //...` would run it without them and fail.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
-            (e.g. `"--extra_toolchains=//some:toolchain"`).
+            (e.g. `"--extra_toolchains=//some:toolchain"`). Unlike `target`,
+            labels embedded here are NOT absolutized against this package --
+            the nested `bazel` runs from the workspace root, so a
+            package-relative label here would resolve against the root
+            package instead. Always spell it out fully, even for a toolchain
+            defined in this same package.
         worker_sandboxing: see `expect_build_failure_test`.
         expect: file labels whose (newline-stripped) contents must appear in the
             build output. Automatically added to the test's `data`.
         reject: file labels whose (newline-stripped) contents must NOT appear in
             the build output. Automatically added to the test's `data`.
+        expect_regex: see `expect_build_failure_test`. Automatically added to
+            the test's `data`.
+        reject_regex: see `expect_build_failure_test`. Automatically added to
+            the test's `data`.
         size: test size; defaults to `"large"`.
         tags: test tags; defaults to `["local", "requires-network"]`.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
@@ -246,6 +277,8 @@ def expect_build_success_test(
         worker_sandboxing = worker_sandboxing,
         expect = expect,
         reject = reject,
+        expect_regex = expect_regex,
+        reject_regex = reject_regex,
         size = size,
         tags = tags,
         **kwargs
