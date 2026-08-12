@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Builds the diagnostics_reporter fixtures under <toolchain> (letting the
-# intentionally-broken ones fail with `-k`), then runs the
+# intentionally-broken ones fail with `--keep_going`), then runs the
 # diagnostics_reporter_test verifier against the resulting
 # *.diagnosticsproto files it should have produced.
 #
@@ -30,7 +30,7 @@ nested_bazel_setup "rules_scala_diagnostics_reporter_output_base"
 # verifier below asserts each fixture's specific diagnostic message, so if a
 # fixture stopped failing (or reporting) the way it's supposed to, the
 # expected message just wouldn't be found and the verifier would fail.
-nested_bazel_run build -k --extra_toolchains="${toolchain}" "${fixtures[@]}" || true
+nested_bazel_run build --keep_going --extra_toolchains="${toolchain}" "${fixtures[@]}" || true
 
 bazel_bin="$(nested_bazel_run info bazel-bin)"
 diagnostics_output="${bazel_bin}/test/diagnostics_reporter"

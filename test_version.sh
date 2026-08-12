@@ -138,7 +138,7 @@ test_diagnostic_proto_files() {
   # :all excludes manual targets the same way `...` does. Using :all here
   # would silently drop those 3 and only build the 2 valid fixtures, so the
   # build below would stop hitting the compile failure this test expects.
-  compilation_should_fail build -k --repo_env=SCALA_VERSION=${SCALA_VERSION} --extra_toolchains=${SCALA_TOOLCHAIN} \
+  compilation_should_fail build --keep_going --repo_env=SCALA_VERSION=${SCALA_VERSION} --extra_toolchains=${SCALA_TOOLCHAIN} \
     //test/diagnostics_reporter:error_file \
     //test/diagnostics_reporter:two_errors_file \
     //test/diagnostics_reporter:warning_file \
