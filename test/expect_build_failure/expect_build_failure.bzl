@@ -104,6 +104,7 @@ def _nested_bazel_test(
         size,
         tags,
         fingerprint_target,
+        no_fingerprint_reason,
         bazel_arg_files = [],
         **kwargs):
     args = ["--command", command, "--target", _absolutize(target)]
@@ -186,19 +187,27 @@ def _nested_bazel_test(
         if arg.startswith("--extra_toolchains=")
     ]
 
-    # `target` may be a pattern, which has no single configured target to read
-    # actions from. Rather than leave such a test without a key, ask for one
-    # concrete target the pattern builds.
-    fingerprint_target = fingerprint_target or target
-    if "..." in fingerprint_target or fingerprint_target.endswith((":all", ":*")):
-        fail("target %s is a pattern; pass fingerprint_target with one concrete label it builds, so a rules change still invalidates %s" % (target, name))
-    fixture_actions(
-        name = "%s_fixture_actions" % name,
-        target = fingerprint_target,
-        extra_toolchains = extra_toolchains,
-        testonly = True,
-    )
-    data.append(":%s_fixture_actions" % name)
+    # Some nested builds run no action this aspect can read: `scala_proto`
+    # generates through an aspect of its own, and a fixture that only builds
+    # toolchain deps compiles nothing at all. Such a test states why and is
+    # tagged `external`, which keeps it out of the cache entirely -- a test
+    # without a fingerprint must not be served a stale pass.
+    if no_fingerprint_reason:
+        tags = tags + ["external"]
+    else:
+        # `target` may be a pattern, which has no single configured target to read
+        # actions from. Rather than leave such a test without a key, ask for one
+        # concrete target the pattern builds.
+        fingerprint_target = fingerprint_target or target
+        if "..." in fingerprint_target or fingerprint_target.endswith((":all", ":*")):
+            fail("target %s is a pattern; pass fingerprint_target with one concrete label it builds, so a rules change still invalidates %s" % (target, name))
+        fixture_actions(
+            name = "%s_fixture_actions" % name,
+            target = fingerprint_target,
+            extra_toolchains = extra_toolchains,
+            testonly = True,
+        )
+        data.append(":%s_fixture_actions" % name)
 
     # `no-sandbox` rather than `local`: both run the nested `bazel` outside the
     # sandbox, which is all it needs, but a `local` result is also kept out of
@@ -245,6 +254,7 @@ def expect_build_failure_test(
         size = "large",
         tags = ["no-sandbox", "requires-network"],
         fingerprint_target = None,
+        no_fingerprint_reason = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel build` of `target` fails.
 
@@ -273,6 +283,9 @@ def expect_build_failure_test(
             sandbox.
         fingerprint_target: label whose actions key this test, when `target` is a
             pattern rather than one label. Defaults to `target`.
+        no_fingerprint_reason: why no action fingerprint can key this test. Setting
+            it tags the test `external`, so it re-runs every time instead of being
+            served a result that cannot notice a change in the rules.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -288,6 +301,7 @@ def expect_build_failure_test(
         size = size,
         tags = tags,
         fingerprint_target = fingerprint_target,
+        no_fingerprint_reason = no_fingerprint_reason,
         **kwargs
     )
 
@@ -301,6 +315,7 @@ def expect_build_success_test(
         size = "large",
         tags = ["no-sandbox", "requires-network"],
         fingerprint_target = None,
+        no_fingerprint_reason = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel build` of `target` succeeds.
 
@@ -332,6 +347,9 @@ def expect_build_success_test(
         tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         fingerprint_target: label whose actions key this test, when `target` is a
             pattern rather than one label. Defaults to `target`.
+        no_fingerprint_reason: why no action fingerprint can key this test. Setting
+            it tags the test `external`, so it re-runs every time instead of being
+            served a result that cannot notice a change in the rules.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -347,6 +365,7 @@ def expect_build_success_test(
         size = size,
         tags = tags,
         fingerprint_target = fingerprint_target,
+        no_fingerprint_reason = no_fingerprint_reason,
         **kwargs
     )
 
@@ -361,6 +380,7 @@ def expect_test_failure_test(
         size = "large",
         tags = ["no-sandbox", "requires-network"],
         fingerprint_target = None,
+        no_fingerprint_reason = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel test`/`bazel coverage` of `target` fails.
 
@@ -386,6 +406,9 @@ def expect_test_failure_test(
         tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         fingerprint_target: label whose actions key this test, when `target` is a
             pattern rather than one label. Defaults to `target`.
+        no_fingerprint_reason: why no action fingerprint can key this test. Setting
+            it tags the test `external`, so it re-runs every time instead of being
+            served a result that cannot notice a change in the rules.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -401,6 +424,7 @@ def expect_test_failure_test(
         size = size,
         tags = tags,
         fingerprint_target = fingerprint_target,
+        no_fingerprint_reason = no_fingerprint_reason,
         **kwargs
     )
 
@@ -417,6 +441,7 @@ def expect_test_success_test(
         size = "large",
         tags = ["no-sandbox", "requires-network"],
         fingerprint_target = None,
+        no_fingerprint_reason = None,
         **kwargs):
     """Declares an `sh_test` asserting that `bazel test`/`bazel coverage` of `target` succeeds.
 
@@ -453,6 +478,9 @@ def expect_test_success_test(
         tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         fingerprint_target: label whose actions key this test, when `target` is a
             pattern rather than one label. Defaults to `target`.
+        no_fingerprint_reason: why no action fingerprint can key this test. Setting
+            it tags the test `external`, so it re-runs every time instead of being
+            served a result that cannot notice a change in the rules.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     _nested_bazel_test(
@@ -469,5 +497,6 @@ def expect_test_success_test(
         size = size,
         tags = tags,
         fingerprint_target = fingerprint_target,
+        no_fingerprint_reason = no_fingerprint_reason,
         **kwargs
     )

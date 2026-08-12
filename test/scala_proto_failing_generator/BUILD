@@ -11,5 +11,6 @@ expect_build_failure_test(
         "--extra_toolchains=//test/proto/custom_generator:failing_scala_proto_toolchain",
     ],
     expect = ["expected_generator_failure.txt"],
+    no_fingerprint_reason = "scala_proto compiles through an aspect of its own, whose actions collect_actions.bzl cannot read",
     target = "//test/proto/custom_generator:any_proto_scala",
 )

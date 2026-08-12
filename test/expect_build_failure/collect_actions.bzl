@@ -72,11 +72,20 @@ _toolchains_transition = transition(
     outputs = ["//command_line_option:extra_toolchains"],
 )
 
+# Every action this ruleset runs invokes a tool built from here, so a fingerprint
+# without it describes a target the rules never touch.
+_RULESET_TOOLS = "src/java/io/bazel/rulesscala"
+
 def _exposed_impl(ctx):
+    lines = sorted(ctx.attr.target[0][_ActionsInfo].lines.to_list())
+    if not [line for line in lines if _RULESET_TOOLS in line]:
+        fail(("%s runs no rules_scala action, so it cannot tell whether the rules " +
+              "changed and the test it keys would stay green through a regression. " +
+              "Point fingerprint_target at a label the nested build really compiles, " +
+              "or state why it cannot with no_fingerprint_reason.") %
+             ctx.attr.target[0].label)
     out = ctx.actions.declare_file("%s.actions.txt" % ctx.label.name)
-    ctx.actions.write(out, content = "\n".join(
-        sorted(ctx.attr.target[0][_ActionsInfo].lines.to_list()),
-    ) + "\n")
+    ctx.actions.write(out, content = "\n".join(lines) + "\n")
     return [DefaultInfo(files = depset([out]))]
 
 fixture_actions = rule(
