@@ -1,6 +1,7 @@
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_test_success_test")
 
 package(default_testonly = 1)
 
@@ -170,4 +171,69 @@ scala_test(
     name = "ScalaTestResourcesFromLocalTargetTest",
     srcs = ["ScalaTestResourcesFromLocalTargetTest.scala"],
     resources = [":py_resource_binary"],
+)
+
+expect_test_success_test(
+    name = "test_filter_wildcard_test",
+    target = "//test:TestFilterTests",
+    bazel_args = [
+        "--test_output=streamed",
+        "--test_filter=scalarules.test.*",
+    ],
+    expect = [
+        "expected_test_filter_a.txt",
+        "expected_test_filter_b.txt",
+    ],
+)
+
+expect_test_success_test(
+    name = "test_filter_single_test",
+    target = "//test:TestFilterTests",
+    bazel_args = [
+        "--test_output=streamed",
+        "--test_filter=scalarules.test.TestFilterTestA",
+    ],
+    expect = ["expected_test_filter_a.txt"],
+    reject = ["expected_test_filter_b.txt"],
+)
+
+sh_test(
+    name = "multi_service_manifest_test",
+    srcs = ["multi_service_manifest_test.sh"],
+    args = [
+        "$(rootpath //test:ScalaBinary_with_service_manifest_srcs_deploy.jar)",
+        "$(rootpath //test/example_jars:expected_service_manifest.txt)",
+    ],
+    data = [
+        "//test:ScalaBinary_with_service_manifest_srcs_deploy.jar",
+        "//test/example_jars:expected_service_manifest.txt",
+    ],
+)
+
+sh_test(
+    name = "repl_test",
+    srcs = ["repl_test.sh"],
+    args = [
+        "--hello-lib-repl",
+        "$(rootpath //test:HelloLibRepl)",
+        "--hello-lib-test-repl",
+        "$(rootpath //test:HelloLibTestRepl)",
+        "--scala-lib-binary-repl",
+        "$(rootpath //test:ScalaLibBinaryRepl)",
+        "--resources-strip-scala-binary-repl",
+        "$(rootpath //test:ResourcesStripScalaBinaryRepl)",
+        "--repl-with-sources",
+        "$(rootpath //test:ReplWithSources)",
+    ],
+    data = [
+        "//test:HelloLibRepl",
+        "//test:HelloLibTestRepl",
+        "//test:ReplWithSources",
+        "//test:ResourcesStripScalaBinaryRepl",
+        "//test:ScalaLibBinaryRepl",
+        # Not exercised at runtime, but its presence in `data` keeps it
+        # build-checked, same as the shell original's `bazel build` over all
+        # `kind(scala_repl, //test/...)` query results.
+        "//test/phase/add_to_all_rules:PhaseRepl",
+    ],
 )
