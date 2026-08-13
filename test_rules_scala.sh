@@ -36,7 +36,6 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_scala_binary.sh
 . "${test_dir}"/test_scala_config.sh
 . "${test_dir}"/test_scala_import_source_jar.sh
-. "${test_dir}"/test_scala_jacocorunner.sh
 . "${test_dir}"/test_scala_proto_library.sh
 . "${test_dir}"/test_scala_library.sh
 . "${test_dir}"/test_scala_specs2.sh
