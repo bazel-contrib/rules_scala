@@ -29,7 +29,9 @@ the outer Bazel handed this test. So the files that decide whether the test
 passes are not inputs of the test, and Bazel would serve a stale pass. These
 tests therefore name those files by hand:
 
-- the fixture's own package (globbed below);
+- the fixture's own package (globbed below); a fixture in another package is
+  tagged `external`, because a macro cannot verify that caller `data` covers
+  every source the nested target reads;
 - the toolchains a `--extra_toolchains` flag registers, by analysing the
   fixture under them (see collect_actions.bzl);
 - the repo `.bazelrc`, which CI steps append to, so two steps that differ only
@@ -107,7 +109,8 @@ def _nested_bazel_test(
         no_fingerprint_reason,
         bazel_arg_files = [],
         **kwargs):
-    args = ["--command", command, "--target", _absolutize(target)]
+    absolute_target = _absolutize(target)
+    args = ["--command", command, "--target", absolute_target]
     if expect_success:
         args += ["--expect-success"]
 
@@ -154,8 +157,7 @@ def _nested_bazel_test(
     # source file in this package and declare it as runfiles: editing any of them
     # changes the test's cache key and forces a re-run. This covers the common
     # case of a fixture whose sources live alongside its BUILD file; a `target` in
-    # another package is not tracked (pass its sources via `data` if you need
-    # that).
+    # another package is tagged `external` below.
     code_under_test = native.glob(["**/*"], allow_empty = True)
 
     # Both entries must be in the test's runfiles (a file reaches runfiles only if
@@ -192,7 +194,13 @@ def _nested_bazel_test(
     # toolchain deps compiles nothing at all. Such a test states why and is
     # tagged `external`, which keeps it out of the cache entirely -- a test
     # without a fingerprint must not be served a stale pass.
-    if no_fingerprint_reason:
+    current_package = "//%s:" % native.package_name()
+    cross_package_fixture = not absolute_target.startswith(current_package)
+    if no_fingerprint_reason or cross_package_fixture:
+        # The package glob above cannot cross a Bazel package boundary, and a
+        # macro cannot prove that caller `data` covers every source of a target
+        # or pattern. Keep cross-package results out of the cache rather than
+        # serve a stale pass after an undeclared source edit.
         tags = tags + ["external"]
     else:
         # `target` may be a pattern, which has no single configured target to read
@@ -282,7 +290,9 @@ def expect_build_failure_test(
             nested `bazel build` fetches external repos and must run outside the
             sandbox.
         fingerprint_target: label whose actions key this test, when `target` is a
-            pattern rather than one label. Defaults to `target`.
+            pattern rather than one label. Defaults to `target`. Ignored when
+            `target` is in another package: such a fixture is always tagged
+            `external` instead (see the module docstring).
         no_fingerprint_reason: why no action fingerprint can key this test. Setting
             it tags the test `external`, so it re-runs every time instead of being
             served a result that cannot notice a change in the rules.
@@ -346,7 +356,9 @@ def expect_build_success_test(
         size: test size; defaults to `"large"`.
         tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         fingerprint_target: label whose actions key this test, when `target` is a
-            pattern rather than one label. Defaults to `target`.
+            pattern rather than one label. Defaults to `target`. Ignored when
+            `target` is in another package: such a fixture is always tagged
+            `external` instead (see the module docstring).
         no_fingerprint_reason: why no action fingerprint can key this test. Setting
             it tags the test `external`, so it re-runs every time instead of being
             served a result that cannot notice a change in the rules.
@@ -405,7 +417,9 @@ def expect_test_failure_test(
         size: test size; defaults to `"large"`.
         tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         fingerprint_target: label whose actions key this test, when `target` is a
-            pattern rather than one label. Defaults to `target`.
+            pattern rather than one label. Defaults to `target`. Ignored when
+            `target` is in another package: such a fixture is always tagged
+            `external` instead (see the module docstring).
         no_fingerprint_reason: why no action fingerprint can key this test. Setting
             it tags the test `external`, so it re-runs every time instead of being
             served a result that cannot notice a change in the rules.
@@ -477,7 +491,9 @@ def expect_test_success_test(
         size: test size; defaults to `"large"`.
         tags: test tags; defaults to `["no-sandbox", "requires-network"]`.
         fingerprint_target: label whose actions key this test, when `target` is a
-            pattern rather than one label. Defaults to `target`.
+            pattern rather than one label. Defaults to `target`. Ignored when
+            `target` is in another package: such a fixture is always tagged
+            `external` instead (see the module docstring).
         no_fingerprint_reason: why no action fingerprint can key this test. Setting
             it tags the test `external`, so it re-runs every time instead of being
             served a result that cannot notice a change in the rules.

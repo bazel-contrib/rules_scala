@@ -16,15 +16,6 @@ expect_build_success_test(
         "--java_runtime_version=remotejdk_11",
         "--tool_java_runtime_version=remotejdk_11",
     ],
-    # The built target's sources live in another package, so the macro's
-    # automatic glob of this package doesn't cover them for staleness. Depend
-    # on a public target that transitively covers most of that package's
-    # scrooge sources (:twitter_scrooge_tests itself is package-private) so a
-    # source change still invalidates this test's cache key.
-    data = ["//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_scala_and_java"],
-    # The target below is a pattern, so name one concrete label it builds for the
-    # action fingerprint that keys this test.
-    fingerprint_target = "//test/src/main/scala/scalarules/test/twitter_scrooge:justscrooges_scala_and_java",
     # Absolute wildcard, not package-relative: _absolutize passes a "//"-prefixed
     # label through unchanged, so this reaches the nested `bazel build` as-is.
     target = "//test/src/main/scala/scalarules/test/twitter_scrooge/...",

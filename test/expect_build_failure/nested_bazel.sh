@@ -97,7 +97,8 @@ _nested_bazel_home_hint() {
   fi
   echo "note: the nested \`bazel\` ran with a scrubbed HOME, so your ~/.bazelrc was" >&2
   echo "      ignored. If it carries settings the build needs (a download proxy, for" >&2
-  echo "      instance), re-run with RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1." >&2
+  echo "      instance), re-run bazel test with --nocache_test_results and" >&2
+  echo "      --test_env=RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1." >&2
 }
 
 nested_bazel_setup() {

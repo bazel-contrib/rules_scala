@@ -54,12 +54,13 @@ the way to catch an input nobody thought to declare.
 
 Nothing in a caller has to know about caching. Three things are worth knowing:
 
-- If the fixture lives in another package, make it visible to yours; the
-  fingerprint is a real dependency edge, unlike the label string the nested
-  `bazel` receives.
+- If the fixture lives in another package, the macro tags the test `external`,
+  because it cannot verify that caller data covers every source the nested target
+  reads.
 - A nested build runs with a scrubbed `HOME`, so your `~/.bazelrc` is ignored.
-  If you need it (a download proxy, say), set
-  `RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1`. Any failing nested build says so.
+  If you need it (a download proxy, say), pass `--nocache_test_results` and
+  `--test_env=RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1` to `bazel test`. The
+  home file is outside this test's key, so keep this opt-in uncached.
 - Analysis fails if the fingerprint carries no rules_scala action, because such
   a fingerprint cannot notice a change in the rules and the test it keys would
   stay green through a regression. Either point `fingerprint_target` at a label
