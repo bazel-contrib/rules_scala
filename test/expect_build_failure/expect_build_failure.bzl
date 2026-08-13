@@ -15,6 +15,12 @@ runfiles, and boilerplate tags on every call.
   only passes under a specific `--test_filter` or inherited env var).
 
 All four share the same script and nested-Bazel plumbing.
+
+A label inside a `build_args`/`bazel_args` flag value (e.g.
+`--extra_toolchains=//pkg:toolchain`) is passed through as-is: unlike
+`target`, it is not absolutized against the caller's package, because the
+nested `bazel` runs from the workspace root. Always write such a label out in
+full, even for a toolchain defined in the same package as the caller.
 """
 
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
@@ -171,9 +177,7 @@ def expect_build_failure_test(
             must tag this fixture `"manual"`: it is expected to fail to build and
             would otherwise break a plain wildcard `bazel build //...`.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
-            (e.g. `"--repo_env=SCALA_VERSION=2.13.18"`). A label embedded in a
-            flag value (e.g. `--extra_toolchains=//pkg:toolchain`) is not
-            absolutized like `target` is -- see `expect_build_success_test`.
+            (e.g. `"--repo_env=SCALA_VERSION=2.13.18"`).
         worker_sandboxing: if True, pass `--worker_sandboxing` to the nested
             `bazel build` -- but only on non-Windows, since Bazel worker
             sandboxing is not implemented on Windows (mirrors the historical
@@ -248,12 +252,7 @@ def expect_build_success_test(
             with the flags this wrapper supplies, so a plain wildcard
             `bazel build //...` would run it without them and fail.
         build_args: extra flags forwarded verbatim to the nested `bazel build`
-            (e.g. `"--extra_toolchains=//some:toolchain"`). Unlike `target`,
-            labels embedded here are NOT absolutized against this package --
-            the nested `bazel` runs from the workspace root, so a
-            package-relative label here would resolve against the root
-            package instead. Always spell it out fully, even for a toolchain
-            defined in this same package.
+            (e.g. `"--extra_toolchains=//some:toolchain"`).
         worker_sandboxing: see `expect_build_failure_test`.
         expect: file labels whose (newline-stripped) contents must appear in the
             build output. Automatically added to the test's `data`.
