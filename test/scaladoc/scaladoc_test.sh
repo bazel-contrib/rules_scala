@@ -3,18 +3,18 @@
 # //test/toolchains:ast_plus_one_deps_unused_deps_warn.
 #
 # Usage:
-#   scaladoc.sh --target=<label> [--expect-file=<file>]... [--do-not-expect-file=<file>]...
+#   scaladoc_test.sh --target=<label> [--expect-file=<file>]... [--reject-file=<file>]...
 #
 # Args:
 #       --target=label                  : target label for bazel build/cquery
 #       --expect-file=file              : filename(s) (not paths) that must exist after scaladoc run
-#       --do-not-expect-file=file       : filename(s) that must NOT exist after scaladoc run
+#       --reject-file=file              : filename(s) that must NOT exist after scaladoc run
 
 set -euo pipefail
 
 TARGET=""
 EXPECT_FILES=()
-DO_NOT_EXPECT_FILES=()
+REJECT_FILES=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -27,9 +27,9 @@ while [[ $# -gt 0 ]]; do
             EXPECT_FILES+=("${EXPECT_FILE}")
             shift
               ;;
-         --do-not-expect-file=*)
-            DO_NOT_EXPECT_FILE="${1#*=}"
-            DO_NOT_EXPECT_FILES+=("${DO_NOT_EXPECT_FILE}")
+         --reject-file=*)
+            REJECT_FILE="${1#*=}"
+            REJECT_FILES+=("${REJECT_FILE}")
             shift
               ;;
            *)
@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "${TARGET:-}" ]]; then
-    echo "Usage: scaladoc.sh --target=label [--expect-file=file]... [nested_bazel.sh]" >&2
+    echo "Usage: scaladoc_test.sh --target=label [--expect-file=file]... [--reject-file=file]..." >&2
     exit 1
 fi
 
@@ -66,7 +66,7 @@ for f in "${EXPECT_FILES[@]:-}"; do
     fi
 done
 
-for f in "${DO_NOT_EXPECT_FILES[@]:-}"; do
+for f in "${REJECT_FILES[@]:-}"; do
     if [[ -f "${SCALADOC_DIR}/${f}" ]]; then
         echo "Unexpected scaladoc file found at ${SCALADOC_DIR}/${f}" >&2
         exit 1

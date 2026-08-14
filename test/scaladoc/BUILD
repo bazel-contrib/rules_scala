@@ -67,7 +67,7 @@ scala_doc(
 sh_test(
     name = "transitive_scaladoc_test",
     size = "large",
-    srcs = ["scaladoc.sh"],
+    srcs = ["scaladoc_test.sh"],
     args = [
          "--target=//test/scaladoc:scaladoc_transitive",
          "--expect-file=B$$.html",
@@ -84,11 +84,11 @@ sh_test(
 sh_test(
     name = "intransitive_scaladoc_test",
     size = "large",
-    srcs = ["scaladoc.sh"],
+    srcs = ["scaladoc_test.sh"],
     args = [
          "--target=//test/scaladoc:scaladoc_intransitive",
          "--expect-file=B$$.html",
-         "--do-not-expect-file=A$$.html"
+         "--reject-file=A$$.html"
     ],
     data = [
          "//:MODULE.bazel",
