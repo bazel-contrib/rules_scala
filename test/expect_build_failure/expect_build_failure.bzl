@@ -47,6 +47,7 @@ def _nested_bazel_test(
         reject,
         size,
         tags,
+        bazel_arg_files = [],
         **kwargs):
     args = ["--command", command, "--target", _absolutize(target)]
     if expect_success:
@@ -71,6 +72,10 @@ def _nested_bazel_test(
         if " " in bazel_arg:
             bazel_arg = "'%s'" % bazel_arg
         args += ["--bazel-arg", bazel_arg]
+    for bazel_arg_file in bazel_arg_files:
+        # The flag's value lives in the file, so only its (metacharacter-free)
+        # path rides the `sh_test` args here -- see the helper's --bazel-arg-file.
+        args += ["--bazel-arg-file", "$(rootpath %s)" % bazel_arg_file]
     for expect_file in expect:
         args += ["--expect-file", "$(rootpath %s)" % expect_file]
     for reject_file in reject:
@@ -107,7 +112,7 @@ def _nested_bazel_test(
     data = [
         "//:MODULE.bazel",
         _NESTED_BAZEL_LIB,
-    ] + expect + reject + code_under_test + kwargs.pop("data", [])
+    ] + expect + reject + bazel_arg_files + code_under_test + kwargs.pop("data", [])
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
     # also named explicitly (e.g. the expect/reject `.txt`s, passed as `:foo.txt`),
@@ -300,6 +305,7 @@ def expect_test_success_test(
         name,
         target,
         bazel_args = [],
+        bazel_arg_files = [],
         env = {},
         worker_sandboxing = False,
         expect = [],
@@ -323,6 +329,13 @@ def expect_test_success_test(
             would run it without them and fail.
         bazel_args: extra flags forwarded verbatim to the nested `bazel test`
             (e.g. `"--test_filter=A"`).
+        bazel_arg_files: file labels each holding one extra flag as its
+            (newline-stripped) contents, forwarded to the nested `bazel test`
+            just like `bazel_args`. Use this instead of `bazel_args` for a flag
+            whose value the `sh_test` args pipeline would mangle -- a space, or a
+            shell metacharacter the Windows launcher's `bash -c` would interpret
+            (e.g. a `--test_filter` regex containing `(`/`|`/`$`). Automatically
+            added to the test's `data`.
         env: dict of KEY: VALUE exported into the nested `bazel` client env before
             the run (e.g. to feed the target's `env_inherit`).
         worker_sandboxing: see `expect_build_failure_test`.
@@ -339,6 +352,7 @@ def expect_test_success_test(
         command = "test",
         target = target,
         bazel_args = bazel_args,
+        bazel_arg_files = bazel_arg_files,
         expect_success = True,
         env = env,
         worker_sandboxing = worker_sandboxing,

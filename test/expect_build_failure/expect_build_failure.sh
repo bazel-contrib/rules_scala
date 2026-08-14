@@ -13,6 +13,7 @@
 #       [--expect-success] \
 #       [--env <KEY=VALUE>]... \
 #       [--bazel-arg <flag>]... \
+#       [--bazel-arg-file <path>]... \
 #       [--expect-file <path>]... \
 #       [--reject-file <path>]...
 #
@@ -25,6 +26,12 @@
 #   --bazel-arg       extra option forwarded to the nested `bazel <command>` (e.g.
 #                     `--repo_env=SCALA_VERSION=2.13.18` or `--extra_toolchains=...`);
 #                     repeatable.
+#   --bazel-arg-file  like --bazel-arg, but the (newline-stripped) contents of the
+#                     given file are the flag. Use this for a flag whose value
+#                     Bazel's `sh_test` args pipeline would mangle -- a space (see
+#                     the note below) or a shell metacharacter that the Windows
+#                     launcher's `bash -c` would interpret (e.g. a `--test_filter`
+#                     regex with `(`/`|`/`$`); repeatable.
 #   --clean-before-build  run `bazel clean` (no --expunge) against the nested
 #                     output base before the real invocation. The caller
 #                     (expect_build_success_test) passes this whenever it also
@@ -57,6 +64,7 @@ command="build"
 expect_success="false"
 clean_before_build="false"
 bazel_args=()
+bazel_arg_files=()
 expect_files=()
 reject_files=()
 
@@ -86,6 +94,10 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --bazel-arg)
       bazel_args+=("$2")
+      shift 2
+      ;;
+    --bazel-arg-file)
+      bazel_arg_files+=("$2")
       shift 2
       ;;
     --expect-file)
@@ -129,6 +141,13 @@ _resolve_message_file() {
 }
 
 nested_bazel_setup "rules_scala_expect_build_failure_output_base"
+
+# Append file-backed flags (see --bazel-arg-file). Read here, after parsing, so
+# the shell never has to carry the raw value on a command line.
+for bazel_arg_file in ${bazel_arg_files[@]+"${bazel_arg_files[@]}"}; do
+  resolved="$(_resolve_message_file "${bazel_arg_file}")"
+  bazel_args+=("$(tr -d '\n' <"${resolved}")")
+done
 
 if [[ "${clean_before_build}" == "true" ]]; then
   nested_bazel_run clean >/dev/null 2>&1
