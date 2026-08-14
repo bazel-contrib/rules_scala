@@ -27,8 +27,9 @@ expected=(
   "testcase name='hasRuntimeDependencies'"
 )
 for testcase in "${expected[@]}"; do
-  if ! grep -qF "${testcase}" "${report}"; then
-    echo "Expected <${testcase}> in ${report}, but it was not found. Full report:" >&2
+  count="$(grep -cF "${testcase}" "${report}" || true)"
+  if [[ "${count}" -ne 1 ]]; then
+    echo "Expected exactly one <${testcase}> in ${report}, found ${count}. Full report:" >&2
     cat "${report}" >&2
     exit 1
   fi
