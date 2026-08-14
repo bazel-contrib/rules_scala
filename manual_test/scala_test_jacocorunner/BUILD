@@ -20,8 +20,7 @@ scala_test(
     srcs = ["EmptyTest.scala"],
 )
 
-# Jacoco coverage support is not implemented on Windows (mirrors the
-# is_windows guard in the former test/shell/test_scala_jacocorunner.sh).
+# Jacoco coverage support is not implemented on Windows.
 expect_test_success_test(
     name = "scala_test_jacocorunner_from_scala_toolchain_passes_test",
     command = "coverage",
