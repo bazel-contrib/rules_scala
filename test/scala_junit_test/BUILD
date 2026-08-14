@@ -1,5 +1,6 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_junit_test", "scala_specs2_junit_test")
+load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_test_failure_test", "expect_test_success_test")
 
 # The discovery/filter/xml tests below depend on //test:Junit* fixtures (which
@@ -41,9 +42,10 @@ expect_test_failure_test(
     target = ":failing_test",
 )
 
-expect_test_failure_test(
+expect_analysis_failure_test(
     name = "no_prefix_or_suffix_fails",
-    target = ":no_prefix_or_suffix",
+    message = "Setting at least one of the attributes ('prefixes','suffixes') is required",
+    target_under_test = ":no_prefix_or_suffix",
 )
 
 expect_test_failure_test(

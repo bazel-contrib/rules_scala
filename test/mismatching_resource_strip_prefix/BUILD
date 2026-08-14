@@ -1,5 +1,5 @@
 load("//scala:scala.bzl", "scala_library")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
+load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 
 package(default_testonly = 1)
 
@@ -12,8 +12,8 @@ scala_library(
     tags = ["manual"],
 )
 
-expect_build_failure_test(
+expect_analysis_failure_test(
     name = "mismatching_resource_strip_prefix",
-    expect = ["expected_mismatching_prefix.txt"],
-    target = ":noSrcsJarWithWrongStripPrefix",
+    message = "Resource file test/mismatching_resource_strip_prefix/resource.txt is not under the specified prefix wrong_prefix to strip",
+    target_under_test = ":noSrcsJarWithWrongStripPrefix",
 )
