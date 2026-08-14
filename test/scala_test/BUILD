@@ -22,6 +22,9 @@ scala_test(
         "CustomReporter.scala",
     ],
     reporter_class = "test.scala_test.CustomReporter",
+    # //test/custom_reporter runs this nested and asserts the reporter wrote its
+    # marker file; it needs this target in `data` to re-key on source edits.
+    visibility = ["//test/custom_reporter:__pkg__"],
 )
 
 # Check that we can run scala tests in external workspaces.
