@@ -6,12 +6,12 @@ expect_build_failure_test(
     name = "user_binary_missing_direct_deps_test",
     build_args = [_MISSING_DIRECT_DEPS_TOOLCHAIN],
     expect = ["expected_user_binary_buildozer_message.txt"],
-    target = "//test_expect_failure/missing_direct_deps/internal_deps:user_binary",
+    target = "//test/missing_direct_deps/internal_deps:user_binary",
 )
 
 expect_build_failure_test(
     name = "binary_user_of_binary_missing_direct_deps_test",
     build_args = [_MISSING_DIRECT_DEPS_TOOLCHAIN],
     expect = ["expected_binary_user_of_binary_buildozer_message.txt"],
-    target = "//test_expect_failure/missing_direct_deps/internal_deps:binary_user_of_binary",
+    target = "//test/missing_direct_deps/internal_deps:binary_user_of_binary",
 )

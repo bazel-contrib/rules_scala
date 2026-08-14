@@ -4,12 +4,8 @@ load(
     "expect_build_success_test",
 )
 
-# Fixture lives in test_expect_failure/missing_direct_deps -- shared by this
-# package and by test/shell/test_scala_binary.sh and
-# test/shell/test_strict_dependency.sh (migrating separately), so it stays put
-# instead of being colocated here.
-_INTERNAL_DEPS = "//test_expect_failure/missing_direct_deps/internal_deps"
-_EXTERNAL_DEPS = "//test_expect_failure/missing_direct_deps/external_deps"
+_INTERNAL_DEPS = "//test/missing_direct_deps/internal_deps"
+_EXTERNAL_DEPS = "//test/missing_direct_deps/external_deps"
 
 _STRICT_DEPS_ERROR = "--extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_error"
 _STRICT_DEPS_WARN = "--extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_warn"

@@ -4,11 +4,17 @@ load(":custom-jvm-rule.bzl", "custom_jvm")
 
 package(default_visibility = ["//visibility:public"])
 
+# Targets below tagged "manual" use a missing direct dep on purpose (that's
+# what test/missing_direct_deps and test/strict_dependency assert on) and fail
+# to build under the default toolchain; verified individually with a
+# --keep_going default build, not tagged as a group.
+
 scala_library(
     name = "transitive_dependency_user",
     srcs = [
         "A.scala",
     ],
+    tags = ["manual"],
     deps = ["direct_dependency"],
 )
 
@@ -17,6 +23,7 @@ scala_library(
     srcs = [
         "User.java",
     ],
+    tags = ["manual"],
     deps = ["direct_dependency"],
 )
 
@@ -40,6 +47,7 @@ scala_library(
     srcs = [
         "HasCustomJavaProviderDependency.scala",
     ],
+    tags = ["manual"],
     deps = ["direct_java_provider_dependency"],
 )
 
@@ -63,6 +71,7 @@ scala_binary(
         "A.scala",
     ],
     main_class = "A",
+    tags = ["manual"],
     deps = ["direct_dependency"],
 )
 
@@ -72,6 +81,7 @@ scala_binary(
         "D.scala",
     ],
     main_class = "D",
+    tags = ["manual"],
     deps = ["direct_binary_dependency"],
 )
 
@@ -80,6 +90,7 @@ java_library(
     srcs = [
         "JavaLibraryHasCustomJavaProviderDependency.java",
     ],
+    tags = ["manual"],
     deps = ["direct_java_provider_dependency"],
 )
 
@@ -88,6 +99,7 @@ java_library(
     srcs = [
         "JavaLibraryHasCustomJavaProviderDependency.java",
     ],
+    tags = ["manual"],
     deps = ["direct_java_library_dependency"],
 )
 
@@ -119,5 +131,6 @@ scala_library(
     srcs = [
         "HasCustomJavaProviderDependency.scala",
     ],
+    tags = ["manual"],
     deps = ["unstamped_direct_java_provider_dependency"],
 )

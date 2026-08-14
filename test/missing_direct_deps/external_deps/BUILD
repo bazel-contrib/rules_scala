@@ -3,12 +3,18 @@ load("//scala:scala.bzl", "scala_library")
 
 package(default_visibility = ["//visibility:public"])
 
+# Targets below tagged "manual" use a missing direct dep on purpose (that's
+# what test/missing_direct_deps and test/strict_dependency assert on) and fail
+# to build under the default toolchain; verified individually with a
+# --keep_going default build, not tagged as a group.
+
 scala_library(
     name = "transitive_external_dependency_user",
     testonly = True,
     srcs = [
         "A.scala",
     ],
+    tags = ["manual"],
     deps = ["external_dependency_user"],
 )
 
@@ -27,6 +33,7 @@ scala_library(
     srcs = [
         "A.scala",
     ],
+    tags = ["manual"],
     deps = ["external_dependency_user_file_group"],
 )
 
@@ -51,5 +58,6 @@ java_library(
     name = "java_lib_with_a_transitive_external_dep",
     testonly = True,
     srcs = ["UsesExternalDep.java"],
+    tags = ["manual"],
     deps = [":java_lib_with_unused_external_dep"],
 )
