@@ -1,0 +1,1 @@
+//test/strict_dependency/scala_proto_deps:some_proto' //test/strict_dependency/scala_proto_deps:uses_transitive_scala_proto

@@ -1,1 +1,1 @@
-warning: Target '//test_expect_failure/missing_direct_deps/internal_deps:transitive_dependency' is used but isn't explicitly declared, please add it to the deps
+warning: Target '//test/missing_direct_deps/internal_deps:transitive_dependency' is used but isn't explicitly declared, please add it to the deps

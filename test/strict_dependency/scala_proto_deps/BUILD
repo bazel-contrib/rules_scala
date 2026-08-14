@@ -70,26 +70,27 @@ scala_library(
 
 # The stamped labels below name a self-repo canonical target
 # (@@//test/strict_dependency/scala_proto_deps:...); whether Bazel prints the
-# leading "@@" varies across the Bazel-version matrix this suite runs under,
-# hence expect_regex (with an optional "@@?"), not expect.
+# leading "@@" varies across the Bazel-version matrix this suite runs under.
+# The expected message starts right after where that "@@" would be, at the
+# "//" the label itself starts with, so the match is unaffected either way.
 
 expect_build_failure_test(
     name = "incorrect_proto_stamp_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_strict_deps_error"],
-    expect_regex = ["expected_regex_incorrect_proto_stamp.txt"],
+    expect = ["expected_incorrect_proto_stamp.txt"],
     target = ":uses_transitive_scala_proto",
 )
 
 expect_build_failure_test(
     name = "stamp_by_convention_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_strict_deps_error,//test/strict_dependency/scala_proto_deps:stamp_by_convention_toolchain"],
-    expect_regex = ["expected_regex_stamp_by_convention.txt"],
+    expect = ["expected_stamp_by_convention.txt"],
     target = ":uses_transitive_scala_proto",
 )
 
 expect_build_failure_test(
     name = "custom_phase_stamping_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_strict_deps_error,//test/strict_dependency/scala_proto_deps:stamp_by_convention_toolchain"],
-    expect_regex = ["expected_regex_custom_phase_stamping.txt"],
+    expect = ["expected_custom_phase_stamping.txt"],
     target = ":uses_transitive_some_proto_custom_suffix",
 )

@@ -1,0 +1,1 @@
+//test/strict_dependency/scala_proto_deps:some_proto_custom_suffix' //test/strict_dependency/scala_proto_deps:uses_transitive_some_proto_custom_suffix

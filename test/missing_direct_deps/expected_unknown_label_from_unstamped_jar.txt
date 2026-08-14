@@ -1,1 +1,1 @@
-transitive_dependency_without_manifest.jar which came from @@//test_expect_failure/missing_direct_deps/internal_deps:unstamped_direct_java_provider_dependency
+transitive_dependency_without_manifest.jar which came from @@//test/missing_direct_deps/internal_deps:unstamped_direct_java_provider_dependency

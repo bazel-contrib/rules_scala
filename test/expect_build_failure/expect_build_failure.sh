@@ -45,15 +45,6 @@
 #                     output; repeatable.
 #   --reject-file     file whose (newline-stripped) contents must NOT appear in the
 #                     output; repeatable.
-#   --expect-regex-file  file whose (newline-stripped) contents is an extended
-#                     regex (grep -E) that must match the output; repeatable.
-#                     Use only when the exact text is not stable across the
-#                     Bazel-version matrix this test runs under (e.g. a bzlmod
-#                     canonical repo name, whose `~`/`+` separator and version
-#                     suffix vary by Bazel version) -- prefer --expect-file for
-#                     anything that is otherwise a fixed string.
-#   --reject-regex-file  same as --expect-regex-file, but the regex must NOT
-#                     match; repeatable.
 #
 # Messages are passed as files rather than inline strings because Bazel subjects
 # `sh_test` `args` to Bourne tokenization, which would split messages that
@@ -76,8 +67,6 @@ bazel_args=()
 bazel_arg_files=()
 expect_files=()
 reject_files=()
-expect_regex_files=()
-reject_regex_files=()
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -117,14 +106,6 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --reject-file)
       reject_files+=("$2")
-      shift 2
-      ;;
-    --expect-regex-file)
-      expect_regex_files+=("$2")
-      shift 2
-      ;;
-    --reject-regex-file)
-      reject_regex_files+=("$2")
       shift 2
       ;;
     *)
@@ -188,22 +169,18 @@ if [[ "${expect_success}" != "true" && "${status}" -eq 0 ]]; then
   exit 1
 fi
 
-# Checks each file in $4... against $output, using $2 as the grep mode
-# (--fixed-strings or --extended-regexp) and failing if a match is found ($3
-# "true") or missing ($3 "false"). $1 ("message"/"regex") only picks the
-# wording of the failure output.
+# Checks each file in $2... against $output, failing if its (fixed-string)
+# content is found and $1 is "false", or missing and $1 is "true".
 _check_files() {
-  local kind="$1"
-  local grep_mode="$2"
-  local must_match="$3"
-  shift 3
+  local must_match="$1"
+  shift
 
   local file resolved text matched
   for file in "$@"; do
     resolved="$(_resolve_message_file "${file}")"
     text="$(tr -d '\n' <"${resolved}")"
 
-    if grep --quiet "${grep_mode}" -- "${text}" <<<"${output}"; then
+    if grep --quiet --fixed-strings -- "${text}" <<<"${output}"; then
       matched="true"
     else
       matched="false"
@@ -213,10 +190,10 @@ _check_files() {
     fi
 
     if [[ "${must_match}" == "true" ]]; then
-      echo "Nested \`bazel ${command}\` finished as expected, but output did not contain the expected ${kind}." >&2
+      echo "Nested \`bazel ${command}\` finished as expected, but output did not contain the expected message." >&2
       echo "Expected (from ${file}): ${text}" >&2
     else
-      echo "Nested \`bazel ${command}\` finished as expected, but output contained a ${kind} that should be absent." >&2
+      echo "Nested \`bazel ${command}\` finished as expected, but output contained a message that should be absent." >&2
       echo "Rejected (from ${file}): ${text}" >&2
     fi
     echo "Output:" >&2
@@ -225,7 +202,5 @@ _check_files() {
   done
 }
 
-_check_files "message" --fixed-strings true ${expect_files[@]+"${expect_files[@]}"}
-_check_files "message" --fixed-strings false ${reject_files[@]+"${reject_files[@]}"}
-_check_files "regex" --extended-regexp true ${expect_regex_files[@]+"${expect_regex_files[@]}"}
-_check_files "regex" --extended-regexp false ${reject_regex_files[@]+"${reject_regex_files[@]}"}
+_check_files true ${expect_files[@]+"${expect_files[@]}"}
+_check_files false ${reject_files[@]+"${reject_files[@]}"}
