@@ -196,19 +196,37 @@ def _nested_bazel_test(
     # without a fingerprint must not be served a stale pass.
     current_package = "//%s:" % native.package_name()
     cross_package_fixture = not absolute_target.startswith(current_package)
-    if no_fingerprint_reason or cross_package_fixture:
+
+    # `target` may be a pattern (a wildcard like `//pkg/...`), which has no
+    # single configured target to read actions from and no single label a
+    # cross-package caller could declare as `data`. A concrete label doesn't
+    # have that problem either way, so only a cross-package *pattern* is
+    # unfixable without the caller's help.
+    fingerprint_target = fingerprint_target or target
+    fingerprint_target_is_pattern = "..." in fingerprint_target or fingerprint_target.endswith((":all", ":*"))
+
+    if no_fingerprint_reason or (cross_package_fixture and fingerprint_target_is_pattern):
         # The package glob above cannot cross a Bazel package boundary, and a
-        # macro cannot prove that caller `data` covers every source of a target
-        # or pattern. Keep cross-package results out of the cache rather than
-        # serve a stale pass after an undeclared source edit.
+        # macro cannot prove that caller `data` covers every source of a
+        # pattern -- there's no single label to declare. Keep such results out
+        # of the cache rather than serve a stale pass after an undeclared
+        # source edit.
         tags = tags + ["external"]
     else:
-        # `target` may be a pattern, which has no single configured target to read
-        # actions from. Rather than leave such a test without a key, ask for one
-        # concrete target the pattern builds.
-        fingerprint_target = fingerprint_target or target
-        if "..." in fingerprint_target or fingerprint_target.endswith((":all", ":*")):
+        if fingerprint_target_is_pattern:
             fail("target %s is a pattern; pass fingerprint_target with one concrete label it builds, so a rules change still invalidates %s" % (target, name))
+        # A cross-package fixture still gets this real, non-empty action
+        # fingerprint, which does catch a rules change. What it does not
+        # catch: a plain source edit to the fixture that doesn't change any
+        # command line, because the package glob above only reaches this
+        # package. Closing that gap would mean depending on the fixture's own
+        # build output, but nothing here can tell whether that output builds
+        # under the *outer* build's plain configuration -- these fixtures are
+        # routinely written to fail, or to only succeed under a toolchain
+        # override the nested `bazel` supplies, and a `tags = ["manual"]` on
+        # such a target lives in a BUILD file this macro cannot read. So this
+        # is the same tradeoff a near-empty fingerprint already accepts
+        # elsewhere in this file.
         fixture_actions(
             name = "%s_fixture_actions" % name,
             target = fingerprint_target,
