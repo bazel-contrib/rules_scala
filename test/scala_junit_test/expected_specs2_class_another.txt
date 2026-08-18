@@ -1,0 +1,1 @@
+[info] JunitSpecs2AnotherTest

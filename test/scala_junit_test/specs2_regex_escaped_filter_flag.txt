@@ -1,0 +1,1 @@
+--test_filter=scalarules.test.junit.specs2.JunitSpec2RegexTest#\Qtests with unsafe characters::work escaped [with regex]\E$
