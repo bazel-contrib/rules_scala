@@ -110,6 +110,7 @@ sh_test(
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
+        "IdentityMacro.scala",
     ],
     tags = [
         "local",

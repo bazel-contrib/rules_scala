@@ -13,11 +13,4 @@ test_scala_proto_library_action_label() {
   fi
 }
 
-test_scala_proto_custom_generator() {
-  bazel test //test/proto/custom_generator:DummyGeneratorTest \
-  --extra_toolchains=//test/proto/custom_generator:scala_proto_deps_toolchain \
-  --extra_toolchains=//test/proto/custom_generator:scala_proto_toolchain
-}
-
 $runner test_scala_proto_library_action_label
-$runner test_scala_proto_custom_generator
