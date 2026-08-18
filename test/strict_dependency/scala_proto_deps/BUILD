@@ -85,6 +85,7 @@ expect_build_failure_test(
     name = "stamp_by_convention_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_strict_deps_error,//test/strict_dependency/scala_proto_deps:stamp_by_convention_toolchain"],
     expect = ["expected_stamp_by_convention.txt"],
+    no_fingerprint_reason = "under this toolchain combination collides with custom_phase_stamping_test below on :some_proto's aspect application (see that test's own no_fingerprint_reason)",
     target = ":uses_transitive_scala_proto",
 )
 
@@ -92,5 +93,6 @@ expect_build_failure_test(
     name = "custom_phase_stamping_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_strict_deps_error,//test/strict_dependency/scala_proto_deps:stamp_by_convention_toolchain"],
     expect = ["expected_custom_phase_stamping.txt"],
+    no_fingerprint_reason = "fingerprinting this target under the same --extra_toolchains as stamp_by_convention_test above analyses :some_proto under two different aspect stacks (scala_proto_aspect alone vs. scala_proto_aspect + this package's custom_stamping_apsect) in the same configuration, which Bazel reports as an ActionConflictException on :some_proto's generated jar",
     target = ":uses_transitive_some_proto_custom_suffix",
 )
