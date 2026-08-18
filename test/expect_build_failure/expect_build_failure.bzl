@@ -268,7 +268,7 @@ def expect_test_failure_test(
         size = "large",
         tags = ["local", "requires-network"],
         **kwargs):
-    """Declares an `sh_test` asserting that `bazel test`/`coverage` of `target` fails.
+    """Declares an `sh_test` asserting that `bazel test`/`bazel coverage` of `target` fails.
 
     Same plumbing as `expect_build_failure_test`, but the nested invocation is
     `bazel test` (or `bazel coverage`), so the failure being asserted is a test
@@ -310,6 +310,7 @@ def expect_test_failure_test(
 def expect_test_success_test(
         name,
         target,
+        command = "test",
         bazel_args = [],
         bazel_arg_files = [],
         env = {},
@@ -319,24 +320,25 @@ def expect_test_success_test(
         size = "large",
         tags = ["local", "requires-network"],
         **kwargs):
-    """Declares an `sh_test` asserting that `bazel test` of `target` succeeds.
+    """Declares an `sh_test` asserting that `bazel test`/`bazel coverage` of `target` succeeds.
 
-    Same plumbing as `expect_test_failure_test`, but the nested `bazel test` is
-    expected to pass. Useful for a fixture that only passes under a specific
-    `--test_filter` or with an inherited env var, which this wrapper supplies via
-    `bazel_args`/`env`.
+    Same plumbing as `expect_test_failure_test`, but the nested run is expected
+    to pass. Useful for a fixture that only passes under a specific
+    `--test_filter`, an inherited env var, or a specific toolchain, which this
+    wrapper supplies via `bazel_args`/`env`.
 
     Args:
         name: test target name.
-        target: label whose nested `bazel test` must succeed. A package-relative
-            label (`":foo"` or `"foo"`) is resolved against this package. The
-            caller must tag this fixture `"manual"`: it only passes with the
-            flags this wrapper supplies, so a plain wildcard `bazel test //...`
+        target: label whose nested run must succeed. A package-relative label
+            (`":foo"` or `"foo"`) is resolved against this package. The caller
+            must tag this fixture `"manual"`: it only passes with the flags
+            this wrapper supplies, so a plain wildcard `bazel test //...`
             would run it without them and fail.
-        bazel_args: extra flags forwarded verbatim to the nested `bazel test`
-            (e.g. `"--test_filter=A"`).
+        command: the bazel subcommand to run; `"test"` (default) or `"coverage"`.
+        bazel_args: extra flags forwarded verbatim to the nested `bazel <command>`
+            (e.g. `"--test_filter=A"`, `"--extra_toolchains=//some:toolchain"`).
         bazel_arg_files: file labels each holding one extra flag as its
-            (newline-stripped) contents, forwarded to the nested `bazel test`
+            (newline-stripped) contents, forwarded to the nested `bazel <command>`
             just like `bazel_args`. Use this instead of `bazel_args` for a flag
             whose value the `sh_test` args pipeline would mangle -- a space, or a
             shell metacharacter the Windows launcher's `bash -c` would interpret
@@ -355,7 +357,7 @@ def expect_test_success_test(
     """
     _nested_bazel_test(
         name = name,
-        command = "test",
+        command = command,
         target = target,
         bazel_args = bazel_args,
         bazel_arg_files = bazel_arg_files,
