@@ -25,7 +25,11 @@ expected_jar="${2:?usage: jar_exposed_in_bep_test.sh <target> <expected_jar>}"
 nested_bazel_setup "rules_scala_build_event_protocol_output_base"
 
 bes_file="${TEST_TMPDIR:?TEST_TMPDIR must be set}/build_events.txt"
-nested_bazel_run build "${target}" "--build_event_text_file=${bes_file}" >/dev/null 2>&1
+if ! build_output="$(nested_bazel_run build "${target}" "--build_event_text_file=${bes_file}" 2>&1)"; then
+  echo "Build of ${target} failed:" >&2
+  echo "${build_output}" >&2
+  exit 1
+fi
 
 if ! grep --quiet --fixed-strings "${expected_jar}" "${bes_file}"; then
   echo "Expected jar '${expected_jar}' to appear in the Build Event Protocol for" \
