@@ -14,6 +14,10 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
         data = [
             "//:MODULE.bazel",
             "//test/expect_build_failure:nested_bazel.sh",
+            # The coordinates these pin decide which scala-library the aquery sees,
+            # so bumping one must re-run this test.
+            "//third_party/repositories:scala_2_12.bzl",
+            "//third_party/repositories:scala_2_13.bzl",
         ],
         tags = [
             "exclusive",
@@ -36,6 +40,9 @@ sh_test(
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
+        # The repo rule that writes SCALA_MAJOR_VERSION into config.bzl; editing
+        # its logic must re-run this test.
+        "//:scala_config.bzl",
     ],
     tags = [
         "exclusive",

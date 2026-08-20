@@ -24,9 +24,13 @@ expected_library="${2:?usage: scalac_javac_scala_library_test.sh <scala_version>
 
 nested_bazel_setup "rules_scala_scala_config_output_base"
 
-output="$(nested_bazel_run aquery \
+if ! output="$(nested_bazel_run aquery \
   'mnemonic("Javac", //src/java/io/bazel/rulesscala/scalac:scalac)' \
-  "--repo_env=SCALA_VERSION=${scala_version}" 2>&1)"
+  "--repo_env=SCALA_VERSION=${scala_version}" 2>&1)"; then
+  echo "aquery under SCALA_VERSION=${scala_version} failed:" >&2
+  echo "${output}" >&2
+  exit 1
+fi
 
 if ! grep --quiet --fixed-strings "${expected_library}" <<<"${output}"; then
   echo "Expected the scalac Javac action to use '${expected_library}' under" \
