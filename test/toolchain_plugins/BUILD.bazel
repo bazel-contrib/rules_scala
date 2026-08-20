@@ -1,0 +1,47 @@
+load("//scala:scala.bzl", "scala_library")
+load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load(
+    ":toolchain_plugins_test.bzl",
+    "toolchain_plugin_absent_test",
+    "toolchain_plugin_present_test",
+)
+
+# The analysis tests never execute the plugin, so any jar works on any Scala
+# version. (A real one, like @org_typelevel_kind_projector//jar, wouldn't:
+# its repo only analyzes under Scala 2.)
+genrule(
+    name = "dummy_plugin",
+    outs = ["dummy_plugin.jar"],
+    cmd = "touch $@",
+)
+
+# A toolchain that enables a compiler plugin for every target.
+scala_toolchain(
+    name = "with_plugin_impl",
+    plugins = [":dummy_plugin"],
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "with_plugin",
+    toolchain = ":with_plugin_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
+scala_library(
+    name = "plain_library",
+    srcs = ["Placeholder.scala"],
+)
+
+toolchain_plugin_present_test(
+    name = "toolchain_plugin_present_test",
+    size = "small",
+    target_under_test = ":plain_library",
+)
+
+toolchain_plugin_absent_test(
+    name = "toolchain_plugin_absent_test",
+    size = "small",
+    target_under_test = ":plain_library",
+)
