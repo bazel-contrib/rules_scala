@@ -26,8 +26,14 @@ test_output_flag="--test_output=errors"
 # that never land in the nested output base -- a nested test that reads one
 # such output by path then fails with a NoSuchFileException that has nothing
 # to do with what it actually tests.
+#
+# Excludes the last_green task: it runs a different (unreleased) Bazel
+# binary, whose action digests don't match what the pinned release Bazel
+# used everywhere else populates, so it pays remote-cache round trips for
+# misses instead of the hits the other tasks get -- measured 8780s against a
+# 3476-3920s baseline without this fix.
 remote_cache_flags=""
-if [[ "${BUILDKITE:-}" == "true" ]] && ! is_macos; then
+if [[ "${BUILDKITE:-}" == "true" ]] && ! is_macos && [[ "${BAZELCI_TASK:-}" != *last_green* ]]; then
   remote_cache_flags="--remote_cache=remotebuildexecution.googleapis.com --remote_instance_name=projects/bazel-untrusted/instances/default_instance --google_default_credentials"
 fi
 
