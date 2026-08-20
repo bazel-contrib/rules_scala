@@ -21,7 +21,9 @@ sh_test(
         "test/disappearing_class/ClassProviderWithoutClass.scala",
     ],
     data = [
+        "ClassProvider.scala",
         "ClassProviderWithoutClass.scala",
+        "UsesClass.scala",
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
     ],
