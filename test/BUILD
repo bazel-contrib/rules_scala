@@ -73,6 +73,7 @@ java_binary(
 
 scala_binary(
     name = "ScalaBinary",
+    visibility = ["//test:__subpackages__"],
     srcs = ["ScalaBinary.scala"],
     main_class = "scalarules.test.ScalaBinary",
     print_compile_time = True,
@@ -190,6 +191,7 @@ scala_library(
 
 scala_library(
     name = "UnusedDependencyCheckerWarn",
+    visibility = ["//test:__subpackages__"],
     srcs = ["OtherLib.scala"],
     unused_dependency_checker_mode = "warn",
     deps = [

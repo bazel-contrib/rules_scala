@@ -7,6 +7,7 @@ load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failu
 expect_build_success_test(
     name = "plus_one_deps_only_works_for_java_info_targets_test",
     build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    no_fingerprint_reason = "test_proto is a plain proto_library, so it runs no rules_scala action to fingerprint",
     target = "//test/proto:test_proto",
 )
 
@@ -41,5 +42,6 @@ expect_build_failure_test(
     name = "external_deps_stamped_label_test",
     build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_error"],
     expect = ["expected_external_deps_stamped_label.txt"],
+    no_fingerprint_reason = "java_lib_with_a_transitive_external_dep is a plain java_library, so it runs no rules_scala action to fingerprint",
     target = "//test/missing_direct_deps/external_deps:java_lib_with_a_transitive_external_dep",
 )

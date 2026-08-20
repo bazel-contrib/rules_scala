@@ -21,6 +21,7 @@ load("//scala_proto/default:default_deps.bzl", "DEFAULT_SCALAPB_WORKER_DEPS")
 
 scala_proto_library(
     name = "any_proto_scala",
+    visibility = ["//test:__subpackages__"],
     deps = ["@com_google_protobuf//:any_proto"],
 )
 

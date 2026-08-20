@@ -96,5 +96,6 @@ expect_build_success_test(
 expect_build_success_test(
     name = "scalac_jvm_flags_with_scalapb_build_test",
     build_args = [_PASSING],
+    no_fingerprint_reason = "scala_proto compiles through an aspect of its own, whose actions collect_actions.bzl cannot read",
     target = ":proto",
 )
