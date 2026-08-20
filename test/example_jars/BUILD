@@ -1,5 +1,7 @@
 load("//scala:scala.bzl", "scala_library")
 
+exports_files(["expected_service_manifest.txt"])
+
 scala_library(
     name = "example_jar1",
     resources = [
