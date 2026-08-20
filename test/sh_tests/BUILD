@@ -173,11 +173,12 @@ scala_test(
     resources = [":py_resource_binary"],
 )
 
+# --test_output=all is needed so expect/reject below can grep the test's stdout.
 expect_test_success_test(
     name = "test_filter_wildcard_test",
     target = "//test:TestFilterTests",
     bazel_args = [
-        "--test_output=streamed",
+        "--test_output=all",
         "--test_filter=scalarules.test.*",
     ],
     expect = [
@@ -190,7 +191,7 @@ expect_test_success_test(
     name = "test_filter_single_test",
     target = "//test:TestFilterTests",
     bazel_args = [
-        "--test_output=streamed",
+        "--test_output=all",
         "--test_filter=scalarules.test.TestFilterTestA",
     ],
     expect = ["expected_test_filter_a.txt"],

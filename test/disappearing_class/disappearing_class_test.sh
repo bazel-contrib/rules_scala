@@ -52,22 +52,21 @@ replacement_path="$(_resolve_runfile "${replacement_relpath}")"
 nested_bazel_setup "rules_scala_disappearing_class_output_base"
 
 class_provider_path="${NESTED_BAZEL_WORKSPACE}/${class_provider_relpath}"
-backup_path="$(mktemp)"
-cp "${class_provider_path}" "${backup_path}"
 restore() {
-  cp "${backup_path}" "${class_provider_path}"
-  rm -f "${backup_path}"
+  (cd "${NESTED_BAZEL_WORKSPACE}" && git checkout -- "${class_provider_relpath}")
 }
 trap restore EXIT
 
-if ! nested_bazel_run build "${target}" >/dev/null 2>&1; then
+if ! initial_output="$(nested_bazel_run build "${target}" 2>&1)"; then
   echo "Expected initial build of ${target} to succeed." >&2
+  echo "${initial_output}" >&2
   exit 1
 fi
 
 cp "${replacement_path}" "${class_provider_path}"
 
-if nested_bazel_run build "${target}" >/dev/null 2>&1; then
+if second_output="$(nested_bazel_run build "${target}" 2>&1)"; then
   echo "Expected build of ${target} to fail after ${class_provider_relpath}'s class disappeared, but it succeeded (stale cache)." >&2
+  echo "${second_output}" >&2
   exit 1
 fi
