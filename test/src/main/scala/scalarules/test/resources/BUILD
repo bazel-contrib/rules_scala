@@ -19,7 +19,7 @@ filegroup(
 sh_test(
     name = "direct_file_resources_in_jar_without_srcs",
     size = "small",
-    srcs = ["//test/sh_tests:string_in_filename_in_jar.sh"],
+    srcs = ["//test/jar_signature_checks:string_in_filename_in_jar.sh"],
     args = [
         "true",
         "noSrcsWithDirectFileResources.jar",
@@ -32,7 +32,7 @@ sh_test(
 sh_test(
     name = "filegroup_resources_in_jar_without_srcs",
     size = "small",
-    srcs = ["//test/sh_tests:string_in_filename_in_jar.sh"],
+    srcs = ["//test/jar_signature_checks:string_in_filename_in_jar.sh"],
     args = [
         "true",
         "noSrcsWithFilegroupResources.jar",

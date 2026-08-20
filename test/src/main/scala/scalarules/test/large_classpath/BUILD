@@ -1,3 +1,4 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_binary", "scala_library")
 load(":helper.bzl", "create_dependencies", "get_dependency_labels")
 
@@ -21,4 +22,11 @@ scala_library(
 create_dependencies(
     amount = 1000,
     length = 20,
+)
+
+sh_test(
+    name = "test_binary_run_with_large_classpath",
+    srcs = ["test_binary_run_with_large_classpath.sh"],
+    args = ["$(rootpath :largeClasspath)"],
+    data = [":largeClasspath"],
 )
