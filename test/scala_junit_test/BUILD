@@ -120,7 +120,9 @@ expect_test_success_test(
     target = "//test:Specs2Tests",
 )
 
-# A method-level filter runs only that example.
+# A method-level filter runs only that example. `specs2_run_smoothly.txt` and
+# `specs2_not_run_smoothly.txt` hold one example's "+ ..." line each; which one
+# is `expect` and which is `reject` depends on the test, not the file name.
 expect_test_success_test(
     name = "specs2_test_filter_one_test",
     bazel_args = [
@@ -129,8 +131,8 @@ expect_test_success_test(
         "--test_filter=scalarules.test.junit.specs2.JunitSpecs2Test#specs2 tests::run smoothly in bazel$$",
     ],
     data = ["//test:Specs2Tests"],
-    expect = ["expected_specs2_run_smoothly.txt"],
-    reject = ["expected_specs2_not_run_smoothly.txt"],
+    expect = ["specs2_run_smoothly.txt"],
+    reject = ["specs2_not_run_smoothly.txt"],
     target = "//test:Specs2Tests",
 )
 
@@ -144,10 +146,10 @@ expect_test_success_test(
     ],
     data = ["//test:Specs2Tests"],
     expect = [
-        "expected_specs2_run_smoothly.txt",
-        "expected_specs2_not_run_smoothly.txt",
+        "specs2_run_smoothly.txt",
+        "specs2_not_run_smoothly.txt",
     ],
-    reject = ["expected_specs2_run_from_another_test.txt"],
+    reject = ["specs2_run_from_another_test.txt"],
     target = "//test:Specs2Tests",
 )
 
@@ -161,30 +163,32 @@ expect_test_success_test(
         "--test_filter=scalarules.test.junit.specs2.JunitSpecs2AnotherTest#other specs2 tests::run from another test$$",
     ],
     data = ["//test:Specs2Tests"],
-    expect = ["expected_specs2_run_from_another_test.txt"],
-    reject = ["expected_specs2_run_from_another_test_2.txt"],
+    expect = ["specs2_run_from_another_test.txt"],
+    reject = ["specs2_run_from_another_test_2.txt"],
     target = "//test:Specs2Tests",
 )
 
 # `\Q...\E`-escaped filters reach the intended example even when its
-# description contains regex metacharacters. The filter's own metacharacters
-# (`+`, spaces) would be mangled by the Windows sh launcher's `bash -c` if
-# they rode the args list, so it's passed via a file (bazel_arg_files).
+# description contains regex metacharacters. `_nested_bazel_test` already
+# single-quotes any `bazel_args` entry containing a space, which keeps this
+# filter's spaces, `+` and `$` intact -- none of those need `bazel_arg_files`.
 expect_test_success_test(
     name = "specs2_test_filter_exact_match_unsafe_characters",
-    bazel_arg_files = ["specs2_regex_unsafe_filter_flag.txt"],
     bazel_args = [
         "--nocache_test_results",
         "--test_output=streamed",
+        "--test_filter=scalarules.test.junit.specs2.JunitSpec2RegexTest#\\Qtests with unsafe characters::2 + 2 != 5\\E$$",
     ],
     data = ["//test:Specs2Tests"],
-    expect = ["expected_specs2_regex_unsafe.txt"],
-    reject = ["expected_specs2_regex_escaped.txt"],
+    expect = ["specs2_regex_unsafe.txt"],
+    reject = ["specs2_regex_escaped.txt"],
     target = "//test:Specs2Tests",
 )
 
 # Same as above, but the description itself contains square brackets, which
-# specs2 sanitizes to parens in its own reporter output.
+# specs2 sanitizes to parens in its own reporter output. Unlike the filter
+# above, the Windows sh launcher's `bash -c` mangles a `[`/`]` pair riding the
+# args list, so this one still needs `bazel_arg_files`.
 expect_test_success_test(
     name = "specs2_test_filter_exact_match_escaped_and_sanitized",
     bazel_arg_files = ["specs2_regex_escaped_filter_flag.txt"],
@@ -193,13 +197,15 @@ expect_test_success_test(
         "--test_output=streamed",
     ],
     data = ["//test:Specs2Tests"],
-    expect = ["expected_specs2_regex_escaped.txt"],
-    reject = ["expected_specs2_regex_unsafe.txt"],
+    expect = ["specs2_regex_escaped.txt"],
+    reject = ["specs2_regex_unsafe.txt"],
     target = "//test:Specs2Tests",
 )
 
 # An alternation in the filter regex matches multiple methods of the same
-# class.
+# class. The filter's `(`/`|` would be mangled the same way, so it too rides
+# `bazel_arg_files`. `specs2_not_run_smoothly.txt` guards against the
+# unrelated sibling class's "not run smoothly in bazel" example leaking in.
 expect_test_success_test(
     name = "specs2_test_filter_match_multiple_methods",
     bazel_arg_files = ["specs2_multiple_methods_filter_flag.txt"],
@@ -209,10 +215,10 @@ expect_test_success_test(
     ],
     data = ["//test:Specs2Tests"],
     expect = [
-        "expected_specs2_run_from_another_test.txt",
-        "expected_specs2_run_from_another_test_2.txt",
+        "specs2_run_from_another_test.txt",
+        "specs2_run_from_another_test_2.txt",
     ],
-    reject = ["rejected_specs2_not_run.txt"],
+    reject = ["specs2_not_run_smoothly.txt"],
     target = "//test:Specs2Tests",
 )
 

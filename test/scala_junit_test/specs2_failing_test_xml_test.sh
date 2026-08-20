@@ -28,6 +28,10 @@ if [[ "${status}" -eq 0 ]]; then
 fi
 
 report="$(nested_bazel_run info bazel-testlogs)/test/scala_junit_test/specs2_failing_test/test.xml"
+if [[ ! -f "${report}" ]]; then
+  echo "Expected a JUnit report at ${report}, but it does not exist." >&2
+  exit 1
+fi
 count="$(grep -c -e "testcase name='specs2 tests::fail'" -e "testcase name='specs2 tests::succeed'" "${report}" || true)"
 if [[ "${count}" -ne 1 ]]; then
   echo "Expected exactly one testcase in ${report}, found ${count}. Full report:" >&2

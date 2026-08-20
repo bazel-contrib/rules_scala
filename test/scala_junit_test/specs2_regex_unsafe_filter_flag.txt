@@ -1,1 +1,0 @@
---test_filter=scalarules.test.junit.specs2.JunitSpec2RegexTest#\Qtests with unsafe characters::2 + 2 != 5\E$

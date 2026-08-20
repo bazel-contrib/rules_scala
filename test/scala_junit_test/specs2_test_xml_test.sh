@@ -17,6 +17,10 @@ report="$(nested_bazel_run info bazel-testlogs)/test/Specs2Tests/test.xml"
 
 assert_testcase_count() {
   local expected_count="$1"
+  if [[ ! -f "${report}" ]]; then
+    echo "Expected a JUnit report at ${report}, but it does not exist." >&2
+    exit 1
+  fi
   local count
   count="$(grep -c -e "testcase name='specs2 tests::run smoothly in bazel'" -e "testcase name='specs2 tests::not run smoothly in bazel'" "${report}" || true)"
   if [[ "${count}" -ne "${expected_count}" ]]; then
@@ -28,14 +32,12 @@ assert_testcase_count() {
 
 nested_bazel_run test \
   --nocache_test_results \
-  --test_output=streamed \
   '--test_filter=scalarules.test.junit.specs2.JunitSpecs2Test#' \
   //test:Specs2Tests
 assert_testcase_count 2
 
 nested_bazel_run test \
   --nocache_test_results \
-  --test_output=streamed \
   '--test_filter=scalarules.test.junit.specs2.JunitSpecs2Test#specs2 tests::run smoothly in bazel$' \
   //test:Specs2Tests
 assert_testcase_count 1
