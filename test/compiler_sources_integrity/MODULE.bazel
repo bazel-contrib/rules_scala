@@ -1,4 +1,4 @@
-"""Bazel module for test/shell/test_compiler_sources_integrity.sh"""
+"""Bazel module for //test/compiler_sources_integrity_test."""
 
 module(name = "test_compiler_sources_integrity")
 
@@ -34,8 +34,8 @@ scala_deps.settings(
     validate_scala_version = False,
 )
 
-# Used for test_emit_no_canonical_reproducible_form_warning_for_user_srcjar.
-# See that test case's comments for details.
+# Used by //test/compiler_sources_integrity_test:user_srcjar_no_warning_test.
+# See that target's comments for details.
 scala_deps.compiler_srcjar(
     integrity = "sha256-7UE3FPJ6UvJTUpinSCTquNbZmzLO0aEnMLp6FUw1H2Q=",
     url = (
@@ -45,7 +45,7 @@ scala_deps.compiler_srcjar(
     version = "3.1.999",
 )
 
-# Used for test_fail_if_compiler_srcjar_object_is_empty.
+# Used by //test/compiler_sources_integrity_test:fails_on_empty_compiler_srcjar_test.
 scala_deps.compiler_srcjar(
     version = "3.1.1000",
 )
