@@ -34,3 +34,9 @@ java_proto_library(
     name = "worker_protocol_java_proto",
     deps = ["@bazel_worker_api//:worker_protocol_proto"],
 )
+
+filegroup(
+    name = "package_sources",
+    srcs = glob(["**/*"], allow_empty = True),
+    visibility = ["//test/community_build:__pkg__"],
+)
