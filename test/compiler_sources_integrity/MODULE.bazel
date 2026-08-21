@@ -1,4 +1,4 @@
-"""Bazel module for //test/compiler_sources_integrity_test."""
+"""Bazel module for compiler source integrity tests."""
 
 module(name = "test_compiler_sources_integrity")
 
@@ -34,8 +34,9 @@ scala_deps.settings(
     validate_scala_version = False,
 )
 
-# Used by //test/compiler_sources_integrity_test:user_srcjar_no_warning_test.
-# See that target's comments for details.
+# 3.1.999 isn't in compiler_sources_integrity.bzl or otherwise configured, so
+# this is what lets a build under it succeed. Uses a real integrity value to
+# keep that build fast.
 scala_deps.compiler_srcjar(
     integrity = "sha256-7UE3FPJ6UvJTUpinSCTquNbZmzLO0aEnMLp6FUw1H2Q=",
     url = (
@@ -45,7 +46,7 @@ scala_deps.compiler_srcjar(
     version = "3.1.999",
 )
 
-# Used by //test/compiler_sources_integrity_test:fails_on_empty_compiler_srcjar_test.
+# An intentionally empty compiler_srcjar.
 scala_deps.compiler_srcjar(
     version = "3.1.1000",
 )
