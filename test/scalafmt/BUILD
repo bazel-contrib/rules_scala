@@ -4,6 +4,10 @@ load(
     "scalafmt_scala_library",
     "scalafmt_scala_test",
 )
+load(
+    "//test/scalafmt:round_trip_test.bzl",
+    "scalafmt_round_trip_test",
+)
 
 filegroup(
     name = "custom-conf",
@@ -65,4 +69,28 @@ scalafmt_scala_library(
     srcs = ["unformatted/unformatted-custom-conf.scala"],
     config = ":custom-conf",
     format = True,
+)
+
+scalafmt_round_trip_test(
+    name = "binary_test",
+    filename = "encoding",
+    rule_type = "binary",
+)
+
+scalafmt_round_trip_test(
+    name = "library_test",
+    filename = "encoding",
+    rule_type = "library",
+)
+
+scalafmt_round_trip_test(
+    name = "test_test",
+    filename = "test",
+    rule_type = "test",
+)
+
+scalafmt_round_trip_test(
+    name = "custom_conf_test",
+    filename = "custom-conf",
+    rule_type = "custom-conf",
 )

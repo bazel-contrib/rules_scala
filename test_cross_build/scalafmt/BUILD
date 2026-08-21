@@ -1,4 +1,8 @@
 load(
+    "round_trip_test.bzl",
+    "scalafmt_round_trip_test",
+)
+load(
     "scalafmt_rules.bzl",
     "scalafmt_scala_binary",
     "scalafmt_scala_library",
@@ -112,4 +116,40 @@ scalafmt_scala_test(
     srcs = ["formatted/formatted-test3.scala"],
     config = ":scala3-conf",
     format = True,
+)
+
+scalafmt_round_trip_test(
+    name = "binary2_test",
+    filename = "binary2",
+    rule_type = "binary2",
+)
+
+scalafmt_round_trip_test(
+    name = "binary3_test",
+    filename = "binary3",
+    rule_type = "binary3",
+)
+
+scalafmt_round_trip_test(
+    name = "library2_test",
+    filename = "library2",
+    rule_type = "library2",
+)
+
+scalafmt_round_trip_test(
+    name = "library3_test",
+    filename = "library3",
+    rule_type = "library3",
+)
+
+scalafmt_round_trip_test(
+    name = "test2_test",
+    filename = "test2",
+    rule_type = "test2",
+)
+
+scalafmt_round_trip_test(
+    name = "test3_test",
+    filename = "test3",
+    rule_type = "test3",
 )
