@@ -15,7 +15,7 @@ should_be_in_file=$1
 
 if test "$should_be_in_file" != "true" -a "$should_be_in_file" != "false" ; then
   echo "ERROR: Please use only (\"true\" or \"false\") to specify whether you need the substring to be in the file."
-  echo "Refer to test/sh_tests/string_in_file.sh for documentation."
+  echo "Refer to test/jar_signature_checks/string_in_file.sh for documentation."
   exit 1
 fi
 
