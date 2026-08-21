@@ -1,4 +1,4 @@
-"""Bazel module for test/shell/test_compiler_sources_integrity.sh"""
+"""Bazel module for compiler source integrity tests."""
 
 module(name = "test_compiler_sources_integrity")
 
@@ -34,8 +34,9 @@ scala_deps.settings(
     validate_scala_version = False,
 )
 
-# Used for test_emit_no_canonical_reproducible_form_warning_for_user_srcjar.
-# See that test case's comments for details.
+# 3.1.999 has no entry in compiler_sources_integrity.bzl. This gives it a real
+# compiler_srcjar (real integrity data, to keep the build fast) so a build
+# under this version succeeds.
 scala_deps.compiler_srcjar(
     integrity = "sha256-7UE3FPJ6UvJTUpinSCTquNbZmzLO0aEnMLp6FUw1H2Q=",
     url = (
@@ -45,7 +46,7 @@ scala_deps.compiler_srcjar(
     version = "3.1.999",
 )
 
-# Used for test_fail_if_compiler_srcjar_object_is_empty.
+# An intentionally empty compiler_srcjar.
 scala_deps.compiler_srcjar(
     version = "3.1.1000",
 )
