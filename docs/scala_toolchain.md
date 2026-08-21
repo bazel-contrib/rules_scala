@@ -171,6 +171,16 @@ The following attributes apply to both `scala_toolchain` and
       </td>
     </tr>
     <tr>
+      <td><code>plugins</code></td>
+      <td>
+        <p><code>List of labels; optional</code></p>
+        <p>
+          Compiler plugin jars to enable for every target using this
+          toolchain, merged with each target's own <code>plugins</code>.
+        </p>
+      </td>
+    </tr>
+    <tr>
       <td><code>scalac_jvm_flags</code></td>
       <td>
         <p><code>List of strings; optional</code></p>
