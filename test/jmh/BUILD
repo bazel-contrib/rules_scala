@@ -48,6 +48,7 @@ scala_benchmark_jmh(
     srcs = ["TestBenchmark.scala"],
     data = ["data.txt"],
     deps = [":add_numbers"],
+    visibility = ["//test/jmh/benchmark_test:__pkg__"],
 )
 
 scala_benchmark_jmh(

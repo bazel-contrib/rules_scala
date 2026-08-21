@@ -57,6 +57,7 @@ add_to_all_rules_scala_repl(
     name = "PhaseRepl",
     srcs = ["PhaseLibrary.scala"],
     custom_content = "This is custom content in repl",
+    visibility = ["//test/sh_tests:__pkg__"],
 )
 
 # args go through shell tokenization, so a message with spaces needs quoting
