@@ -34,9 +34,9 @@ scala_deps.settings(
     validate_scala_version = False,
 )
 
-# 3.1.999 isn't in compiler_sources_integrity.bzl or otherwise configured, so
-# this is what lets a build under it succeed. Uses a real integrity value to
-# keep that build fast.
+# 3.1.999 has no entry in compiler_sources_integrity.bzl. This gives it a real
+# compiler_srcjar (real integrity data, to keep the build fast) so a build
+# under this version succeeds.
 scala_deps.compiler_srcjar(
     integrity = "sha256-7UE3FPJ6UvJTUpinSCTquNbZmzLO0aEnMLp6FUw1H2Q=",
     url = (
