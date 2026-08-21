@@ -5,3 +5,9 @@ exports_files([
     "scala_2_12.bzl",
     "scala_2_13.bzl",
 ])
+
+filegroup(
+    name = "package_sources",
+    srcs = glob(["**/*"], allow_empty = True),
+    visibility = ["//test/community_build:__pkg__"],
+)
