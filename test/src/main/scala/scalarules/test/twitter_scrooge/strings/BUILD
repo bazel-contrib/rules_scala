@@ -8,7 +8,7 @@ _JUSTSCROOGES_JAVA = _PARENT + ":justscrooges_java"
 
 sh_test(
     name = "libthrift2_a_not_on_classpath",
-    srcs = ["//test/jar_signature_checks:string_in_file.sh"],
+    srcs = ["//test/string_checks:string_in_file.sh"],
     args = [
         "false",
         "libthrift2_a",
@@ -19,7 +19,7 @@ sh_test(
 
 sh_test(
     name = "java_jar_not_on_classpath",
-    srcs = ["//test/jar_signature_checks:string_in_file.sh"],
+    srcs = ["//test/string_checks:string_in_file.sh"],
     args = [
         "false",
         "_java.jar",
@@ -30,7 +30,7 @@ sh_test(
 
 sh_test(
     name = "java_jar_on_classpath_in_scrooges",
-    srcs = ["//test/jar_signature_checks:string_in_file.sh"],
+    srcs = ["//test/string_checks:string_in_file.sh"],
     args = [
         "true",
         "_java.jar",
@@ -41,7 +41,7 @@ sh_test(
 
 sh_test(
     name = "thrift999_in_namespace_in_java_jar",
-    srcs = ["//test/jar_signature_checks:string_in_filename_in_jar.sh"],
+    srcs = ["//test/string_checks:string_in_filename_in_jar.sh"],
     args = [
         "true",
         "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",
@@ -53,7 +53,7 @@ sh_test(
 
 sh_test(
     name = "thrift5_not_in_namespace_in_java_jar",
-    srcs = ["//test/jar_signature_checks:string_in_filename_in_jar.sh"],
+    srcs = ["//test/string_checks:string_in_filename_in_jar.sh"],
     args = [
         "false",
         "thrift/thrift_with_compiler_args/thrift5_scrooge_java.jar",

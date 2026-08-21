@@ -65,7 +65,7 @@ add_to_all_rules_scala_repl(
 [
     sh_test(
         name = target + "CustomOutputTest",
-        srcs = ["//test/jar_signature_checks:string_in_file.sh"],
+        srcs = ["//test/string_checks:string_in_file.sh"],
         args = [
             "true",
             "'%s'" % message,

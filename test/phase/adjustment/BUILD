@@ -32,7 +32,7 @@ adjustment_replace_scala_library(
 [
     sh_test(
         name = target + "CustomOutputTest",
-        srcs = ["//test/jar_signature_checks:string_in_file.sh"],
+        srcs = ["//test/string_checks:string_in_file.sh"],
         args = [
             "true",
             "'%s'" % message,
