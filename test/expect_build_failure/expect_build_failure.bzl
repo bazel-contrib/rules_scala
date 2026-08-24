@@ -242,11 +242,15 @@ def _nested_bazel_test(
 
     # Callers default `tags` to `no-sandbox` rather than `local`: both run the
     # nested `bazel` outside the sandbox, which is all it needs, but a `local`
-    # result is also kept out of the shared cache. Added here: `exclusive`,
-    # because each run takes the shared output base's lock, so running them one
-    # at a time keeps them off each other's timeout; `no-remote-exec`, because
+    # result is also kept out of the shared cache. `no-remote-exec` because
     # this reads this machine's tree.
-    execution_tags = tags + ["exclusive", "no-remote-exec"]
+    #
+    # Splits the shared nested output base into 2 lanes (hash(name) % 2) so
+    # tests in different lanes run concurrently instead of all serializing on
+    # one lock. Two tests that land in the same lane still queue behind each
+    # other -- same risk #1894 fixed with `exclusive`, just half as likely.
+    args += ["--lane", str(hash(name) % 2)]
+    execution_tags = tags + ["no-remote-exec"]
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
     # also named explicitly (e.g. the expect/reject `.txt`s, passed as `:foo.txt`),

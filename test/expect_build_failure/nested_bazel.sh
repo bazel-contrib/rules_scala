@@ -87,11 +87,13 @@ _nested_bazel_symlink_prefix=""
 # Prepares the environment for nested `bazel` invocations and `cd`s into the real
 # source workspace. Call once before any `nested_bazel_run`.
 #
-# Arg 1: the nested output base directory name (created under /tmp). All nested
-# invocations from a single test share it. Under one `bazel test //...` the tests
-# then serialize on Bazel's output-base lock (each inner `bazel --batch` waits for
-# the lock rather than failing), which keeps the extracted external repos warm and
-# avoids multiplying ~1GB of Scala jars across a separate output base per test.
+# Arg 1: the nested output base directory name (created under /tmp). Every
+# caller that passes the same name shares that output base and its lock (each
+# inner `bazel --batch` waits for the lock rather than failing), which keeps
+# the extracted external repos warm and avoids multiplying ~1GB of Scala jars
+# across a separate output base per test. `expect_build_failure.sh` splits its
+# tests across 2 such names (see its --lane) so two tests never queue behind
+# each other unless they land in the same lane.
 _nested_bazel_home_hint() {
   if [[ -n "${RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME:-}" ]]; then
     return
