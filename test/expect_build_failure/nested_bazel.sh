@@ -92,7 +92,7 @@ _nested_bazel_symlink_prefix=""
 # inner `bazel --batch` waits for the lock rather than failing), which keeps
 # the extracted external repos warm and avoids multiplying ~1GB of Scala jars
 # across a separate output base per test. `expect_build_failure.sh` splits its
-# tests across 2 such names (see its --lane) so two tests never queue behind
+# tests across 3 such names (see its --lane) so two tests never queue behind
 # each other unless they land in the same lane.
 _nested_bazel_home_hint() {
   if [[ -n "${RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME:-}" ]]; then

@@ -8,7 +8,7 @@
 # nested_bazel.sh helper this script sources.
 #
 # Usage:
-#   expect_build_failure.sh --target <label> --lane <0|1> \
+#   expect_build_failure.sh --target <label> --lane <0|1|2> \
 #       [--command <build|test|coverage>] \
 #       [--expect-success] \
 #       [--env <KEY=VALUE>]... \
@@ -18,9 +18,9 @@
 #       [--reject-file <path>]...
 #
 #   --target          the label to act on.
-#   --lane            which of the 2 shared nested output bases to use (see
+#   --lane            which of the 3 shared nested output bases to use (see
 #                      nested_bazel_setup); the caller macro derives this from
-#                      hash(name) % 2.
+#                      hash(name) % 3.
 #   --command         the bazel subcommand to run; defaults to `build`.
 #   --expect-success  assert the invocation succeeds; by default it must fail.
 #   --env             KEY=VALUE exported into the nested `bazel` client env before

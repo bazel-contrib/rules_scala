@@ -245,11 +245,11 @@ def _nested_bazel_test(
     # result is also kept out of the shared cache. `no-remote-exec` because
     # this reads this machine's tree.
     #
-    # Splits the shared nested output base into 2 lanes (hash(name) % 2) so
+    # Splits the shared nested output base into 3 lanes (hash(name) % 3) so
     # tests in different lanes run concurrently instead of all serializing on
     # one lock. Two tests that land in the same lane still queue behind each
-    # other -- same risk #1894 fixed with `exclusive`, just half as likely.
-    args += ["--lane", str(hash(name) % 2)]
+    # other -- same risk #1894 fixed with `exclusive`, just a third as likely.
+    args += ["--lane", str(hash(name) % 3)]
     execution_tags = tags + ["no-remote-exec"]
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
