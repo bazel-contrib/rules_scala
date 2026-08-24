@@ -39,4 +39,16 @@ build --java_runtime_version=17
 
 #Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting in 'file in use' errors). See Bazel Issue#10498.
 
-build:windows --worker_quit_after_build --enable_runfiles 
+build:windows --worker_quit_after_build --enable_runfiles
+
+# Caps each of the 3 lanes expect_build_failure_test's nested tests hash into
+# (see the "resources:laneN_lock:1" tag in expect_build_failure.bzl) at one
+# running test at a time, so two tests in the same lane never both start.
+# On macOS the lane_lock amount is high enough that no test ever has to wait
+# for it: while one test waits for a scarce custom resource, Bazel's scheduler
+# also delays starting other tests that don't need that resource at all
+# (https://github.com/bazelbuild/bazel/issues/18153) -- macOS is where that
+# side effect showed up.
+test:linux --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1
+test:windows --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1
+test:macos --local_resources=lane0_lock=1000 --local_resources=lane1_lock=1000 --local_resources=lane2_lock=1000
