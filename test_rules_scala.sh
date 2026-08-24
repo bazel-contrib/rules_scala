@@ -28,10 +28,7 @@ test_output_flag="--test_output=errors"
 # to do with what it actually tests.
 #
 # Excludes the last_green task: it runs a different (unreleased) Bazel
-# binary, whose action digests don't match what the pinned release Bazel
-# used everywhere else populates, so it pays remote-cache round trips for
-# misses instead of the hits the other tasks get -- measured 8780s against a
-# 3476-3920s baseline without this fix.
+# binary than every other task, so it has nothing to share this cache with.
 remote_cache_flags=""
 if [[ "${BUILDKITE:-}" == "true" ]] && ! is_macos && [[ "${BAZELCI_TASK:-}" != *last_green* ]]; then
   remote_cache_flags="--remote_cache=remotebuildexecution.googleapis.com --remote_instance_name=projects/bazel-untrusted/instances/default_instance --google_default_credentials"
