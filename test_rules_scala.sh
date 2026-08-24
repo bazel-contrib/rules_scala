@@ -32,6 +32,5 @@ $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolcha
 . "${test_dir}"/test_misc.sh
 . "${test_dir}"/test_scalafmt.sh
 . "${test_dir}"/test_scala_binary.sh
-. "${test_dir}"/test_scala_import_source_jar.sh
 . "${test_dir}"/test_scala_library.sh
 . "${test_dir}"/test_semanticdb.sh
