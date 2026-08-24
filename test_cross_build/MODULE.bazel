@@ -9,7 +9,6 @@ local_path_override(
 )
 
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
-
 bazel_dep(name = "latest_dependencies", dev_dependency = True)
 local_path_override(
     module_name = "latest_dependencies",
