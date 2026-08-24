@@ -16,9 +16,3 @@ scala_library_for_plugin_bootstrapping(
     visibility = ["//visibility:public"],
     deps = ["//scala/private/toolchain_deps:scala_compile_classpath"],
 )
-
-filegroup(
-    name = "package_sources",
-    srcs = glob(["**/*"], allow_empty = True),
-    visibility = ["//test/community_build:__pkg__"],
-)
