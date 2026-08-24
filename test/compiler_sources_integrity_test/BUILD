@@ -62,6 +62,11 @@ sh_test(
 # newest patch release tracked for each supported major.minor line. Each also
 # lists its own version file in `data`: bumping a coordinate must re-run only
 # that version's test.
+#
+# This list is manual, not derived from a glob: a `load()` statement is
+# static in Starlark, so it can't be generated from a glob() over
+# third_party/repositories/scala_*.bzl. Adding a new major.minor line needs a
+# `load()` above and an entry below.
 [
     sh_test(
         name = "latest_version_%s_no_warning_test" % scala_version.replace(".", "_"),

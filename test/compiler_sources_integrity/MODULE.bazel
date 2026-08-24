@@ -1,4 +1,12 @@
-"""Bazel module for compiler source integrity tests."""
+"""Bazel module for compiler source integrity tests.
+
+Its own module, since `scala_config`/`scala_deps` extension settings only
+apply from the root module's tags: this module's own bogus Scala versions and
+disabled version validation stay scoped to it, separate from the root
+rules_scala module's real repositories. See
+test/compiler_sources_integrity_test/BUILD for the second, independent reason
+this test suite needs a separate module.
+"""
 
 module(name = "test_compiler_sources_integrity")
 
