@@ -63,7 +63,12 @@ def exposed_source_packages_test(name, **kwargs):
         name = name,
         srcs = ["exposed_source_packages_test.sh"],
         args = EXPOSED_SOURCE_PACKAGES,
-        data = ["//test/expect_build_failure:nested_bazel.sh"],
+        data = [
+            # _nested_bazel_find_workspace resolves the real source root from
+            # this symlink under `bazel test` (no BUILD_WORKSPACE_DIRECTORY).
+            "//:MODULE.bazel",
+            "//test/expect_build_failure:nested_bazel.sh",
+        ],
         target_compatible_with = ["@platforms//os:linux"],
         tags = ["no-sandbox", "external"],
         **kwargs
