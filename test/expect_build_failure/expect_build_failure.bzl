@@ -75,6 +75,8 @@ _SCALAC_JAR = "//src/java/io/bazel/rulesscala/scalac:scalac_deploy.jar"
 
 # The compiler jar above does not pull in the test runners, and a nested
 # `bazel test` runs through them, so their content decides its outcome too.
+# Kept in sync by hand with each rule's default runner/instrumenter dep; a new
+# one added to rules_scala needs a line here too.
 _RUNNER_JARS = [
     "//src/java/io/bazel/rulesscala/test_discovery:test_discovery.jar",
     "//src/java/io/bazel/rulesscala/specs2:specs2_test_discovery.jar",
