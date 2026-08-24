@@ -1,5 +1,3 @@
-// downstream-caching-invalidation-probe: temporary, reverted after CI confirms
-// this change invalidates joern_test/dicer_test's cache (see PR #1938).
 package io.bazel.rulesscala.scalac;
 
 import static java.io.File.pathSeparator;
