@@ -54,9 +54,11 @@ the way to catch an input nobody thought to declare.
 
 Nothing in a caller has to know about caching. Three things are worth knowing:
 
-- If the fixture lives in another package, the macro tags the test `external`,
-  because it cannot verify that caller data covers every source the nested target
-  reads.
+- If the fixture lives in another package, it still gets a real fingerprint
+  through `fixture_actions` when `target` is one concrete label. Only a
+  cross-package *pattern* (a wildcard like `//pkg/...`) gets tagged `external`,
+  because there's no single label a macro could fingerprint or a caller could
+  declare as `data`.
 - A nested build runs with a scrubbed `HOME`, so your `~/.bazelrc` is ignored.
   If you need it (a download proxy, say), pass `--nocache_test_results` and
   `--test_env=RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1` to `bazel test`. The

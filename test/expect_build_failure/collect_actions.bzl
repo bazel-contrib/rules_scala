@@ -29,15 +29,19 @@ def _without_configuration(line):
     out = parts[0]
     for part in parts[1:]:
         slash = part.find("/")
+        # No slash means the token ends right at the configuration directory (no
+        # path below it), so there's nothing to anchor the replacement on; leave
+        # it as-is rather than guess where the configuration name ends.
         out += "bazel-out/" + ("<cfg>" + part[slash:] if slash != -1 else part)
     return out
 
 def _collect_impl(target, ctx):
-    # One line per action, keeping the arguments in order. Collecting the tokens
-    # separately would lose which value belongs to which flag: a depset of tokens
-    # does not change when a flag's value is swapped for one that some other flag
-    # already carries, and `unused_dependency_checker_mode = "error"` -> `"off"`
-    # is exactly that.
+    # One line per action, joining mnemonic and argv so each action keeps its own
+    # flag-to-value pairing. Collecting individual tokens into one depset would
+    # lose that pairing: several rules_scala flags share the same "off"/"warn"/
+    # "error" values (e.g. unused_dependency_checker_mode and strict_deps_mode),
+    # so moving a value from one such flag to another leaves the flat set of
+    # tokens unchanged even though the actual behavior changed.
     direct = []
     for action in target.actions:
         argv = getattr(action, "argv", None) or []
@@ -76,7 +80,7 @@ _toolchains_transition = transition(
 # without it describes a target the rules never touch.
 _RULESET_TOOLS = "src/java/io/bazel/rulesscala"
 
-def _exposed_impl(ctx):
+def _fixture_actions_impl(ctx):
     lines = sorted(ctx.attr.target[0][_ActionsInfo].lines.to_list())
     if not [line for line in lines if _RULESET_TOOLS in line]:
         fail(("%s runs no rules_scala action, so it cannot tell whether the rules " +
@@ -89,7 +93,7 @@ def _exposed_impl(ctx):
     return [DefaultInfo(files = depset([out]))]
 
 fixture_actions = rule(
-    implementation = _exposed_impl,
+    implementation = _fixture_actions_impl,
     attrs = {
         "extra_toolchains": attr.string_list(
             doc = "Toolchains the nested `bazel` registers, to analyse `target` under.",
