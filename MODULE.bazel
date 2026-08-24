@@ -328,4 +328,8 @@ source_fingerprint = use_repo_rule(
     "//test/community_build:source_fingerprint.bzl",
     "source_fingerprint",
 )
-source_fingerprint(name = "rules_scala_source_fingerprint", dev_dependency = True)
+
+source_fingerprint(
+    name = "rules_scala_source_fingerprint",
+    dev_dependency = True,
+)
