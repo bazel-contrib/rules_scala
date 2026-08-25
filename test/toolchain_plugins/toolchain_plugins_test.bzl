@@ -51,4 +51,9 @@ toolchain_plugin_present_test = analysistest.make(
     },
 )
 
-toolchain_plugin_absent_test = analysistest.make(_toolchain_plugin_absent_test)
+toolchain_plugin_absent_test = analysistest.make(
+    _toolchain_plugin_absent_test,
+    config_settings = {
+        "//command_line_option:extra_toolchains": [],
+    },
+)
