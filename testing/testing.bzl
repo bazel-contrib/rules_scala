@@ -96,8 +96,10 @@ def setup_scala_testing_toolchain(
         toolchain = ":" + name + "_impl",
         toolchain_type = Label("//testing/toolchain:testing_toolchain_type"),
         target_settings = [
-            "@rules_scala_config//:scala_version" +
-            version_suffix(scala_version),
+            Label(
+                "@rules_scala_config//:scala_version" +
+                version_suffix(scala_version),
+            ),
         ],
         visibility = visibility,
     )
