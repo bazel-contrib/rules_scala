@@ -44,7 +44,7 @@ expect_build_failure_test(
 # command line and a rules change would not invalidate anything.
 sh_test(
     name = "fingerprint_reaches_dependency_actions",
-    srcs = ["//test/sh_tests:string_in_file.sh"],
+    srcs = ["//test/string_checks:string_in_file.sh"],
     args = [
         "true",
         "Scalac",
