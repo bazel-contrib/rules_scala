@@ -13,9 +13,9 @@ The nested `bazel test` reads this checkout's *live* source tree via
 without being declared inputs, the same unsound-caching trap
 `test/expect_build_failure/expect_build_failure.bzl` fixes for its own nested
 tests. `@rules_scala_source_fingerprint//:fingerprint.txt` (see
-source_fingerprint.bzl) hashes every file under scala/, src/, and
-third_party/ -- the only trees `local_path_override` exposes -- so an edit
-anywhere in them changes this `sh_test`'s declared inputs and forces a re-run.
+source_fingerprint.bzl) hashes every file rules_scala exposes to a downstream
+consumer, so an edit anywhere in scope changes this `sh_test`'s declared
+inputs and forces a re-run.
 
 `no-sandbox` + `no-remote-exec` rather than `local`: `local` also precludes
 the *local* test-result cache, not just sandboxing and remote execution (see

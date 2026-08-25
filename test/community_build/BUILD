@@ -3,8 +3,11 @@
 # scala_version below must match MODULE.bazel's consumer(...) pin -- can't
 # load() it instead, that would fetch the repo just to load this package.
 load(":downstream_test.bzl", "downstream_test")
+load(":source_fingerprint.bzl", "exposed_top_level_dirs_test")
 
 exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
+
+exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
 
 # joern is Scala-3-only and uses only scala_library/scala_test throughout its
 # tree.
