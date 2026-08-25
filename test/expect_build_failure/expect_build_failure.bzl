@@ -160,8 +160,9 @@ def _nested_bazel_test(
     # build, and a macro can't introspect a target's `srcs` anyway. So glob every
     # source file in this package and declare it as runfiles: editing any of them
     # changes the test's cache key and forces a re-run. This covers the common
-    # case of a fixture whose sources live alongside its BUILD file; a `target` in
-    # another package is tagged `external` below.
+    # case of a fixture whose sources live alongside its BUILD file; a `target`
+    # in another package either gets a real fingerprint via `fixture_actions`
+    # below or, if it's a pattern, is tagged `external`.
     code_under_test = native.glob(["**/*"], allow_empty = True)
 
     # Both entries must be in the test's runfiles (a file reaches runfiles only if
