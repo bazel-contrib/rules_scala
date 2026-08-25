@@ -32,16 +32,16 @@ the way to catch an input nobody thought to declare.
   `_RUNNER_JARS`, which exist only because the fingerprint carries the tools'
   paths and not their content. This repo pins 7.7.1 in `.bazelversion`, where
   the parameter does not exist.
-- **The success cases do not need a nested build at all.** A Starlark transition
-  can set `//command_line_option:extra_toolchains`, verified on Bazel 7.7.1: the
-  same fixture fails with the `-Xmx1M` toolchain and builds with the `-Xmx1G` one
-  when the flag is set that way. Of the 61 tests here, 41 assert a failure and do
-  need the nested build, because a target that fails cannot be a dependency. The
-  other 20 assert success: 17 of those only set flags and check nothing about the
-  output, so a transition plus `build_test` covers them, and 1 sets no flags at
-  all and needs only `build_test`. The last 2 assert on build output, which only
-  a real invocation produces. Those 18 took 180s of the 653s a full local run
-  spends here, all of it on the critical path because of `exclusive`.
+- **Most success cases do not need a nested build at all.** A Starlark
+  transition can set `//command_line_option:extra_toolchains`, verified on
+  Bazel 7.7.1: the same fixture fails with the `-Xmx1M` toolchain and builds
+  with the `-Xmx1G` one when the flag is set that way. A test asserting a
+  build *failure* still needs the nested build, because a target that fails
+  cannot be a dependency. A test asserting *success* only needs it if it also
+  checks the build output (`expect`/`reject`); one that just checks the build
+  passed under a flag or toolchain override can be replaced with a transition
+  plus `build_test`, which runs in-process and isn't `exclusive`, so it drops
+  off the critical path these nested tests share today.
 - **The whole nested driver** would go away by moving these tests to
   [`rules_bazel_integration_test`](https://github.com/bazel-contrib/rules_bazel_integration_test),
   which gives each test its own child workspace and an explicit `workspace_files`
@@ -68,10 +68,14 @@ Nothing in a caller has to know about caching. Three things are worth knowing:
   stay green through a regression. Either point `fingerprint_target` at a label
   the nested build really compiles, or say why you cannot with
   `no_fingerprint_reason`, which tags the test `external` so it re-runs every
-  time rather than being served a pass it cannot vouch for. Seven tests do that
-  today: `scala_proto` generates through an aspect of its own, whose actions
-  this aspect cannot read, and the `semanticdb` fixtures only build toolchain
-  deps, so they compile nothing at all.
+  time rather than being served a pass it cannot vouch for. A few tests do
+  that today, for one of four reasons: `scala_proto` generates through an
+  aspect of its own, whose actions this aspect cannot read; the `semanticdb`
+  fixtures only build toolchain deps, so they compile nothing at all; a
+  fixture targets a plain `proto_library`/`java_library`, which runs no
+  rules_scala action either; or fingerprinting two fixtures under the same
+  `--extra_toolchains` would analyse a shared dependency under two different
+  aspect stacks, which Bazel reports as an `ActionConflictException`.
 
 What the fingerprint does not see: an action that writes a file instead of
 running a command line (`ctx.actions.write`, template expansion) contributes its
