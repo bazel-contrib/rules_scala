@@ -94,6 +94,173 @@ expect_test_failure_test(
     target = ":specs2_failing_test",
 )
 
+# The tests below assert on `--test_filter` narrowing a specs2 suite
+# (`scala_specs2_junit_test`), matching the specs2 console reporter's own
+# "+ <description>" lines (not the runner's println-based signal the JUnit
+# filter tests below use). The fixture lives in //test; it's added to `data`
+# only so editing its sources re-keys the wrapping test.
+
+# No filter: every discovered class runs and is listed (the specs2 console
+# reporter prints its own "+ ..." lines, unrelated to --test_output).
+expect_test_success_test(
+    name = "specs2_test_filter_everything",
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+        "--test_filter=.*",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = [
+        "expected_specs2_class_regex.txt",
+        "expected_specs2_class_another.txt",
+        "expected_specs2_class_test.txt",
+        "expected_specs2_class_many_fragments.txt",
+    ],
+    reject = ["rejected_specs2_class_unrelated.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# A method-level filter runs only that example. `specs2_run_smoothly.txt` and
+# `specs2_not_run_smoothly.txt` hold one example's "+ ..." line each; which one
+# is `expect` and which is `reject` depends on the test, not the file name.
+expect_test_success_test(
+    name = "specs2_test_filter_one_test",
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+        "--test_filter=scalarules.test.junit.specs2.JunitSpecs2Test#specs2 tests::run smoothly in bazel$$",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = ["specs2_run_smoothly.txt"],
+    reject = ["specs2_not_run_smoothly.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# A class-level filter (no method suffix) runs every example of that class.
+expect_test_success_test(
+    name = "specs2_test_filter_whole_spec",
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+        "--test_filter=scalarules.test.junit.specs2.JunitSpecs2Test#",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = [
+        "specs2_run_smoothly.txt",
+        "specs2_not_run_smoothly.txt",
+    ],
+    reject = ["specs2_run_from_another_test.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# An exact method match excludes a sibling example whose description is a
+# prefix of the filtered one.
+expect_test_success_test(
+    name = "specs2_test_filter_exact_match",
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+        "--test_filter=scalarules.test.junit.specs2.JunitSpecs2AnotherTest#other specs2 tests::run from another test$$",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = ["specs2_run_from_another_test.txt"],
+    reject = ["specs2_run_from_another_test_2.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# `\Q...\E`-escaped filters reach the intended example even when its
+# description contains regex metacharacters. `_nested_bazel_test` already
+# single-quotes any `bazel_args` entry containing a space, which keeps this
+# filter's spaces, `+` and `$` intact -- none of those need `bazel_arg_files`.
+expect_test_success_test(
+    name = "specs2_test_filter_exact_match_unsafe_characters",
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+        "--test_filter=scalarules.test.junit.specs2.JunitSpec2RegexTest#\\Qtests with unsafe characters::2 + 2 != 5\\E$$",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = ["specs2_regex_unsafe.txt"],
+    reject = ["specs2_regex_escaped.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# Same as above, but the description itself contains square brackets, which
+# specs2 sanitizes to parens in its own reporter output. Unlike the filter
+# above, the Windows sh launcher's `bash -c` mangles a `[`/`]` pair riding the
+# args list, so this one still needs `bazel_arg_files`.
+expect_test_success_test(
+    name = "specs2_test_filter_exact_match_escaped_and_sanitized",
+    bazel_arg_files = ["specs2_regex_escaped_filter_flag.txt"],
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = ["specs2_regex_escaped.txt"],
+    reject = ["specs2_regex_unsafe.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# An alternation in the filter regex matches multiple methods of the same
+# class. The filter's `(`/`|` would be mangled the same way, so it too rides
+# `bazel_arg_files`. `specs2_not_run_smoothly.txt` guards against the
+# unrelated sibling class's "not run smoothly in bazel" example leaking in.
+expect_test_success_test(
+    name = "specs2_test_filter_match_multiple_methods",
+    bazel_arg_files = ["specs2_multiple_methods_filter_flag.txt"],
+    bazel_args = [
+        "--nocache_test_results",
+        "--test_output=streamed",
+    ],
+    data = ["//test:Specs2Tests"],
+    expect = [
+        "specs2_run_from_another_test.txt",
+        "specs2_run_from_another_test_2.txt",
+    ],
+    reject = ["specs2_not_run_smoothly.txt"],
+    target = "//test:Specs2Tests",
+)
+
+# Unlike the checks above, these assert on the generated JUnit test.xml report
+# -- an on-disk artifact `bazel test` never prints to stdout -- so they can't
+# reuse the stdout-matching expect_build_failure.bzl macros; see
+# junit_generates_xml_logs_test.sh below for the same reasoning.
+sh_test(
+    name = "specs2_test_xml_test",
+    size = "large",
+    srcs = ["specs2_test_xml_test.sh"],
+    data = [
+        "//:MODULE.bazel",
+        "//test:Specs2Tests",
+        "//test/expect_build_failure:nested_bazel.sh",
+    ],
+    tags = [
+        "exclusive",
+        "local",
+        "requires-network",
+    ],
+)
+
+# Same as above, but for a suite whose filtered example fails: the nested
+# `bazel test` is expected to fail, and the report must still list only the
+# one filtered example.
+sh_test(
+    name = "specs2_failing_test_xml_test",
+    size = "large",
+    srcs = ["specs2_failing_test_xml_test.sh"],
+    data = [
+        "//:MODULE.bazel",
+        ":specs2_failing_test",
+        "//test/expect_build_failure:nested_bazel.sh",
+    ],
+    tags = [
+        "exclusive",
+        "local",
+        "requires-network",
+    ],
+)
+
 # The tests below assert on which JUnit classes/methods a `scala_junit_test`
 # discovers and runs. The signal is the runner's own stdout (the
 # `print_discovered_classes` listing and each test method's `println`), so they
