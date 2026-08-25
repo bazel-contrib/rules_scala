@@ -17,3 +17,5 @@ load("//scala:scala_cross_version.bzl", "version_suffix")
         "junit",
     ]
 ]
+
+exports_files(["testing.bzl"])

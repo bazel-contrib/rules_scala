@@ -2,6 +2,7 @@
 
 module(name = "proto")
 
+bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "rules_scala")
 local_path_override(
     module_name = "rules_scala",
@@ -12,6 +13,15 @@ bazel_dep(name = "latest_dependencies", dev_dependency = True)
 local_path_override(
     module_name = "latest_dependencies",
     path = "../../../deps/latest",
+)
+
+scala_config = use_extension(
+    "@rules_scala//scala/extensions:config.bzl",
+    "scala_config",
+    dev_dependency = True,
+)
+scala_config.settings(
+    enable_compiler_dependency_tracking = True,
 )
 
 scala_deps = use_extension(
