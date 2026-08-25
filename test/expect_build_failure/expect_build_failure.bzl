@@ -30,8 +30,10 @@ passes are not inputs of the test, and Bazel would serve a stale pass. These
 tests therefore name those files by hand:
 
 - the fixture's own package (globbed below); a fixture in another package is
-  tagged `external`, because a macro cannot verify that caller `data` covers
-  every source the nested target reads;
+  tagged `external` only if `target` is a pattern, because a macro cannot
+  verify that caller `data` covers every source of a pattern -- a concrete
+  cross-package label gets fingerprinted below instead, and needs
+  `target`'s visibility to reach the caller's package;
 - the toolchains a `--extra_toolchains` flag registers, by analysing the
   fixture under them (see collect_actions.bzl);
 - the repo `.bazelrc`, which CI steps append to, so two steps that differ only
