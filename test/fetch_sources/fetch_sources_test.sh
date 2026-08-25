@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Builds //test/fetch_sources/... and checks whether Maven source jars got
-# fetched, based on the BAZEL_JVM_FETCH_SOURCES env var. The repository rule
-# declares that var in `environ`, so Bazel re-fetches whenever it changes; the
-# three test instantiations can safely share one nested output base.
+# Builds //test/fetch_sources:fetch_sources and checks whether Maven source
+# jars got fetched, based on the BAZEL_JVM_FETCH_SOURCES env var. The
+# repository rule declares that var in `environ`, so Bazel re-fetches
+# whenever it changes; the test instantiations can safely share one nested
+# output base.
 #
 # Usage:
 #   fetch_sources_test.sh [--env-value=<value>] --expect-exists=<true|false>
@@ -42,7 +43,7 @@ if [[ -n "${ENV_VALUE}" ]]; then
   export BAZEL_JVM_FETCH_SOURCES="${ENV_VALUE}"
 fi
 
-target="//test/fetch_sources/..."
+target="//test/fetch_sources:fetch_sources"
 if ! build_output="$(nested_bazel_run build "${target}" 2>&1)"; then
   echo "Expected build of ${target} to succeed, but it failed." >&2
   echo "${build_output}" >&2

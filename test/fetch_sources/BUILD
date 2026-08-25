@@ -64,3 +64,22 @@ sh_test(
         "requires-network",
     ],
 )
+
+sh_test(
+    name = "not_fetched_when_env_var_invalid_test",
+    size = "large",
+    srcs = ["fetch_sources_test.sh"],
+    args = [
+        "--env-value=1",  # anything other than "true" (case insensitive) is treated as false
+        "--expect-exists=false",
+    ],
+    data = [
+        "//:MODULE.bazel",
+        "//test/expect_build_failure:nested_bazel.sh",
+    ],
+    tags = [
+        "exclusive",
+        "local",
+        "requires-network",
+    ],
+)
