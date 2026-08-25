@@ -29,6 +29,7 @@ package(
         "//test/repl:__pkg__",
         "//test/rootpaths:__pkg__",
         "//test/scala_junit_test:__pkg__",
+        "//test/scala_test_testfilter:__pkg__",
     ],
 )
 
