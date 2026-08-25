@@ -21,8 +21,14 @@ load(":env_vars.bzl", "env_vars")
 package(
     default_testonly = 1,
     default_visibility = [
+        "//test/binary_in_genrule:__pkg__",
+        "//test/binary_smoke:__pkg__",
+        "//test/jar_signature_checks:__pkg__",
+        "//test/mixed_java_scala_outputs:__pkg__",
+        "//test/multi_service_manifest:__pkg__",
+        "//test/repl:__pkg__",
+        "//test/rootpaths:__pkg__",
         "//test/scala_junit_test:__pkg__",
-        "//test/sh_tests:__pkg__",
     ],
 )
 

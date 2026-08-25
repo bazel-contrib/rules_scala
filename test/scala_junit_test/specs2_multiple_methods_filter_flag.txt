@@ -1,0 +1,1 @@
+--test_filter=scalarules.test.junit.specs2.JunitSpecs2AnotherTest#other specs2 tests::(\Qrun from another test\E|\Qrun from another test 2\E)$

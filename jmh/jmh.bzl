@@ -124,4 +124,5 @@ def scala_benchmark_jmh(**kw):
         tags = tags,
         unused_dependency_checker_mode = "off",
         runtime_jdk = runtime_jdk,
+        **({"visibility": kw["visibility"]} if "visibility" in kw else {})
     )
