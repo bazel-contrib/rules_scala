@@ -1,7 +1,5 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
-# `third_party/test/proto`'s Scalac action must carry this exact label.
-#
 # `third_party/test/proto` is `.bazelignore`d -- a self-contained bzlmod module
 # invisible to this workspace's package graph -- so its files can't be listed
 # in `data` to bust this test's cache the way `expect_build_failure.bzl` does

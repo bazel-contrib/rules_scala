@@ -4,7 +4,7 @@
 # bzlmod module, walled off from this workspace via `.bazelignore`) carries the
 # expected action label. The signal here is a nested `bazel aquery`'s stdout,
 # while `expect_build_failure.bzl`'s macros model a build/test outcome, so this
-# uses a bespoke sh_test instead of one of those macros. The nested `bazel`
+# uses a custom sh_test instead of one of those macros. The nested `bazel`
 # (and the rationale for it) lives in the shared nested_bazel.sh helper this
 # script sources.
 
