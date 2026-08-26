@@ -1,7 +1,7 @@
 def paths(resources, resource_strip_prefix):
-    """Return a list of path tuples (target, source) where:
+    """Return a list of tuples (target, source) where:
         target - is a path in the archive (with given prefix stripped off)
-        source - is an absolute path of the resource file
+        source - is the resource File
 
     Tuple ordering is aligned with zipper format ie zip_path=file
 
@@ -9,7 +9,7 @@ def paths(resources, resource_strip_prefix):
         resources: list of file objects
         resource_strip_prefix: string to strip from resource path
     """
-    return [(_target_path(resource, resource_strip_prefix), resource.path) for resource in resources]
+    return [(_target_path(resource, resource_strip_prefix), resource) for resource in resources]
 
 def _target_path(resource, resource_strip_prefix):
     path = _target_path_by_strip_prefix(resource, resource_strip_prefix) if resource_strip_prefix else _target_path_by_default_prefixes(resource)
