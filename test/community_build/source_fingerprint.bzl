@@ -4,7 +4,8 @@ with its content hash.
 
 `repository_ctx.watch_tree`'s `exclude` param (which would let this watch the
 whole checkout root minus a short internal-only list) needs Bazel 8+; this
-checkout pins 7.7.1 (.bazelversion). So instead `_PUBLIC_DIRS` below is the
+checkout pins 7.7.1 (.bazelversion). TODO(#1945): remove once Bazel is
+updated to 8+. So instead `_PUBLIC_DIRS` below is the
 list of top-level directories a `bazel_dep(rules_scala)` consumer can
 actually load from -- verified against real `load()`s in docs/*.md,
 examples/*/BUILD, and rules_scala's own scala/*.bzl (e.g. `scala/toolchains.bzl`
