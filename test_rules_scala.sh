@@ -25,15 +25,13 @@ $runner bazel test "${test_output_flag}" --extra_toolchains=//test/toolchains:hi
 $runner bazel test "${test_output_flag}" --extra_toolchains=//scala:minimal_direct_source_deps -- test/...
 $runner bazel build test/missing_direct_deps/internal_deps/... --strict_java_deps=warn --extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_warn
 $runner bazel test "$test_output_flag" //test/... --extra_toolchains="//test_expect_failure/plus_one_deps:plus_one_deps"
-$runner bazel build //test/sh_tests:ScalaBinaryInGenrule --nolegacy_external_runfiles
+$runner bazel build //test/binary_in_genrule:ScalaBinaryInGenrule --nolegacy_external_runfiles
 $runner bazel build //test_statsfile:Simple_statsfile
 $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolchains="//test/toolchains:enable_stats_file_disabled_toolchain"
 . "${test_dir}"/test_env_attribute_expansion.sh
-. "${test_dir}"/test_compiler_sources_integrity.sh
 . "${test_dir}"/test_misc.sh
 . "${test_dir}"/test_scalafmt.sh
 . "${test_dir}"/test_scala_binary.sh
 . "${test_dir}"/test_scala_import_source_jar.sh
-. "${test_dir}"/test_scala_proto_library.sh
 . "${test_dir}"/test_scala_library.sh
 . "${test_dir}"/test_semanticdb.sh

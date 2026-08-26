@@ -8,16 +8,16 @@ load(
     "scala_proto_toolchain",
 )
 load("//scala_proto/default:default_deps.bzl", "DEFAULT_SCALAPB_WORKER_DEPS")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_test_success_test")
 
-# This package contains manual tests for custom generators:
-#
-# bazel test //test/proto/custom_generator:DummyGeneratorTest \
-# --extra_toolchains=//test/proto/custom_generator:scala_proto_deps_toolchain \
-# --extra_toolchains=//test/proto/custom_generator:scala_proto_toolchain
-#
-# bazel build //test/proto/custom_generator:any_proto_scala \
-# --extra_toolchains=//test/proto/custom_generator:failing_scala_proto_deps_toolchain \
-# --extra_toolchains=//test/proto/custom_generator:failing_scala_proto_toolchain
+expect_test_success_test(
+    name = "dummy_generator_test",
+    bazel_args = [
+        "--extra_toolchains=//test/proto/custom_generator:scala_proto_deps_toolchain",
+        "--extra_toolchains=//test/proto/custom_generator:scala_proto_toolchain",
+    ],
+    target = ":DummyGeneratorTest",
+)
 
 scala_proto_library(
     name = "any_proto_scala",
