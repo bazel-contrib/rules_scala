@@ -111,7 +111,17 @@ _INTERNAL_ENTRIES = [
     "test_version.sh",
     "tmp",
     "tools",
+    # Written into the checkout root by the CI runner itself, right before
+    # invoking bazel -- see e.g. https://github.com/bazelbuild/continuous-integration.
+    "bazelci.py",
+    "collect_metrics.py",
 ]
+
+# Files an OS or IDE can create anywhere under a public directory on a local
+# checkout (not tracked in git, so a fresh CI clone never has these) --
+# pruned from the hash below so browsing a directory in Finder or opening it
+# in an IDE doesn't invalidate the fingerprint.
+_LOCAL_ONLY_FILES = [".DS_Store", ".idea", ".vscode"]
 
 def _impl(repository_ctx):
     root = repository_ctx.path(Label("//:MODULE.bazel")).dirname
@@ -120,13 +130,15 @@ def _impl(repository_ctx):
     for name in _PUBLIC_ROOT_FILES:
         repository_ctx.watch(root.get_child(name))
 
+    prune = " -o ".join(['-name "%s"' % name for name in _LOCAL_ONLY_FILES])
     result = repository_ctx.execute(
-        # All paths (files and directories alike) must precede the `-type f`
+        # All paths (files and directories alike) must precede the
         # expression -- some `find` implementations (e.g. BSD find on macOS)
         # reject a path argument once the expression has started.
-        ["sh", "-c", "find %s %s -type f | sort | xargs sha256sum" % (
+        ["sh", "-c", 'find %s %s \\( %s \\) -prune -o -type f -print | sort | xargs sha256sum' % (
             " ".join(_PUBLIC_ROOT_FILES),
             " ".join(_PUBLIC_DIRS),
+            prune,
         )],
         working_directory = str(root),
     )
@@ -142,7 +154,7 @@ source_fingerprint = repository_rule(
 )
 
 def exposed_top_level_dirs_test(name, **kwargs):
-    """Fails if a top-level directory is neither in _PUBLIC_DIRS nor _INTERNAL_ENTRIES.
+    """Fails if a top-level entry is neither in _PUBLIC_DIRS/_PUBLIC_ROOT_FILES nor _INTERNAL_ENTRIES.
 
     Needs the real checkout, not just this test's runfiles, so it can `ls`
     the repo root -- same reason test/expect_build_failure's nested tests are
