@@ -18,20 +18,26 @@ test_output_flag="--test_output=errors"
 # bazelci's shell_commands steps don't get its own --remote_cache /
 # --google_default_credentials flags (remote_caching_flags in bazelci.py), so
 # the bazel calls below share nothing with the separate "bazel test //..."
-# step. The same GCE credentials work on Linux and Windows; macOS runs on
-# MacService instead of GCE and has no ADC to find. Passed as argv, not
-# written to .bazelrc: nested_bazel.sh's nested `bazel` invocations (run by
-# the expect_* tests below) read this workspace's .bazelrc directly and would
-# inherit it otherwise, serving intermediate outputs from the remote cache
-# that never land in the nested output base -- a nested test that reads one
-# such output by path then fails with a NoSuchFileException that has nothing
-# to do with what it actually tests.
+# step. Passed as argv, not written to .bazelrc: nested_bazel.sh's nested
+# `bazel` invocations (run by the expect_* tests below) read this workspace's
+# .bazelrc directly and would inherit it otherwise, serving intermediate
+# outputs from the remote cache that never land in the nested output base --
+# a nested test that reads one such output by path then fails with a
+# NoSuchFileException that has nothing to do with what it actually tests.
 #
 # Excludes the last_green task: it runs a different (unreleased) Bazel
 # binary than every other task, so it has nothing to share this cache with.
+#
+# Linux/Windows use RBE; macOS runs on MacService instead of GCE, so
+# bazelci.py caches it through a GCS bucket instead (still with
+# --google_default_credentials).
 remote_cache_flags=""
-if [[ "${BUILDKITE:-}" == "true" ]] && ! is_macos && [[ "${BAZELCI_TASK:-}" != *last_green* ]]; then
-  remote_cache_flags="--remote_cache=remotebuildexecution.googleapis.com --remote_instance_name=projects/bazel-untrusted/instances/default_instance --google_default_credentials"
+if [[ "${BUILDKITE:-}" == "true" ]] && [[ "${BAZELCI_TASK:-}" != *last_green* ]]; then
+  if is_macos; then
+    remote_cache_flags="--remote_cache=https://storage.googleapis.com/bazel-untrusted-build-cache --google_default_credentials --remote_timeout=3600"
+  else
+    remote_cache_flags="--remote_cache=remotebuildexecution.googleapis.com --remote_instance_name=projects/bazel-untrusted/instances/default_instance --google_default_credentials"
+  fi
 fi
 
 . "${test_dir}"/test_bzlmod_macros.sh
