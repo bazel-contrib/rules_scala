@@ -10,6 +10,7 @@ exports_files(
     visibility = [
         "//test/phase/adjustment:__pkg__",
         "//test/phase/add_to_all_rules:__pkg__",
+        "//test/scala_library_suite:__pkg__",
         "//test/src/main/scala/scalarules/test/resources:__pkg__",
         "//test/src/main/scala/scalarules/test/twitter_scrooge/strings:__pkg__",
     ],

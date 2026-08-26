@@ -7,12 +7,10 @@ patching in `local_path_override(rules_scala)` so it builds against *this*
 checkout instead of a released version, then runs its own test suite
 against it.
 
-Every target here is tagged `manual`, so a plain `bazel test //...` (this
-repo's own CI tasks run that wildcard) never picks them up -- cloning and
-testing a full external project is slow and network-dependent. `manual`
-excludes wildcard patterns too (`//test/community_build/...`,
-`//test/community_build:all` -- neither finds any test targets), so name
-each one explicitly instead:
+A plain `bazel test //...` (this repo's own CI tasks run that wildcard)
+picks these targets up: their nested `bazel test` of a full external
+project is why they're the slowest targets in that run. Running one by
+name instead is faster for local iteration:
 
 ```sh
 bazel test --test_env=PATH //test/community_build:joern_test
@@ -27,11 +25,14 @@ bazel test --test_env=PATH //test/community_build:joern_test //test/community_bu
 (`--test_env=PATH`: the nested `bazel` invocation needs the *consumer's*
 pinned Bazel version, not this checkout's -- see `downstream_test_driver.sh`.)
 
-Each run executes for real, never from Bazel's test-result cache (the
-targets are tagged `external`): the nested build reads this checkout's live
-source tree, so rules_scala's own sources are code under test without being
-declared inputs of the `sh_test` -- a cached PASS would survive edits to
-them.
+A rerun with nothing relevant changed is served `(cached) PASSED`: the
+nested build reads this checkout's live source tree, so rules_scala's own
+sources would otherwise be code under test without being declared inputs
+of the `sh_test` (a cached PASS surviving an edit to them). Instead, both
+targets declare `@rules_scala_source_fingerprint//:fingerprint.txt` (see
+`source_fingerprint.bzl`) as `data` -- a hash of every file rules_scala
+exposes to a downstream consumer -- so an edit anywhere in scope changes it
+and forces a real re-run.
 
 ## What these cover -- and what they deliberately don't
 

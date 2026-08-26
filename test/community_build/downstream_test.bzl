@@ -4,6 +4,23 @@ checkout, wired against *this* rules_scala checkout: first repins its Maven
 lockfile(s) (`bazel run @maven//:pin`, since the consumer's exact pin may not
 match a version this checkout's third_party repos carry), then runs a
 nested `bazel test` against `targets`.
+
+Cacheability
+------------
+The nested `bazel test` reads this checkout's *live* source tree via
+`local_path_override` (see downstream_repository.bzl), not the runfiles this
+`sh_test` was handed -- so rules_scala's own sources are code under test
+without being declared inputs, the same unsound-caching trap
+`test/expect_build_failure/expect_build_failure.bzl` fixes for its own nested
+tests. `@rules_scala_source_fingerprint//:fingerprint.txt` (see
+source_fingerprint.bzl) hashes every file rules_scala exposes to a downstream
+consumer, so an edit anywhere in scope changes this `sh_test`'s declared
+inputs and forces a re-run.
+
+`no-sandbox` + `no-remote-exec` rather than `local`: `local` also precludes
+the *local* test-result cache, not just sandboxing and remote execution (see
+https://bazel.build/reference/be/common-definitions#test.tags) -- with it,
+this test would never come back `(cached) PASSED` even on an unmodified rerun.
 """
 
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
@@ -15,7 +32,7 @@ def downstream_test(
         targets,
         extra_bazel_flags = "",
         size = "large",
-        tags = ["external", "local", "requires-network", "no-last-green"],
+        tags = ["no-sandbox", "no-remote-exec", "requires-network", "no-last-green"],
         **kwargs):
     """Declares an `sh_test` testing `targets` in the `repo_name` external repo.
 
@@ -29,21 +46,16 @@ def downstream_test(
         size: test size; defaults to "large" (nested Bazel invocation, cold
             Maven/git fetch on first run).
         tags: test tags; defaults to
-            `["external", "local", "requires-network", "no-last-green"]`.
-            `external` disables test-result caching: the nested build reads
-            this checkout's *live* source tree via `local_path_override`, so
-            rules_scala's sources are code under test without being declared
-            inputs of this `sh_test` -- a cached PASS would survive edits to
-            them and go stale (the same unsound-caching trap
-            `expect_build_failure_test` fixed by globbing its code under
-            test, except here the code under test is the whole repo, out of
-            a BUILD-file glob's reach). `local` and `requires-network` match
-            `expect_build_failure_test`'s rationale -- the nested build
-            fetches external repos and must run outside the sandbox.
-            `no-last-green` excludes these from the last_green Bazel CI step
-            (via `--test_tag_filters`): a third-party consumer isn't expected
-            to build against an unreleased Bazel, so failures there are noise,
-            not a rules_scala regression.
+            `["no-sandbox", "no-remote-exec", "requires-network", "no-last-green"]`.
+            `no-sandbox` and `no-remote-exec` let this run outside the sandbox
+            (the nested `bazel` reads the real source tree) while keeping it
+            eligible for the test-result cache -- see the module docstring for
+            why not `local`/`external`. `requires-network`: the nested build
+            fetches external repos on a cache miss. `no-last-green` excludes
+            these from the last_green Bazel CI step (via `--test_tag_filters`):
+            a third-party consumer isn't expected to build against an
+            unreleased Bazel, so failures there are noise, not a rules_scala
+            regression.
         **kwargs: forwarded to the underlying `sh_test`.
     """
     sh_test(
@@ -62,6 +74,7 @@ def downstream_test(
         data = [
             "@{}//_bazel_native_marker:marker.txt".format(repo_name),
             "//test/expect_build_failure:nested_bazel.sh",
+            "@rules_scala_source_fingerprint//:fingerprint.txt",
         ],
         size = size,
         tags = tags,
