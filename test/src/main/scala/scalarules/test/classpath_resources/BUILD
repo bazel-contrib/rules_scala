@@ -21,4 +21,5 @@ scala_binary(
         "//test/src/main/resources/scalarules/test/classpath_resource2:classpath-resource",
     ],
     main_class = "scalarules.test.classpathresources.ObjectWithDuplicateClasspathResources",
+    visibility = ["//test:__subpackages__"],
 )

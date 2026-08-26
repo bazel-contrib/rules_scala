@@ -35,8 +35,10 @@ def setup_scalafmt_toolchain(
     native.toolchain(
         name = name,
         target_settings = [
-            "@rules_scala_config//:scala_version" +
-            version_suffix(scala_version),
+            Label(
+                "@rules_scala_config//:scala_version" +
+                version_suffix(scala_version),
+            ),
         ],
         toolchain = ":%s_impl" % name,
         toolchain_type = SCALAFMT_TOOLCHAIN_TYPE,

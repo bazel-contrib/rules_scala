@@ -107,6 +107,11 @@ parent_output_base="$(_nested_bazel_find_parent_output_base)"
 _nested_bazel_output_base="/tmp/${output_base_name}"
 mkdir -p "${_nested_bazel_output_base}"
 cd "${NESTED_BAZEL_WORKSPACE}"
+# This driver always uses the developer's home directory. `nested_bazel_setup`
+# does so only when asked, because a `~/.bazelrc` outside the repo could then
+# decide the result of a test whose pass is cached and reused. The tests here
+# are tagged `external`, so Bazel re-runs them every time and there is no such
+# stale pass to worry about. The paths built below need a home directory anyway.
 _nested_bazel_real_home="$(eval echo "~$(id -un)" 2>/dev/null || true)"
 _nested_bazel_common_opts=()
 repository_cache="$(dirname "${parent_output_base}")/cache/repos/v1"

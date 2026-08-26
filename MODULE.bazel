@@ -319,3 +319,17 @@ downstream_consumers.consumer(
     remote = "https://github.com/databricks/dicer.git",
 )
 use_repo(downstream_consumers, "dicer", "joern")
+
+# Hashes every top-level directory/file downstream_consumers' targets can
+# reach via local_path_override into one file, so joern_test/dicer_test can
+# declare it as a data dependency and cache soundly. See
+# test/community_build/source_fingerprint.bzl.
+source_fingerprint = use_repo_rule(
+    "//test/community_build:source_fingerprint.bzl",
+    "source_fingerprint",
+)
+
+source_fingerprint(
+    name = "rules_scala_source_fingerprint",
+    dev_dependency = True,
+)

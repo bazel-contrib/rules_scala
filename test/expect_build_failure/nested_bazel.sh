@@ -91,6 +91,16 @@ _nested_bazel_common_opts=()
 # then serialize on Bazel's output-base lock (each inner `bazel --batch` waits for
 # the lock rather than failing), which keeps the extracted external repos warm and
 # avoids multiplying ~1GB of Scala jars across a separate output base per test.
+_nested_bazel_home_hint() {
+  if [[ -n "${RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME:-}" ]]; then
+    return
+  fi
+  echo "note: the nested \`bazel\` ran with a scrubbed HOME, so your ~/.bazelrc was" >&2
+  echo "      ignored. If it carries settings the build needs (a download proxy, for" >&2
+  echo "      instance), re-run bazel test with --nocache_test_results and" >&2
+  echo "      --test_env=RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1." >&2
+}
+
 nested_bazel_setup() {
   local output_base_name="${1:?nested_bazel_setup requires an output-base directory name}"
 
@@ -107,7 +117,17 @@ nested_bazel_setup() {
   # a corporate proxy via `--experimental_downloader_config`). Resolve the real
   # home from the passwd database and run with it so it behaves like the user's
   # own `bazel build`. On hosts without such an rc (e.g. CI) this is a no-op.
-  _nested_bazel_real_home="$(eval echo "~$(id -un)" 2>/dev/null || true)"
+  # Any failure below may be the missing rc rather than the code under test, and
+  # the reader has no way to guess that, so say it on every failing exit.
+  trap '_nested_bazel_status=$?; if [[ "${_nested_bazel_status}" -ne 0 ]]; then _nested_bazel_home_hint; fi' EXIT
+
+  # Opt-in: the user's rc is not a declared input of the test, so reading it by
+  # default would let a cached result depend on a file outside the repo. CI stays
+  # hermetic; a developer who needs the rc sets the variable.
+  _nested_bazel_real_home=""
+  if [[ -n "${RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME:-}" ]]; then
+    _nested_bazel_real_home="$(eval echo "~$(id -un)" 2>/dev/null || true)"
+  fi
 
   _nested_bazel_common_opts=()
   # Derive the parent's repository (download) cache from its output base rather
