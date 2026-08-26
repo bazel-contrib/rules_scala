@@ -7,12 +7,10 @@ patching in `local_path_override(rules_scala)` so it builds against *this*
 checkout instead of a released version, then runs its own test suite
 against it.
 
-Every target here is tagged `manual`, so a plain `bazel test //...` (this
-repo's own CI tasks run that wildcard) never picks them up -- cloning and
-testing a full external project is slow and network-dependent. `manual`
-excludes wildcard patterns too (`//test/community_build/...`,
-`//test/community_build:all` -- neither finds any test targets), so name
-each one explicitly instead:
+A plain `bazel test //...` (this repo's own CI tasks run that wildcard)
+picks these targets up: their nested `bazel test` of a full external
+project is why they're the slowest targets in that run. Running one by
+name instead is faster for local iteration:
 
 ```sh
 bazel test --test_env=PATH //test/community_build:joern_test
