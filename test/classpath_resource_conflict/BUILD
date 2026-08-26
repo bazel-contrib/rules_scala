@@ -9,9 +9,8 @@ package(default_testonly = 1)
 # expect_build_success_test and assert the warning is surfaced. (See that macro's
 # docstring for how it keeps a cached action from hiding the warning.)
 #
-# `target` lives in another package, but it's one concrete label, so the macro
-# still fingerprints it via `fixture_actions` (see expect_build_failure.bzl)
-# instead of tagging this test `external`.
+# `target` lives in another package; see expect_build_failure.bzl's docstring
+# for why that still gets a real fingerprint here.
 expect_build_success_test(
     name = "classpath_resource_namespace_conflict_test",
     expect = ["expected_namespace_conflict.txt"],

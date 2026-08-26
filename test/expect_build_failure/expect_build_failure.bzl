@@ -211,7 +211,7 @@ def _nested_bazel_test(
     fingerprint_target_is_pattern = "..." in fingerprint_target or fingerprint_target.endswith((":all", ":*"))
 
     if no_fingerprint_reason or (cross_package_fixture and fingerprint_target_is_pattern):
-        # The package glob above cannot cross a Bazel package boundary, and a
+        # `code_under_test` above cannot cross a Bazel package boundary, and a
         # macro cannot prove that caller `data` covers every source of a
         # pattern -- there's no single label to declare. Keep such results out
         # of the cache rather than serve a stale pass after an undeclared
@@ -240,9 +240,12 @@ def _nested_bazel_test(
         )
         data.append(":%s_fixture_actions" % name)
 
-    # `no-sandbox` rather than `local`: both run the nested `bazel` outside the
-    # sandbox, which is all it needs, but a `local` result is also kept out of
-    # the shared cache. `no-remote-exec` because it reads this machine's tree.
+    # Callers default `tags` to `no-sandbox` rather than `local`: both run the
+    # nested `bazel` outside the sandbox, which is all it needs, but a `local`
+    # result is also kept out of the shared cache. Added here: `exclusive`,
+    # because each run takes the shared output base's lock, so running them one
+    # at a time keeps them off each other's timeout; `no-remote-exec`, because
+    # this reads this machine's tree.
     execution_tags = tags + ["exclusive", "no-remote-exec"]
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
@@ -268,9 +271,6 @@ def _nested_bazel_test(
         srcs = [_HELPER],
         args = args,
         data = deduped_data,
-        # `exclusive`: each runs a nested `bazel` that takes the shared output
-        # base's lock, so running them one at a time keeps them off each other's
-        # timeout.
         tags = execution_tags,
         **kwargs
     )

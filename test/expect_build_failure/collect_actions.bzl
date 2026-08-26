@@ -35,7 +35,7 @@ def _without_configuration(line):
         out += "bazel-out/" + ("<cfg>" + part[slash:] if slash != -1 else part)
     return out
 
-def _collect_impl(target, ctx):
+def _collect_actions_aspect_impl(target, ctx):
     # One line per action, joining mnemonic and argv so each action keeps its own
     # flag-to-value pairing. Collecting individual tokens into one depset would
     # lose that pairing: several rules_scala flags share the same "off"/"warn"/
@@ -59,7 +59,7 @@ def _collect_impl(target, ctx):
     return [_ActionsInfo(lines = depset(direct, transitive = transitive))]
 
 collect_actions_aspect = aspect(
-    implementation = _collect_impl,
+    implementation = _collect_actions_aspect_impl,
     attr_aspects = ["*"],
 )
 

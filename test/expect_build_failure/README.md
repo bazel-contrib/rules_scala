@@ -79,11 +79,16 @@ Nothing in a caller has to know about caching. Three things are worth knowing:
 
 What the fingerprint does not see: an action that writes a file instead of
 running a command line (`ctx.actions.write`, template expansion) contributes its
-mnemonic and nothing else, which is 446 of the 5135 lines it collects today. A
-change to what such an action writes leaves the fingerprint identical. Declaring
-those files instead would put output paths -- and with them the configuration --
-back into the key, which is what makes the tests re-run under every flag the
-outer build sets.
+mnemonic and nothing else, so a change to what such an action writes leaves the
+fingerprint identical. The same blind spot applies more broadly: an action's
+command line carries a file's path, not its content, so a content-only change
+to a file rules_scala itself reads by path (rather than compiles from a
+fixture's own sources) also leaves the fingerprint identical -- `_SCALAC_JAR`
+and `_RUNNER_JARS` below are declared as explicit `data` for exactly this
+reason. Declaring the file such a write action produces as a test input
+instead would put its output path -- and with it the configuration -- back
+into the key, which is what makes the tests re-run under every flag the outer
+build sets.
 
 ## Registering a toolchain
 
