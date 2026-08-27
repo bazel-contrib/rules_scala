@@ -147,7 +147,7 @@
   "moduleExtensions": {
     "//test/community_build:downstream_repository.bzl%downstream_consumers": {
       "general": {
-        "bzlTransitiveDigest": "lwMMcr8BIh+yVqXS3lVu+bSx932/5RE6/ACKYZmcbVI=",
+        "bzlTransitiveDigest": "wMa5aAkkSaBiGE9wCV5HS4ZR9zcg24vSD5WXB5KdmTs=",
         "usagesDigest": "ylTxWZOsS2rL1viJm4oKFPgAglCgWPpVd5YJ+CTGZTU=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
