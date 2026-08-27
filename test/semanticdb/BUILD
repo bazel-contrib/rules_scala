@@ -1,5 +1,7 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load("//test/expect_build_failure:collect_actions.bzl", "fixture_actions")
 load(
     "//test/expect_build_failure:expect_build_failure.bzl",
     "expect_build_success_test",
@@ -79,6 +81,126 @@ scala_library(
         allow_empty = True,
     ),
 )
+
+# The nested `bazel build` here reads the on-disk checkout directly, so its
+# inputs must be declared by hand -- same reasoning as the expect_*_test
+# macros above. The `.bazelrc`/`.bazelversion`/lockfile/`_SCALAC_JAR` entries
+# below match those macros' own list; the fixture_actions targets are their
+# per-fixture action fingerprint.
+_SCALAC_JAR = "//src/java/io/bazel/rulesscala/scalac:scalac_deploy.jar"
+
+_SEMANTICDB_FIXTURE_DATA = glob([
+    "*.scala",
+    "BUILD",
+    "rules.bzl",
+    "semantic_provider_vars.sh.template",
+]) + [
+    "//:.bazelrc",
+    "//:.bazelversion",
+    "//:MODULE.bazel",
+    "//:MODULE.bazel.lock",
+    "//scala:semanticdb_provider.bzl",
+    "//scala/private:phases/phase_semanticdb.bzl",
+    _SCALAC_JAR,
+    "//test/expect_build_failure:nested_bazel.sh",
+]
+
+expect_build_success_test(
+    name = "empty_semanticdb_test",
+    build_args = ["--extra_toolchains=//test/semanticdb:semanticdb_nobundle_toolchain"],
+    target = ":semantic_provider_vars_empty",
+)
+
+expect_build_success_test(
+    name = "semanticdb_synthetics_toolchain_scalaopt_test",
+    build_args = ["--extra_toolchains=//test/semanticdb:semanticdb_synthetics_toolchain"],
+    target = ":all_lib",
+)
+
+fixture_actions(
+    name = "all_lib_fixture_actions",
+    testonly = True,
+    target = ":all_lib",
+)
+
+fixture_actions(
+    name = "lib_with_tempsrc_fixture_actions",
+    testonly = True,
+    extra_toolchains = ["//test/semanticdb:semanticdb_nobundle_toolchain"],
+    target = ":lib_with_tempsrc",
+)
+
+fixture_actions(
+    name = "semantic_provider_vars_all_bundle_fixture_actions",
+    testonly = True,
+    extra_toolchains = ["//test/semanticdb:semanticdb_bundle_toolchain"],
+    target = ":semantic_provider_vars_all",
+)
+
+fixture_actions(
+    name = "semantic_provider_vars_all_nobundle_fixture_actions",
+    testonly = True,
+    extra_toolchains = ["//test/semanticdb:semanticdb_nobundle_toolchain"],
+    target = ":semantic_provider_vars_all",
+)
+
+sh_test(
+    name = "no_semanticdb_test",
+    size = "large",
+    srcs = ["no_semanticdb_test.sh"],
+    data = _SEMANTICDB_FIXTURE_DATA + [":all_lib_fixture_actions"],
+    tags = [
+        "exclusive",
+        "no-remote-exec",
+        "no-sandbox",
+        "requires-network",
+    ],
+)
+
+sh_test(
+    name = "removed_sourcefiles_test",
+    size = "large",
+    srcs = ["removed_sourcefiles_test.sh"],
+    data = _SEMANTICDB_FIXTURE_DATA + [":lib_with_tempsrc_fixture_actions"],
+    tags = [
+        "exclusive",
+        "no-remote-exec",
+        "no-sandbox",
+        "requires-network",
+    ],
+)
+
+[
+    sh_test(
+        name = "produces_semanticdb_test_scala%d_%s" % (
+            scala_majver,
+            "bundle" if is_bundle else "nobundle",
+        ),
+        size = "large",
+        srcs = ["produces_semanticdb_test.sh"],
+        args = [
+            "//test/semanticdb:semanticdb_bundle_toolchain" if is_bundle else "//test/semanticdb:semanticdb_nobundle_toolchain",
+            str(is_bundle),
+            str(scala_majver),
+        ] + (["--repo_env=SCALA_VERSION=3.3.8"] if scala_majver == 3 else []),
+        data = _SEMANTICDB_FIXTURE_DATA + (
+            [] if scala_majver == 3 else [":semantic_provider_vars_all_bundle_fixture_actions" if is_bundle else ":semantic_provider_vars_all_nobundle_fixture_actions"]
+        ),
+        tags = [
+            "exclusive",
+            "no-remote-exec",
+            "no-sandbox",
+            "requires-network",
+        ] + (
+            # fixture_actions analyses the fixture under the outer build's
+            # default Scala version, so it can't see a rules change that only
+            # affects the Scala 3 codepath this repo_env override selects.
+            ["external"] if scala_majver == 3 else []
+        ),
+    )
+    for is_bundle in (0, 1)
+    for scala_majver in (2, 3)
+]
 
 # Scala versions the toolchain_deps semanticdb classpath is resolved against.
 _TOOLCHAIN_DEPS_SCALA_VERSIONS = [
