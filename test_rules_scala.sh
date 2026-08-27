@@ -28,4 +28,3 @@ $runner bazel test "$test_output_flag" //test/... --extra_toolchains="//test_exp
 $runner bazel build //test/binary_in_genrule:ScalaBinaryInGenrule --nolegacy_external_runfiles
 $runner bazel build //test_statsfile:Simple_statsfile
 $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolchains="//test/toolchains:enable_stats_file_disabled_toolchain"
-. "${test_dir}"/test_scala_library.sh

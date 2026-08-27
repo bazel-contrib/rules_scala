@@ -6,6 +6,7 @@ exports_files(
     [
         "expect_build_failure.sh",
         "nested_bazel.sh",
+        "no_recompilation_test.sh",
     ],
     visibility = ["//visibility:public"],
 )
