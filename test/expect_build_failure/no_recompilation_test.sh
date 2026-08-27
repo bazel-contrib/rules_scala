@@ -5,20 +5,27 @@
 # its consumer, since the consumer only ever compiles against the target's
 # interface jar.
 #
-# Builds <target> once against a nested output base, then mutates
-# <changed-file> in the real source tree with <sed-expr> and builds <target>
-# again with --subcommands. Fails if <not-expected> appears in the second
-# build's output (meaning the consumer action ran, i.e. it recompiled).
+# Builds <target> once against a nested output base, then replaces the
+# quoted string literal "<search-word>" with "<replace-word>" in
+# <changed-file> in the real source tree, and builds <target> again with
+# --subcommands. Fails if <not-expected> appears in the second build's
+# output (meaning the consumer action ran, i.e. it recompiled).
+#
+# <search-word>/<replace-word> (not a raw sed expression) so the args stay
+# free of shell metacharacters like ( and " -- Bazel's test wrapper on
+# Windows re-parses argv through another shell, which mangles those.
 #
 # Usage:
 #   no_recompilation_test.sh --target=<label-or-pattern> --changed-file=<path>
-#     --sed-expr=<expr> --not-expected=<substring> [--extra-toolchain=<label>]
+#     --search-word=<word> --replace-word=<word> --not-expected=<substring>
+#     [--extra-toolchain=<label>]
 
 set -euo pipefail
 
 target=""
 changed_file=""
-sed_expr=""
+search_word=""
+replace_word=""
 not_expected=""
 extra_toolchain=""
 
@@ -26,15 +33,16 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --target=*) target="${1#*=}"; shift ;;
     --changed-file=*) changed_file="${1#*=}"; shift ;;
-    --sed-expr=*) sed_expr="${1#*=}"; shift ;;
+    --search-word=*) search_word="${1#*=}"; shift ;;
+    --replace-word=*) replace_word="${1#*=}"; shift ;;
     --not-expected=*) not_expected="${1#*=}"; shift ;;
     --extra-toolchain=*) extra_toolchain="${1#*=}"; shift ;;
     *) echo "Unexpected argument: $1" >&2; exit 1 ;;
   esac
 done
 
-if [[ -z "${target}" || -z "${changed_file}" || -z "${sed_expr}" || -z "${not_expected}" ]]; then
-  echo "Usage: no_recompilation_test.sh --target=<label-or-pattern> --changed-file=<path> --sed-expr=<expr> --not-expected=<substring> [--extra-toolchain=<label>]" >&2
+if [[ -z "${target}" || -z "${changed_file}" || -z "${search_word}" || -z "${replace_word}" || -z "${not_expected}" ]]; then
+  echo "Usage: no_recompilation_test.sh --target=<label-or-pattern> --changed-file=<path> --search-word=<word> --replace-word=<word> --not-expected=<substring> [--extra-toolchain=<label>]" >&2
   exit 1
 fi
 
@@ -62,13 +70,13 @@ if ! initial_output="$(nested_bazel_run build ${toolchain_args[@]+"${toolchain_a
   exit 1
 fi
 
-sed -i.bak "${sed_expr}" "${changed_file_path}"
+sed -i.bak "s/(\"${search_word}\")/(\"${replace_word}\")/" "${changed_file_path}"
 
 # A sed expression that matches nothing still exits 0, which would silently
 # turn the assertion below into a vacuous pass (no recompilation, because
 # nothing was actually changed).
 if cmp -s "${backup_path}" "${changed_file_path}"; then
-  echo "sed expression '${sed_expr}' did not change ${changed_file}." >&2
+  echo "'${search_word}' -> '${replace_word}' did not change ${changed_file}." >&2
   exit 1
 fi
 

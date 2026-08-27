@@ -37,7 +37,8 @@ sh_test(
     args = [
         "--target=//test/src/main/scala/scalarules/test/strict_deps/no_recompilation/...",
         "--changed-file=test/src/main/scala/scalarules/test/strict_deps/no_recompilation/C.scala",
-        "--sed-expr='s/println(\"orig\")/println(\"altered\")/'",
+        "--search-word=orig",
+        "--replace-word=altered",
         "--not-expected=test/src/main/scala/scalarules/test/strict_deps/no_recompilation:transitive_dependency_user",
         "--extra-toolchain=//test/toolchains:high_level_transitive_deps_strict_deps_error",
     ],

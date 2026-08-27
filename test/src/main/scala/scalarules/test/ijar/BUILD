@@ -32,7 +32,8 @@ sh_test(
     args = [
         "--target=//test/src/main/scala/scalarules/test/ijar/...",
         "--changed-file=test/src/main/scala/scalarules/test/ijar/B.scala",
-        "--sed-expr='s/println(\"orig\")/println(\"altered\")/'",
+        "--search-word=orig",
+        "--replace-word=altered",
         "--not-expected=test/src/main/scala/scalarules/test/ijar:user",
     ],
     data = [
@@ -54,7 +55,8 @@ sh_test(
     args = [
         "--target=//test/src/main/scala/scalarules/test/ijar/...",
         "--changed-file=test/src/main/scala/scalarules/test/ijar/C.java",
-        "--sed-expr='s/System.out.println(\"orig\")/System.out.println(\"altered\")/'",
+        "--search-word=orig",
+        "--replace-word=altered",
         "--not-expected=test/src/main/scala/scalarules/test/ijar:user",
     ],
     data = [
@@ -76,7 +78,8 @@ sh_test(
     args = [
         "--target=//test/src/main/scala/scalarules/test/ijar/...",
         "--changed-file=test/src/main/scala/scalarules/test/ijar/B.scala",
-        "--sed-expr='s/println(\"orig_sibling\")/println(\"altered_sibling\")/'",
+        "--search-word=orig_sibling",
+        "--replace-word=altered_sibling",
         "--not-expected=test/src/main/scala/scalarules/test/ijar/dependency_java",
     ],
     data = [
