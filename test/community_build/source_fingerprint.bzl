@@ -164,7 +164,7 @@ def exposed_top_level_dirs_test(name, **kwargs):
     sh_test(
         name = name,
         srcs = ["exposed_top_level_dirs_test.sh"],
-        args = _PUBLIC_DIRS + _PUBLIC_ROOT_FILES + ["--"] + _INTERNAL_ENTRIES,
+        args = _PUBLIC_DIRS + _PUBLIC_ROOT_FILES + ["--"] + _INTERNAL_ENTRIES + _LOCAL_ONLY_FILES,
         data = [
             # _nested_bazel_find_workspace resolves the real source root from
             # this symlink under `bazel test` (no BUILD_WORKSPACE_DIRECTORY).
