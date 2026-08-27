@@ -250,9 +250,8 @@ def _nested_bazel_test(
     # one lock. The `resources:laneN_lock:1` tag caps each lane at one test at
     # a time, so two tests in the same lane never both start and risk a
     # shared-lock wait counting toward either one's own test timeout.
-    # `tags` isn't a configurable attribute (no `select()`), so this tag is the
-    # same on every platform; see .bazelrc for why the lane_lock amount differs
-    # by platform.
+    # The .bazelrc registers each laneN_lock's available amount (1 per lane, so
+    # only one test per lane runs at a time on every platform).
     lane = hash(name) % 3
     args += ["--lane", str(lane)]
     execution_tags = tags + ["no-remote-exec", "resources:lane%d_lock:1" % lane]
