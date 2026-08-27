@@ -7,3 +7,12 @@ exports_files(["MODULE.bazel"])
 # repo rule's generated output; listing it in that test's `data` re-keys the test
 # when the generation logic changes.
 exports_files(["scala_config.bzl"])
+
+# Declared inputs of the nested `bazel` tests: it reads the repo `.bazelrc`,
+# resolves dependencies from the lock and runs the version bazelisk picks, so
+# all three decide their outcome. See //test/expect_build_failure.
+exports_files([
+    ".bazelrc",
+    ".bazelversion",
+    "MODULE.bazel.lock",
+])

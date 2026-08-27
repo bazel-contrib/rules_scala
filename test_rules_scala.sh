@@ -29,9 +29,6 @@ $runner bazel build //test/binary_in_genrule:ScalaBinaryInGenrule --nolegacy_ext
 $runner bazel build //test_statsfile:Simple_statsfile
 $runner bazel build //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolchains="//test/toolchains:enable_stats_file_disabled_toolchain"
 . "${test_dir}"/test_misc.sh
-. "${test_dir}"/test_scalafmt.sh
 . "${test_dir}"/test_scala_binary.sh
-. "${test_dir}"/test_scala_import_source_jar.sh
-. "${test_dir}"/test_scala_proto_library.sh
 . "${test_dir}"/test_scala_library.sh
 . "${test_dir}"/test_semanticdb.sh

@@ -74,8 +74,8 @@ def dev_deps_repositories(
     repositories(
         fetch_sources = fetch_sources,
         fetch_sources_by_id = {
-            # Required by test/shell/test_scala_import_source_jar.sh. Without
-            # this, the first test will always fail, and the
+            # Required by the //test/fetch_sources tests. Without this,
+            # `fetched_by_default_test` will always fail, and the
             # `BAZEL_JVM_FETCH_SOURCES` environment variable has no effect.
             "com_google_guava_guava_21_0": True,
         },

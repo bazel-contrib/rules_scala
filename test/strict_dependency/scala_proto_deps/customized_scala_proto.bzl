@@ -29,6 +29,6 @@ _custom_phases = {
     ],
 }
 
-custom_stamping_apsect = make_scala_proto_aspect(_custom_phases)
+custom_stamping_aspect = make_scala_proto_aspect(_custom_phases)
 
-custom_stamping_scala_proto_library = make_scala_proto_library(aspects = [custom_stamping_apsect])
+custom_stamping_scala_proto_library = make_scala_proto_library(aspects = [custom_stamping_aspect])

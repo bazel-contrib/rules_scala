@@ -97,6 +97,7 @@ _TOOLCHAIN_DEPS_SCALA_VERSIONS = [
         # cover it. Depend on the built target directly so a change to its .bzl
         # sources still invalidates this test's cache key.
         data = ["//scala/private/toolchain_deps:semanticdb"],
+        no_fingerprint_reason = "this nested build only builds toolchain deps, so it runs no rules_scala action to fingerprint; the data above covers what it does build",
         target = "//scala/private/toolchain_deps:semanticdb",
     )
     for scala_version in _TOOLCHAIN_DEPS_SCALA_VERSIONS
