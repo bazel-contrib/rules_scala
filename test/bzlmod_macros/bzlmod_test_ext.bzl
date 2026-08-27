@@ -1,4 +1,4 @@
-"""Used by test/shell/test_bzlmod_helpers.sh to test bzlmod.bzl.
+"""Used by test/bzlmod_macros/bzlmod_macros_test.sh to test bzlmod.bzl.
 
 Defines a module extension with two tag classes:
 

@@ -13,7 +13,6 @@ test_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/test/shell
 runner=$(get_test_runner "${1:-local}")
 test_output_flag="--test_output=errors"
 
-. "${test_dir}"/test_bzlmod_macros.sh
 $runner bazel build src/... test/...
 #$runner bazel build src/... test/... --all_incompatible_changes
 $runner bazel test "${test_output_flag}" src/... test/...
