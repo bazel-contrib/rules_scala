@@ -28,8 +28,10 @@ if ! build_output="$(nested_bazel_run build //test/semanticdb:all_lib 2>&1)"; th
   exit 1
 fi
 
-if [[ "$(find "${target_out}" -type f -name '*.semanticdb' | wc -l)" -gt 0 ]]; then
-  echo "Error: Semanticdb files erroneously found in target output" >&2
+loose_files="$(find "${target_out}" -type f -name '*.semanticdb')"
+if [[ -n "${loose_files}" ]]; then
+  echo "Error: Found .semanticdb files as loose files under ${target_out}, expected none under the default (semanticdb-disabled) toolchain:" >&2
+  echo "${loose_files}" >&2
   exit 1
 fi
 
@@ -37,7 +39,7 @@ jar="${target_out}/all_lib.jar"
 jar_listing="$(jar tf "${jar}")"
 for f in A.scala.semanticdb B.scala.semanticdb; do
   if printf '%s\n' "${jar_listing}" | grep -qF "${f}"; then
-    echo "Error: Semanticdb included in jar ${jar}, but wasn't expected to be" >&2
+    echo "Error: Found ${f} bundled in jar ${jar}, expected it absent under the default (semanticdb-disabled) toolchain" >&2
     exit 1
   fi
 done

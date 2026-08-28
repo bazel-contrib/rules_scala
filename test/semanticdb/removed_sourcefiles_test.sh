@@ -35,7 +35,7 @@ echo "class D{ val a = 1; }" > "${newfile_path}"
 # Query Bazel's own dependency graph, not just the filesystem: this catches a
 # regression in lib_with_tempsrc's glob pattern itself, which a plain
 # `[[ -f ]]` check on the file we just wrote would not.
-query_result1="$(nested_bazel_run query "labels(srcs, ${rule_label})" 2>&1)"
+query_result1="$(nested_bazel_run cquery "labels(srcs, ${rule_label})" 2>&1)"
 if [[ "${query_result1}" != *"D.scala"* ]]; then
   echo "D.scala was not properly added as src for target ${rule_label}" >&2
   echo "${query_result1}" >&2
@@ -50,7 +50,7 @@ fi
 
 rm "${newfile_path}"
 
-query_result2="$(nested_bazel_run query "labels(srcs, ${rule_label})" 2>&1)"
+query_result2="$(nested_bazel_run cquery "labels(srcs, ${rule_label})" 2>&1)"
 if [[ "${query_result2}" == *"D.scala"* ]]; then
   echo "D.scala was not properly removed as src for target ${rule_label}" >&2
   echo "${query_result2}" >&2

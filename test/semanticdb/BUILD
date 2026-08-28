@@ -84,7 +84,7 @@ scala_library(
 
 # The nested `bazel build` here reads the on-disk checkout directly, so its
 # inputs must be declared by hand -- same reasoning as the expect_*_test
-# macros above. The `.bazelrc`/`.bazelversion`/lockfile/`_SCALAC_JAR` entries
+# macros below. The `.bazelrc`/`.bazelversion`/lockfile/`_SCALAC_JAR` entries
 # below match those macros' own list; the fixture_actions targets are their
 # per-fixture action fingerprint.
 _SCALAC_JAR = "//src/java/io/bazel/rulesscala/scalac:scalac_deploy.jar"
@@ -173,18 +173,18 @@ sh_test(
 [
     sh_test(
         name = "produces_semanticdb_test_scala%d_%s" % (
-            scala_majver,
+            scala_epoch,
             "bundle" if is_bundle else "nobundle",
         ),
         size = "large",
         srcs = ["produces_semanticdb_test.sh"],
         args = [
-            "//test/semanticdb:semanticdb_bundle_toolchain" if is_bundle else "//test/semanticdb:semanticdb_nobundle_toolchain",
-            str(is_bundle),
-            str(scala_majver),
-        ] + (["--repo_env=SCALA_VERSION=3.3.8"] if scala_majver == 3 else []),
+            "--toolchain=" + ("//test/semanticdb:semanticdb_bundle_toolchain" if is_bundle else "//test/semanticdb:semanticdb_nobundle_toolchain"),
+            "--is-bundle=" + str(is_bundle),
+            "--scala-epoch=" + str(scala_epoch),
+        ] + (["--repo_env=SCALA_VERSION=3.3.8"] if scala_epoch == 3 else []),
         data = _SEMANTICDB_FIXTURE_DATA + (
-            [] if scala_majver == 3 else [":semantic_provider_vars_all_bundle_fixture_actions" if is_bundle else ":semantic_provider_vars_all_nobundle_fixture_actions"]
+            [] if scala_epoch == 3 else [":semantic_provider_vars_all_bundle_fixture_actions" if is_bundle else ":semantic_provider_vars_all_nobundle_fixture_actions"]
         ),
         tags = [
             "exclusive",
@@ -195,11 +195,11 @@ sh_test(
             # fixture_actions analyses the fixture under the outer build's
             # default Scala version, so it can't see a rules change that only
             # affects the Scala 3 codepath this repo_env override selects.
-            ["external"] if scala_majver == 3 else []
+            ["external"] if scala_epoch == 3 else []
         ),
     )
     for is_bundle in (0, 1)
-    for scala_majver in (2, 3)
+    for scala_epoch in (2, 3)
 ]
 
 # Scala versions the toolchain_deps semanticdb classpath is resolved against.
