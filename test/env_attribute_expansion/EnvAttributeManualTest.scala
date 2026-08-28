@@ -1,6 +1,3 @@
-// Used by test_scala_test_env_attribute_with_env_inherit_and_test_env
-// from test/shell/test_env_attribute_expansion.sh.
-
 package scalarules.test
 
 import org.scalatest.flatspec._

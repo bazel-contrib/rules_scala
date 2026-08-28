@@ -23,6 +23,7 @@ package(
     default_visibility = [
         "//test/binary_in_genrule:__pkg__",
         "//test/binary_smoke:__pkg__",
+        "//test/env_attribute_expansion:__pkg__",
         "//test/jar_signature_checks:__pkg__",
         "//test/mixed_java_scala_outputs:__pkg__",
         "//test/multi_service_manifest:__pkg__",
@@ -79,6 +80,7 @@ java_binary(
 
 scala_binary(
     name = "ScalaBinary",
+    visibility = ["//test:__subpackages__"],
     srcs = ["ScalaBinary.scala"],
     main_class = "scalarules.test.ScalaBinary",
     print_compile_time = True,
@@ -151,6 +153,7 @@ scala_test_suite(
 scala_test(
     name = "TestFilterTests",
     size = "small",
+    visibility = ["//test:__subpackages__"],
     srcs = glob(["TestFilterTest*.scala"]),
 )
 
@@ -196,6 +199,7 @@ scala_library(
 
 scala_library(
     name = "UnusedDependencyCheckerWarn",
+    visibility = ["//test:__subpackages__"],
     srcs = ["OtherLib.scala"],
     unused_dependency_checker_mode = "warn",
     deps = [
@@ -827,24 +831,4 @@ scala_junit_test(
 env_vars(
     name = "test_vars",
     vars = {"FOOBAR": "bazquux"},
-)
-
-# Used by test_scala_test_env_attribute_with_env_inherit_and_test_env
-# from test/shell/test_env_attribute_expansion.sh.
-scala_test(
-    name = "EnvAttributeManualTest",
-    size = "small",
-    srcs = ["EnvAttributeManualTest.scala"],
-    env = {
-        "FROM_TEST_ENV_AND_ENV_ATTR": "env attribute value",
-        "FROM_ENV_INHERIT_AND_ENV_ATTR": "env attribute value",
-        "FROM_ALL_SOURCES": "env attribute value",
-    },
-    env_inherit = [
-        "FROM_ENV_INHERIT",
-        "FROM_ENV_INHERIT_AND_ENV_ATTR",
-        "FROM_ENV_INHERIT_AND_TEST_ENV",
-        "FROM_ALL_SOURCES",
-    ],
-    tags = ["manual"],
 )
