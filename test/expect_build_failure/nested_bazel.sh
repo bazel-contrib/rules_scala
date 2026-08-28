@@ -82,6 +82,7 @@ NESTED_BAZEL_WORKSPACE=""
 _nested_bazel_output_base=""
 _nested_bazel_real_home=""
 _nested_bazel_common_opts=()
+_nested_bazel_symlink_prefix=""
 
 # Prepares the environment for nested `bazel` invocations and `cd`s into the real
 # source workspace. Call once before any `nested_bazel_run`.
@@ -141,8 +142,11 @@ nested_bazel_setup() {
     _nested_bazel_common_opts+=("--repository_cache=${repository_cache}")
   fi
   # Keep the nested build's convenience symlinks out of the workspace so they do
-  # not clobber the parent invocation's `bazel-bin` etc.
-  _nested_bazel_common_opts+=("--symlink_prefix=${_nested_bazel_output_base}/convenience_symlinks/")
+  # not clobber the parent invocation's `bazel-bin` etc. Not added to
+  # `_nested_bazel_common_opts`: `bazel query` (unlike build/test/coverage/
+  # info/cquery/aquery) produces no such symlinks and rejects this flag
+  # outright, so `nested_bazel_run` adds it for every other subcommand only.
+  _nested_bazel_symlink_prefix="${_nested_bazel_output_base}/convenience_symlinks/"
 }
 
 # Runs `bazel <subcommand> [args...]` against the nested output base, inserting
@@ -158,8 +162,11 @@ nested_bazel_run() {
     "--output_base=${_nested_bazel_output_base}"
     "${subcommand}"
     "${_nested_bazel_common_opts[@]}"
-    "$@"
   )
+  if [[ "${subcommand}" != "query" ]]; then
+    cmd+=("--symlink_prefix=${_nested_bazel_symlink_prefix}")
+  fi
+  cmd+=("$@")
   if [[ -n "${_nested_bazel_real_home}" && -d "${_nested_bazel_real_home}" ]]; then
     cmd=(env "HOME=${_nested_bazel_real_home}" "${cmd[@]}")
   fi
@@ -174,7 +181,7 @@ nested_bazel_run() {
   # Windows path, so disabling it outright (tried first) broke that instead.
   # MSYS2_ARG_CONV_EXCL excludes args matching a given prefix (semicolon
   # separated), leaving everything else (like /tmp/...) converted as before.
-  # `labels(` is here for the same reason as `--extra_toolchains=`: a `cquery`
+  # `labels(` is here for the same reason as `--extra_toolchains=`: a `query`
   # call passes a `labels(srcs, //pkg:target)` argument with a `//pkg:target`
   # label embedded past the start of the string, not verified on a real
   # Windows run but following the same corruption pattern already observed.
