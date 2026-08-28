@@ -48,7 +48,7 @@ fi
 
 # shellcheck source=test/expect_build_failure/nested_bazel.sh
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
-nested_bazel_setup "rules_scala_no_recompilation_output_base"
+nested_bazel_setup "rules_scala_no_recomp_output_base"
 
 toolchain_args=()
 if [[ -n "${extra_toolchain}" ]]; then

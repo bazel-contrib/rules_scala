@@ -31,7 +31,7 @@ scala_library(
 # rebuild of `transitive_dependency_user`, under the toolchain that treats
 # transitive deps of high-level rules as strict-deps errors.
 sh_test(
-    name = "no_recompilation_on_internal_change_of_transitive_dependency_test",
+    name = "transitive_dependency_no_recompilation_test",
     size = "large",
     srcs = ["//test/expect_build_failure:no_recompilation_test.sh"],
     args = [
