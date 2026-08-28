@@ -1,6 +1,5 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
-# rules_scala doesn't support argfiles on Windows yet.
 sh_test(
     name = "argument_file_in_runner_test",
     size = "large",
@@ -23,6 +22,7 @@ sh_test(
         "local",
         "requires-network",
     ],
+    # rules_scala doesn't support argfiles on Windows yet.
     target_compatible_with = select({
         "@platforms//os:windows": ["@platforms//:incompatible"],
         "//conditions:default": [],
