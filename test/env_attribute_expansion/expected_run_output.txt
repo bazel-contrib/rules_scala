@@ -1,0 +1,7 @@
+LOCATION: West of House
+DATA_PATH: test/data/foo.txt
+DEP_PATH: test/HelloLib.jar
+SRC_PATH: test/EnvAttributeBinary.scala
+BINDIR: {{BINDIR}}
+FROM_TOOLCHAIN_VAR: bazquux
+ESCAPED: $(rootpath //test/data:foo.txt) $(BINDIR) $UNKNOWN
