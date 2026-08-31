@@ -266,7 +266,9 @@ def _compile_or_empty(
 
 def _build_nosrc_jar(ctx):
     resource_tuples = _resource_paths(ctx.files.resources, ctx.attr.resource_strip_prefix)
-    resources = [s + ":" + t for t, s in resource_tuples]
+    # Not path-mapping safe: singlejar wants "source:target" as one token, so the path has to be
+    # interpolated here rather than handed to Args as a File. Nothing opts this action in today.
+    resources = [s.path + ":" + t for t, s in resource_tuples]
     skip_warn_duplicate_resources = False
     for t, _ in resource_tuples:
         if t == "reference.conf":
