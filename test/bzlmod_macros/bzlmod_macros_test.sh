@@ -39,7 +39,7 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 nested_bazel_setup "rules_scala_bzlmod_macros_output_base"
 
 fixture_dir="${NESTED_BAZEL_WORKSPACE}/test/bzlmod_macros"
-workspace_base="${TMPDIR:-/tmp}/rules_scala_bzlmod_macros_workspace"
+workspace_base="${TEST_TMPDIR:?TEST_TMPDIR must be set}/workspace"
 root_module_dir="${workspace_base}/root_module"
 test_module_dir="${workspace_base}/test_module"
 
@@ -62,17 +62,24 @@ latest_deps_dir="$(convert_msys2_path "${NESTED_BAZEL_WORKSPACE}/deps/latest")"
 # the message text needs a precise match.
 module_bazel_regex='[^ ]+MODULE.bazel'
 
+# write_bazel_config <module_dir> copies the repo's .bazelversion and a
+# lockfile_mode=update copy of its .bazelrc into a scratch module directory,
+# outside the repo, where bazelisk would otherwise fall back to its own
+# default Bazel version instead of the one this repo pins.
+write_bazel_config() {
+  local module_dir="$1"
+  cp "${NESTED_BAZEL_WORKSPACE}/.bazelversion" "${module_dir}/"
+  sed -e 's/--lockfile_mode=error/--lockfile_mode=update/' \
+    "${NESTED_BAZEL_WORKSPACE}/.bazelrc" >"${module_dir}/.bazelrc"
+}
+
 # setup_test_module <module_dir> [MODULE.bazel tag line]...
 setup_test_module() {
   local module_dir="$1"
   shift
   mkdir -p "${module_dir}"
-  cp \
-    "${NESTED_BAZEL_WORKSPACE}/.bazelversion" \
-    "${fixture_dir}/bzlmod_test_ext.bzl" \
-    "${module_dir}/"
-  sed -e 's/--lockfile_mode=error/--lockfile_mode=update/' \
-    "${NESTED_BAZEL_WORKSPACE}/.bazelrc" >"${module_dir}/.bazelrc"
+  write_bazel_config "${module_dir}"
+  cp "${fixture_dir}/bzlmod_test_ext.bzl" "${module_dir}/"
   cp "${fixture_dir}/BUILD.bzlmod_test" "${module_dir}/BUILD"
   sed \
     -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \
@@ -190,6 +197,7 @@ case "${case_name}" in
   fake-root-module-tags)
     setup_test_module "${test_module_dir}"
     test_module_path="$(convert_msys2_path "${test_module_dir}")"
+    write_bazel_config "${root_module_dir}"
     sed \
       -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \
       -e "s%\${latest_deps_dir}%${latest_deps_dir}%" \
