@@ -92,6 +92,9 @@ def downstream_test(
             regression.
         **kwargs: forwarded to the underlying `sh_test`.
     """
+    if bool(filtered_targets) != bool(test_filter):
+        fail("downstream_test '%s': filtered_targets and test_filter must both be set, or both left empty" % name)
+
     sh_test(
         name = name,
         srcs = ["//test/community_build:downstream_test_driver.sh"],

@@ -17,7 +17,7 @@
 # flag applies to every target in one invocation), so jssrc2cpg's own ~11k
 # lines of test sources still compile in full (real Scala 3 compile
 # workload against the toolchain under test), but only this smoke subset
-# executes: measured 748-820s -> 165s.
+# executes: measured 748-820s -> 165-215s.
 --- /dev/null
 +++ b/joern-cli/frontends/jssrc2cpg/src/test/scala/io/joern/jssrc2cpg/SmokeSuite.scala
 @@ -0,0 +1,18 @@

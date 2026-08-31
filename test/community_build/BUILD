@@ -45,7 +45,7 @@ exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
 # one suite; test_filter selects just that suite, so jssrc2cpg's test
 # sources still compile in full (real Scala 3 compile workload against the
 # toolchain under test) but only the smoke subset executes: measured
-# 748-820s -> 165s.
+# 748-820s -> 165-215s.
 downstream_test(
     name = "joern_test",
     size = "enormous",
