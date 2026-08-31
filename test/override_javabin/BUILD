@@ -12,7 +12,6 @@ sh_test(
     args = ["//test:ScalaBinary"],
     data = [
         "//:MODULE.bazel",
-        "//test:ScalaBinary",
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
