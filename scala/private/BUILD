@@ -21,3 +21,9 @@ exports_files(
     ],
     visibility = ["//test:__subpackages__"],
 )
+
+# For //test/semanticdb, whose tests build a fixture using this phase; listing
+# it in those tests' `data` re-keys the tests when the phase's logic changes.
+# fixture_actions can't see this on its own: the fixture's only own action is
+# a template expansion, which fingerprints by mnemonic and not by content.
+exports_files(["phases/phase_semanticdb.bzl"])
