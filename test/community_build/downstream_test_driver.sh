@@ -268,11 +268,15 @@ nested_bazel_run test --test_output=errors --cache_test_results=no \
 # Carries the same extra_bazel_flags as the first invocation (e.g. the
 # --test_timeout every target here needs).
 if [[ "${#filtered_targets[@]}" -gt 0 ]]; then
+  filtered_status=0
   # shellcheck disable=SC2086 # same intentional word-splitting as above.
   nested_bazel_run test --test_output=errors --cache_test_results=no \
     --repo_env=SCALA_VERSION="${scala_version}" \
     ${extra_bazel_flags} --test_filter="${test_filter}" \
-    -- "${filtered_targets[@]}" || status="$?"
+    -- "${filtered_targets[@]}" || filtered_status="$?"
+  if [[ "${filtered_status}" -gt "${status}" ]]; then
+    status="${filtered_status}"
+  fi
 fi
 
 exit "${status}"
