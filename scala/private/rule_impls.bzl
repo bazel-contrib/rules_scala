@@ -131,6 +131,7 @@ def compile_scala(
         inputs = ins,
         outputs = outs,
         executable = scalac,
+        exec_group = "scalac",
         mnemonic = "Scalac",
         progress_message = "scala %s" % target_label,
         execution_requirements = {"supports-workers": "1"},
