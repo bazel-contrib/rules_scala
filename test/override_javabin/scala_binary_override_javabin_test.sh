@@ -10,9 +10,16 @@
 set -euo pipefail
 
 launcher="${1:?Usage: scala_binary_override_javabin_test.sh <launcher>}"
+bad_javabin="/etc/basdf"
 
-if output="$(JAVABIN=/etc/basdf "${launcher}" 2>&1)"; then
+if output="$(JAVABIN="${bad_javabin}" "${launcher}" 2>&1)"; then
   echo "${output}"
-  echo "running ${launcher} with JAVABIN=/etc/basdf should have failed but passed." >&2
+  echo "running ${launcher} with JAVABIN=${bad_javabin} should have failed but passed." >&2
+  exit 1
+fi
+
+if [[ "${output}" != *"${bad_javabin}"* ]]; then
+  echo "${output}"
+  echo "expected the failure output to mention the bad JAVABIN path ${bad_javabin}." >&2
   exit 1
 fi
