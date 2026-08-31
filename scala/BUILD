@@ -3,6 +3,10 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala_cross_version.bzl", "version_suffix")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 
+# For //test/semanticdb, whose tests build a fixture using this provider;
+# listing it in those tests' `data` re-keys the tests when its fields change.
+exports_files(["semanticdb_provider.bzl"])
+
 toolchain_type(
     name = "toolchain_type",
     visibility = ["//visibility:public"],
