@@ -34,9 +34,9 @@ test_output_flag="--test_output=errors"
 remote_cache_flags=""
 if [[ "${BUILDKITE:-}" == "true" ]] && [[ "${BAZELCI_TASK:-}" != *last_green* ]]; then
   if is_macos; then
-    remote_cache_flags="--remote_cache=https://storage.googleapis.com/bazel-untrusted-build-cache --google_default_credentials --remote_timeout=3600"
+    remote_cache_flags="--remote_cache=https://storage.googleapis.com/bazel-untrusted-build-cache --google_default_credentials --remote_timeout=3600 --remote_max_connections=200"
   else
-    remote_cache_flags="--remote_cache=remotebuildexecution.googleapis.com --remote_instance_name=projects/bazel-untrusted/instances/default_instance --google_default_credentials"
+    remote_cache_flags="--remote_cache=remotebuildexecution.googleapis.com --remote_instance_name=projects/bazel-untrusted/instances/default_instance --google_default_credentials --remote_max_connections=200"
   fi
 fi
 
