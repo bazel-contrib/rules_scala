@@ -27,9 +27,10 @@ if [[ -z "${case_name}" ]]; then
   exit 2
 fi
 
-# bzlmod's module-extension APIs used here are not compatible with Bazel 6.
+# bzlmod's module-extension APIs used here require Bazel 7.1+ (this repo's own
+# MODULE.bazel declares the same floor via bazel_compatibility).
 if [[ "$(bazel --version)" =~ ^bazel\ 6\. ]]; then
-  echo "Skipping bzlmod macro test: not compatible with Bazel 6."
+  echo "Skipping bzlmod macro test: requires Bazel 7.1 or newer."
   exit 0
 fi
 
@@ -57,7 +58,8 @@ rules_scala_dir="$(convert_msys2_path "${NESTED_BAZEL_WORKSPACE}")"
 latest_deps_dir="$(convert_msys2_path "${NESTED_BAZEL_WORKSPACE}/deps/latest")"
 
 # Matches the "at <path>/MODULE.bazel:<line>" location bazel appends to a
-# module-extension tag error; the exact tmpdir path isn't worth pinning down.
+# module-extension tag error; broad enough to match any tmpdir path, since only
+# the message text needs a precise match.
 module_bazel_regex='[^ ]+MODULE.bazel'
 
 # setup_test_module <module_dir> [MODULE.bazel tag line]...
@@ -124,7 +126,6 @@ case "${case_name}" in
       'test_ext.single_test_tag(first = "quux", third = "plugh")'
       'dev_test_ext.single_test_tag(second = "xyzzy", third = "frobozz")'
     )
-    # Dev values matching the default won't overwrite regular tag values.
     expect_regex='quux xyzzy frobozz$'
     ;;
   single-tag-fails-if-more-than-two-tags)
