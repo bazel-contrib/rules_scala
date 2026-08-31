@@ -153,7 +153,7 @@ _resolve_message_file() {
   printf '%s' "${file}"
 }
 
-nested_bazel_setup "rules_scala_expect_build_failure_output_base_lane${lane}"
+nested_bazel_setup "rules_scala_expect_build_failure_output_base_lane${lane}" "${lane}"
 
 # Append file-backed flags (see --bazel-arg-file). Read here, after parsing, so
 # the shell never has to carry the raw value on a command line.
@@ -163,8 +163,10 @@ for bazel_arg_file in ${bazel_arg_files[@]+"${bazel_arg_files[@]}"}; do
 done
 
 if [[ "${clean_before_build}" == "true" ]]; then
-  # Guards against a same-lane test's `build` landing between this `clean` and
-  # this test's own `build` below (see _nested_bazel_acquire_lane_lock).
+  # `nested_bazel_run` already takes the lane lock around each call on its
+  # own; acquiring it here first instead makes it span both this `clean` and
+  # this test's own `build` below as one unit, so a same-lane sibling's call
+  # can't land in between and leave this test reading the sibling's output.
   _nested_bazel_acquire_lane_lock "${lane}"
   nested_bazel_run clean >/dev/null 2>&1
 fi

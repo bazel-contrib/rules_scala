@@ -83,36 +83,55 @@ _nested_bazel_output_base=""
 _nested_bazel_real_home=""
 _nested_bazel_common_opts=()
 _nested_bazel_symlink_prefix=""
+_nested_bazel_lane=""
 _nested_bazel_lock_dir=""
 
-# Bazel's own output-base lock covers exactly one `bazel` invocation.
-# `expect_build_failure.sh` runs `clean` then `build` as two separate
-# `nested_bazel_run` calls when it needs a guaranteed fresh build (see its
-# --clean-before-build), and that pair needs to stay uninterrupted as a unit:
-# a sibling test in the same lane landing its own `build` between this one's
-# `clean` and `build` would make this test read the sibling's fresh output
-# instead of its own.
+# Bazel's own output-base lock covers exactly one `bazel` invocation, so two
+# tests sharing a lane (see `nested_bazel_setup`'s `lane` argument) can still
+# each run one invocation at a time in the gap between another test's two
+# separate invocations -- e.g. `expect_build_failure.sh` runs `clean` then
+# `build` as two calls when it needs a guaranteed fresh build (its
+# --clean-before-build), and a sibling's `build` landing in that gap would
+# make this test read the sibling's fresh output instead of its own. This
+# lock covers every `nested_bazel_run` call for a lane (see there), and a
+# caller that needs several calls to stay uninterrupted as one unit (like the
+# clean+build pair above) acquires it itself first so those calls see it
+# already held and skip their own acquire/release.
 #
-# Whether that can actually happen depends on the lane_lock amount each
-# platform sets in .bazelrc: on Linux/Windows it is 1, so Bazel's scheduler
-# already serializes same-lane tests to begin with, and acquiring this lock
-# there is one instant, uncontended mkdir/rmdir pair every time. On macOS it
-# is 1000 (a deliberate trade against a Bazel scheduler issue,
+# Whether contending for it actually costs a wait depends on the lane_lock
+# amount each platform sets in .bazelrc: on Linux/Windows it is 1, so Bazel's
+# own scheduler already runs same-lane tests one at a time, and acquiring this
+# lock there is one instant, uncontended mkdir/rmdir pair every time. On
+# macOS it is 1000 (a deliberate trade against a Bazel scheduler issue,
 # bazelbuild/bazel#18153, where a scarce resource delays every unrelated test
 # scheduled alongside it, whatever that test's own resource needs are), so
-# same-lane tests there really can run at the same time -- that is the case
-# this lock exists for.
-#
-# Acquired the same way on every platform, keeping the locking logic in one
-# place.
+# same-lane tests there really do run at the same time, and this lock is what
+# keeps their nested `bazel` calls from interleaving.
 #
 # mkdir is the mutex primitive here because it is atomic and available in
 # every POSIX shell this runs under (Linux, macOS, and Windows' MSYS2 bash);
-# flock ships only as part of Linux's util-linux package.
+# flock ships only as part of Linux's util-linux package. The lock directory
+# holds the acquiring process's PID: a Bazel test-timeout kill (SIGKILL, which
+# no trap can run cleanup for) can leave the directory behind, and the next
+# acquirer clears it once `kill -0` on that PID says the process is gone,
+# rather than waiting on a lock nobody will ever release.
 _nested_bazel_acquire_lane_lock() {
   local lane="${1:?_nested_bazel_acquire_lane_lock requires a lane}"
-  _nested_bazel_lock_dir="/tmp/rules_scala_expect_build_failure_lane${lane}.lock"
-  while ! mkdir "${_nested_bazel_lock_dir}" 2>/dev/null; do
+  local lock_dir="/tmp/rules_scala_expect_build_failure_lane${lane}.lock"
+  while true; do
+    if mkdir "${lock_dir}" 2>/dev/null; then
+      _nested_bazel_lock_dir="${lock_dir}"
+      echo "$$" >"${_nested_bazel_lock_dir}/pid"
+      return
+    fi
+    local holder_pid
+    holder_pid="$(cat "${lock_dir}/pid" 2>/dev/null || true)"
+    if [[ -n "${holder_pid}" ]] && ! kill -0 "${holder_pid}" 2>/dev/null; then
+      # rmdir alone fails silently here: the directory holds the "pid" file,
+      # so it's never empty.
+      rm -rf "${lock_dir}" 2>/dev/null || true
+      continue
+    fi
     sleep 0.1
   done
 }
@@ -122,6 +141,7 @@ _nested_bazel_acquire_lane_lock() {
 # caller's own release still frees the lock for the next test).
 _nested_bazel_release_lane_lock() {
   if [[ -n "${_nested_bazel_lock_dir}" ]]; then
+    rm -f "${_nested_bazel_lock_dir}/pid"
     rmdir "${_nested_bazel_lock_dir}" 2>/dev/null || true
     _nested_bazel_lock_dir=""
   fi
@@ -134,9 +154,14 @@ _nested_bazel_release_lane_lock() {
 # caller that passes the same name shares that output base and its lock (each
 # inner `bazel --batch` waits for the lock rather than failing), which keeps
 # the extracted external repos warm and avoids multiplying ~1GB of Scala jars
-# across a separate output base per test. `expect_build_failure.sh` splits its
-# tests across 3 such names (see its --lane), scoping this lock to the pair
-# of tests that happen to land in the same lane.
+# across a separate output base per test.
+#
+# Arg 2: optional lane number. `expect_build_failure.sh` passes one (see its
+# --lane) because several of its tests can share the same output-base name
+# above; `nested_bazel_run` then takes the matching lane lock around every
+# call, so their nested `bazel` calls never interleave. A caller that has the
+# output base to itself (like this file's other sourcing scripts) omits this
+# argument and pays no locking cost.
 _nested_bazel_home_hint() {
   if [[ -n "${RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME:-}" ]]; then
     return
@@ -149,6 +174,7 @@ _nested_bazel_home_hint() {
 
 nested_bazel_setup() {
   local output_base_name="${1:?nested_bazel_setup requires an output-base directory name}"
+  _nested_bazel_lane="${2:-}"
 
   NESTED_BAZEL_WORKSPACE="$(_nested_bazel_find_workspace)"
   local parent_output_base
@@ -203,9 +229,20 @@ nested_bazel_setup() {
 # Runs `bazel <subcommand> [args...]` against the nested output base, inserting
 # the shared command options right after the subcommand. Forwards the exit code
 # and output of `bazel`, so callers can assert on either.
+#
+# Takes the lane lock (see `nested_bazel_setup`'s `lane` argument) around this
+# one call when no one holds it yet, and releases it again right after --
+# reentrant, so a caller that already took the lock itself (to span more than
+# this one call) keeps holding it across this call instead of losing it here.
 nested_bazel_run() {
   local subcommand="$1"
   shift
+
+  local acquired_lock_here="false"
+  if [[ -n "${_nested_bazel_lane}" && -z "${_nested_bazel_lock_dir}" ]]; then
+    _nested_bazel_acquire_lane_lock "${_nested_bazel_lane}"
+    acquired_lock_here="true"
+  fi
 
   local cmd=(
     bazel
@@ -237,4 +274,10 @@ nested_bazel_run() {
   # label embedded past the start of the string, not verified on a real
   # Windows run but following the same corruption pattern already observed.
   MSYS2_ARG_CONV_EXCL='//;--extra_toolchains=;labels(' "${cmd[@]}"
+  local status=$?
+
+  if [[ "${acquired_lock_here}" == "true" ]]; then
+    _nested_bazel_release_lane_lock
+  fi
+  return "${status}"
 }

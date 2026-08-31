@@ -44,8 +44,8 @@ build:windows --worker_quit_after_build --enable_runfiles
 # Caps each of the 3 lanes expect_build_failure_test's nested tests hash into
 # (see the "resources:laneN_lock:1" tag in expect_build_failure.bzl) at one
 # running test at a time on Linux/Windows, so two tests in the same lane
-# always queue behind each other there and neither's shared-lock wait counts
-# toward its own test timeout.
+# always queue behind each other there, and each keeps its own test timeout
+# budget intact while it waits.
 #
 # The macOS amount stays high enough to keep this resource always available:
 # while one test waits for a scarce custom resource, Bazel's scheduler also
