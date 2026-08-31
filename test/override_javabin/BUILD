@@ -7,17 +7,10 @@ package(default_testonly = 1)
 # instead, which does not consult it, so this test is meaningless there.
 sh_test(
     name = "scala_binary_override_javabin_test",
-    size = "large",
+    size = "small",
     srcs = ["scala_binary_override_javabin_test.sh"],
-    args = ["//test:ScalaBinary"],
-    data = [
-        "//:MODULE.bazel",
-        "//test/expect_build_failure:nested_bazel.sh",
-    ],
-    tags = [
-        "local",
-        "requires-network",
-    ],
+    args = ["$(rootpath //test:ScalaBinary)"],
+    data = ["//test:ScalaBinary"],
     target_compatible_with = select({
         "@platforms//os:windows": ["@platforms//:incompatible"],
         "//conditions:default": [],
