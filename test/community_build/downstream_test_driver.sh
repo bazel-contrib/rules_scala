@@ -109,9 +109,13 @@ mkdir -p "${_nested_bazel_output_base}"
 cd "${NESTED_BAZEL_WORKSPACE}"
 # This driver always uses the developer's home directory. `nested_bazel_setup`
 # does so only when asked, because a `~/.bazelrc` outside the repo could then
-# decide the result of a test whose pass is cached and reused. The tests here
-# are tagged `external`, so Bazel re-runs them every time and there is no such
-# stale pass to worry about. The paths built below need a home directory anyway.
+# decide the result of a cached, reused test pass. That risk is real here too
+# now that `downstream_test` dropped `external` for `source_fingerprint`-based
+# caching (see downstream_test.bzl): a developer's own `~/.bazelrc` still
+# isn't a declared input, so a `~/.bazelrc` edit between two runs with an
+# otherwise-unchanged fingerprint can go unnoticed by the cache. Scrubbing or
+# pinning the home configuration this nested invocation reads is follow-up
+# work. The paths built below need a home directory regardless.
 _nested_bazel_real_home="$(eval echo "~$(id -un)" 2>/dev/null || true)"
 _nested_bazel_common_opts=()
 repository_cache="$(dirname "${parent_output_base}")/cache/repos/v1"
@@ -119,6 +123,27 @@ if [[ -d "${repository_cache}" ]]; then
   _nested_bazel_common_opts+=("--repository_cache=${repository_cache}")
 fi
 _nested_bazel_common_opts+=("--symlink_prefix=${_nested_bazel_output_base}/convenience_symlinks/")
+
+# CI's own `bazel` already builds against a shared remote cache (see
+# .bazelci/presubmit.yml's runner) -- extend the same cache to this nested
+# invocation's ~1000 build actions too (joern/dicer's own frontends and
+# deps, stable across most rules_scala PRs since the consumer commit is
+# pinned); `source_fingerprint` already covers the outer `sh_test`'s own
+# cached-or-not decision, a separate layer. `BUILDKITE` is set by every
+# buildkite-agent job, so this only ever activates on CI. A distinct
+# `cache-silo-key` (rather than reusing whatever the outer invocation set)
+# keeps this nested-build cache namespace independent of the outer one, so
+# a poisoned or stale entry in one stays isolated to that one.
+if [[ "${BUILDKITE:-}" == "true" ]]; then
+  _nested_bazel_common_opts+=(
+    "--remote_cache=remotebuildexecution.googleapis.com"
+    "--remote_instance_name=projects/bazel-untrusted/instances/default_instance"
+    "--google_default_credentials"
+    "--remote_timeout=60"
+    "--remote_max_connections=200"
+    "--remote_default_exec_properties=cache-silo-key=rules-scala-downstream-nested-v1"
+  )
+fi
 
 # Some consumers' own build/test actions write outside the sandbox: joern's
 # javasrc2cpg to `~/.shiftleft`, and its codepropertygraph dep's run_codegen
@@ -204,7 +229,16 @@ grep -oE 'lock_file = "//[^"]*"' MODULE.bazel | sed -E 's/lock_file = "(.*)"/\1/
   fi
 done
 
+# --cache_test_results=no: the remote cache above (when active) scopes to
+# the build actions underneath these targets, keeping the test run itself
+# real every time -- `downstream_test`'s whole point is that its targets
+# (9 for joern, 163 for dicer) actually execute against the toolchain under
+# test on every real `sh_test` run, the same guarantee `source_fingerprint`
+# gives at the outer level by forcing a real re-run instead of serving a
+# stale PASS. The cost of a retry-attempt rerun scales with that count.
+#
 # shellcheck disable=SC2086 # intentional word-splitting: extra_bazel_flags
 # and targets are each meant to expand to multiple words/patterns.
-nested_bazel_run test --test_output=errors --repo_env=SCALA_VERSION="${scala_version}" \
+nested_bazel_run test --test_output=errors --cache_test_results=no \
+  --repo_env=SCALA_VERSION="${scala_version}" \
   ${extra_bazel_flags} -- "${targets[@]}"
