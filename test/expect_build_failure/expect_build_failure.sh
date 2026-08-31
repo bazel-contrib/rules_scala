@@ -163,6 +163,9 @@ for bazel_arg_file in ${bazel_arg_files[@]+"${bazel_arg_files[@]}"}; do
 done
 
 if [[ "${clean_before_build}" == "true" ]]; then
+  # Guards against a same-lane test's `build` landing between this `clean` and
+  # this test's own `build` below (see _nested_bazel_acquire_lane_lock).
+  _nested_bazel_acquire_lane_lock "${lane}"
   nested_bazel_run clean >/dev/null 2>&1
 fi
 
@@ -170,6 +173,10 @@ set +e
 output="$(nested_bazel_run "${command}" ${bazel_args[@]+"${bazel_args[@]}"} "${target}" 2>&1)"
 status=$?
 set -e
+
+if [[ "${clean_before_build}" == "true" ]]; then
+  _nested_bazel_release_lane_lock
+fi
 
 if [[ "${expect_success}" == "true" && "${status}" -ne 0 ]]; then
   echo "Expected \`bazel ${command}\` of \"${target}\" to succeed, but it failed (exit ${status})." >&2

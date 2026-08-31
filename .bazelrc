@@ -43,8 +43,17 @@ build:windows --worker_quit_after_build --enable_runfiles
 
 # Caps each of the 3 lanes expect_build_failure_test's nested tests hash into
 # (see the "resources:laneN_lock:1" tag in expect_build_failure.bzl) at one
-# running test at a time, so two tests in the same lane never both start and
-# risk a shared-lock wait counting toward either one's own test timeout.
+# running test at a time on Linux/Windows, so two tests in the same lane
+# always queue behind each other there and neither's shared-lock wait counts
+# toward its own test timeout.
+#
+# The macOS amount stays high enough to keep this resource always available:
+# while one test waits for a scarce custom resource, Bazel's scheduler also
+# delays starting every other test scheduled alongside it, regardless of that
+# test's own resource needs (https://github.com/bazelbuild/bazel/issues/18153)
+# -- macOS is where that side effect showed up. Two same-lane tests really can
+# run at once there; the lane lock in nested_bazel.sh
+# (_nested_bazel_acquire_lane_lock) covers the correctness gap that leaves.
 test:linux --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1
 test:windows --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1
-test:macos --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1
+test:macos --local_resources=lane0_lock=1000 --local_resources=lane1_lock=1000 --local_resources=lane2_lock=1000

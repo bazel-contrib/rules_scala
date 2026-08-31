@@ -83,6 +83,49 @@ _nested_bazel_output_base=""
 _nested_bazel_real_home=""
 _nested_bazel_common_opts=()
 _nested_bazel_symlink_prefix=""
+_nested_bazel_lock_dir=""
+
+# Bazel's own output-base lock covers exactly one `bazel` invocation.
+# `expect_build_failure.sh` runs `clean` then `build` as two separate
+# `nested_bazel_run` calls when it needs a guaranteed fresh build (see its
+# --clean-before-build), and that pair needs to stay uninterrupted as a unit:
+# a sibling test in the same lane landing its own `build` between this one's
+# `clean` and `build` would make this test read the sibling's fresh output
+# instead of its own.
+#
+# Whether that can actually happen depends on the lane_lock amount each
+# platform sets in .bazelrc: on Linux/Windows it is 1, so Bazel's scheduler
+# already serializes same-lane tests to begin with, and acquiring this lock
+# there is one instant, uncontended mkdir/rmdir pair every time. On macOS it
+# is 1000 (a deliberate trade against a Bazel scheduler issue,
+# bazelbuild/bazel#18153, where a scarce resource delays every unrelated test
+# scheduled alongside it, whatever that test's own resource needs are), so
+# same-lane tests there really can run at the same time -- that is the case
+# this lock exists for.
+#
+# Acquired the same way on every platform, keeping the locking logic in one
+# place.
+#
+# mkdir is the mutex primitive here because it is atomic and available in
+# every POSIX shell this runs under (Linux, macOS, and Windows' MSYS2 bash);
+# flock ships only as part of Linux's util-linux package.
+_nested_bazel_acquire_lane_lock() {
+  local lane="${1:?_nested_bazel_acquire_lane_lock requires a lane}"
+  _nested_bazel_lock_dir="/tmp/rules_scala_expect_build_failure_lane${lane}.lock"
+  while ! mkdir "${_nested_bazel_lock_dir}" 2>/dev/null; do
+    sleep 0.1
+  done
+}
+
+# Idempotent: safe to call whether or not a lock is held (also called from the
+# EXIT trap `nested_bazel_setup` installs, so a failure between acquire and the
+# caller's own release still frees the lock for the next test).
+_nested_bazel_release_lane_lock() {
+  if [[ -n "${_nested_bazel_lock_dir}" ]]; then
+    rmdir "${_nested_bazel_lock_dir}" 2>/dev/null || true
+    _nested_bazel_lock_dir=""
+  fi
+}
 
 # Prepares the environment for nested `bazel` invocations and `cd`s into the real
 # source workspace. Call once before any `nested_bazel_run`.
@@ -122,7 +165,13 @@ nested_bazel_setup() {
   # own `bazel build`. On hosts without such an rc (e.g. CI) this is a no-op.
   # Any failure below may be the missing rc rather than the code under test, and
   # the reader has no way to guess that, so say it on every failing exit.
-  trap '_nested_bazel_status=$?; if [[ "${_nested_bazel_status}" -ne 0 ]]; then _nested_bazel_home_hint; fi' EXIT
+  #
+  # Also releases the lane lock unconditionally on this EXIT: `set -e` exits
+  # the script the instant anything between acquiring the lock and the
+  # caller's own release call returns non-zero, skipping that release call.
+  # This trap is what actually frees the lane for every later test in that
+  # case.
+  trap '_nested_bazel_status=$?; _nested_bazel_release_lane_lock; if [[ "${_nested_bazel_status}" -ne 0 ]]; then _nested_bazel_home_hint; fi' EXIT
 
   # Opt-in: the user's rc is not a declared input of the test, so reading it by
   # default would let a cached result depend on a file outside the repo. CI stays

@@ -247,11 +247,13 @@ def _nested_bazel_test(
     #
     # Splits the shared nested output base into 3 lanes (hash(name) % 3) so
     # tests in different lanes run concurrently instead of all serializing on
-    # one lock. The `resources:laneN_lock:1` tag caps each lane at one test at
-    # a time, so two tests in the same lane never both start and risk a
-    # shared-lock wait counting toward either one's own test timeout.
-    # The .bazelrc registers each laneN_lock's available amount (1 per lane, so
-    # only one test per lane runs at a time on every platform).
+    # one lock. The `resources:laneN_lock:1` tag asks each test for one unit
+    # of its lane's lock; .bazelrc registers how many units each laneN_lock
+    # has available, which is what actually decides whether two same-lane
+    # tests queue behind each other or run together (1 on Linux/Windows, 1000
+    # on macOS -- see .bazelrc for why). A same-lane pair that does run
+    # together is still safe: see the lane lock in nested_bazel.sh
+    # (_nested_bazel_acquire_lane_lock).
     lane = hash(name) % 3
     args += ["--lane", str(lane)]
     execution_tags = tags + ["no-remote-exec", "resources:lane%d_lock:1" % lane]
