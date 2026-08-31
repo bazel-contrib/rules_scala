@@ -5,7 +5,11 @@
 load(":downstream_test.bzl", "downstream_test")
 load(":source_fingerprint.bzl", "exposed_top_level_dirs_test")
 
-exports_files(["downstream_test_driver.sh", "dicer_protobuf_version.patch"])
+exports_files([
+    "downstream_test_driver.sh",
+    "dicer_protobuf_version.patch",
+    "joern_jssrc2cpg_smoke.patch",
+])
 
 exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
 
@@ -28,19 +32,37 @@ exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
 #
 # extra_bazel_flags's --test_timeout bounds each nested test, not size
 # (which bounds this whole sh_test action).
+#
+# test_filter selects jssrc2cpg's own SmokeSuite (see
+# joern_jssrc2cpg_smoke.patch): jssrc2cpg is this test's single most
+# expensive target (~750-820s of the ~1050-1200s this whole test costs once
+# the nested build itself is warm), and its ~11k lines of test sources are
+# ~99% Joern's own JS/TS semantic correctness -- an assertion about Joern's
+# own correctness. The patch adds one new
+# file aggregating a handful of existing test classes (AST, CFG, dataflow,
+# type-recovery, plus the closest things to an integration smoke test: a
+# real AstGenRunner file-parse and a JVM HTTP server + full classpath) into
+# one suite; test_filter selects just that suite, so jssrc2cpg's test
+# sources still compile in full (real Scala 3 compile workload against the
+# toolchain under test) but only the smoke subset executes: measured
+# 748-820s -> 165s.
 downstream_test(
     name = "joern_test",
+    size = "enormous",
+    extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
+    filtered_targets = ["//joern-cli/frontends/jssrc2cpg:tests"],
+    patches = ["//test/community_build:joern_jssrc2cpg_smoke.patch"],
     repo_name = "joern",
     scala_version = "3.7.4",
-    extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
-    size = "enormous",
     target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",
         "-//joern-cli/frontends/php2cpg/...",
         "-//joern-cli/frontends/rust2cpg/...",
         "-//joern-cli/frontends/swiftsrc2cpg/...",
+        "-//joern-cli/frontends/jssrc2cpg/...",
     ],
+    test_filter = "io.joern.jssrc2cpg.SmokeSuite",
 )
 
 # dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
@@ -60,9 +82,10 @@ downstream_test(
 # "large" (900s) default in total.
 downstream_test(
     name = "dicer_test",
+    size = "enormous",
+    patches = ["//test/community_build:dicer_protobuf_version.patch"],
     repo_name = "dicer",
     scala_version = "2.12.21",
-    size = "enormous",
     target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",

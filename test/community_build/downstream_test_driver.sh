@@ -6,7 +6,8 @@
 # repository rule already wrote into the consumer's MODULE.bazel.
 #
 # Usage: downstream_test_driver.sh --marker-rootpath <path> --scala-version <v> \
-#   --output-base-name <name> [--extra-bazel-flags <flags>] -- <target-pattern>...
+#   --output-base-name <name> [--extra-bazel-flags <flags>] [--test-filter <value>] \
+#   -- <target-pattern>...
 #
 # Named flags because Bazel/rules_shell silently drops or mangles blank
 # `args` entries -- same convention as test/expect_build_failure/expect_build_failure.sh.
@@ -17,6 +18,8 @@ marker_rootpath=""
 scala_version=""
 output_base_name=""
 extra_bazel_flags=""
+test_filter=""
+filtered_targets=()
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --marker-rootpath)
@@ -34,6 +37,17 @@ while [[ "$#" -gt 0 ]]; do
     --extra-bazel-flags)
       extra_bazel_flags="$2"
       shift 2
+      ;;
+    --test-filter)
+      test_filter="$2"
+      shift 2
+      ;;
+    --filtered-targets)
+      shift
+      while [[ "$#" -gt 0 && "$1" != "--" ]]; do
+        filtered_targets+=("$1")
+        shift
+      done
       ;;
     --)
       shift
@@ -237,8 +251,28 @@ done
 # gives at the outer level by forcing a real re-run instead of serving a
 # stale PASS. The cost of a retry-attempt rerun scales with that count.
 #
+# Captured rather than let `set -e` exit here: both invocations always run
+# regardless of the first's outcome, and the combined exit status (see
+# below) reflects either one failing.
+status=0
 # shellcheck disable=SC2086 # intentional word-splitting: extra_bazel_flags
 # and targets are each meant to expand to multiple words/patterns.
 nested_bazel_run test --test_output=errors --cache_test_results=no \
   --repo_env=SCALA_VERSION="${scala_version}" \
-  ${extra_bazel_flags} -- "${targets[@]}"
+  ${extra_bazel_flags} -- "${targets[@]}" || status="$?"
+
+# A second, separate invocation: --test_filter applies to every target in a
+# `bazel test` command line, so filtered_targets (a ScalaTest suite name
+# that exists in only one target's classpath) needs its own invocation to
+# keep from failing every other target sharing it with "class not found".
+# Carries the same extra_bazel_flags as the first invocation (e.g. the
+# --test_timeout every target here needs).
+if [[ "${#filtered_targets[@]}" -gt 0 ]]; then
+  # shellcheck disable=SC2086 # same intentional word-splitting as above.
+  nested_bazel_run test --test_output=errors --cache_test_results=no \
+    --repo_env=SCALA_VERSION="${scala_version}" \
+    ${extra_bazel_flags} --test_filter="${test_filter}" \
+    -- "${filtered_targets[@]}" || status="$?"
+fi
+
+exit "${status}"

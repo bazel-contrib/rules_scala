@@ -159,7 +159,9 @@
             "attributes": {
               "remote": "https://github.com/joernio/joern.git",
               "commit": "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
-              "patches": []
+              "patches": [
+                "@@//test/community_build:joern_jssrc2cpg_smoke.patch"
+              ]
             }
           },
           "dicer": {
