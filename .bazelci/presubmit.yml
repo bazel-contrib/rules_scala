@@ -38,6 +38,11 @@ tasks:
       # the //src/java worker/compileoptions unit tests and //tools:lint_check.
       - "//..."
       - "-//test_expect_failure/..."
+    test_flags:
+      # Bazel gives test actions a fixed, curated environment regardless of
+      # sandboxing -- BUILDKITE reaches downstream_test_driver.sh (see
+      # test/community_build/downstream_test.bzl) only with this forward.
+      - "--test_env=BUILDKITE"
   macos:
     name: "bazel test //..."
     platform: macos
