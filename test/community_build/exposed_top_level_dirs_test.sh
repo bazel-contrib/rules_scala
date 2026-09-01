@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
 # Fails if a top-level entry (file or directory) exists on disk that
-# source_fingerprint.bzl's _PUBLIC_DIRS/_PUBLIC_ROOT_FILES and
-# _INTERNAL_ENTRIES don't together account for -- so a new one can't silently
-# miss the fingerprint's scope. `bazel-*` (this checkout's own convenience
-# symlinks into Bazel's output_base, whose exact name varies by checkout) is
-# skipped by pattern.
+# source_fingerprint.bzl's _PUBLIC_DIRS/_PUBLIC_ROOT_FILES, _INTERNAL_ENTRIES,
+# and _LOCAL_ONLY_FILES don't together account for -- so a new one can't
+# silently miss the fingerprint's scope. `bazel-*` (this checkout's own
+# convenience symlinks into Bazel's output_base, whose exact name varies by
+# checkout) is skipped by pattern.
 #
 # Usage: exposed_top_level_dirs_test.sh <public-entry>... -- <internal-entry>...
 
@@ -44,6 +44,7 @@ if [[ "${#unknown[@]}" -eq 0 ]]; then
 fi
 
 echo "New top-level entry not in source_fingerprint.bzl's _PUBLIC_DIRS," >&2
-echo "_PUBLIC_ROOT_FILES, or _INTERNAL_ENTRIES -- classify it and add it there:" >&2
+echo "_PUBLIC_ROOT_FILES, _INTERNAL_ENTRIES, or _LOCAL_ONLY_FILES -- classify" >&2
+echo "it and add it there:" >&2
 printf '  %s\n' "${unknown[@]}" >&2
 exit 1
