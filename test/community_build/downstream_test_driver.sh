@@ -7,7 +7,7 @@
 #
 # Usage: downstream_test_driver.sh --marker-rootpath <path> --scala-version <v> \
 #   --output-base-name <name> [--extra-bazel-flags <flags>] [--test-filter <value>] \
-#   -- <target-pattern>...
+#   [--filtered-targets <target>...] -- <target-pattern>...
 #
 # Named flags because Bazel/rules_shell silently drops or mangles blank
 # `args` entries -- same convention as test/expect_build_failure/expect_build_failure.sh.
