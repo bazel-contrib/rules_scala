@@ -11,10 +11,6 @@
 # --subcommands. Fails if <not-expected> appears in the second build's
 # output (meaning the consumer action ran, i.e. it recompiled).
 #
-# <search-word>/<replace-word> (not a raw sed expression) so the args stay
-# free of shell metacharacters like ( and " -- Bazel's test wrapper on
-# Windows re-parses argv through another shell, which mangles those.
-#
 # Usage:
 #   no_recompilation_test.sh --target=<label-or-pattern> --changed-file=<path>
 #     --search-word=<word> --replace-word=<word> --not-expected=<substring>
@@ -70,6 +66,9 @@ if ! initial_output="$(nested_bazel_run build ${toolchain_args[@]+"${toolchain_a
   exit 1
 fi
 
+# search_word/replace_word are plain identifiers, since Bazel's Windows test
+# wrapper re-parses argv through its own shell, which mangles characters like
+# ( and " on the way through.
 sed -i.bak "s/(\"${search_word}\")/(\"${replace_word}\")/" "${changed_file_path}"
 
 # A sed expression that matches nothing still exits 0, which would silently
