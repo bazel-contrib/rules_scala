@@ -114,24 +114,55 @@ _nested_bazel_lock_dir=""
 # holds the acquiring process's PID: a Bazel test-timeout kill (SIGKILL, which
 # no trap can run cleanup for) can leave the directory behind, and the next
 # acquirer clears it once `kill -0` on that PID says the process is gone,
-# rather than waiting on a lock nobody will ever release.
+# rather than waiting on a lock nobody will ever release. The same kill can
+# also land between the `mkdir` and the `pid` write below, leaving an empty
+# directory that a PID check alone could never call stale; a run of
+# consecutive empty reads clears that case too, since a live acquirer always
+# writes its pid within the same instant it creates the directory.
 _nested_bazel_acquire_lane_lock() {
   local lane="${1:?_nested_bazel_acquire_lane_lock requires a lane}"
   local lock_dir="/tmp/rules_scala_expect_build_failure_lane${lane}.lock"
+  local empty_pid_iterations=0
   while true; do
     if mkdir "${lock_dir}" 2>/dev/null; then
       _nested_bazel_lock_dir="${lock_dir}"
       echo "$$" >"${_nested_bazel_lock_dir}/pid"
       return
     fi
+
     local holder_pid
     holder_pid="$(cat "${lock_dir}/pid" 2>/dev/null || true)"
-    if [[ -n "${holder_pid}" ]] && ! kill -0 "${holder_pid}" 2>/dev/null; then
-      # rmdir alone fails silently here: the directory holds the "pid" file,
-      # so it's never empty.
-      rm -rf "${lock_dir}" 2>/dev/null || true
+
+    local stale="false"
+    if [[ -z "${holder_pid}" ]]; then
+      # A directory with no pid file yet is indistinguishable from a holder
+      # still between its `mkdir` and its `pid` write, a few instructions
+      # away -- unless it stays empty well past that, which only happens if
+      # a kill landed in that exact window and left it behind for good.
+      empty_pid_iterations=$((empty_pid_iterations + 1))
+      if ((empty_pid_iterations >= 20)); then
+        stale="true"
+      fi
+    else
+      empty_pid_iterations=0
+      if ! kill -0 "${holder_pid}" 2>/dev/null; then
+        stale="true"
+      fi
+    fi
+
+    if [[ "${stale}" == "true" ]]; then
+      # Re-read right before removing: the holder this pass called dead or
+      # abandoned may since have been cleared and replaced by a new, live
+      # one, and deleting the directory out from under that new holder
+      # would be worse than the stale lock this is meant to clear.
+      if [[ "$(cat "${lock_dir}/pid" 2>/dev/null || true)" == "${holder_pid}" ]]; then
+        # rmdir alone fails silently here: the directory holds the "pid" file,
+        # so it's never empty.
+        rm -rf "${lock_dir}" 2>/dev/null || true
+      fi
       continue
     fi
+
     sleep 0.1
   done
 }
