@@ -95,21 +95,26 @@ def downstream_test(
     if bool(filtered_targets) != bool(test_filter):
         fail("downstream_test '%s': filtered_targets and test_filter must both be set, or both left empty" % name)
 
+    args = [
+        "--marker-rootpath",
+        "$(rootpath @{}//_bazel_native_marker:marker.txt)".format(repo_name),
+        "--scala-version",
+        scala_version,
+        "--output-base-name",
+        name,
+    ]
+    if extra_bazel_flags:
+        args += ["--extra-bazel-flags", extra_bazel_flags]
+    if test_filter:
+        args += ["--test-filter", test_filter]
+    if filtered_targets:
+        args += ["--filtered-targets"] + filtered_targets
+    args += ["--"] + targets
+
     sh_test(
         name = name,
         srcs = ["//test/community_build:downstream_test_driver.sh"],
-        args = [
-                   "--marker-rootpath",
-                   "$(rootpath @{}//_bazel_native_marker:marker.txt)".format(repo_name),
-                   "--scala-version",
-                   scala_version,
-                   "--output-base-name",
-                   name,
-               ] + (["--extra-bazel-flags", extra_bazel_flags] if extra_bazel_flags else []) +
-               (["--test-filter", test_filter] if test_filter else []) +
-               (["--filtered-targets"] + filtered_targets if filtered_targets else []) + [
-            "--",
-        ] + targets,
+        args = args,
         data = [
             "@{}//_bazel_native_marker:marker.txt".format(repo_name),
             "//test/expect_build_failure:nested_bazel.sh",
