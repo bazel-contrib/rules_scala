@@ -46,7 +46,15 @@ local_path_override(
         "_bazel_native_marker/BUILD",
         'exports_files(["marker.txt"])\n',
     )
-    repository_ctx.file("_bazel_native_marker/marker.txt", commit + "\n")
+
+    # marker.txt is the only declared input tying downstream_test's sh_test
+    # to this repo's fetch, so its content has to cover everything that
+    # decides the fetch's result: the patch files and this file's own logic.
+    fingerprint_content = "\0".join([
+        repository_ctx.read(f)
+        for f in [Label("//test/community_build:downstream_repository.bzl")] + repository_ctx.attr.patches
+    ])
+    repository_ctx.file("_bazel_native_marker/marker.txt", commit + "\n" + fingerprint_content)
 
 _downstream_consumer_repository = repository_rule(
     implementation = _downstream_consumer_repository_impl,
