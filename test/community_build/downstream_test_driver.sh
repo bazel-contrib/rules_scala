@@ -254,6 +254,11 @@ done
 # Captured rather than let `set -e` exit here: both invocations always run
 # regardless of the first's outcome, and the combined exit status (see
 # below) reflects either one failing.
+#
+# The unfiltered `targets` list is expected to already exclude any
+# filtered_targets (via the caller's own negative pattern in BUILD -- see
+# downstream_test.bzl's filtered_targets docstring), so a filtered target
+# runs exactly once, through the second invocation below.
 status=0
 # shellcheck disable=SC2086 # intentional word-splitting: extra_bazel_flags
 # and targets are each meant to expand to multiple words/patterns.
