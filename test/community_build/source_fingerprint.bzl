@@ -155,7 +155,7 @@ source_fingerprint = repository_rule(
 )
 
 def exposed_top_level_dirs_test(name, **kwargs):
-    """Fails if a top-level entry is neither in _PUBLIC_DIRS/_PUBLIC_ROOT_FILES nor _INTERNAL_ENTRIES.
+    """Fails unless every top-level entry is in _PUBLIC_DIRS/_PUBLIC_ROOT_FILES, _INTERNAL_ENTRIES, or _LOCAL_ONLY_FILES.
 
     Needs the real checkout, not just this test's runfiles, so it can `ls`
     the repo root -- same reason test/expect_build_failure's nested tests are
@@ -164,7 +164,7 @@ def exposed_top_level_dirs_test(name, **kwargs):
     sh_test(
         name = name,
         srcs = ["exposed_top_level_dirs_test.sh"],
-        args = _PUBLIC_DIRS + _PUBLIC_ROOT_FILES + ["--"] + _INTERNAL_ENTRIES,
+        args = _PUBLIC_DIRS + _PUBLIC_ROOT_FILES + ["--"] + _INTERNAL_ENTRIES + _LOCAL_ONLY_FILES,
         data = [
             # _nested_bazel_find_workspace resolves the real source root from
             # this symlink under `bazel test` (no BUILD_WORKSPACE_DIRECTORY).
