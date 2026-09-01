@@ -28,8 +28,9 @@ test_output_flag="--test_output=errors"
 # Excludes the last_green task: it runs a different (unreleased) Bazel
 # binary than every other task, so it has nothing to share this cache with.
 #
-# Linux/Windows use RBE; macOS runs on MacService instead of GCE, so
-# bazelci.py caches it through a GCS bucket instead (still with
+# Linux/Windows use RBE (Remote Build Execution); macOS runs on MacService
+# instead of GCE (Google Compute Engine), so bazelci.py caches it through a
+# GCS (Google Cloud Storage) bucket instead (still with
 # --google_default_credentials).
 remote_cache_flags=""
 if [[ "${BUILDKITE:-}" == "true" ]] && [[ "${BAZELCI_TASK:-}" != *last_green* ]]; then
