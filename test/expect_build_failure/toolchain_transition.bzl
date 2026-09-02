@@ -1,20 +1,20 @@
 """Builds a target under one fixed toolchain, in the outer Bazel's build graph.
 
 A `--extra_toolchains` transition makes the outer build pick that toolchain
-for the target, over any others already registered. So the outer build
-compiles the target itself, and checking "does this build" just means
-checking the outer build's own result -- no second, nested `bazel` process.
+for the target, over any others already registered. The outer build then
+compiles the target itself, so checking "does this build" is answered by
+that one build alone.
 
-The transition is set here, on this wrapper, not on the fixture itself. That
-way other rules can still depend on the fixture in its normal form, for tests
-that check it fails under the default toolchain.
+The transition is set on this wrapper. The fixture itself keeps its plain,
+untransitioned form, so other rules can still depend on it directly --
+including tests that check it fails under the default toolchain.
 """
 
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 
 def _toolchains_transition_impl(_settings, attr):
-    # Whatever the outer build set for extra_toolchains is replaced, not
-    # added to: the transitioned target always uses this fixed list instead.
+    # Sets extra_toolchains to exactly attr.extra_toolchains. This fully
+    # replaces the outer build's own extra_toolchains value.
     return {"//command_line_option:extra_toolchains": attr.extra_toolchains}
 
 toolchains_transition = transition(
