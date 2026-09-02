@@ -18,6 +18,8 @@ expansion) contribute their mnemonic and nothing else, so a change to what such
 an action writes does not reach the fingerprint.
 """
 
+load(":toolchain_transition.bzl", "toolchains_transition")
+
 _ActionsInfo = provider(fields = ["lines"])
 
 def _without_configuration(line):
@@ -63,19 +65,6 @@ collect_actions_aspect = aspect(
     attr_aspects = ["*"],
 )
 
-def _toolchains_transition_impl(_settings, attr):
-    # Analyse the fixture under the toolchains the nested `bazel` will register,
-    # so that changing one of them changes the command lines collected above.
-    # Whatever the outer build registered is replaced, not extended: the nested
-    # `bazel` gets these and nothing else.
-    return {"//command_line_option:extra_toolchains": attr.extra_toolchains}
-
-_toolchains_transition = transition(
-    implementation = _toolchains_transition_impl,
-    inputs = [],
-    outputs = ["//command_line_option:extra_toolchains"],
-)
-
 # Every action this ruleset runs invokes a tool built from here, so a fingerprint
 # without it describes a target the rules never touch.
 _RULESET_TOOLS = "src/java/io/bazel/rulesscala"
@@ -98,7 +87,7 @@ fixture_actions = rule(
         "extra_toolchains": attr.string_list(
             doc = "Toolchains the nested `bazel` registers, to analyse `target` under.",
         ),
-        "target": attr.label(aspects = [collect_actions_aspect], cfg = _toolchains_transition),
+        "target": attr.label(aspects = [collect_actions_aspect], cfg = toolchains_transition),
     },
     doc = "Writes the command lines of `target`'s actions to a file.",
 )
