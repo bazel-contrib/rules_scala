@@ -113,6 +113,14 @@ nested_bazel_setup() {
   mkdir -p "${_nested_bazel_output_base}"
   cd "${NESTED_BAZEL_WORKSPACE}"
 
+  # This script is itself running inside a bazel test action's runfiles tree,
+  # so Bazel's runfiles env vars (RUNFILES_DIR, JAVA_RUNFILES, etc.) point at
+  # *this* test's own runfiles. If we leave them set, they leak into a nested
+  # `bazel run`/`bazel test`: any sh_binary it runs that reads its own
+  # runfiles ends up looking in *our* tree instead of its own. Clearing them
+  # lets each nested invocation set up its own runfiles correctly.
+  unset RUNFILES_DIR RUNFILES_MANIFEST_FILE RUNFILES_MANIFEST_ONLY JAVA_RUNFILES
+
   # A `bazel test` runs the test action with a scrubbed `HOME`, so the nested
   # `bazel` would not read the user's `~/.bazelrc` (which may route Maven through
   # a corporate proxy via `--experimental_downloader_config`). Resolve the real
