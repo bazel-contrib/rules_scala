@@ -1,18 +1,43 @@
 #!/usr/bin/env bash
 # Creates standalone bzlmod consumer modules and checks the values produced by
 # scala/private/macros/bzlmod.bzl's root_module_tags/single_tag_values/
-# repeated_tag_values logic.
+# repeated_tag_values logic. Config comes from the calling BUILD target's
+# args, built by bzlmod_macros.bzl's bzlmod_macro_test/bzlmod_fake_root_module_test
+# macros.
 #
-# Usage: bzlmod_macros_test.sh --case=<case-name>
-# See the `case` statement below for the full list of case names.
+# Usage:
+#   bzlmod_macros_test.sh --target=<label> [--tag=<MODULE.bazel line>]...
+#     (--expect=<regex> | --expect-fail=<regex>)
+#   bzlmod_macros_test.sh --fake-root-module-tags
 
 set -euo pipefail
 
-case_name=""
+target=""
+tag_lines=()
+expect_regex=""
+expect_fail_regex=""
+fake_root=0
+
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
-    --case=*)
-      case_name="${1#*=}"
+    --target=*)
+      target="${1#*=}"
+      shift
+      ;;
+    --tag=*)
+      tag_lines+=("${1#*=}")
+      shift
+      ;;
+    --expect=*)
+      expect_regex="${1#*=}"
+      shift
+      ;;
+    --expect-fail=*)
+      expect_fail_regex="${1#*=}"
+      shift
+      ;;
+    --fake-root-module-tags)
+      fake_root=1
       shift
       ;;
     *)
@@ -22,9 +47,15 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-if [[ -z "${case_name}" ]]; then
-  echo "Usage: bzlmod_macros_test.sh --case=<case-name>" >&2
-  exit 2
+if [[ "${fake_root}" -eq 0 ]]; then
+  if [[ -z "${target}" ]]; then
+    echo "--target is required unless --fake-root-module-tags is passed" >&2
+    exit 2
+  fi
+  if [[ -n "${expect_regex}" && -n "${expect_fail_regex}" ]] || [[ -z "${expect_regex}" && -z "${expect_fail_regex}" ]]; then
+    echo "Pass exactly one of --expect or --expect-fail" >&2
+    exit 2
+  fi
 fi
 
 # bzlmod's module-extension APIs used here require Bazel 7.1+ (this repo's own
@@ -56,11 +87,6 @@ convert_msys2_path() {
 
 rules_scala_dir="$(convert_msys2_path "${NESTED_BAZEL_WORKSPACE}")"
 latest_deps_dir="$(convert_msys2_path "${NESTED_BAZEL_WORKSPACE}/deps/latest")"
-
-# Matches the "at <path>/MODULE.bazel:<line>" location bazel appends to a
-# module-extension tag error; broad enough to match any tmpdir path, since only
-# the message text needs a precise match.
-module_bazel_regex='[^ ]+MODULE.bazel'
 
 # write_bazel_config <module_dir> copies the repo's .bazelversion and a
 # lockfile_mode=update copy of its .bazelrc into a scratch module directory,
@@ -107,117 +133,25 @@ run_target() {
   nested_bazel_run run --enable_bzlmod "$1" 2>&1
 }
 
-target=""
-tag_lines=()
-expect_regex=""
-expect_fail_regex=""
-
-case "${case_name}" in
-  single-tag-defaults)
-    target='//:print-single-test-tag-values'
-    expect_regex='foo bar baz$'
-    ;;
-  single-tag-regular-root-values)
-    target='//:print-single-test-tag-values'
-    tag_lines=('test_ext.single_test_tag(first = "quux", third = "plugh")')
-    expect_regex='quux bar plugh$'
-    ;;
-  single-tag-dev-root-values)
-    target='//:print-single-test-tag-values'
-    tag_lines=('dev_test_ext.single_test_tag(first = "quux", third = "plugh")')
-    expect_regex='quux bar plugh$'
-    ;;
-  single-tag-combines-regular-and-dev)
-    target='//:print-single-test-tag-values'
-    tag_lines=(
-      'test_ext.single_test_tag(first = "quux", third = "plugh")'
-      'dev_test_ext.single_test_tag(second = "xyzzy", third = "frobozz")'
-    )
-    expect_regex='quux xyzzy frobozz$'
-    ;;
-  single-tag-fails-if-more-than-two-tags)
-    target='//:print-single-test-tag-values'
-    tag_lines=(
-      'test_ext.single_test_tag()'
-      'dev_test_ext.single_test_tag()'
-      'dev_test_ext.single_test_tag(second = "not", third = "happening")'
-    )
-    expect_fail_regex="expected one regular tag instance and/or one dev_dependency instance, got 3: 'single_test_tag' tag at ${module_bazel_regex}:"
-    ;;
-  single-tag-fails-if-dev-tag-before-regular)
-    target='//:print-single-test-tag-values'
-    tag_lines=(
-      'dev_test_ext.single_test_tag()'
-      'test_ext.single_test_tag(first = "unused")'
-    )
-    expect_fail_regex="expected one regular tag instance and/or one dev_dependency instance, got the dev_dependency instance before the regular instance: 'single_test_tag' tag at ${module_bazel_regex}:"
-    ;;
-  single-tag-fails-if-two-regular-tags)
-    target='//:print-single-test-tag-values'
-    tag_lines=(
-      'test_ext.single_test_tag(first = "of two")'
-      'test_ext.single_test_tag(second = "of two")'
-    )
-    expect_fail_regex="expected one regular tag instance and/or one dev_dependency instance, got two regular instances: 'single_test_tag' tag at ${module_bazel_regex}:"
-    ;;
-  single-tag-fails-if-two-dev-tags)
-    target='//:print-single-test-tag-values'
-    tag_lines=(
-      'dev_test_ext.single_test_tag(first = "of two")'
-      'dev_test_ext.single_test_tag(second = "of two")'
-    )
-    expect_fail_regex="expected one regular tag instance and/or one dev_dependency instance, got two dev_dependency instances: 'single_test_tag' tag at ${module_bazel_regex}:"
-    ;;
-  repeated-tag-values-for-zero-instances)
-    target='//:print-repeated-test-tag-values'
-    expect_regex='\{\}$'
-    ;;
-  repeated-tag-values-for-one-instance)
-    target='//:print-repeated-test-tag-values'
-    tag_lines=('test_ext.repeated_test_tag(unique_key = "foo", required = "bar")')
-    expect_regex='\{"foo": \{"required": "bar", "optional": ""\}\}$'
-    ;;
-  repeated-tag-values-for-multiple-instances)
-    target='//:print-repeated-test-tag-values'
-    tag_lines=(
-      'test_ext.repeated_test_tag(unique_key = "foo", required = "bar")'
-      'test_ext.repeated_test_tag(unique_key = "baz", required = "quux", optional = "xyzzy")'
-      'dev_test_ext.repeated_test_tag(unique_key = "plugh", required = "frobozz")'
-    )
-    expect_regex='\{"foo": \{"required": "bar", "optional": ""\}, "baz": \{"required": "quux", "optional": "xyzzy"\}, "plugh": \{"required": "frobozz", "optional": ""\}\}$'
-    ;;
-  repeated-tag-values-fails-on-duplicate-key)
-    target='//:print-repeated-test-tag-values'
-    tag_lines=(
-      'test_ext.repeated_test_tag(unique_key = "foo", required = "bar")'
-      'dev_test_ext.repeated_test_tag(unique_key = "foo", required = "baz")'
-    )
-    expect_fail_regex="multiple tags with same unique_key: 'repeated_test_tag' tag at ${module_bazel_regex}:"
-    ;;
-  fake-root-module-tags)
-    setup_test_module "${test_module_dir}"
-    test_module_path="$(convert_msys2_path "${test_module_dir}")"
-    write_bazel_config "${root_module_dir}"
-    sed \
-      -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \
-      -e "s%\${latest_deps_dir}%${latest_deps_dir}%" \
-      -e "s%\${test_module_dir}%${test_module_path}%" \
-      "${fixture_dir}/MODULE.bzlmod_test_root_module" \
-      >"${root_module_dir}/MODULE.bazel"
-    cd "${root_module_dir}"
-    if ! output="$(run_target '@test_module//:print-single-test-tag-values')"; then
-      echo "${output}" >&2
-      echo "Nested bazel run failed." >&2
-      exit 1
-    fi
-    assert_matches 'foo bar baz$' "${output}"
-    exit 0
-    ;;
-  *)
-    echo "Unknown case: ${case_name}" >&2
-    exit 2
-    ;;
-esac
+if [[ "${fake_root}" -eq 1 ]]; then
+  setup_test_module "${test_module_dir}"
+  test_module_path="$(convert_msys2_path "${test_module_dir}")"
+  write_bazel_config "${root_module_dir}"
+  sed \
+    -e "s%\${rules_scala_dir}%${rules_scala_dir}%" \
+    -e "s%\${latest_deps_dir}%${latest_deps_dir}%" \
+    -e "s%\${test_module_dir}%${test_module_path}%" \
+    "${fixture_dir}/MODULE.bzlmod_test_root_module" \
+    >"${root_module_dir}/MODULE.bazel"
+  cd "${root_module_dir}"
+  if ! output="$(run_target '@test_module//:print-single-test-tag-values')"; then
+    echo "${output}" >&2
+    echo "Nested bazel run failed." >&2
+    exit 1
+  fi
+  assert_matches 'foo bar baz$' "${output}"
+  exit 0
+fi
 
 setup_test_module "${root_module_dir}" "${tag_lines[@]+"${tag_lines[@]}"}"
 cd "${root_module_dir}"
