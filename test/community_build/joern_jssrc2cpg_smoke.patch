@@ -1,0 +1,41 @@
+# jssrc2cpg's own test suite is ~99% Joern's JS/TS semantic correctness (AST
+# node shapes, CFG edges, dataflow paths for hundreds of language-construct
+# variations) -- signal about Joern's own correctness. It's also this
+# downstream_test's single most expensive target: ~750-820s of the
+# ~1050-1200s the whole joern_test costs, once the nested build itself is
+# warm (see downstream_test.bzl's "Cacheability" docstring for that other
+# half).
+#
+# This adds one new file, keeping Joern's existing test files exactly as
+# upstream ships them, aggregating a handful of existing test classes
+# (spanning AST, CFG, dataflow, and type-recovery passes, plus the two
+# closest things to an integration smoke test: ProjectParseTests's real
+# AstGenRunner/file I/O and JsSrc2CpgHTTPServerTests's JVM HTTP server + full
+# classpath) into one ScalaTest suite. `downstream_test.bzl`'s
+# `test_filter`/`filtered_targets` for joern_test select just this one suite
+# via `--test_filter` (in its own nested `bazel test` invocation, since that
+# flag applies to every target in one invocation), so jssrc2cpg's own ~11k
+# lines of test sources still compile in full (real Scala 3 compile
+# workload against the toolchain under test), but only this smoke subset
+# executes: measured 748-820s -> 165-215s.
+--- /dev/null
++++ b/joern-cli/frontends/jssrc2cpg/src/test/scala/io/joern/jssrc2cpg/SmokeSuite.scala
+@@ -0,0 +1,18 @@
++package io.joern.jssrc2cpg
++
++import _root_.io.joern.jssrc2cpg.dataflow.DataflowTests
++import _root_.io.joern.jssrc2cpg.io.{JsSrc2CpgHTTPServerTests, ProjectParseTests}
++import _root_.io.joern.jssrc2cpg.passes.TypeRecoveryPassTests
++import _root_.io.joern.jssrc2cpg.passes.ast.SimpleAstCreationPassTests
++import _root_.io.joern.jssrc2cpg.passes.cfg.SimpleCfgCreationPassTests
++import org.scalatest.Suites
++
++class SmokeSuite
++    extends Suites(
++      new SimpleAstCreationPassTests,
++      new SimpleCfgCreationPassTests,
++      new DataflowTests,
++      new TypeRecoveryPassTests,
++      new ProjectParseTests,
++      new JsSrc2CpgHTTPServerTests
++    )
