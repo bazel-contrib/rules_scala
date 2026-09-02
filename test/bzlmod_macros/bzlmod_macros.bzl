@@ -8,9 +8,22 @@ and match). `expect_fail` may use the placeholder `{MODULE_BAZEL}` for the
 "at <path>/MODULE.bazel:<line>" location bazel appends to a module-extension
 tag error; the placeholder expands to a regex broad enough to match any
 tmpdir path, since only the message text needs a precise match.
+
+Each test's config (target/tag_lines/expect) is written to a small text file
+at build time and passed to the script as a single `$(rootpath)` argument,
+rather than as individual `args` entries. A tag line or regex can contain
+spaces, `$`, quotes and parens, and those survive an ordinary `sh_test` `args`
+entry inconsistently across platforms: Bazel's own args handling needs `$`
+doubled and spaces quoted, and the Windows test launcher rebuilds a `bash -c`
+command line from `args` using its own incomplete quoting (confirmed via a
+real CI run: an unquoted `test_ext.single_test_tag()` broke bash's parser on
+its parens). A `$(rootpath)` value is a plain package-relative path (letters,
+digits, `/`, `_`, `.`), so it survives every platform's argument handling
+intact, and a shell reads the config text exactly once: this script's own
+`while read` loop.
 """
 
-load("@bazel_skylib//lib:shell.bzl", "shell")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 _MODULE_BAZEL_REGEX = "[^ ]+MODULE[.]bazel"
@@ -35,14 +48,6 @@ _NESTED_BAZEL_TAGS = [
     "requires-network",
 ]
 
-def _arg(flag_value):
-    # `sh_test.args` goes through Bazel's own "Make" variable expansion (for
-    # $(location) etc.) before Bourne-shell tokenization, so a literal `$` (e.g.
-    # in a `$`-anchored regex) must be doubled first, or Bazel reads it as the
-    # start of a $(...) reference. shell.quote then protects spaces and quotes
-    # from the later Bourne-tokenization pass.
-    return shell.quote(flag_value.replace("$", "$$"))
-
 def bzlmod_macro_test(name, target, tag_lines = [], expect = None, expect_fail = None):
     """A test that runs `target` (with `tag_lines` appended to MODULE.bazel) and checks its output.
 
@@ -58,21 +63,29 @@ def bzlmod_macro_test(name, target, tag_lines = [], expect = None, expect_fail =
     if (expect == None) == (expect_fail == None):
         fail("bzlmod_macro_test %s: pass exactly one of expect or expect_fail" % name)
 
-    args = [_arg("--target=%s" % target)]
-    args += [_arg("--tag=%s" % line) for line in tag_lines]
+    config_lines = ["TARGET=%s" % target]
+    config_lines += ["TAG=%s" % line for line in tag_lines]
     if expect != None:
-        args.append(_arg("--expect=%s" % expect))
+        config_lines.append("EXPECT=%s" % expect)
     else:
-        args.append(_arg(
-            "--expect-fail=%s" % expect_fail.replace("{MODULE_BAZEL}", _MODULE_BAZEL_REGEX),
-        ))
+        config_lines.append(
+            "EXPECT_FAIL=%s" % expect_fail.replace("{MODULE_BAZEL}", _MODULE_BAZEL_REGEX),
+        )
+
+    config_name = "%s_config" % name
+    write_file(
+        name = config_name,
+        out = "%s.txt" % config_name,
+        content = config_lines,
+        newline = "unix",
+    )
 
     sh_test(
         name = name,
         size = "large",
         srcs = ["bzlmod_macros_test.sh"],
-        args = args,
-        data = _NESTED_BAZEL_DATA,
+        args = ["$(rootpath :%s)" % config_name],
+        data = _NESTED_BAZEL_DATA + [":" + config_name],
         tags = _NESTED_BAZEL_TAGS,
     )
 

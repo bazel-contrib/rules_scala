@@ -1,59 +1,57 @@
 #!/usr/bin/env bash
 # Creates standalone bzlmod consumer modules and checks the values produced by
 # scala/private/macros/bzlmod.bzl's root_module_tags/single_tag_values/
-# repeated_tag_values logic. Config comes from the calling BUILD target's
-# args, built by bzlmod_macros.bzl's bzlmod_macro_test/bzlmod_fake_root_module_test
-# macros.
+# repeated_tag_values logic. Config comes from a small text file built by
+# bzlmod_macros.bzl's bzlmod_macro_test macro (see that file for the reason).
+# The fake-root case takes a plain flag instead, since its config is fixed.
 #
 # Usage:
-#   bzlmod_macros_test.sh --target=<label> [--tag=<MODULE.bazel line>]...
-#     (--expect=<regex> | --expect-fail=<regex>)
+#   bzlmod_macros_test.sh <config-file-rootpath>
 #   bzlmod_macros_test.sh --fake-root-module-tags
+#
+# The config file has one "KEY=value" line per entry: TARGET (once), TAG (zero
+# or more), and exactly one of EXPECT or EXPECT_FAIL.
 
 set -euo pipefail
+
+if [[ "$#" -ne 1 ]]; then
+  echo "Usage: bzlmod_macros_test.sh (<config-file-rootpath> | --fake-root-module-tags)" >&2
+  exit 2
+fi
+
+fake_root=0
+config_file=""
+if [[ "$1" == "--fake-root-module-tags" ]]; then
+  fake_root=1
+else
+  config_file="${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/$1"
+fi
 
 target=""
 tag_lines=()
 expect_regex=""
 expect_fail_regex=""
-fake_root=0
-
-while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    --target=*)
-      target="${1#*=}"
-      shift
-      ;;
-    --tag=*)
-      tag_lines+=("${1#*=}")
-      shift
-      ;;
-    --expect=*)
-      expect_regex="${1#*=}"
-      shift
-      ;;
-    --expect-fail=*)
-      expect_fail_regex="${1#*=}"
-      shift
-      ;;
-    --fake-root-module-tags)
-      fake_root=1
-      shift
-      ;;
-    *)
-      echo "Unknown argument: $1" >&2
-      exit 2
-      ;;
-  esac
-done
 
 if [[ "${fake_root}" -eq 0 ]]; then
+  while IFS= read -r config_line || [[ -n "${config_line}" ]]; do
+    case "${config_line}" in
+      TARGET=*) target="${config_line#TARGET=}" ;;
+      TAG=*) tag_lines+=("${config_line#TAG=}") ;;
+      EXPECT=*) expect_regex="${config_line#EXPECT=}" ;;
+      EXPECT_FAIL=*) expect_fail_regex="${config_line#EXPECT_FAIL=}" ;;
+      *)
+        echo "Unrecognized config line: ${config_line}" >&2
+        exit 2
+        ;;
+    esac
+  done <"${config_file}"
+
   if [[ -z "${target}" ]]; then
-    echo "--target is required unless --fake-root-module-tags is passed" >&2
+    echo "Config file is missing a TARGET line: ${config_file}" >&2
     exit 2
   fi
   if [[ -n "${expect_regex}" && -n "${expect_fail_regex}" ]] || [[ -z "${expect_regex}" && -z "${expect_fail_regex}" ]]; then
-    echo "Pass exactly one of --expect or --expect-fail" >&2
+    echo "Config file must have exactly one of EXPECT or EXPECT_FAIL: ${config_file}" >&2
     exit 2
   fi
 fi
