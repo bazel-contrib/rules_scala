@@ -232,10 +232,10 @@ done
 # --cache_test_results=no: the remote cache above (when active) scopes to
 # the build actions underneath these targets, keeping the test run itself
 # real every time -- `downstream_test`'s whole point is that its targets
-# (9 for joern, 163 for dicer) actually execute against the toolchain under
-# test on every real `sh_test` run, the same guarantee `source_fingerprint`
-# gives at the outer level by forcing a real re-run instead of serving a
-# stale PASS. The cost of a retry-attempt rerun scales with that count.
+# actually execute against the toolchain under test on every real `sh_test`
+# run, the same guarantee `source_fingerprint` gives at the outer level by
+# forcing a real re-run instead of serving a stale PASS. The cost of a
+# retry-attempt rerun scales with the target count.
 #
 # shellcheck disable=SC2086 # intentional word-splitting: extra_bazel_flags
 # and targets are each meant to expand to multiple words/patterns.

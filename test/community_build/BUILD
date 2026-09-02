@@ -45,27 +45,36 @@ downstream_test(
 
 # dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
 # Scala 2.12 -- neither exercised by joern_test above (Scala 3, proto-free).
+# That coverage doesn't depend on the etcd-touching targets excluded below:
+# proto/gRPC-generated code is exercised throughout dicer/common,
+# dicer/client, dicer/friend, wrappers/rpc, and elsewhere outside that set.
 #
-# `caching/util:etcd_suite`, `dicer/common:etcd_bootstrapper_test`, and
-# `dicer/assigner/...` each need a downloaded `etcd_release` binary
-# (`//bazel:etcd.bzl`) hardcoded to a linux-amd64 release, so this is
-# linux-only: the binary can't execute at all on other architectures
-# ("etcd exited with code 126", e.g. darwin-arm64).
+# The 8 targets below exercise dicer's own etcd runtime setup, not anything
+# rules_scala's rules produce or control: each starts a real etcd_release
+# binary (`//bazel:etcd.bzl`) to talk to, and communication with that binary
+# repeatedly times out in CI.
 #
 # algorithm_chaos_test is excluded below: it asserts a randomly-seeded
 # statistical bound, flaky by construction.
 #
-# size = "enormous" for the same reason as joern_test above: 163 nested
-# tests, several of them minutes-long, can exceed this sh_test's own
-# "large" (900s) default in total.
+# size = "enormous" for the same reason as joern_test above: dicer's nested
+# test suite is large enough, with some tests minutes-long, to exceed this
+# sh_test's own "large" (900s) default in total.
 downstream_test(
     name = "dicer_test",
     repo_name = "dicer",
     scala_version = "2.12.21",
     size = "enormous",
-    target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",
+        "-//caching/util:etcd_suite",
         "-//dicer/assigner/algorithm:algorithm_chaos_test",
+        "-//dicer/assigner:assigner_main_test",
+        "-//dicer/assigner:etcd_preferred_assigner_driver_test",
+        "-//dicer/assigner:etcd_preferred_assigner_integration_test",
+        "-//dicer/assigner:etcd_preferred_assigner_store_test",
+        "-//dicer/assigner:multiple_assigner_instances_test",
+        "-//dicer/assigner:target_migration_integration_test",
+        "-//dicer/common:etcd_bootstrapper_test",
     ],
 )
