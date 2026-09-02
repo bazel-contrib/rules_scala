@@ -1,6 +1,8 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load(":toolchain_transition.bzl", "build_under_toolchains")
 
 scala_toolchain(
     name = "failing_toolchain_impl",
@@ -57,10 +59,16 @@ expect_build_failure_test(
     target = ":toolchain_failing_build",
 )
 
-expect_build_success_test(
-    name = "mode_override_toolchain_succeeds_test",
-    build_args = ["--extra_toolchains=//test/unused_dependency_checker:failing_scala_toolchain"],
+build_under_toolchains(
+    name = "toolchain_override_under_failing_scala_toolchain",
+    testonly = True,
+    extra_toolchains = ["//test/unused_dependency_checker:failing_scala_toolchain"],
     target = ":toolchain_override",
+)
+
+build_test(
+    name = "mode_override_toolchain_succeeds_test",
+    targets = [":toolchain_override_under_failing_scala_toolchain"],
 )
 
 # `target` lives in //test, not this package: its sources aren't tracked as
@@ -75,8 +83,14 @@ expect_build_success_test(
 
 # `target` lives in //test/scala_test, not this package: see the comment above
 # on mode_warn_test.
-expect_build_success_test(
-    name = "ast_analyzer_no_scalatest_unused_dep_warning_test",
-    build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_error"],
+build_under_toolchains(
+    name = "scala_test_b_under_ast_plus_one_deps_unused_deps_error",
+    testonly = True,
+    extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_error"],
     target = "//test/scala_test:b",
+)
+
+build_test(
+    name = "ast_analyzer_no_scalatest_unused_dep_warning_test",
+    targets = [":scala_test_b_under_ast_plus_one_deps_unused_deps_error"],
 )
