@@ -40,11 +40,3 @@ build --java_runtime_version=17
 #Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting in 'file in use' errors). See Bazel Issue#10498.
 
 build:windows --worker_quit_after_build --enable_runfiles
-
-# A "fixed-toolchain" build_test's own transition always sets
-# --extra_toolchains to one fixed value, so its result is the same no
-# matter which toolchain an outer sweep sets. test_rules_scala.sh's extra
-# toolchain sweeps over test/... use this config to skip these targets,
-# since the default sweep already checks them.
-build:toolchain-sweep --build_tag_filters=-fixed-toolchain
-test:toolchain-sweep --test_tag_filters=-fixed-toolchain

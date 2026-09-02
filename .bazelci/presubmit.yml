@@ -77,8 +77,11 @@ tasks:
       - echo "test --test_env=PATH" >>.bazelrc
       # Downstream consumer tests aren't expected to build against an
       # unreleased Bazel; skip them so a green here means an actual
-      # last_green regression, not third-party noise.
-      - echo "test --test_tag_filters=-no-last-green" >>.bazelrc
+      # last_green regression, not third-party noise. test_rules_scala.sh
+      # reads this file itself, instead of a plain "test --test_tag_filters"
+      # .bazelrc line: its own toolchain-sweep flag also uses
+      # --test_tag_filters, and Bazel keeps only the last value it sees.
+      - echo "-no-last-green" >.extra_test_tag_filters
       - "./test_rules_scala.sh"
     soft_fail:
       - exit_status: "*"
