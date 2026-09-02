@@ -4,7 +4,7 @@
 scala_2_12="2.12.21"
 scala_2_13="2.13.18"
 scala_3_3="3.3.8"
-scala_3="3.8.4"
+scala_3="3.9.0"
 
 scala_versions=(
   "$scala_2_12"
