@@ -57,6 +57,11 @@ downstream_test(
 # algorithm_chaos_test is excluded below: it asserts a randomly-seeded
 # statistical bound, flaky by construction.
 #
+# Linux-only for reasons unrelated to the etcd binary: dicer's own coursier
+# resolve times out over this repo's macOS CI network (the same failure
+# joern_test hits above), and the nested Bazelisk invocation can't find its
+# home directory on Windows (missing %LocalAppData%).
+#
 # size = "enormous" for the same reason as joern_test above: dicer's nested
 # test suite is large enough, with some tests minutes-long, to exceed this
 # sh_test's own "large" (900s) default in total.
@@ -65,6 +70,7 @@ downstream_test(
     repo_name = "dicer",
     scala_version = "2.12.21",
     size = "enormous",
+    target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",
         "-//caching/util:etcd_suite",
