@@ -1,7 +1,7 @@
-"""Used by test/shell/test_bzlmod_helpers.sh to test bzlmod.bzl.
+"""Standalone root module for the fake-root bzlmod macro test.
 
-Used by `test_bzlmod_creates_fake_root_module_tags_when_unused_by_root_module`
-to test `root_module_tags` when the extension isn't imported by the root module.
+This module wraps test_module so the extension under test is unused by the real
+root module and must synthesize empty root-module tags.
 """
 
 module(name = "test_root_module", version = "0.0.0")
@@ -21,5 +21,5 @@ local_path_override(
 bazel_dep(name = "test_module")
 local_path_override(
     module_name = "test_module",
-    path = "${test_module_dir}"
+    path = "${test_module_dir}",
 )
