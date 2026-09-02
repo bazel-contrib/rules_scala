@@ -1,9 +1,10 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//scala:scala.bzl", "scala_library")
 load(
     "//test/expect_build_failure:expect_build_failure.bzl",
     "expect_build_failure_test",
-    "expect_build_success_test",
 )
+load(":toolchain_transition.bzl", "build_under_toolchains")
 
 # Targets exercising Scala 3 `given` imports under the ast_plus_error toolchain,
 # driven by the given_import_* tests below.
@@ -61,10 +62,15 @@ scala_library(
 
 # `:user` builds cleanly under ast_plus_error (unused-dep checker set to error):
 # the given dep `:givens`, used only through implicit search, is not flagged.
-expect_build_success_test(
-    name = "given_import_is_not_unused",
-    build_args = ["--extra_toolchains=//test/compiler_dependency_tracker:ast_plus_error"],
+build_under_toolchains(
+    name = "user_under_ast_plus_error",
+    extra_toolchains = ["//test/compiler_dependency_tracker:ast_plus_error"],
     target = ":user",
+)
+
+build_test(
+    name = "given_import_is_not_unused",
+    targets = [":user_under_ast_plus_error"],
 )
 
 expect_build_failure_test(
