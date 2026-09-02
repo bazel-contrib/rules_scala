@@ -52,9 +52,9 @@ downstream_test(
 # algorithm_chaos_test is excluded below: it asserts a randomly-seeded
 # statistical bound, flaky by construction.
 #
-# Linux-only: dicer's own macOS CI hits a coursier network timeout, and
-# Windows CI is missing %LocalAppData%, needed by the nested Bazelisk
-# invocation.
+# Linux-only: this repo's macOS CI hits a coursier network timeout running
+# dicer_test, and its Windows CI is missing %LocalAppData%, needed by the
+# nested Bazelisk invocation.
 #
 # size = "enormous" for the same reason as joern_test above: dicer's nested
 # test suite is large enough, with some tests minutes-long, to exceed this
