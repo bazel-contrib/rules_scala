@@ -246,10 +246,10 @@ done
 # --cache_test_results=no: the remote cache above (when active) scopes to
 # the build actions underneath these targets, keeping the test run itself
 # real every time -- `downstream_test`'s whole point is that its targets
-# (9 for joern, 163 for dicer) actually execute against the toolchain under
-# test on every real `sh_test` run, the same guarantee `source_fingerprint`
-# gives at the outer level by forcing a real re-run instead of serving a
-# stale PASS. The cost of a retry-attempt rerun scales with that count.
+# actually execute against the toolchain under test on every real `sh_test`
+# run, the same guarantee `source_fingerprint` gives at the outer level by
+# forcing a real re-run instead of serving a stale PASS. The cost of a
+# retry-attempt rerun scales with the target count.
 #
 # Captured rather than let `set -e` exit here: both invocations always run
 # regardless of the first's outcome, and the combined exit status (see
