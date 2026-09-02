@@ -1,7 +1,7 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
-load(":toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 load("scaladoc.bzl", "scala_doc_intransitive")
 
 package(default_testonly = 1)

@@ -1,6 +1,6 @@
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load("//test/plus_one_deps:toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # Make sure plus-one deps reachable through a direct dep's exports propagate too,
 # both when the export is a pure facade (no srcs) and when it is a real dep. All

@@ -3,7 +3,7 @@ load(
     "//test/expect_build_failure:expect_build_failure.bzl",
     "expect_build_failure_test",
 )
-load(":toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # Targets exercising Scala 3 `given` imports under the ast_plus_error toolchain,
 # driven by the given_import_* tests below.

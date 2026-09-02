@@ -1,6 +1,6 @@
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load("//test/plus_one_deps:toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # Plus-one dependency mode lets `a` use a symbol from `c` (a dependency of its
 # direct dep `b`); under the default toolchain that transitive use is a

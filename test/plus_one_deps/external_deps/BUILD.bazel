@@ -1,6 +1,6 @@
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load("//test/plus_one_deps:toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # `a` uses a symbol reachable only transitively through
 # @org_springframework_spring_tx; only plus-one mode allows that. Tagged "manual"
@@ -16,7 +16,6 @@ scala_library(
 
 toolchain_build_test(
     name = "plus_one_deps_external_deps_test",
-    testonly = True,
     extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":a",
 )

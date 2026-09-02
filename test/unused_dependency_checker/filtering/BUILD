@@ -1,7 +1,7 @@
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load(":toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 toolchain(
     name = "plus_one_unused_deps_filter",
@@ -44,7 +44,6 @@ scala_library(
 
 toolchain_build_test(
     name = "excluded_target_succeeds_test",
-    testonly = True,
     extra_toolchains = ["//test/unused_dependency_checker/filtering:plus_one_unused_deps_filter"],
     target = ":a",
 )

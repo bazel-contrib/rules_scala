@@ -7,7 +7,7 @@ load(
     "expect_build_success_test",
 )
 load("//test/semanticdb:rules.bzl", "semanticdb_vars_script")
-load(":toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 scala_toolchain(
     name = "semanticdb_bundle_toolchain_impl",
@@ -108,7 +108,6 @@ _SEMANTICDB_FIXTURE_DATA = glob([
 
 toolchain_build_test(
     name = "empty_semanticdb_test",
-    testonly = True,
     extra_toolchains = ["//test/semanticdb:semanticdb_nobundle_toolchain"],
     target = ":semantic_provider_vars_empty",
 )

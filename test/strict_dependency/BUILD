@@ -1,5 +1,5 @@
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
-load(":toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # The plus_one_deps toolchain stays in test_expect_failure/: test_rules_scala.sh
 # itself builds against it directly (line 27), outside any single shell file's
