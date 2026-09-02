@@ -1,8 +1,7 @@
-load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load(":toolchain_transition.bzl", "build_under_toolchains")
+load(":toolchain_transition.bzl", "toolchain_build_test")
 
 toolchain(
     name = "plus_one_strict_deps_filter",
@@ -48,16 +47,11 @@ scala_library(
     deps = [":transitive_deps"],
 )
 
-build_under_toolchains(
-    name = "a_under_plus_one_strict_deps_filter",
+toolchain_build_test(
+    name = "strict_deps_filter_excluded_target_test",
     testonly = True,
     extra_toolchains = ["//test/strict_dependency/filtering:plus_one_strict_deps_filter"],
     target = ":a",
-)
-
-build_test(
-    name = "strict_deps_filter_excluded_target_test",
-    targets = [":a_under_plus_one_strict_deps_filter"],
 )
 
 expect_build_failure_test(

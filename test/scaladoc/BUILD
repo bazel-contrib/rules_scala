@@ -1,8 +1,7 @@
-load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
-load(":toolchain_transition.bzl", "build_under_toolchains")
+load(":toolchain_transition.bzl", "toolchain_build_test")
 load("scaladoc.bzl", "scala_doc_intransitive")
 
 package(default_testonly = 1)
@@ -99,13 +98,8 @@ sh_test(
 )
 
 # Test that scaladoc for transitive external deps works (just build succeeds).
-build_under_toolchains(
-    name = "scaladoc_C_under_ast_plus_one_deps_unused_deps_warn",
+toolchain_build_test(
+    name = "scaladoc_C_build_test",
     extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
     target = ":scaladoc_C",
-)
-
-build_test(
-    name = "scaladoc_C_build_test",
-    targets = [":scaladoc_C_under_ast_plus_one_deps_unused_deps_warn"],
 )

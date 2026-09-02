@@ -1,20 +1,14 @@
-load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
-load(":toolchain_transition.bzl", "build_under_toolchains")
+load(":toolchain_transition.bzl", "toolchain_build_test")
 
 # The plus_one_deps toolchain stays in test_expect_failure/: test_rules_scala.sh
 # itself builds against it directly (line 27), outside any single shell file's
 # migration.
 
-build_under_toolchains(
-    name = "test_proto_under_plus_one_deps",
+toolchain_build_test(
+    name = "plus_one_deps_only_works_for_java_info_targets_test",
     extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = "//test/proto:test_proto",
-)
-
-build_test(
-    name = "plus_one_deps_only_works_for_java_info_targets_test",
-    targets = [":test_proto_under_plus_one_deps"],
 )
 
 expect_build_failure_test(

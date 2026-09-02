@@ -1,7 +1,6 @@
-load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load("//test/plus_one_deps:toolchain_transition.bzl", "build_under_toolchains")
+load("//test/plus_one_deps:toolchain_transition.bzl", "toolchain_build_test")
 
 # Plus-one dependency mode lets `a` use a symbol from `c` (a dependency of its
 # direct dep `b`); under the default toolchain that transitive use is a
@@ -28,15 +27,10 @@ scala_library(
     tags = ["manual"],
 )
 
-build_under_toolchains(
-    name = "a_under_plus_one_deps",
+toolchain_build_test(
+    name = "plus_one_deps_internal_deps_test",
     extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":a",
-)
-
-build_test(
-    name = "plus_one_deps_internal_deps_test",
-    targets = [":a_under_plus_one_deps"],
 )
 
 # Negative control: without the plus-one toolchain, `a`'s transitive use of `c`

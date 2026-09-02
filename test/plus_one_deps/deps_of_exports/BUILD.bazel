@@ -1,7 +1,6 @@
-load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//scala:scala.bzl", "scala_library")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
-load("//test/plus_one_deps:toolchain_transition.bzl", "build_under_toolchains")
+load("//test/plus_one_deps:toolchain_transition.bzl", "toolchain_build_test")
 
 # Make sure plus-one deps reachable through a direct dep's exports propagate too,
 # both when the export is a pure facade (no srcs) and when it is a real dep. All
@@ -53,26 +52,16 @@ scala_library(
     tags = ["manual"],
 )
 
-build_under_toolchains(
-    name = "test_target_using_facade_under_plus_one_deps",
+toolchain_build_test(
+    name = "plus_one_deps_deps_of_exports_facade_test",
     extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":test_target_using_facade",
 )
 
-build_test(
-    name = "plus_one_deps_deps_of_exports_facade_test",
-    targets = [":test_target_using_facade_under_plus_one_deps"],
-)
-
-build_under_toolchains(
-    name = "test_target_under_plus_one_deps",
+toolchain_build_test(
+    name = "plus_one_deps_deps_of_exports_test",
     extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":test_target",
-)
-
-build_test(
-    name = "plus_one_deps_deps_of_exports_test",
-    targets = [":test_target_under_plus_one_deps"],
 )
 
 # Negative control: without the plus-one toolchain, the plus-one dep hanging off
