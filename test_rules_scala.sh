@@ -12,9 +12,11 @@ test_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/test/shell
 . "${test_dir}"/test_runner.sh
 runner=$(get_test_runner "${1:-local}")
 test_output_flag="--test_output=errors"
-# See .bazelrc: skips "fixed-toolchain" build_test targets, whose own
-# transition already forces a fixed toolchain regardless of what an
-# alternate-toolchain sweep below registers.
+# The lines below re-run test/... under several different --extra_toolchains
+# values ("toolchain sweeps"). A "fixed-toolchain" build_test's own transition
+# already overrides --extra_toolchains to one fixed value, so its result is
+# the same in every sweep; this flag (defined in .bazelrc) skips it in the
+# alternate sweeps, since the default sweep above already covers it.
 toolchain_sweep_flag="--config=toolchain-sweep"
 
 . "${test_dir}"/test_bzlmod_macros.sh
