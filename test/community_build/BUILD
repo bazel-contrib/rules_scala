@@ -44,23 +44,19 @@ downstream_test(
 )
 
 # dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
-# Scala 2.12 -- neither exercised by joern_test above (Scala 3, proto-free).
-# That coverage doesn't depend on the etcd-touching targets excluded below:
-# proto/gRPC-generated code is exercised throughout dicer/common,
-# dicer/client, dicer/friend, wrappers/rpc, and elsewhere outside that set.
-#
-# The 8 targets below exercise dicer's own etcd runtime setup, not anything
-# rules_scala's rules produce or control: each starts a real etcd_release
-# binary (`//bazel:etcd.bzl`) to talk to, and communication with that binary
-# repeatedly times out in CI.
+# Scala 2.12 (joern_test above is Scala 3, proto-free); that code runs
+# throughout dicer/common, dicer/client, dicer/friend, wrappers/rpc, and
+# beyond the 8 etcd-touching targets excluded below, which start a real
+# etcd_release binary (`//bazel:etcd.bzl`) -- dicer's own etcd runtime
+# setup -- and repeatedly time out talking to it in CI.
 #
 # algorithm_chaos_test is excluded below: it asserts a randomly-seeded
 # statistical bound, flaky by construction.
 #
-# Linux-only for reasons unrelated to the etcd binary: dicer's own coursier
-# resolve times out over this repo's macOS CI network (the same failure
-# joern_test hits above), and the nested Bazelisk invocation can't find its
-# home directory on Windows (missing %LocalAppData%).
+# Linux-only: dicer's coursier resolve times out on this repo's macOS CI
+# network (same failure as joern_test above), and the nested Bazelisk
+# invocation needs %LocalAppData% for its home directory, unset on this
+# repo's Windows CI.
 #
 # size = "enormous" for the same reason as joern_test above: dicer's nested
 # test suite is large enough, with some tests minutes-long, to exceed this
