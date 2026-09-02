@@ -43,20 +43,18 @@ downstream_test(
     ],
 )
 
-# dicer covers rules_scala's scala_proto/ScalaPB (gRPC) codegen path and
-# Scala 2.12 (joern_test above is Scala 3, proto-free); that code runs
-# throughout dicer/common, dicer/client, dicer/friend, wrappers/rpc, and
-# beyond the 8 etcd-touching targets excluded below, which start a real
-# etcd_release binary (`//bazel:etcd.bzl`) -- dicer's own etcd runtime
-# setup -- and repeatedly time out talking to it in CI.
+# dicer_test's job: exercise rules_scala's scala_proto/ScalaPB (gRPC)
+# codegen and Scala 2.12 support.
+#
+# The 8 targets excluded below start a real etcd binary. That binary is
+# what repeatedly times out in CI.
 #
 # algorithm_chaos_test is excluded below: it asserts a randomly-seeded
 # statistical bound, flaky by construction.
 #
-# Linux-only: dicer's coursier resolve times out on this repo's macOS CI
-# network (same failure as joern_test above), and the nested Bazelisk
-# invocation needs %LocalAppData% for its home directory, unset on this
-# repo's Windows CI.
+# Linux-only: dicer's own macOS CI hits a coursier network timeout, and
+# Windows CI is missing %LocalAppData%, needed by the nested Bazelisk
+# invocation.
 #
 # size = "enormous" for the same reason as joern_test above: dicer's nested
 # test suite is large enough, with some tests minutes-long, to exceed this
