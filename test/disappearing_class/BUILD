@@ -14,6 +14,7 @@ scala_library(
 
 sh_test(
     name = "disappearing_class_test",
+    size = "large",
     srcs = ["disappearing_class_test.sh"],
     args = [
         "//test/disappearing_class:uses_class",
