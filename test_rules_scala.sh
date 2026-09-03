@@ -25,12 +25,13 @@ if [[ -n "${base_test_tag_filters}" ]]; then
 fi
 
 # The lines below run test/... again under different --extra_toolchains
-# values ("toolchain sweeps"). A "fixed-toolchain" build_test's own transition
-# already sets --extra_toolchains to one fixed value, so its result is the
-# same in every sweep. These two flags skip it in the extra sweeps, combined
-# with base_test_tag_filters above, since the default sweep already checks it.
-toolchain_sweep_build_flag="--build_tag_filters=-fixed-toolchain"
-toolchain_sweep_test_flag="--test_tag_filters=${base_test_tag_filters:+${base_test_tag_filters},}-fixed-toolchain"
+# values ("toolchain sweeps"). A build_test tagged "skip-toolchain-sweep" has
+# its own transition that already sets --extra_toolchains to one fixed value,
+# so its result is the same in every sweep. These two flags skip it in the
+# extra sweeps, combined with base_test_tag_filters above, since the default
+# sweep already checks it.
+toolchain_sweep_build_flag="--build_tag_filters=-skip-toolchain-sweep"
+toolchain_sweep_test_flag="--test_tag_filters=${base_test_tag_filters:+${base_test_tag_filters},}-skip-toolchain-sweep"
 
 . "${test_dir}"/test_bzlmod_macros.sh
 $runner bazel build src/... test/...

@@ -78,7 +78,7 @@ tasks:
       # Downstream consumer tests aren't expected to build against an
       # unreleased Bazel; skip them so a green here means an actual
       # last_green regression, not third-party noise.
-      - RULES_SCALA_TEST_TAG_FILTERS=-no-last-green ./test_rules_scala.sh
+      - RULES_SCALA_TEST_TAG_FILTERS=-skip-last-green-bazel ./test_rules_scala.sh
     soft_fail:
       - exit_status: "*"
   test_rules_scala_macos:
