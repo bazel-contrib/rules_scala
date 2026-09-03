@@ -56,16 +56,12 @@ tasks:
     name: "./test_rules_scala"
     platform: ubuntu2004
     shell_commands:
-      # Install xmllint
-      - sudo apt update && sudo apt install --reinstall libxml2-utils -y
       - "./test_rules_scala.sh"
   test_rules_scala_linux_last_green:
     name: "./test_rules_scala (last_green Bazel)"
     platform: ubuntu2004
     bazel: last_green
     shell_commands:
-      # Install xmllint
-      - sudo apt update && sudo apt install --reinstall libxml2-utils -y
       - echo "common --lockfile_mode=update" >>.bazelrc
       # The nested-Bazel tests (expect_build_failure_test etc.) shell out to
       # `bazel` from inside a test action. bazelisk prepends the dir holding the
@@ -93,7 +89,6 @@ tasks:
       MSYS2_ARG_CONV_EXCL: "*"
     batch_commands:
       - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
-      - 'bash -lc "pacman --noconfirm --needed -S libxml2"' #tests require xmllint
       - "bash test_rules_scala.sh"
   test_coverage_linux:
     name: "./test_coverage"
@@ -149,7 +144,6 @@ tasks:
     name: "./test_rules_scala with jdk21"
     platform: ubuntu2004
     shell_commands:
-      - sudo apt update && sudo apt install -y libxml2-utils
       - echo "build --java_language_version=21" >> .bazelrc
       - echo "build --java_runtime_version=21" >> .bazelrc
       - echo "build --tool_java_language_version=21" >> .bazelrc
@@ -177,7 +171,6 @@ tasks:
       MSYS2_ARG_CONV_EXCL: "*"
     batch_commands:
       - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
-      - 'bash -lc "pacman --noconfirm --needed -S libxml2"' #tests require xmllint
       - "bash ./test_dependency_versions.sh" # script removes ./ from BASH_SOURCE
   bcr_presubmit:
     # Keep in sync with .bcr/presubmit.yml.

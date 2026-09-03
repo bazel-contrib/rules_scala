@@ -148,7 +148,7 @@
     "//test/community_build:downstream_repository.bzl%downstream_consumers": {
       "general": {
         "bzlTransitiveDigest": "iNbmMqJdb8MiDSGAH41GC2emXRrNu1I+eGxIIxnLxZo=",
-        "usagesDigest": "ylTxWZOsS2rL1viJm4oKFPgAglCgWPpVd5YJ+CTGZTU=",
+        "usagesDigest": "CwUUnc8bB6arWZ4SSw8Cx/ZV385dh8SV4CyMUYJ42MQ=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -159,7 +159,9 @@
             "attributes": {
               "remote": "https://github.com/joernio/joern.git",
               "commit": "7da091d0a6a860a89d411ee04e3a7e696dbdf6b1",
-              "patches": []
+              "patches": [
+                "@@//test/community_build:joern_jssrc2cpg_smoke.patch"
+              ]
             }
           },
           "dicer": {

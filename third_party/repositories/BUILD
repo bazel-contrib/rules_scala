@@ -19,4 +19,5 @@ exports_files([
     "scala_3_6.bzl",
     "scala_3_7.bzl",
     "scala_3_8.bzl",
+    "scala_3_9.bzl",
 ])

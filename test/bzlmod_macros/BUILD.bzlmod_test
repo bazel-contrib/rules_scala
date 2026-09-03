@@ -1,4 +1,4 @@
-"""Used by test/shell/test_bzlmod_helpers.sh to test bzlmod.bzl."""
+"""Used by test/bzlmod_macros/bzlmod_macros_test.sh to test bzlmod.bzl."""
 
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 load(

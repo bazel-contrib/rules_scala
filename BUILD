@@ -8,11 +8,12 @@ exports_files(["MODULE.bazel"])
 # when the generation logic changes.
 exports_files(["scala_config.bzl"])
 
-# Declared inputs of the nested `bazel` tests: it reads the repo `.bazelrc`,
-# resolves dependencies from the lock and runs the version bazelisk picks, so
-# all three decide their outcome. See //test/expect_build_failure.
+# Declared inputs of nested `bazel` tests. The expect_* tests read the repo
+# config, lockfile and Bazel version; the bzlmod macro tests also consume the
+# latest-dependencies module through local_path_override.
 exports_files([
     ".bazelrc",
     ".bazelversion",
     "MODULE.bazel.lock",
+    "deps/latest/MODULE.bazel",
 ])

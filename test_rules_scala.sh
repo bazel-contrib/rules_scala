@@ -33,7 +33,6 @@ fi
 toolchain_sweep_build_flag="--build_tag_filters=-skip-toolchain-sweep"
 toolchain_sweep_test_flag="--test_tag_filters=${base_test_tag_filters:+${base_test_tag_filters},}-skip-toolchain-sweep"
 
-. "${test_dir}"/test_bzlmod_macros.sh
 $runner bazel build src/... test/...
 #$runner bazel build src/... test/... --all_incompatible_changes
 $runner bazel test "${test_flags[@]}" src/... test/...
