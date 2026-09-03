@@ -10,6 +10,7 @@ load("//third_party/repositories:scala_3_5.bzl", scala_3_5_version = "scala_vers
 load("//third_party/repositories:scala_3_6.bzl", scala_3_6_version = "scala_version")
 load("//third_party/repositories:scala_3_7.bzl", scala_3_7_version = "scala_version")
 load("//third_party/repositories:scala_3_8.bzl", scala_3_8_version = "scala_version")
+load("//third_party/repositories:scala_3_9.bzl", scala_3_9_version = "scala_version")
 
 # test/compiler_sources_integrity is a separate Bazel module (its own
 # MODULE.bazel/WORKSPACE, local_path_override'd onto this checkout) excluded
@@ -91,6 +92,7 @@ sh_test(
         ("scala_3_6", scala_3_6_version),
         ("scala_3_7", scala_3_7_version),
         ("scala_3_8", scala_3_8_version),
+        ("scala_3_9", scala_3_9_version),
     ]
 ]
 

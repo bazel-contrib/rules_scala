@@ -40,6 +40,8 @@ SCALA_VERSIONS = [
     f'3.7.{patch}' for patch in range(0, 5)    # 3.7.0  to 3.7.4
 ] + [
     f'3.8.{patch}' for patch in range(0, 5)    # 3.8.0  to 3.8.4
+] + [
+    f'3.9.{patch}' for patch in range(0, 1)    # 3.9.0  to 3.9.0 LTS
 ]
 
 DATA_MARKER = "COMPILER_SOURCES = "
