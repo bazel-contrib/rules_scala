@@ -12,30 +12,31 @@ test_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/test/shell
 . "${test_dir}"/test_runner.sh
 runner=$(get_test_runner "${1:-local}")
 test_output_flag="--test_output=errors"
+# `RULES_SCALA_TEST_TAG_FILTERS`: an extra `--test_tag_filters` value for
+# every `bazel test` below (e.g. the last_green CI job sets this to skip its
+# own downstream-consumer tests). Kept out of `--test_tag_filters` itself so
+# a caller's own value and the toolchain-sweep flags below can both apply:
+# Bazel keeps only the last `--test_tag_filters` it sees on one command line,
+# so passing two would silently drop one of them.
+base_test_tag_filters="${RULES_SCALA_TEST_TAG_FILTERS:-}"
+test_flags=("${test_output_flag}")
+if [[ -n "${base_test_tag_filters}" ]]; then
+  test_flags+=("--test_tag_filters=${base_test_tag_filters}")
+fi
+
 # The lines below run test/... again under different --extra_toolchains
 # values ("toolchain sweeps"). A "fixed-toolchain" build_test's own transition
 # already sets --extra_toolchains to one fixed value, so its result is the
-# same in every sweep. These two flags skip it in the extra sweeps, since
-# the default sweep above already checks it.
-#
-# A CI job that needs its own --test_tag_filters value too (e.g. to also
-# skip some other tests) writes that value to .extra_test_tag_filters
-# before calling this script, instead of passing --test_tag_filters
-# itself: Bazel keeps only the last --test_tag_filters value it sees, so a
-# second one here would silently replace the job's own value instead of
-# adding to it.
-extra_test_tag_filters=""
-if [[ -f .extra_test_tag_filters ]]; then
-  extra_test_tag_filters=$(cat .extra_test_tag_filters)
-fi
+# same in every sweep. These two flags skip it in the extra sweeps, combined
+# with base_test_tag_filters above, since the default sweep already checks it.
 toolchain_sweep_build_flag="--build_tag_filters=-fixed-toolchain"
-toolchain_sweep_test_flag="--test_tag_filters=${extra_test_tag_filters:+${extra_test_tag_filters},}-fixed-toolchain"
+toolchain_sweep_test_flag="--test_tag_filters=${base_test_tag_filters:+${base_test_tag_filters},}-fixed-toolchain"
 
 . "${test_dir}"/test_bzlmod_macros.sh
 $runner bazel build src/... test/...
 #$runner bazel build src/... test/... --all_incompatible_changes
-$runner bazel test "${test_output_flag}" src/... test/...
-$runner bazel test "${test_output_flag}" third_party/...
+$runner bazel test "${test_flags[@]}" src/... test/...
+$runner bazel test "${test_flags[@]}" third_party/...
 $runner bazel build "${toolchain_sweep_build_flag}" --extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_error -- test/...
 $runner bazel build "${toolchain_sweep_build_flag}" --extra_toolchains=//scala:minimal_direct_source_deps -- test/...
 #$runner bazel build --extra_toolchains=//test/toolchains:high_level_transitive_deps_strict_deps_error --all_incompatible_changes -- test/...
