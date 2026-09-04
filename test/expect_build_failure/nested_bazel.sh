@@ -84,14 +84,6 @@ _nested_bazel_real_home=""
 _nested_bazel_common_opts=()
 _nested_bazel_symlink_prefix=""
 
-# Prepares the environment for nested `bazel` invocations and `cd`s into the real
-# source workspace. Call once before any `nested_bazel_run`.
-#
-# Arg 1: the nested output base directory name (created under /tmp). All nested
-# invocations from a single test share it. Under one `bazel test //...` the tests
-# then serialize on Bazel's output-base lock (each inner `bazel --batch` waits for
-# the lock rather than failing), which keeps the extracted external repos warm and
-# avoids multiplying ~1GB of Scala jars across a separate output base per test.
 _nested_bazel_home_hint() {
   if [[ -n "${RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME:-}" ]]; then
     return
@@ -102,6 +94,14 @@ _nested_bazel_home_hint() {
   echo "      --test_env=RULES_SCALA_NESTED_BAZEL_USE_REAL_HOME=1." >&2
 }
 
+# Prepares the environment for nested `bazel` invocations and `cd`s into the real
+# source workspace. Call once before any `nested_bazel_run`.
+#
+# Arg 1: the nested output base directory name (created under /tmp). Every
+# caller that passes the same name shares that output base (each inner
+# `bazel --batch` waits on Bazel's own output-base lock rather than failing),
+# which keeps the extracted external repos warm and avoids multiplying ~1GB
+# of Scala jars across a separate output base per test.
 nested_bazel_setup() {
   local output_base_name="${1:?nested_bazel_setup requires an output-base directory name}"
 
