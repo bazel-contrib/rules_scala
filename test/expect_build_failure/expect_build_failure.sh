@@ -8,7 +8,7 @@
 # nested_bazel.sh helper this script sources.
 #
 # Usage:
-#   expect_build_failure.sh --target <label> \
+#   expect_build_failure.sh --target <label> --lane <0|1|2> \
 #       [--command <build|test|coverage>] \
 #       [--expect-success] \
 #       [--env <KEY=VALUE>]... \
@@ -18,6 +18,9 @@
 #       [--reject-file <path>]...
 #
 #   --target          the label to act on.
+#   --lane            which of the 3 shared nested output bases to use (see
+#                      nested_bazel_setup); the caller macro derives this from
+#                      hash(name) % 3.
 #   --command         the bazel subcommand to run; defaults to `build`.
 #   --expect-success  assert the invocation succeeds; by default it must fail.
 #   --env             KEY=VALUE exported into the nested `bazel` client env before
@@ -63,6 +66,7 @@ target=""
 command="build"
 expect_success="false"
 clean_before_build="false"
+lane=""
 bazel_args=()
 bazel_arg_files=()
 expect_files=()
@@ -85,6 +89,10 @@ while [[ "$#" -gt 0 ]]; do
     --clean-before-build)
       clean_before_build="true"
       shift
+      ;;
+    --lane)
+      lane="$2"
+      shift 2
       ;;
     --env)
       # Exported here so it reaches the nested `bazel` client (nested_bazel_run
@@ -120,6 +128,11 @@ if [[ -z "${target}" ]]; then
   exit 2
 fi
 
+if [[ -z "${lane}" ]]; then
+  echo "Missing required --lane." >&2
+  exit 2
+fi
+
 # Resolves a message file path, tolerating an absolute path, a path relative to
 # the original working directory (before the `cd` in nested_bazel_setup), or one
 # relative to the test's runfiles root.
@@ -140,7 +153,7 @@ _resolve_message_file() {
   printf '%s' "${file}"
 }
 
-nested_bazel_setup "rules_scala_expect_build_failure_output_base"
+nested_bazel_setup "rules_scala_expect_build_failure_output_base_lane${lane}"
 
 # Append file-backed flags (see --bazel-arg-file). Read here, after parsing, so
 # the shell never has to carry the raw value on a command line.

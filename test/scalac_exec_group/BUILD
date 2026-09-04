@@ -124,9 +124,7 @@ sh_test(
         "//scala/private:rules/scala_repl.bzl",
         "//scala/private:rules/scala_test.bzl",
     ] + glob(["*"]),
-    # Shares the nested output base of the other nested-Bazel tests, whose lock
-    # serializes them; "exclusive" keeps this one from queueing behind them and
-    # blowing its timeout.
+    # Uses a nested output base dedicated to only this test.
     tags = [
         "exclusive",
         "local",

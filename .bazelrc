@@ -40,3 +40,32 @@ build --java_runtime_version=17
 #Windows needs --worker_quit_after_build due to workers not being shut down when the compiler tools need to be rebuilt (resulting in 'file in use' errors). See Bazel Issue#10498.
 
 build:windows --worker_quit_after_build --enable_runfiles
+
+# bazelci's own remote-cache flags (remote_caching_flags in bazelci.py) for
+# `build_targets`/`test_targets` tasks, as named configs a bazel invocation
+# must explicitly request via --config -- see test_rules_scala.sh, which
+# requests one of these for its own top-level calls while the nested `bazel`
+# calls the expect_* tests run stay on the default configuration.
+# Covers both Linux and Windows: both cache through the RBE (Remote Build
+# Execution) endpoint, only macOS (below) uses a different backend.
+build:ci-cache-rbe --remote_cache=remotebuildexecution.googleapis.com
+build:ci-cache-rbe --remote_instance_name=projects/bazel-untrusted/instances/default_instance
+build:ci-cache-rbe --google_default_credentials
+build:ci-cache-rbe --remote_max_connections=200
+
+# macOS runs on MacService instead of GCE (Google Compute Engine), so
+# bazelci.py caches it through a GCS (Google Cloud Storage) bucket instead
+# (still with --google_default_credentials).
+build:ci-cache-gcs --remote_cache=https://storage.googleapis.com/bazel-untrusted-build-cache
+build:ci-cache-gcs --google_default_credentials
+build:ci-cache-gcs --remote_timeout=3600
+build:ci-cache-gcs --remote_max_connections=200
+
+# Caps each of the 3 lanes expect_build_failure_test's nested tests hash into
+# (see the "resources:laneN_lock:1" tag in expect_build_failure.bzl) at one
+# running test at a time, so two tests in the same lane access their shared
+# nested output base one at a time. A higher macOS amount was tried, to work
+# around a Bazel scheduler bug (bazelbuild/bazel#18153) where a scarce
+# resource delays every unrelated test alongside it, but its own script-level
+# lock caused more timeouts than this flat cap, so 1 stayed uniform.
+test --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1

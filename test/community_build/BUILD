@@ -99,5 +99,9 @@ downstream_test(
         "-//dicer/assigner:multiple_assigner_instances_test",
         "-//dicer/assigner:target_migration_integration_test",
         "-//dicer/common:etcd_bootstrapper_test",
+        # Its own `timeout = "short"` (60s) leaves it running within a second
+        # of that limit even on an otherwise-idle machine, so any extra load
+        # sharing the host tips it into an occasional TIMEOUT.
+        "-//dicer/assigner:assignment_generator_test",
     ],
 )
