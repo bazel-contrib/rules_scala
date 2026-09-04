@@ -1,10 +1,11 @@
 load("//scala:scala.bzl", "scala_library")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # `a` uses a symbol reachable only transitively through
 # @org_springframework_spring_tx; only plus-one mode allows that. Tagged "manual"
-# so a default-toolchain wildcard build skips it (the nested build below names it
-# explicitly and supplies the plus-one toolchain).
+# so a default-toolchain wildcard build skips it; the test below reaches it
+# through a label, which bypasses "manual", and supplies the plus-one toolchain.
 scala_library(
     name = "a",
     testonly = True,
@@ -13,9 +14,9 @@ scala_library(
     deps = ["@org_springframework_spring_tx"],
 )
 
-expect_build_success_test(
+toolchain_build_test(
     name = "plus_one_deps_external_deps_test",
-    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":a",
 )
 

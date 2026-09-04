@@ -1,6 +1,7 @@
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 scala_toolchain(
     name = "failing_toolchain_impl",
@@ -57,9 +58,9 @@ expect_build_failure_test(
     target = ":toolchain_failing_build",
 )
 
-expect_build_success_test(
+toolchain_build_test(
     name = "mode_override_toolchain_succeeds_test",
-    build_args = ["--extra_toolchains=//test/unused_dependency_checker:failing_scala_toolchain"],
+    extra_toolchains = ["//test/unused_dependency_checker:failing_scala_toolchain"],
     target = ":toolchain_override",
 )
 
@@ -75,8 +76,8 @@ expect_build_success_test(
 
 # `target` lives in //test/scala_test, not this package: see the comment above
 # on mode_warn_test.
-expect_build_success_test(
+toolchain_build_test(
     name = "ast_analyzer_no_scalatest_unused_dep_warning_test",
-    build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_error"],
+    extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_error"],
     target = "//test/scala_test:b",
 )

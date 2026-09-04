@@ -1,6 +1,7 @@
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 toolchain(
     name = "plus_one_unused_deps_filter",
@@ -41,9 +42,9 @@ scala_library(
     deps = ["@com_google_guava_guava_21_0"],
 )
 
-expect_build_success_test(
+toolchain_build_test(
     name = "excluded_target_succeeds_test",
-    build_args = ["--extra_toolchains=//test/unused_dependency_checker/filtering:plus_one_unused_deps_filter"],
+    extra_toolchains = ["//test/unused_dependency_checker/filtering:plus_one_unused_deps_filter"],
     target = ":a",
 )
 

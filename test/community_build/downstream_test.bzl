@@ -35,7 +35,7 @@ def downstream_test(
         test_filter = "",
         patches = [],
         size = "large",
-        tags = ["no-sandbox", "no-remote-exec", "requires-network", "no-last-green"],
+        tags = ["no-sandbox", "no-remote-exec", "requires-network", "skip-last-green-bazel"],
         **kwargs):
     """Declares an `sh_test` testing `targets` in the `repo_name` external repo.
 
@@ -80,12 +80,12 @@ def downstream_test(
         size: test size; defaults to "large" (nested Bazel invocation, cold
             Maven/git fetch on first run).
         tags: test tags; defaults to
-            `["no-sandbox", "no-remote-exec", "requires-network", "no-last-green"]`.
+            `["no-sandbox", "no-remote-exec", "requires-network", "skip-last-green-bazel"]`.
             `no-sandbox` and `no-remote-exec` let this run outside the sandbox
             (the nested `bazel` reads the real source tree) while keeping it
             eligible for the test-result cache -- see the module docstring for
             why not `local`/`external`. `requires-network`: the nested build
-            fetches external repos on a cache miss. `no-last-green` excludes
+            fetches external repos on a cache miss. `skip-last-green-bazel` excludes
             these from the last_green Bazel CI step (via `--test_tag_filters`):
             a third-party consumer isn't expected to build against an
             unreleased Bazel, so failures there are noise, not a rules_scala

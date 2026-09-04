@@ -1,11 +1,12 @@
 load("//scala:scala.bzl", "scala_library")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # Make sure plus-one deps reachable through a direct dep's exports propagate too,
 # both when the export is a pure facade (no srcs) and when it is a real dep. All
 # libraries are tagged "manual" so a default-toolchain wildcard build skips them;
-# the nested builds below name the top targets explicitly and supply the
-# plus-one toolchain.
+# the tests below reach the top targets through a label, which bypasses
+# "manual", and supply the plus-one toolchain.
 
 # example with target only in exports
 scala_library(
@@ -51,15 +52,15 @@ scala_library(
     tags = ["manual"],
 )
 
-expect_build_success_test(
+toolchain_build_test(
     name = "plus_one_deps_deps_of_exports_facade_test",
-    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":test_target_using_facade",
 )
 
-expect_build_success_test(
+toolchain_build_test(
     name = "plus_one_deps_deps_of_exports_test",
-    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
+    extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = ":test_target",
 )
 

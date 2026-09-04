@@ -1,7 +1,7 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_success_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 load("scaladoc.bzl", "scala_doc_intransitive")
 
 package(default_testonly = 1)
@@ -98,8 +98,8 @@ sh_test(
 )
 
 # Test that scaladoc for transitive external deps works (just build succeeds).
-expect_build_success_test(
+toolchain_build_test(
     name = "scaladoc_C_build_test",
-    target = "//test/scaladoc:scaladoc_C",
-    build_args = ["--extra_toolchains=//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
+    extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
+    target = ":scaladoc_C",
 )

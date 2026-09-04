@@ -1,6 +1,7 @@
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
-load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 toolchain(
     name = "plus_one_strict_deps_filter",
@@ -46,9 +47,9 @@ scala_library(
     deps = [":transitive_deps"],
 )
 
-expect_build_success_test(
+toolchain_build_test(
     name = "strict_deps_filter_excluded_target_test",
-    build_args = ["--extra_toolchains=//test/strict_dependency/filtering:plus_one_strict_deps_filter"],
+    extra_toolchains = ["//test/strict_dependency/filtering:plus_one_strict_deps_filter"],
     target = ":a",
 )
 

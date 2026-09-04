@@ -1,13 +1,13 @@
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test", "expect_build_success_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # The plus_one_deps toolchain stays in test_expect_failure/: test_rules_scala.sh
-# itself builds against it directly (line 27), outside any single shell file's
-# migration.
+# itself sets it directly for its own extra toolchain sweep, outside any
+# single shell file's migration.
 
-expect_build_success_test(
+toolchain_build_test(
     name = "plus_one_deps_only_works_for_java_info_targets_test",
-    build_args = ["--extra_toolchains=//test_expect_failure/plus_one_deps:plus_one_deps"],
-    no_fingerprint_reason = "test_proto is a plain proto_library, so it runs no rules_scala action to fingerprint",
+    extra_toolchains = ["//test_expect_failure/plus_one_deps:plus_one_deps"],
     target = "//test/proto:test_proto",
 )
 

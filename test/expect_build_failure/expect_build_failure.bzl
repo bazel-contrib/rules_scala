@@ -48,7 +48,7 @@ tests therefore name those files by hand:
 Editing `.bazelversion` re-runs the tests. What that file cannot catch is a CI
 step which leaves it alone and points bazelisk at another binary. One step does
 that (`last_green`), and it keeps its own cache key regardless, because it
-appends three flags to `.bazelrc`, which is on the list above.
+appends flags to `.bazelrc`, which is on the list above.
 
 Outside the list is whatever the network serves while external repositories are
 fetched. `MODULE.bazel.lock` pins the versions, so what is exposed is a flaky
