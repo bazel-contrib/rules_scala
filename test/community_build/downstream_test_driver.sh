@@ -7,7 +7,7 @@
 #
 # Usage: downstream_test_driver.sh --marker-rootpath <path> --scala-version <v> \
 #   --output-base-name <name> [--extra-bazel-flags <flags>] [--test-filter <value>] \
-#   [--filtered-targets <target>...] -- <target-pattern>...
+#   [--filtered-targets <target>...] [--smoke-test-targets <target>...] -- <target-pattern>...
 #
 # Named flags because Bazel/rules_shell silently drops or mangles blank
 # `args` entries -- same convention as test/expect_build_failure/expect_build_failure.sh.
@@ -20,6 +20,7 @@ output_base_name=""
 extra_bazel_flags=""
 test_filter=""
 filtered_targets=()
+smoke_test_targets=()
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --marker-rootpath)
@@ -44,8 +45,20 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --filtered-targets)
       shift
-      while [[ "$#" -gt 0 && "$1" != "--" ]]; do
+      # Stop at the next flag (anything starting with "--"), not just the
+      # bare "--" target-list separator: a following --smoke-test-targets
+      # would otherwise get swallowed into this list too. Safe because
+      # Bazel target patterns never start with "--" (a negative pattern
+      # like "-//pkg/..." starts with a single "-").
+      while [[ "$#" -gt 0 && "$1" != --* ]]; do
         filtered_targets+=("$1")
+        shift
+      done
+      ;;
+    --smoke-test-targets)
+      shift
+      while [[ "$#" -gt 0 && "$1" != --* ]]; do
+        smoke_test_targets+=("$1")
         shift
       done
       ;;
@@ -260,9 +273,18 @@ done
 # downstream_test.bzl's filtered_targets docstring), so a filtered target
 # runs exactly once, through the second invocation below.
 status=0
-# shellcheck disable=SC2086 # intentional word-splitting: extra_bazel_flags
-# and targets are each meant to expand to multiple words/patterns.
-nested_bazel_run test --test_output=errors --cache_test_results=no \
+# smoke_test_targets means `targets` only builds here (see
+# downstream_test.bzl's docstring), so this invocation drops the
+# test-only --test_output/--cache_test_results flags.
+main_command="test"
+main_command_extra_flags="--test_output=errors --cache_test_results=no"
+if [[ "${#smoke_test_targets[@]}" -gt 0 ]]; then
+  main_command="build"
+  main_command_extra_flags=""
+fi
+# shellcheck disable=SC2086 # intentional word-splitting: main_command_extra_flags,
+# extra_bazel_flags and targets are each meant to expand to multiple words/patterns.
+nested_bazel_run "${main_command}" ${main_command_extra_flags} \
   --repo_env=SCALA_VERSION="${scala_version}" \
   ${extra_bazel_flags} -- "${targets[@]}" || status="$?"
 
@@ -281,6 +303,22 @@ if [[ "${#filtered_targets[@]}" -gt 0 ]]; then
     -- "${filtered_targets[@]}" || filtered_status="$?"
   if [[ "${filtered_status}" -gt "${status}" ]]; then
     status="${filtered_status}"
+  fi
+fi
+
+# A third, separate invocation for smoke_test_targets: the main invocation
+# above only *built* them (part of `targets`), so they still need their own
+# `bazel test` to actually execute -- reusing, via Bazel's own action cache
+# (same output_base), the build outputs the main invocation already
+# produced.
+if [[ "${#smoke_test_targets[@]}" -gt 0 ]]; then
+  smoke_status=0
+  # shellcheck disable=SC2086 # same intentional word-splitting as above.
+  nested_bazel_run test --test_output=errors --cache_test_results=no \
+    --repo_env=SCALA_VERSION="${scala_version}" \
+    ${extra_bazel_flags} -- "${smoke_test_targets[@]}" || smoke_status="$?"
+  if [[ "${smoke_status}" -gt "${status}" ]]; then
+    status="${smoke_status}"
   fi
 fi
 
