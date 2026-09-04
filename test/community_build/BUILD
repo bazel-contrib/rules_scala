@@ -81,12 +81,22 @@ downstream_test(
 # size = "enormous" for the same reason as joern_test above: dicer's nested
 # test suite is large enough, with some tests minutes-long, to exceed this
 # sh_test's own "large" (900s) default in total.
+#
+# smoke_test_targets: dicer's other ~150 test targets assert dicer's own
+# business logic; these two are the actual runtime check for
+# scala_proto/ScalaPB codegen, round-tripping real generated messages
+# (`toProto`/`fromProto`). gRPC service/stub code keeps compile-only
+# coverage, same as everything else in `targets`.
 downstream_test(
     name = "dicer_test",
     size = "enormous",
     patches = ["//test/community_build:dicer_protobuf_version.patch"],
     repo_name = "dicer",
     scala_version = "2.12.21",
+    smoke_test_targets = [
+        "//dicer/common:assignment_test",
+        "//dicer/common:diff_assignment_test",
+    ],
     target_compatible_with = ["@platforms//os:linux"],
     targets = [
         "//...",
