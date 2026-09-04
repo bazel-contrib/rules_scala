@@ -56,7 +56,9 @@ tasks:
     name: "./test_rules_scala"
     platform: ubuntu2004
     shell_commands:
-      - "./test_rules_scala.sh"
+      # src/... + test/... under the default toolchain is already covered,
+      # with remote cache, by the ubuntu2004 "bazel test //..." task.
+      - "SKIP_DEFAULT_TOOLCHAIN_RUN=1 ./test_rules_scala.sh"
   test_rules_scala_linux_last_green:
     name: "./test_rules_scala (last_green Bazel)"
     platform: ubuntu2004
@@ -81,7 +83,9 @@ tasks:
     name: "./test_rules_scala"
     platform: macos
     shell_commands:
-      - "./test_rules_scala.sh"
+      # src/... + test/... under the default toolchain is already covered,
+      # with remote cache, by the macos "bazel test //..." task.
+      - "SKIP_DEFAULT_TOOLCHAIN_RUN=1 ./test_rules_scala.sh"
   test_rules_scala_win:
     name: "./test_rules_scala"
     platform: windows
