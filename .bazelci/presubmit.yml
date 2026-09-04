@@ -56,7 +56,7 @@ tasks:
     name: "./test_rules_scala"
     platform: ubuntu2004
     shell_commands:
-      - "RULES_SCALA_REMOTE_CACHE=ubuntu2004 ./test_rules_scala.sh"
+      - "RULES_SCALA_REMOTE_CACHE=1 ./test_rules_scala.sh"
   test_rules_scala_linux_last_green:
     name: "./test_rules_scala (last_green Bazel)"
     platform: ubuntu2004
@@ -81,7 +81,7 @@ tasks:
     name: "./test_rules_scala"
     platform: macos
     shell_commands:
-      - "RULES_SCALA_REMOTE_CACHE=macos ./test_rules_scala.sh"
+      - "RULES_SCALA_REMOTE_CACHE=1 ./test_rules_scala.sh"
   test_rules_scala_win:
     name: "./test_rules_scala"
     platform: windows

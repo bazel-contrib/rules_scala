@@ -37,11 +37,11 @@ toolchain_sweep_test_flag="--test_tag_filters=${base_test_tag_filters:+${base_te
 # other CI task exercises, so there's nothing else for Bazel to reuse -- but
 # unlike a build_targets/test_targets task, a shell_commands task like this one
 # (bazelci.py's execute_shell_commands()) gets no remote-cache flags for free.
-# Add them ourselves, gated by RULES_SCALA_REMOTE_CACHE=<platform>, so repeated
-# CI runs of this script reuse each other's cache instead of always starting
-# from empty.
+# Add them here, gated by RULES_SCALA_REMOTE_CACHE=1, so repeated CI runs of
+# this script share a cache across runs.
 remote_cache_flags=()
 if [[ -n "${RULES_SCALA_REMOTE_CACHE:-}" ]]; then
+  platform=$(uname)
   buildkite_org="${BUILDKITE_ORGANIZATION_SLUG:-bazel}"
   cloud_project=bazel-untrusted
   bucket_id=untrusted
@@ -52,10 +52,15 @@ if [[ -n "${RULES_SCALA_REMOTE_CACHE:-}" ]]; then
   sha256() { if command -v sha256sum >/dev/null; then sha256sum; else shasum -a 256; fi; }
   # A tag we own, not bazelci.py's "cache-poisoning-<date>" one: this cache is
   # only ever read/written by this script's own runs, so there's no upstream
-  # tag to track or fall out of sync with.
-  silo_key=$(printf '%s:test_rules_scala.sh-extra-toolchains-v1:%s:' \
-    "$buildkite_org" "$RULES_SCALA_REMOTE_CACHE" | sha256 | cut -d' ' -f1)
-  if [[ "$RULES_SCALA_REMOTE_CACHE" == macos ]]; then
+  # tag to track or fall out of sync with. On macOS, fold in the OS/Xcode
+  # version too, so a runner-image upgrade gets a fresh silo instead of
+  # sharing one with results built under the old toolchain.
+  silo_key_input="${buildkite_org}:test_rules_scala.sh-extra-toolchains-v1:${platform}"
+  if [[ "$platform" == Darwin ]]; then
+    silo_key_input+=":$(sw_vers -productVersion):$(xcode-select -p):$(xcodebuild -version)"
+  fi
+  silo_key=$(printf '%s' "$silo_key_input" | sha256 | cut -d' ' -f1)
+  if [[ "$platform" == Darwin ]]; then
     remote_cache_flags=(
       "--remote_cache=https://storage.googleapis.com/bazel-${bucket_id}-build-cache"
       "--google_default_credentials"
