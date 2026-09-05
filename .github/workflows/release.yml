@@ -29,7 +29,7 @@ jobs:
   release:
     uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.4.0
     with:
-      bazel_test_command: "bazel test //src/... //test/... //third_party/..."
+      bazel_test_command: "bazel test -- //... -//test/community_build/..."
       prerelease: false
       draft: true
       release_files: rules_scala-*.tar.gz
