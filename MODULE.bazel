@@ -307,6 +307,7 @@ bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
 downstream_consumers = use_extension(
     "//test/community_build:downstream_repository.bzl",
     "downstream_consumers",
+    dev_dependency = True,
 )
 downstream_consumers.consumer(
     name = "joern",
