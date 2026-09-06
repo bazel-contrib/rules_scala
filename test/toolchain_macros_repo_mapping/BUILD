@@ -15,7 +15,6 @@ sh_test(
         "//testing:testing.bzl",
     ],
     tags = [
-        "exclusive",
         "local",
         "requires-network",
     ],

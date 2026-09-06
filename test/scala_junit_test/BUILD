@@ -236,7 +236,6 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
         "local",
         "requires-network",
     ],
@@ -255,7 +254,6 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
         "local",
         "requires-network",
     ],
@@ -372,7 +370,6 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
         "local",
         "requires-network",
     ],

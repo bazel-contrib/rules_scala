@@ -15,7 +15,6 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
         "external",
         "local",
         "requires-network",

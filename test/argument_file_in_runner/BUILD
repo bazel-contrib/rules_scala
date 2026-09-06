@@ -13,7 +13,6 @@ sh_test(
         "//test/src/main/scala/scalarules/test/large_classpath:largeClasspath",
     ],
     tags = [
-        "exclusive",
         # The nested build also reads the use_argument_file_in_runner toolchain
         # straight from the real workspace, which isn't practical to declare as
         # a source input, so caching is disabled to avoid serving a stale pass

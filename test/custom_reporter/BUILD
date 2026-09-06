@@ -22,7 +22,6 @@ sh_test(
         "//test/scala_test:custom_reporter",
     ],
     tags = [
-        "exclusive",
         "local",
         "requires-network",
     ],
