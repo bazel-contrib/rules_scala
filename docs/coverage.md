@@ -160,6 +160,40 @@ You could also register the toolchain in your `WORKSPACE`.
 
 You can verify that the locally built `jacocorunner` works with `manual_test/coverage_local_jacocorunner/test.sh`.
 
+## Methods too large to instrument
+
+JaCoCo's probes add bytecode, so a method that is already close to the JVM's
+64KB per-method limit goes over it once instrumented. ASM then throws
+`MethodTooLargeException`, `JacocoInstrumenter` fails, and every test that
+transitively depends on that library fails to build under `bazel coverage`,
+even though it compiles and tests fine without coverage.
+
+Set `coverage_skip_oversized_methods` on `scala_toolchain` to pass such a class
+through to the output jar uninstrumented instead of failing the build:
+
+```py
+scala_toolchain(
+    name = "coverage_skip_oversized_methods_impl",
+    coverage_skip_oversized_methods = True,
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "coverage_skip_oversized_methods",
+    toolchain = "coverage_skip_oversized_methods_impl",
+    toolchain_type = "@rules_scala//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)
+```
+
+```txt
+coverage --extra_toolchains="//path/to:coverage_skip_oversized_methods"
+```
+
+The class is omitted from coverage reports altogether rather than reported as
+uncovered, and `JacocoInstrumenter` prints a warning naming it. The default is
+`False`, which keeps the original behaviour of failing the action.
+
 ## Notes
 
 Please ensure these scripts use Java 8.
