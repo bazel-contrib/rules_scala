@@ -68,12 +68,6 @@ downstream_test(
 # dicer_test's job: exercise rules_scala's scala_proto/ScalaPB (gRPC)
 # codegen and Scala 2.12 support.
 #
-# The 8 targets excluded below start a real etcd binary. That binary is
-# what repeatedly times out in CI.
-#
-# algorithm_chaos_test is excluded below: it asserts a randomly-seeded
-# statistical bound, flaky by construction.
-#
 # Linux-only: this repo's macOS CI hits a coursier network timeout running
 # dicer_test, and its Windows CI is missing %LocalAppData%, needed by the
 # nested Bazelisk invocation.
@@ -81,27 +75,27 @@ downstream_test(
 # size = "enormous" for the same reason as joern_test above: dicer's nested
 # test suite is large enough, with some tests minutes-long, to exceed this
 # sh_test's own "large" (900s) default in total.
+#
+# smoke_test_targets: dicer's other ~150 test targets assert dicer's own
+# business logic; these two are the actual runtime check for
+# scala_proto/ScalaPB codegen, round-tripping real generated messages
+# (`toProto`/`fromProto`). gRPC service/stub code keeps compile-only
+# coverage, same as everything else in `targets` -- which needs no
+# exclusions any more: a real etcd binary starting (8 targets across
+# //caching/util and //dicer/assigner, //dicer/common), a flaky statistical
+# assertion (algorithm_chaos_test), and a tight test timeout under load
+# (assignment_generator_test) were all test-execution problems, moot once
+# a target only builds.
 downstream_test(
     name = "dicer_test",
     size = "enormous",
     patches = ["//test/community_build:dicer_protobuf_version.patch"],
     repo_name = "dicer",
     scala_version = "2.12.21",
-    target_compatible_with = ["@platforms//os:linux"],
-    targets = [
-        "//...",
-        "-//caching/util:etcd_suite",
-        "-//dicer/assigner/algorithm:algorithm_chaos_test",
-        "-//dicer/assigner:assigner_main_test",
-        "-//dicer/assigner:etcd_preferred_assigner_driver_test",
-        "-//dicer/assigner:etcd_preferred_assigner_integration_test",
-        "-//dicer/assigner:etcd_preferred_assigner_store_test",
-        "-//dicer/assigner:multiple_assigner_instances_test",
-        "-//dicer/assigner:target_migration_integration_test",
-        "-//dicer/common:etcd_bootstrapper_test",
-        # Its own `timeout = "short"` (60s) leaves it running within a second
-        # of that limit even on an otherwise-idle machine, so any extra load
-        # sharing the host tips it into an occasional TIMEOUT.
-        "-//dicer/assigner:assignment_generator_test",
+    smoke_test_targets = [
+        "//dicer/common:assignment_test",
+        "//dicer/common:diff_assignment_test",
     ],
+    target_compatible_with = ["@platforms//os:linux"],
+    targets = ["//..."],
 )

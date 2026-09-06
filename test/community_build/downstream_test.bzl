@@ -33,6 +33,7 @@ def downstream_test(
         extra_bazel_flags = "",
         filtered_targets = [],
         test_filter = "",
+        smoke_test_targets = [],
         patches = [],
         size = "large",
         tags = ["no-sandbox", "no-remote-exec", "requires-network", "skip-last-green-bazel"],
@@ -45,8 +46,13 @@ def downstream_test(
         scala_version: value to force via --repo_env=SCALA_VERSION (must be
             one this checkout's third_party repos carry).
         targets: list of Bazel target patterns to test in the consumer repo,
-            run unfiltered in one nested `bazel test` invocation.
-        extra_bazel_flags: extra flags forwarded to the nested `bazel test`.
+            run unfiltered in one nested `bazel test` invocation -- or, when
+            `smoke_test_targets` is set, compiled in one nested `bazel build`
+            invocation instead (see `smoke_test_targets`).
+        extra_bazel_flags: extra flags forwarded to the nested `bazel test`
+            -- or, when `smoke_test_targets` is set, to *both* the main
+            `bazel build` and the separate `bazel test` for
+            `smoke_test_targets`.
         filtered_targets: target patterns run only through a chosen
             ScalaTest suite (`test_filter`), instead of their whole test
             source tree -- e.g. joern_test uses this to run just a smoke
@@ -70,6 +76,10 @@ def downstream_test(
             hands the driver's arg loop a bare `--test_filter=...`, which
             only its catch-all `*)` case matches, exiting with "Unknown
             argument".
+        smoke_test_targets: if set, only these targets get tested; every
+            other target in `targets` only builds (see
+            downstream_test_driver.sh for the mechanism). Pick one
+            mechanism per target: this, or `filtered_targets`.
         patches: patch files applied to `repo_name`'s consumer in
             `MODULE.bazel` (that `consumer(...)` call's own `patches` attr).
             Declared here too, as `data`, purely for this `sh_test`'s own
@@ -109,6 +119,8 @@ def downstream_test(
         args += ["--test-filter", test_filter]
     if filtered_targets:
         args += ["--filtered-targets"] + filtered_targets
+    if smoke_test_targets:
+        args += ["--smoke-test-targets"] + smoke_test_targets
     args += ["--"] + targets
 
     sh_test(
