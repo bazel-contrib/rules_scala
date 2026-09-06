@@ -50,6 +50,8 @@ def _phase_coverage(ctx, p, srcjars):
         args = ctx.actions.args()
         args.set_param_file_format("multiline")
         args.use_param_file("@%s", use_always = True)
+        if ctx.toolchains["//scala:toolchain_type"].coverage_skip_oversized_methods:
+            args.add("--skip_oversized_methods")
         args.add(input_jar)
         args.add(output_jar)
         args.add_all(ctx.files.srcs)

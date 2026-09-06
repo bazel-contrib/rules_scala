@@ -152,3 +152,16 @@ toolchain(
     toolchain_type = "//scala:toolchain_type",
     visibility = ["//visibility:public"],
 )
+
+scala_toolchain(
+    name = "coverage_skip_oversized_methods_impl",
+    coverage_skip_oversized_methods = True,
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "coverage_skip_oversized_methods",
+    toolchain = "coverage_skip_oversized_methods_impl",
+    toolchain_type = "//scala:toolchain_type",
+    visibility = ["//visibility:public"],
+)

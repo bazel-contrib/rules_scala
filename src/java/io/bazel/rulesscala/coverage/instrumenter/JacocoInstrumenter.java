@@ -23,6 +23,12 @@ import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator;
 
 public final class JacocoInstrumenter implements Worker.Interface {
 
+  /**
+   * Pass classes whose instrumentation would push a method past the JVM's 64KB method limit through
+   * to the output jar uninstrumented, instead of failing the action.
+   */
+  private static final String SKIP_OVERSIZED_METHODS_FLAG = "--skip_oversized_methods";
+
   public static void main(String[] args) throws Exception {
     Worker.workerMain(args, new JacocoInstrumenter());
   }
@@ -34,15 +40,27 @@ public final class JacocoInstrumenter implements Worker.Interface {
   }
 
   private void processArg(Instrumenter jacoco, String[] args) throws Exception {
-    if (args.length < 3) {
+    boolean skipOversizedMethods = false;
+    int firstPositional = 0;
+
+    while (firstPositional < args.length && args[firstPositional].startsWith("--")) {
+      String flag = args[firstPositional++];
+      if (SKIP_OVERSIZED_METHODS_FLAG.equals(flag)) {
+        skipOversizedMethods = true;
+      } else {
+        throw new Exception("unknown flag `" + flag + "` in arguments: " + Arrays.asList(args));
+      }
+    }
+
+    if (args.length - firstPositional < 3) {
       throw new Exception(
-          "expected format `in_path out_path src1 src2 ... srcN`  for arguments: "
+          "expected format `[flags] in_path out_path src1 src2 ... srcN`  for arguments: "
               + Arrays.asList(args));
     }
 
-    Path inPath = Paths.get(args[0]);
-    Path outPath = Paths.get(args[1]);
-    String[] srcs = Arrays.copyOfRange(args, 2, args.length);
+    Path inPath = Paths.get(args[firstPositional]);
+    Path outPath = Paths.get(args[firstPositional + 1]);
+    String[] srcs = Arrays.copyOfRange(args, firstPositional + 2, args.length);
 
     // Use a directory for coverage metadata that is unique to each built jar. Avoids
     // multiple threads performing read/write/delete actions on the instrumented classes directory.
@@ -53,7 +71,8 @@ public final class JacocoInstrumenter implements Worker.Interface {
 
     try (FileSystem inFS = FileSystems.newFileSystem(inPath, (ClassLoader) null)) {
       FileVisitor fileVisitor =
-          createInstrumenterVisitor(jacoco, instrumentedClassesDirectory, jarCreator);
+          createInstrumenterVisitor(
+              jacoco, instrumentedClassesDirectory, jarCreator, skipOversizedMethods);
       inFS.getRootDirectories()
           .forEach(
               root -> {
@@ -93,8 +112,28 @@ public final class JacocoInstrumenter implements Worker.Interface {
     return outputJar.resolveSibling(outputJar + "-coverage-metadata");
   }
 
+  /**
+   * Whether an instrumentation failure was ASM refusing to write a method over the JVM's 64KB
+   * limit. ASM's {@code MethodTooLargeException} is repackaged into the jarjar'd JaCoCo runner, so
+   * it isn't on this tool's compile classpath and can't be caught by type.
+   */
+  private static boolean isMethodTooLarge(Throwable t) {
+    for (Throwable cause = t; cause != null; cause = cause.getCause()) {
+      if (cause.getClass().getSimpleName().equals("MethodTooLargeException")) {
+        return true;
+      }
+      if (cause.getCause() == cause) {
+        break;
+      }
+    }
+    return false;
+  }
+
   private SimpleFileVisitor createInstrumenterVisitor(
-      Instrumenter jacoco, Path instrumentedClassesDirectory, JarCreator jarCreator) {
+      Instrumenter jacoco,
+      Path instrumentedClassesDirectory,
+      JarCreator jarCreator,
+      boolean skipOversizedMethods) {
     return new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(Path inPath, BasicFileAttributes attrs) {
@@ -132,6 +171,23 @@ public final class JacocoInstrumenter implements Worker.Interface {
                   new BufferedOutputStream(
                       Files.newOutputStream(tempPath, StandardOpenOption.CREATE_NEW)); ) {
             jacoco.instrument(inStream, outStream, inPath.toString());
+          } catch (final IOException e) {
+            if (!skipOversizedMethods || !isMethodTooLarge(e)) {
+              throw e;
+            }
+            // JaCoCo's probes push a method that is already near the JVM's 64KB limit over it.
+            // Failing here would fail the build of a library that compiles and tests fine, and
+            // take every test that depends on it down with it, so pass the class through
+            // untouched instead. Skipping its `.uninstrumented` twin keeps the class out of the
+            // report entirely rather than reporting it as uncovered.
+            System.err.println(
+                "JacocoInstrumenter: skipping "
+                    + inPath
+                    + " (instrumented method exceeds the 64KB JVM limit); it will be absent from"
+                    + " coverage reports");
+            Files.deleteIfExists(tempPath);
+            jarCreator.addEntry(inPath.toString(), inPath);
+            return FileVisitResult.CONTINUE;
           }
           jarCreator.addEntry(inPath.toString(), tempPath);
           jarCreator.addEntry(inPath.toString() + ".uninstrumented", inPath);
