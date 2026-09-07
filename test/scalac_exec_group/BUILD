@@ -125,9 +125,11 @@ sh_test(
         "//scala/private:rules/scala_test.bzl",
     ] + glob(["*"]),
     # Uses a nested output base dedicated to only this test.
+    # "no-release" as it for some reason fails in GitHub-hosted runners, but not in Buildkite.
     tags = [
         "exclusive",
         "local",
+        "no-release",
         "requires-network",
     ],
 )
