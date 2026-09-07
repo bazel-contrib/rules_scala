@@ -36,7 +36,7 @@ def downstream_test(
         smoke_test_targets = [],
         patches = [],
         size = "large",
-        tags = ["no-sandbox", "no-remote-exec", "requires-network", "skip-last-green-bazel"],
+        tags = ["no-sandbox", "no-remote-exec", "no-release", "requires-network", "skip-last-green-bazel"],
         **kwargs):
     """Declares an `sh_test` testing `targets` in the `repo_name` external repo.
 
