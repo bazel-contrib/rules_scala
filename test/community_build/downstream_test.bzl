@@ -56,15 +56,20 @@ def downstream_test(
         filtered_targets: target patterns run only through a chosen
             ScalaTest suite (`test_filter`), instead of their whole test
             source tree -- e.g. joern_test uses this to run just a smoke
-            suite for jssrc2cpg, its most expensive target, while every
-            other target in `targets` keeps running unfiltered. Needs a
-            *second*, separate nested `bazel test` invocation, with
+            suite for each of its 5 most expensive targets, while every
+            other target in `targets` keeps running unfiltered. `test_filter`
+            is one exact class name (Bazel's `--test_filter` becomes
+            ScalaTest's own `-s <value>`, see
+            `io.bazel.rulesscala.scala_test.Runner`), so more than one
+            filtered target needs that same class under the identical
+            fully-qualified name in each one's own compiled test jar.
+            Needs a *second*, separate nested `bazel test` invocation, with
             `extra_bazel_flags` plus `--test_filter=<test_filter>`: Bazel
             applies `--test_filter` uniformly across every target in one
             `bazel test` invocation, so sharing the main invocation would
             apply that same suite name to every other target too, and each
             one fails with "class not found" since the suite exists only in
-            the filtered target's classpath. Exclude a filtered target from
+            filtered_targets' own classpaths. Exclude a filtered target from
             `targets` too (e.g. a `-//pkg/...` negative pattern), so it runs
             exactly once.
         test_filter: value forwarded as `filtered_targets`' nested `bazel

@@ -289,10 +289,11 @@ nested_bazel_run "${main_command}" ${main_command_extra_flags} \
   ${extra_bazel_flags} -- "${targets[@]}" || status="$?"
 
 # A second, separate invocation: --test_filter applies to every target in a
-# `bazel test` command line, so filtered_targets (a ScalaTest suite name
-# that exists in only one target's classpath) needs its own invocation to
-# keep from failing every other target sharing it with "class not found".
-# Carries the same extra_bazel_flags as the first invocation (e.g. the
+# `bazel test` command line, so filtered_targets (which selects a ScalaTest
+# suite that exists only in filtered_targets' own classpaths, not
+# `targets`') needs its own invocation to keep from failing every target in
+# `targets` that doesn't carry that suite with "class not found". Carries
+# the same extra_bazel_flags as the first invocation (e.g. the
 # --test_timeout every target here needs).
 if [[ "${#filtered_targets[@]}" -gt 0 ]]; then
   filtered_status=0

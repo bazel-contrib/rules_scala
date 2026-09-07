@@ -1,0 +1,12 @@
+# Wraps the existing Kotlin2CpgHTTPServerTests (writes a file, starts the
+# frontend's HTTP server, loads the CPG) as io.joern.smoke.SmokeSuite --
+# see BUILD's test_filter comment. ~40s -> ~3s.
+--- /dev/null
++++ b/joern-cli/frontends/kotlin2cpg/src/test/scala/io/joern/smoke/SmokeSuite.scala
+@@ -0,0 +1,6 @@
++package io.joern.smoke
++
++import io.joern.kotlin2cpg.io.Kotlin2CpgHTTPServerTests
++import org.scalatest.Suites
++
++class SmokeSuite extends Suites(new Kotlin2CpgHTTPServerTests)
