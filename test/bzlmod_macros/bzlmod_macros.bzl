@@ -45,6 +45,7 @@ _NESTED_BAZEL_DATA = [
 _NESTED_BAZEL_TAGS = [
     "exclusive",
     "local",
+    "no-release",
     "requires-network",
 ]
 

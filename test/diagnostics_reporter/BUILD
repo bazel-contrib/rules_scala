@@ -135,6 +135,7 @@ _FIXTURES = [
         tags = [
             "exclusive",
             "local",
+            "no-release",
             "requires-network",
         ],
     )
