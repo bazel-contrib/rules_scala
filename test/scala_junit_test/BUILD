@@ -81,6 +81,9 @@ expect_test_failure_test(
 
 # Filtering to the failing spec must surface the same exception and terminate
 # promptly (no test-timeout), i.e. the run fails fast rather than hanging.
+#
+# `timeout` overrides the "large"-size default (900s) so a hang here (seen on
+# Windows) fails within a minute, not 15.
 expect_test_failure_test(
     name = "specs2_exception_terminates_without_timeout",
     bazel_args = [
@@ -92,6 +95,7 @@ expect_test_failure_test(
     expect = ["expected_specs2_user_exception.txt"],
     reject = ["rejected_timeout.txt"],
     target = ":specs2_failing_test",
+    timeout = "short",
 )
 
 # The tests below assert on `--test_filter` narrowing a specs2 suite
