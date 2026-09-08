@@ -23,6 +23,7 @@ sh_test(
     tags = [
         "exclusive",
         "local",
+        "no-release",
         "requires-network",
     ],
 )
@@ -42,6 +43,7 @@ sh_test(
     tags = [
         "exclusive",
         "local",
+        "no-release",
         "requires-network",
     ],
 )
@@ -61,6 +63,7 @@ sh_test(
     tags = [
         "exclusive",
         "local",
+        "no-release",
         "requires-network",
     ],
 )
@@ -80,6 +83,7 @@ sh_test(
     tags = [
         "exclusive",
         "local",
+        "no-release",
         "requires-network",
     ],
 )

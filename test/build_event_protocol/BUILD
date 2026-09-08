@@ -20,6 +20,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
         tags = [
             "exclusive",
             "local",
+            "no-release",
             "requires-network",
         ],
     )

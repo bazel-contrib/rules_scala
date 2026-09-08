@@ -152,6 +152,7 @@ sh_test(
     data = _SEMANTICDB_FIXTURE_DATA + [":all_lib_fixture_actions"],
     tags = [
         "exclusive",
+        "no-release",
         "no-remote-exec",
         "no-sandbox",
         "requires-network",
@@ -165,6 +166,7 @@ sh_test(
     data = _SEMANTICDB_FIXTURE_DATA + [":lib_with_tempsrc_fixture_actions"],
     tags = [
         "exclusive",
+        "no-release",
         "no-remote-exec",
         "no-sandbox",
         "requires-network",
@@ -189,6 +191,7 @@ sh_test(
         ),
         tags = [
             "exclusive",
+            "no-release",
             "no-remote-exec",
             "no-sandbox",
             "requires-network",

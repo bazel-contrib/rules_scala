@@ -16,6 +16,7 @@ sh_test(
     ],
     tags = [
         "local",
+        "no-release",
         "requires-network",
     ],
 )

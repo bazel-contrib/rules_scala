@@ -77,7 +77,7 @@ sh_test(
          "//:MODULE.bazel",
          "//test/expect_build_failure:nested_bazel.sh"
     ],
-    tags = ["local", "requires-network"],
+    tags = ["local", "no-release", "requires-network"],
 )
 
 # Test that scaladoc for intransitive deps generates docs only for B (not A).
@@ -94,7 +94,7 @@ sh_test(
          "//:MODULE.bazel",
          "//test/expect_build_failure:nested_bazel.sh"
     ],
-    tags = ["local", "requires-network"],
+    tags = ["local", "no-release", "requires-network"],
 )
 
 # Test that scaladoc for transitive external deps works (just build succeeds).

@@ -19,6 +19,7 @@ sh_test(
         # after that toolchain changes.
         "external",
         "local",
+        "no-release",
         "requires-network",
     ],
     # rules_scala doesn't support argfiles on Windows yet.
