@@ -9,10 +9,6 @@ exports_files([
     "downstream_test_driver.sh",
     "dicer_protobuf_version.patch",
     "joern_jssrc2cpg_smoke.patch",
-    "joern_x2cpg_smoke.patch",
-    "joern_rubysrc2cpg_smoke.patch",
-    "joern_kotlin2cpg_smoke.patch",
-    "joern_javasrc2cpg_smoke.patch",
 ])
 
 exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
@@ -37,14 +33,13 @@ exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
 # extra_bazel_flags's --test_timeout bounds each nested test, not size
 # (which bounds this whole sh_test action).
 #
-# test_filter selects each filtered target's own smoke suite (see the
-# joern_*_smoke.patch files for what each one wraps and why). It becomes
-# ScalaTest's own `-s <value>` (see `io.bazel.rulesscala.scala_test.Runner`),
-# one exact class name shared across every filtered_targets entry in this
-# single nested `bazel test` invocation -- so every filtered target's suite
-# needs the identical fully-qualified class name (io.joern.smoke.SmokeSuite)
-# for that one value to resolve in each one's own classpath. Full test
-# source still compiles for all of them; only the smoke subset executes.
+# filtered_targets picks one ScalaTest class per target to run instead of
+# its whole test source tree -- jssrc2cpg's own patch file adds a class
+# combining a few of its own existing tests; the other four point straight
+# at an already-existing class doing the same job (x2cpg's own HTTP
+# server/client base, or a frontend's own version of it: write a file,
+# start the server, load the resulting CPG), no patch needed. Full test
+# source still compiles for all of them; only the picked class executes.
 # Test-execution time, measured in a Linux container:
 #   jssrc2cpg:   ~800s -> ~165s
 #   x2cpg:       ~105s -> ~3s
@@ -58,20 +53,14 @@ downstream_test(
     name = "joern_test",
     size = "enormous",
     extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
-    filtered_targets = [
-        "//joern-cli/frontends/jssrc2cpg:tests",
-        "//joern-cli/frontends/x2cpg:tests",
-        "//joern-cli/frontends/rubysrc2cpg:tests",
-        "//joern-cli/frontends/kotlin2cpg:tests",
-        "//joern-cli/frontends/javasrc2cpg:tests",
-    ],
-    patches = [
-        "//test/community_build:joern_jssrc2cpg_smoke.patch",
-        "//test/community_build:joern_x2cpg_smoke.patch",
-        "//test/community_build:joern_rubysrc2cpg_smoke.patch",
-        "//test/community_build:joern_kotlin2cpg_smoke.patch",
-        "//test/community_build:joern_javasrc2cpg_smoke.patch",
-    ],
+    filtered_targets = {
+        "//joern-cli/frontends/jssrc2cpg:tests": "io.joern.jssrc2cpg.SmokeSuite",
+        "//joern-cli/frontends/x2cpg:tests": "io.joern.x2cpg.utils.server.FrontendHTTPServerTests",
+        "//joern-cli/frontends/rubysrc2cpg:tests": "io.joern.rubysrc2cpg.io.RubySrc2CpgHTTPServerTests",
+        "//joern-cli/frontends/kotlin2cpg:tests": "io.joern.kotlin2cpg.io.Kotlin2CpgHTTPServerTests",
+        "//joern-cli/frontends/javasrc2cpg:tests": "io.joern.javasrc2cpg.io.JavaSrc2CpgHTTPServerTests",
+    },
+    patches = ["//test/community_build:joern_jssrc2cpg_smoke.patch"],
     repo_name = "joern",
     scala_version = "3.7.4",
     target_compatible_with = ["@platforms//os:linux"],
@@ -86,7 +75,6 @@ downstream_test(
         "-//joern-cli/frontends/kotlin2cpg/...",
         "-//joern-cli/frontends/javasrc2cpg/...",
     ],
-    test_filter = "io.joern.smoke.SmokeSuite",
 )
 
 # dicer_test's job: exercise rules_scala's scala_proto/ScalaPB (gRPC)
