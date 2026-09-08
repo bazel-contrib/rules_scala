@@ -6,8 +6,9 @@
 # repository rule already wrote into the consumer's MODULE.bazel.
 #
 # Usage: downstream_test_driver.sh --marker-rootpath <path> --scala-version <v> \
-#   --output-base-name <name> [--extra-bazel-flags <flags>] [--test-filter <value>] \
-#   [--filtered-targets <target>...] [--smoke-test-targets <target>...] -- <target-pattern>...
+#   --output-base-name <name> [--extra-bazel-flags <flags>] \
+#   [--filtered-targets <target>=<class-name>...] [--smoke-test-targets <target>...] \
+#   -- <target-pattern>...
 #
 # Named flags because Bazel/rules_shell silently drops or mangles blank
 # `args` entries -- same convention as test/expect_build_failure/expect_build_failure.sh.
@@ -18,7 +19,6 @@ marker_rootpath=""
 scala_version=""
 output_base_name=""
 extra_bazel_flags=""
-test_filter=""
 filtered_targets=()
 smoke_test_targets=()
 while [[ "$#" -gt 0 ]]; do
@@ -39,17 +39,15 @@ while [[ "$#" -gt 0 ]]; do
       extra_bazel_flags="$2"
       shift 2
       ;;
-    --test-filter)
-      test_filter="$2"
-      shift 2
-      ;;
     --filtered-targets)
       shift
-      # Stop at the next flag (anything starting with "--"), not just the
-      # bare "--" target-list separator: a following --smoke-test-targets
-      # would otherwise get swallowed into this list too. Safe because
-      # Bazel target patterns never start with "--" (a negative pattern
-      # like "-//pkg/..." starts with a single "-").
+      # Each entry is "<target>=<class-name>" (see downstream_test.bzl for
+      # why "=" is a safe separator). Stop at the next flag (anything
+      # starting with "--"), not just the bare "--" target-list separator:
+      # a following --smoke-test-targets would otherwise get swallowed into
+      # this list too. Safe because Bazel target patterns never start with
+      # "--" (a negative pattern like "-//pkg/..." starts with a single
+      # "-").
       while [[ "$#" -gt 0 && "$1" != --* ]]; do
         filtered_targets+=("$1")
         shift
@@ -264,14 +262,14 @@ done
 # forcing a real re-run instead of serving a stale PASS. The cost of a
 # retry-attempt rerun scales with the target count.
 #
-# Captured rather than let `set -e` exit here: both invocations always run
-# regardless of the first's outcome, and the combined exit status (see
-# below) reflects either one failing.
+# Captured rather than let `set -e` exit here: every invocation below
+# always runs regardless of an earlier one's outcome, and the combined
+# exit status (see below) reflects any of them failing.
 #
 # The unfiltered `targets` list is expected to already exclude any
 # filtered_targets (via the caller's own negative pattern in BUILD -- see
 # downstream_test.bzl's filtered_targets docstring), so a filtered target
-# runs exactly once, through the second invocation below.
+# runs exactly once, through its own invocation below.
 status=0
 # smoke_test_targets means `targets` only builds here (see
 # downstream_test.bzl's docstring), so this invocation drops the
@@ -288,25 +286,31 @@ nested_bazel_run "${main_command}" ${main_command_extra_flags} \
   --repo_env=SCALA_VERSION="${scala_version}" \
   ${extra_bazel_flags} -- "${targets[@]}" || status="$?"
 
-# A second, separate invocation: --test_filter applies to every target in a
-# `bazel test` command line, so filtered_targets (a ScalaTest suite name
-# that exists in only one target's classpath) needs its own invocation to
-# keep from failing every other target sharing it with "class not found".
-# Carries the same extra_bazel_flags as the first invocation (e.g. the
-# --test_timeout every target here needs).
-if [[ "${#filtered_targets[@]}" -gt 0 ]]; then
-  filtered_status=0
+# One more separate invocation per filtered_targets entry: --test_filter
+# applies to every target in a `bazel test` command line, so a target
+# selecting its own ScalaTest class needs its own invocation to keep from
+# applying that class name to every other target too, and failing each
+# with "class not found". Carries the same extra_bazel_flags as the first
+# invocation (e.g. the --test_timeout every target here needs).
+for entry in "${filtered_targets[@]}"; do
+  # Split at the LAST "=", not the first: Bazel target names may contain
+  # "=" (see https://bazel.build/concepts/labels#target-names), but a
+  # Java/Scala class name never does, so the class name is always the part
+  # after the final one.
+  target="${entry%=*}"
+  class_name="${entry##*=}"
+  entry_status=0
   # shellcheck disable=SC2086 # same intentional word-splitting as above.
   nested_bazel_run test --test_output=errors --cache_test_results=no \
     --repo_env=SCALA_VERSION="${scala_version}" \
-    ${extra_bazel_flags} --test_filter="${test_filter}" \
-    -- "${filtered_targets[@]}" || filtered_status="$?"
-  if [[ "${filtered_status}" -gt "${status}" ]]; then
-    status="${filtered_status}"
+    ${extra_bazel_flags} --test_filter="${class_name}" \
+    -- "${target}" || entry_status="$?"
+  if [[ "${entry_status}" -gt "${status}" ]]; then
+    status="${entry_status}"
   fi
-fi
+done
 
-# A third, separate invocation for smoke_test_targets: the main invocation
+# One more separate invocation for smoke_test_targets: the main invocation
 # above only *built* them (part of `targets`), so they still need their own
 # `bazel test` to actually execute -- reusing, via Bazel's own action cache
 # (same output_base), the build outputs the main invocation already

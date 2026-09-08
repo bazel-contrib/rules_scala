@@ -12,8 +12,8 @@
 # closest things to an integration smoke test: ProjectParseTests's real
 # AstGenRunner/file I/O and JsSrc2CpgHTTPServerTests's JVM HTTP server + full
 # classpath) into one ScalaTest suite. `downstream_test.bzl`'s
-# `test_filter`/`filtered_targets` for joern_test select just this one suite
-# via `--test_filter` (in its own nested `bazel test` invocation, since that
+# `filtered_targets` for joern_test selects just this one suite via
+# `--test_filter` (in its own nested `bazel test` invocation, since that
 # flag applies to every target in one invocation), so jssrc2cpg's own ~11k
 # lines of test sources still compile in full (real Scala 3 compile
 # workload against the toolchain under test), but only this smoke subset

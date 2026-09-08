@@ -31,8 +31,7 @@ def downstream_test(
         scala_version,
         targets,
         extra_bazel_flags = "",
-        filtered_targets = [],
-        test_filter = "",
+        filtered_targets = {},
         smoke_test_targets = [],
         patches = [],
         size = "large",
@@ -53,29 +52,20 @@ def downstream_test(
             -- or, when `smoke_test_targets` is set, to *both* the main
             `bazel build` and the separate `bazel test` for
             `smoke_test_targets`.
-        filtered_targets: target patterns run only through a chosen
-            ScalaTest suite (`test_filter`), instead of their whole test
-            source tree -- e.g. joern_test uses this to run just a smoke
-            suite for jssrc2cpg, its most expensive target, while every
-            other target in `targets` keeps running unfiltered. Needs a
-            *second*, separate nested `bazel test` invocation, with
-            `extra_bazel_flags` plus `--test_filter=<test_filter>`: Bazel
-            applies `--test_filter` uniformly across every target in one
-            `bazel test` invocation, so sharing the main invocation would
-            apply that same suite name to every other target too, and each
-            one fails with "class not found" since the suite exists only in
-            the filtered target's classpath. Exclude a filtered target from
-            `targets` too (e.g. a `-//pkg/...` negative pattern), so it runs
-            exactly once.
-        test_filter: value forwarded as `filtered_targets`' nested `bazel
-            test`'s own `--test_filter`. A separate arg from
-            `extra_bazel_flags`, which stays a single `args` list element:
-            rules_shell's `sh_test` re-splits that element on whitespace
-            before the driver script's own `--extra-bazel-flags` parsing
-            sees it, so a value like `"--test_timeout=... --test_filter=..."`
-            hands the driver's arg loop a bare `--test_filter=...`, which
-            only its catch-all `*)` case matches, exiting with "Unknown
-            argument".
+        filtered_targets: `{target pattern: ScalaTest class name}` -- each
+            target runs only that one class instead of its whole test
+            source tree, e.g. joern_test uses this to run just a smoke
+            suite for each of its 5 most expensive targets, while every
+            other target in `targets` keeps running unfiltered. Each entry
+            gets its own nested `bazel test` invocation (with
+            `--test_filter=<class name>`, which becomes ScalaTest's own
+            `-s <value>`, see `io.bazel.rulesscala.scala_test.Runner`):
+            `--test_filter` applies uniformly across every target in one
+            `bazel test` invocation, so sharing an invocation across
+            targets with different class names would apply the wrong one
+            to some of them. Exclude a filtered target from `targets` too
+            (e.g. a `-//pkg/...` negative pattern), so it runs exactly
+            once.
         smoke_test_targets: if set, only these targets get tested; every
             other target in `targets` only builds (see
             downstream_test_driver.sh for the mechanism). Pick one
@@ -102,9 +92,6 @@ def downstream_test(
             regression.
         **kwargs: forwarded to the underlying `sh_test`.
     """
-    if bool(filtered_targets) != bool(test_filter):
-        fail("downstream_test '%s': filtered_targets and test_filter must both be set, or both left empty" % name)
-
     args = [
         "--marker-rootpath",
         "$(rootpath @{}//_bazel_native_marker:marker.txt)".format(repo_name),
@@ -115,10 +102,15 @@ def downstream_test(
     ]
     if extra_bazel_flags:
         args += ["--extra-bazel-flags", extra_bazel_flags]
-    if test_filter:
-        args += ["--test-filter", test_filter]
     if filtered_targets:
-        args += ["--filtered-targets"] + filtered_targets
+        # "=" packs each pair into one token, simpler than threading a
+        # second parallel list through the driver's arg parsing. Safe even
+        # though a target label can itself contain "=" (a class name never
+        # does): the driver splits at the LAST "=" in each token.
+        args += ["--filtered-targets"] + [
+            "{}={}".format(target, class_name)
+            for target, class_name in filtered_targets.items()
+        ]
     if smoke_test_targets:
         args += ["--smoke-test-targets"] + smoke_test_targets
     args += ["--"] + targets

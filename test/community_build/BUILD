@@ -33,24 +33,33 @@ exposed_top_level_dirs_test(name = "exposed_top_level_dirs_test")
 # extra_bazel_flags's --test_timeout bounds each nested test, not size
 # (which bounds this whole sh_test action).
 #
-# test_filter selects jssrc2cpg's own SmokeSuite (see
-# joern_jssrc2cpg_smoke.patch): jssrc2cpg is this test's single most
-# expensive target (~750-820s of the ~1050-1200s this whole test costs once
-# the nested build itself is warm), and its ~11k lines of test sources are
-# ~99% Joern's own JS/TS semantic correctness -- an assertion about Joern's
-# own correctness. The patch adds one new
-# file aggregating a handful of existing test classes (AST, CFG, dataflow,
-# type-recovery, plus the closest things to an integration smoke test: a
-# real AstGenRunner file-parse and a JVM HTTP server + full classpath) into
-# one suite; test_filter selects just that suite, so jssrc2cpg's test
-# sources still compile in full (real Scala 3 compile workload against the
-# toolchain under test) but only the smoke subset executes: measured
-# 748-820s -> 165-215s.
+# filtered_targets picks one ScalaTest class per target to run instead of
+# its whole test source tree -- jssrc2cpg's own patch file adds a class
+# combining a few of its own existing tests; the other four point straight
+# at an already-existing class doing the same job (x2cpg's own HTTP
+# server/client base, or a frontend's own version of it: write a file,
+# start the server, load the resulting CPG), no patch needed. Full test
+# source still compiles for all of them; only the picked class executes.
+# Test-execution time, measured in a Linux container:
+#   jssrc2cpg:   ~800s -> ~165s
+#   x2cpg:       ~105s -> ~3s
+#   rubysrc2cpg: ~55s  -> ~7s
+#   kotlin2cpg:  ~40s  -> ~3s
+#   javasrc2cpg: ~25s  -> ~6s
+#
+# c2cpg, pysrc2cpg, semanticcpg, and dataflowengineoss (each under 11s) keep
+# running unfiltered: too cheap to bother.
 downstream_test(
     name = "joern_test",
     size = "enormous",
     extra_bazel_flags = "--test_timeout=60,1800,1800,3600",
-    filtered_targets = ["//joern-cli/frontends/jssrc2cpg:tests"],
+    filtered_targets = {
+        "//joern-cli/frontends/jssrc2cpg:tests": "io.joern.jssrc2cpg.SmokeSuite",
+        "//joern-cli/frontends/x2cpg:tests": "io.joern.x2cpg.utils.server.FrontendHTTPServerTests",
+        "//joern-cli/frontends/rubysrc2cpg:tests": "io.joern.rubysrc2cpg.io.RubySrc2CpgHTTPServerTests",
+        "//joern-cli/frontends/kotlin2cpg:tests": "io.joern.kotlin2cpg.io.Kotlin2CpgHTTPServerTests",
+        "//joern-cli/frontends/javasrc2cpg:tests": "io.joern.javasrc2cpg.io.JavaSrc2CpgHTTPServerTests",
+    },
     patches = ["//test/community_build:joern_jssrc2cpg_smoke.patch"],
     repo_name = "joern",
     scala_version = "3.7.4",
@@ -61,8 +70,11 @@ downstream_test(
         "-//joern-cli/frontends/rust2cpg/...",
         "-//joern-cli/frontends/swiftsrc2cpg/...",
         "-//joern-cli/frontends/jssrc2cpg/...",
+        "-//joern-cli/frontends/x2cpg/...",
+        "-//joern-cli/frontends/rubysrc2cpg/...",
+        "-//joern-cli/frontends/kotlin2cpg/...",
+        "-//joern-cli/frontends/javasrc2cpg/...",
     ],
-    test_filter = "io.joern.jssrc2cpg.SmokeSuite",
 )
 
 # dicer_test's job: exercise rules_scala's scala_proto/ScalaPB (gRPC)
