@@ -82,8 +82,11 @@ expect_test_failure_test(
 # Filtering to the failing spec must surface the same exception and terminate
 # promptly (no test-timeout), i.e. the run fails fast rather than hanging.
 #
-# `timeout` overrides the "large"-size default (900s) so a hang here (seen on
-# Windows) fails within a minute, not 15.
+# Excluded on Windows: Bazel's own test-timeout kill is unreliable there (no
+# POSIX signals, and a process can escape the job object Bazel tracks it
+# with), so the nested run has been seen to hang well past its own
+# `--test_timeout=10` and block CI for the outer test's full 900s timeout
+# (#1884). No known fix on our side; the assertion still holds on Linux/macOS.
 expect_test_failure_test(
     name = "specs2_exception_terminates_without_timeout",
     bazel_args = [
@@ -95,7 +98,10 @@ expect_test_failure_test(
     expect = ["expected_specs2_user_exception.txt"],
     reject = ["rejected_timeout.txt"],
     target = ":specs2_failing_test",
-    timeout = "short",
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
 )
 
 # The tests below assert on `--test_filter` narrowing a specs2 suite
