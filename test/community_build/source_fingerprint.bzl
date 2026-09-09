@@ -108,7 +108,6 @@ _INTERNAL_ENTRIES = [
     "test_rules_scala.sh",
     "test_statsfile",
     "test_thirdparty_version",
-    "test_thirdparty_version.sh",
     "test_version",
     "test_version.sh",
     "tmp",

@@ -125,10 +125,12 @@ tasks:
     shell_commands:
       - "./test_version.sh"
   thirdparty_version_linux:
-    name: "./test_thirdparty_version.sh"
+    name: "test_thirdparty_version"
     platform: ubuntu2204_java17
-    shell_commands:
-      - "./test_thirdparty_version.sh"
+    build_targets:
+      - "//test_thirdparty_version/..."
+    test_targets:
+      - "//test_thirdparty_version/..."
   examples_linux:
     name: "./test_examples"
     platform: ubuntu2004
