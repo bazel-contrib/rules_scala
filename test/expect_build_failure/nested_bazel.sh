@@ -151,8 +151,8 @@ nested_bazel_setup() {
   fi
   # Keep the nested build's convenience symlinks out of the workspace so they do
   # not clobber the parent invocation's `bazel-bin` etc. Not added to
-  # `_nested_bazel_common_opts`: `bazel query` (unlike build/test/coverage/
-  # info/cquery/aquery) produces no such symlinks and rejects this flag
+  # `_nested_bazel_common_opts`: `bazel query`/`bazel mod` (unlike build/test/
+  # coverage/info/cquery/aquery) produce no such symlinks and reject this flag
   # outright, so `nested_bazel_run` adds it for every other subcommand only.
   _nested_bazel_symlink_prefix="${_nested_bazel_output_base}/convenience_symlinks/"
 }
@@ -171,7 +171,7 @@ nested_bazel_run() {
     "${subcommand}"
     "${_nested_bazel_common_opts[@]}"
   )
-  if [[ "${subcommand}" != "query" ]]; then
+  if [[ "${subcommand}" != "query" && "${subcommand}" != "mod" ]]; then
     cmd+=("--symlink_prefix=${_nested_bazel_symlink_prefix}")
   fi
   cmd+=("$@")
