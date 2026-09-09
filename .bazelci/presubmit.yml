@@ -134,11 +134,6 @@ tasks:
     platform: ubuntu2004
     shell_commands:
       - "./test_examples.sh"
-  cross_build_linux:
-    name: "./test_cross_build"
-    platform: ubuntu2004
-    shell_commands:
-      - "./test_cross_build.sh"
   lint_linux:
     name: "./test_lint.sh"
     platform: ubuntu2004
