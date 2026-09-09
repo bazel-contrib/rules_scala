@@ -94,16 +94,6 @@ tasks:
     batch_commands:
       - "set PATH=/usr/bin;%PATH%" #Make sure bash uses msys commands over windows commands. (i.e. find).
       - "bash test_rules_scala.sh"
-  test_coverage_linux:
-    name: "./test_coverage"
-    platform: ubuntu2004
-    shell_commands:
-      - "./test_coverage.sh"
-  test_coverage_macos:
-    name: "./test_coverage"
-    platform: macos
-    shell_commands:
-      - "./test_coverage.sh"
   test_reproducibility_linux:
     name: "./test_reproducibility.sh"
     platform: ubuntu1804

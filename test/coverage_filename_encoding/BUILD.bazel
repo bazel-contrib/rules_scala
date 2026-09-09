@@ -1,4 +1,13 @@
 load("//scala:scala.bzl", "scala_library", "scala_specs2_junit_test")
+load("//test/coverage_test:coverage_test.bzl", "coverage_test")
+
+coverage_test(
+    name = "coverage_matches_expected_test",
+    # Default to 2.12.21 because other Scala versions change the output.
+    bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
+    expected = "test/coverage_filename_encoding/expected-coverage.dat",
+    target = ":name-with-equals",
+)
 
 scala_specs2_junit_test(
     name = "name-with-equals",

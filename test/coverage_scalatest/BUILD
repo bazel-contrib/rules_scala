@@ -1,5 +1,21 @@
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 load("//scala:scala.bzl", "scala_library", "scala_test")
+load("//test/coverage_test:coverage_test.bzl", "coverage_test")
+
+coverage_test(
+    name = "coverage_matches_expected_test",
+    # Default to 2.12.21 because other Scala versions change the output.
+    bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
+    expected = "test/coverage_scalatest/expected-coverage.dat",
+    target = ":test-scalatest",
+)
+
+coverage_test(
+    name = "coverage_includes_test_targets_test",
+    bazel_args = ["--instrument_test_targets=True"],
+    grep = "SF:test/coverage_scalatest/TestWithScalaTest.scala",
+    target = ":test-scalatest",
+)
 
 scala_test(
     name = "test-scalatest",
