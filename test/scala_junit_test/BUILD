@@ -82,11 +82,9 @@ expect_test_failure_test(
 # Filtering to the failing spec must surface the same exception and terminate
 # promptly (no test-timeout), i.e. the run fails fast rather than hanging.
 #
-# Excluded on Windows: Bazel's own test-timeout kill is unreliable there (no
-# POSIX signals, and a process can escape the job object Bazel tracks it
-# with), so the nested run has been seen to hang well past its own
-# `--test_timeout=10` and block CI for the outer test's full 900s timeout
-# (#1884). No known fix on our side; the assertion still holds on Linux/macOS.
+# Excluded on Windows: the nested run has been seen to outlive its own
+# `--test_timeout=10` there and occupy this test until its own 900s timeout
+# (#1884). Assertion still holds on Linux/macOS.
 expect_test_failure_test(
     name = "specs2_exception_terminates_without_timeout",
     bazel_args = [
