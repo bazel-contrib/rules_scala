@@ -11,6 +11,9 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 _NESTED_BAZEL_DATA = [
     "//:MODULE.bazel",
     "//test/expect_build_failure:nested_bazel.sh",
+    # The select-based per-scala_version dep providers default_2x_build_test
+    # verifies; listing it re-keys that test when the fix changes.
+    "//scala:toolchains_repo.bzl",
 ]
 
 _NESTED_BAZEL_TAGS = [
