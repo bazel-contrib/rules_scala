@@ -83,8 +83,10 @@ tasks:
     name: "./test_rules_scala"
     platform: macos
     shell_commands:
-      # src/... + test/... under the default toolchain is already covered,
-      # with remote cache, by the macos "bazel test //..." task.
+      # This env var skips the default build/test (the macos "bazel test
+      # //..." task above already does that). The script also skips its
+      # toolchain sweep on macOS. So this task only builds
+      # //test/binary_in_genrule and the two //test_statsfile targets.
       - "SKIP_DEFAULT_TOOLCHAIN_RUN=1 ./test_rules_scala.sh"
   test_rules_scala_win:
     name: "./test_rules_scala"
