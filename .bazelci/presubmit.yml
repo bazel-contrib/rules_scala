@@ -106,6 +106,16 @@ tasks:
     platform: macos
     shell_commands:
       - "./test_coverage.sh"
+  test_reproducibility_linux:
+    name: "bazel test //test/reproducibility"
+    platform: ubuntu2004
+    test_targets:
+      - "//test/reproducibility:build_is_identical_test"
+  test_reproducibility_macos:
+    name: "bazel test //test/reproducibility"
+    platform: macos
+    test_targets:
+      - "//test/reproducibility:build_is_identical_test"
   versions_linux:
     name: "./test_version.sh"
     platform: ubuntu2004
