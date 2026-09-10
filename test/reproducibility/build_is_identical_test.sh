@@ -1,15 +1,9 @@
 #!/usr/bin/env bash
 #
-# Builds test/... (plus the coverage-instrumented test/coverage_* packages)
-# twice from scratch, with a fresh --disk_cache on the second run, and checks
-# that every non-deploy jar under test/ hashes the same both times -- i.e.
-# that the build is reproducible independently of caching.
-#
-# The nested `bazel` (and the rationale for it) lives in the shared
-# nested_bazel.sh helper this script sources. This test's whole point is a
-# clean-from-scratch build, so unlike expect_build_failure.bzl's macros it
-# cannot declare an action fingerprint and skip re-running -- it always
-# builds twice.
+# Builds test/... plus the coverage-instrumented test/coverage_* packages
+# twice from scratch, with a fresh --disk_cache the second time, and diffs
+# md5 hashes of every non-deploy jar -- proves the build is reproducible
+# independent of caching.
 
 set -euo pipefail
 
@@ -26,9 +20,8 @@ md5_util() {
   fi
 }
 
-# Coverage packages are collected dynamically (as the original shell test
-# did) so this test doesn't need updating if test/coverage_* packages are
-# added, renamed, or removed.
+# Collected dynamically so new/renamed/removed test/coverage_* packages
+# need no change here.
 coverage_packages=()
 for package_dir in test/coverage_*; do
   coverage_packages+=("//${package_dir}/...")
