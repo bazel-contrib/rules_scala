@@ -85,5 +85,10 @@ def coverage_test(
             _NESTED_BAZEL_LIB,
         ],
         tags = tags,
+        # `bazel coverage` doesn't produce a coverage.dat on Windows yet.
+        target_compatible_with = select({
+            "@platforms//os:windows": ["@platforms//:incompatible"],
+            "//conditions:default": [],
+        }),
         **kwargs
     )
