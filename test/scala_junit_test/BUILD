@@ -81,6 +81,10 @@ expect_test_failure_test(
 
 # Filtering to the failing spec must surface the same exception and terminate
 # promptly (no test-timeout), i.e. the run fails fast rather than hanging.
+#
+# Excluded on Windows: the nested run has been seen to outlive its own
+# `--test_timeout=10` there and occupy this test until its own 900s timeout
+# (#1884). Assertion still holds on Linux/macOS.
 expect_test_failure_test(
     name = "specs2_exception_terminates_without_timeout",
     bazel_args = [
@@ -92,6 +96,10 @@ expect_test_failure_test(
     expect = ["expected_specs2_user_exception.txt"],
     reject = ["rejected_timeout.txt"],
     target = ":specs2_failing_test",
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
 )
 
 # The tests below assert on `--test_filter` narrowing a specs2 suite
