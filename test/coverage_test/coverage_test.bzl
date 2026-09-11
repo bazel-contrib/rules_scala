@@ -29,7 +29,14 @@ def coverage_test(
         expected_line = None,
         bazel_args = [],
         size = "large",
-        tags = ["no-sandbox", "external", "exclusive", "requires-network"],
+        tags = [
+            "no-sandbox",
+            "external",
+            "exclusive",
+            "requires-network",
+            "no-release",
+            "skip-toolchain-sweep",
+        ],
         **kwargs):
     """Declares an sh_test asserting a nested `bazel coverage` of `target` and its coverage.dat.
 
@@ -43,6 +50,12 @@ def coverage_test(
     nested_bazel.sh): two of these running at once could race on the same
     fixture's coverage.dat (e.g. one run's --instrument_test_targets=True
     result landing where another run without it expected to read its own).
+    Tagged `no-release`, like every other disk-heavy nested-bazel test, so the
+    release workflow's constrained disk budget skips it. Tagged
+    `skip-toolchain-sweep`: the nested `bazel coverage` runs under its own
+    output base with its own flags, so the outer build's `--extra_toolchains`
+    never reaches it and every toolchain sweep would otherwise repeat the same
+    result test_rules_scala.sh's default sweep already checked.
 
     Args:
         name: test target name.
@@ -56,13 +69,8 @@ def coverage_test(
             coverage` (e.g. `"--instrument_test_targets=True"`).
         size: test size; defaults to `"large"` (the nested Bazel invocation is
             slow and, on a cold cache, serializes on the shared output base).
-        tags: test tags; defaults to
-            `["no-sandbox", "external", "exclusive", "requires-network"]` --
-            `no-sandbox` because the nested `bazel coverage` needs real
-            filesystem access outside the sandbox; `external` keeps the result
-            out of the cache entirely, since it has no correct cache key (see
-            above); `exclusive` serializes every coverage_test against every
-            other, since they share one nested output base (see above).
+        tags: test tags; see the defaults above and their rationale in this
+            docstring's first paragraph.
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
     if (expected_file == None) == (expected_line == None):
