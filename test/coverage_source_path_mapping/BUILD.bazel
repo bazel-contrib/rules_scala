@@ -1,0 +1,33 @@
+load("//scala:scala.bzl", "scala_library", "scala_test")
+
+# Regression test for https://github.com/bazel-contrib/rules_scala/issues/1101. These
+# sources sit directly in `test/coverage_source_path_mapping`, so their paths on disk do
+# not end with their package paths. Coverage can only be attributed to them through an
+# explicit source path mapping in `-paths-for-coverage.txt`, not through the suffix match
+# that `JacocoLCOVFormatter` falls back to.
+
+scala_test(
+    name = "test-source-path-mapping",
+    size = "small",
+    srcs = [
+        "TestSourcePathMapping.scala",
+    ],
+    deps = [
+        ":also_mapped",
+        ":mapped",
+    ],
+)
+
+scala_library(
+    name = "mapped",
+    srcs = [
+        "Mapped.scala",
+    ],
+)
+
+scala_library(
+    name = "also_mapped",
+    srcs = [
+        "AlsoMapped.scala",
+    ],
+)

@@ -1,0 +1,39 @@
+SF:test/coverage_source_path_mapping/AlsoMapped.scala
+FN:-1,com/example/coverage/other/AlsoMapped$::<clinit> ()V
+FN:3,com/example/coverage/other/AlsoMapped$::<init> ()V
+FN:5,com/example/coverage/other/AlsoMapped$::covered (I)I
+FN:-1,com/example/coverage/other/AlsoMapped::covered (I)I
+FNDA:1,com/example/coverage/other/AlsoMapped$::<clinit> ()V
+FNDA:1,com/example/coverage/other/AlsoMapped$::<init> ()V
+FNDA:1,com/example/coverage/other/AlsoMapped$::covered (I)I
+FNDA:0,com/example/coverage/other/AlsoMapped::covered (I)I
+FNF:4
+FNH:3
+DA:3,1
+DA:5,1
+DA:6,1
+LH:3
+LF:3
+end_of_record
+SF:test/coverage_source_path_mapping/Mapped.scala
+FN:-1,com/example/coverage/mapping/Mapped$::<clinit> ()V
+FN:3,com/example/coverage/mapping/Mapped$::<init> ()V
+FN:5,com/example/coverage/mapping/Mapped$::covered (Ljava/lang/String;)Ljava/lang/String;
+FN:8,com/example/coverage/mapping/Mapped$::uncovered (Ljava/lang/String;)Ljava/lang/String;
+FN:-1,com/example/coverage/mapping/Mapped::covered (Ljava/lang/String;)Ljava/lang/String;
+FN:-1,com/example/coverage/mapping/Mapped::uncovered (Ljava/lang/String;)Ljava/lang/String;
+FNDA:1,com/example/coverage/mapping/Mapped$::<clinit> ()V
+FNDA:1,com/example/coverage/mapping/Mapped$::<init> ()V
+FNDA:1,com/example/coverage/mapping/Mapped$::covered (Ljava/lang/String;)Ljava/lang/String;
+FNDA:0,com/example/coverage/mapping/Mapped$::uncovered (Ljava/lang/String;)Ljava/lang/String;
+FNDA:0,com/example/coverage/mapping/Mapped::covered (Ljava/lang/String;)Ljava/lang/String;
+FNDA:0,com/example/coverage/mapping/Mapped::uncovered (Ljava/lang/String;)Ljava/lang/String;
+FNF:6
+FNH:3
+DA:3,1
+DA:5,1
+DA:8,0
+DA:9,1
+LH:3
+LF:4
+end_of_record
