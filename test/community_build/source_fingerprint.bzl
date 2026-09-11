@@ -106,7 +106,7 @@ _INTERNAL_ENTRIES = [
     "test_reproducibility.sh",
     "test_rules_scala.sh",
     "test_statsfile",
-    "test_thirdparty_version.sh",
+    "test_thirdparty_version",
     "test_version",
     "test_version.sh",
     "tmp",
