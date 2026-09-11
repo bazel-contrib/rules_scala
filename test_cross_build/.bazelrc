@@ -1,2 +1,9 @@
-# Remove after moving to Bazel 7.
 import ../.bazelrc
+
+# Overrides the imported settings above (a later line wins): this module's
+# Scala 3.1.3 fixture needs a JDK its own compiler can run on. Under JDK 21
+# its process misreads the JDK's own class files ("class file ... is broken,
+# reading aborted" on java.lang.reflect.AccessFlag). Pinned independently of
+# whatever JDK the importing checkout's own baseline moves to.
+build --tool_java_language_version=17
+build --tool_java_runtime_version=17
