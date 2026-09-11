@@ -96,7 +96,6 @@ _INTERNAL_ENTRIES = [
     "test",
     "test_all.sh",
     "test_cleanup.sh",
-    "test_coverage.sh",
     "test_cross_build",
     "test_dependency_versions.sh",
     "test_examples.sh",
