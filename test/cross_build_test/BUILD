@@ -21,10 +21,14 @@ _NESTED_BAZEL_TAGS = [
     "no-release",
     "requires-network",
     "exclusive",
+    # Neither nested invocation inherits the outer sweep's --extra_toolchains
+    # (nested_bazel_run builds its own command line from scratch), so a
+    # toolchain sweep here always exercises the same configuration.
+    "skip-toolchain-sweep",
 ]
 
 sh_test(
-    name = "test_test",
+    name = "full_suite_test",
     size = "large",
     srcs = ["run_test.sh"],
     args = [
