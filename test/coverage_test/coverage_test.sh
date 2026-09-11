@@ -76,7 +76,7 @@ if [[ -n "${expected}" ]]; then
   fi
 else
   if ! grep -q "${grep_pattern}" "${coverage_dat}"; then
-    echo "coverage.dat for ${target} does not contain expected line: ${grep_pattern}" >&2
+    echo "coverage.dat for ${target} does not contain expected text: ${grep_pattern}" >&2
     exit 1
   fi
 fi

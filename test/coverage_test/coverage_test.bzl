@@ -25,32 +25,33 @@ def _absolutize(target):
 def coverage_test(
         name,
         target,
-        expected = None,
-        grep = None,
+        expected_file = None,
+        expected_line = None,
         bazel_args = [],
         size = "large",
         tags = ["no-sandbox", "external", "exclusive", "requires-network"],
         **kwargs):
     """Declares an sh_test asserting a nested `bazel coverage` of `target` and its coverage.dat.
 
-    Exactly one of `expected`/`grep` must be given. Tagged `external` rather
-    than fingerprinted for caching: the nested build reads the real source
-    tree, not this test's runfiles (see nested_bazel.sh module docstring), so
-    there is no correct cache key to give it short of never caching at all --
-    `external` is Bazel's own way of saying that. Tagged `exclusive` because
-    every coverage_test shares one nested output base (see nested_bazel.sh):
-    two of these running at once could race on the same fixture's coverage.dat
-    (e.g. one run's --instrument_test_targets=True result landing where
-    another run without it expected to read its own).
+    Exactly one of `expected_file`/`expected_line` must be given; both check
+    the real run's coverage.dat, not the command's own output. Tagged
+    `external` rather than fingerprinted for caching: the nested build reads
+    the real source tree, not this test's runfiles (see nested_bazel.sh module
+    docstring), so there is no correct cache key to give it short of never
+    caching at all -- `external` is Bazel's own way of saying that. Tagged
+    `exclusive` because every coverage_test shares one nested output base (see
+    nested_bazel.sh): two of these running at once could race on the same
+    fixture's coverage.dat (e.g. one run's --instrument_test_targets=True
+    result landing where another run without it expected to read its own).
 
     Args:
         name: test target name.
         target: label whose nested `bazel coverage` must succeed. A
             package-relative label (`":foo"` or `"foo"`) is resolved against
             this package.
-        expected: workspace-relative path to a checked-in coverage.dat that the
-            real run's coverage.dat must match exactly.
-        grep: pattern that must appear in the real run's coverage.dat.
+        expected_file: workspace-relative path to a checked-in coverage.dat
+            that the real run's coverage.dat must match exactly.
+        expected_line: pattern that must appear in the real run's coverage.dat.
         bazel_args: extra flags forwarded verbatim to the nested `bazel
             coverage` (e.g. `"--instrument_test_targets=True"`).
         size: test size; defaults to `"large"` (the nested Bazel invocation is
@@ -64,16 +65,16 @@ def coverage_test(
             other, since they share one nested output base (see above).
         **kwargs: forwarded to the underlying `sh_test` (e.g. extra `data`).
     """
-    if (expected == None) == (grep == None):
-        fail("coverage_test %s needs exactly one of expected or grep" % name)
+    if (expected_file == None) == (expected_line == None):
+        fail("coverage_test %s needs exactly one of expected_file or expected_line" % name)
 
     args = ["--target", _absolutize(target)]
     for bazel_arg in bazel_args:
         args += ["--bazel-arg", bazel_arg]
-    if expected:
-        args += ["--expected", expected]
+    if expected_file:
+        args += ["--expected", expected_file]
     else:
-        args += ["--grep", grep]
+        args += ["--grep", expected_line]
 
     sh_test(
         name = name,

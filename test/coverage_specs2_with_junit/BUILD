@@ -4,16 +4,17 @@ load("//test/coverage_test:coverage_test.bzl", "coverage_test")
 
 coverage_test(
     name = "coverage_matches_expected_test",
-    # Default to 2.12.21 because other Scala versions change the output.
+    # Pinned to 2.12.21: each Scala version formats coverage.dat differently, so a
+    # diff against a fixed expectation needs a fixed version.
     bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
-    expected = "test/coverage_specs2_with_junit/expected-coverage.dat",
+    expected_file = "test/coverage_specs2_with_junit/expected-coverage.dat",
     target = ":test-specs2-with-junit",
 )
 
 coverage_test(
     name = "coverage_includes_test_targets_test",
     bazel_args = ["--instrument_test_targets=True"],
-    grep = "SF:test/coverage_specs2_with_junit/TestWithSpecs2WithJUnit.scala",
+    expected_line = "SF:test/coverage_specs2_with_junit/TestWithSpecs2WithJUnit.scala",
     target = ":test-specs2-with-junit",
 )
 
