@@ -1,6 +1,5 @@
 """Repositories for testing rules_scala itself"""
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:scala_maven_import_external.bzl", "java_import_external")
 load(
@@ -9,9 +8,6 @@ load(
     "single_tag_values",
 )
 load("//third_party/repositories:repositories.bzl", "repositories")
-
-_BUILD_TOOLS_RELEASE = "8.2.1"
-_BUILD_TOOLS_INTEGRITY = "sha256-UxGTl7vOHNfkxZDhF9zaNDwghhmd5ikyEGyAczUmwmE="
 
 _settings_defaults = {
     "maven_servers": default_maven_server_urls(),
