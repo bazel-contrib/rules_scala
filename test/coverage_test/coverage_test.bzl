@@ -27,6 +27,8 @@ def coverage_test(
         target,
         expected_file = None,
         expected_line = None,
+        reject_line = None,
+        expected_output = None,
         bazel_args = [],
         size = "large",
         tags = [
@@ -40,8 +42,9 @@ def coverage_test(
         **kwargs):
     """Declares an sh_test asserting a nested `bazel coverage` of `target` and its coverage.dat.
 
-    Exactly one of `expected_file`/`expected_line` must be given; both check
-    the real run's coverage.dat, not the command's own output. Tagged
+    Exactly one of `expected_file`/`expected_line` must be given; `reject_line`
+    is optional and can accompany either. All three check the real run's
+    coverage.dat, not the command's own output. Tagged
     `external` rather than fingerprinted for caching: the nested build reads
     the real source tree, not this test's runfiles (see nested_bazel.sh module
     docstring), so there is no correct cache key to give it short of never
@@ -65,6 +68,12 @@ def coverage_test(
         expected_file: workspace-relative path to a checked-in coverage.dat
             that the real run's coverage.dat must match exactly.
         expected_line: pattern that must appear in the real run's coverage.dat.
+        reject_line: pattern that must NOT appear in the real run's
+            coverage.dat. Can be combined with either `expected_file` or
+            `expected_line`.
+        expected_output: pattern that must appear in the nested `bazel coverage`
+            command's own combined stdout/stderr, checked before the
+            coverage.dat itself (e.g. a warning the instrumenter prints).
         bazel_args: extra flags forwarded verbatim to the nested `bazel
             coverage` (e.g. `"--instrument_test_targets=True"`).
         size: test size; defaults to `"large"` (the nested Bazel invocation is
@@ -76,13 +85,24 @@ def coverage_test(
     if (expected_file == None) == (expected_line == None):
         fail("coverage_test %s needs exactly one of expected_file or expected_line" % name)
 
+    # Bazel applies Bourne tokenization to `sh_test` `args`, which would split a
+    # pattern containing spaces (e.g. "JacocoInstrumenter: skipping") into two
+    # tokens; single-quote such values so tokenization keeps them whole (same
+    # guard expect_build_failure.bzl uses for its own `bazel_args`/`env`).
+    def _quoted(value):
+        return "'%s'" % value if " " in value else value
+
     args = ["--target", _absolutize(target)]
     for bazel_arg in bazel_args:
-        args += ["--bazel-arg", bazel_arg]
+        args += ["--bazel-arg", _quoted(bazel_arg)]
     if expected_file:
         args += ["--expected", expected_file]
     else:
-        args += ["--grep", expected_line]
+        args += ["--grep", _quoted(expected_line)]
+    if reject_line:
+        args += ["--reject-grep", _quoted(reject_line)]
+    if expected_output:
+        args += ["--expected-output", _quoted(expected_output)]
 
     sh_test(
         name = name,
