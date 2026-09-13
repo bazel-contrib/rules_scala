@@ -17,3 +17,10 @@ expect_analysis_failure_test(
     message = "Resource file test/mismatching_resource_strip_prefix/resource.txt is not under the specified prefix wrong_prefix to strip",
     target_under_test = ":noSrcsJarWithWrongStripPrefix",
 )
+
+# Same mismatch, but for a generated resource from an external repo.
+expect_analysis_failure_test(
+    name = "mismatching_resource_strip_prefix_external_generated",
+    message = "Resource file strip/nosrc_jar_generated_resource.txt is not under the specified prefix wrong_prefix to strip",
+    target_under_test = "@example_external_workspace//strip:noSrcsWithGeneratedResourceWrongPrefix",
+)
