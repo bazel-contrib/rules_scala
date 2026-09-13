@@ -40,21 +40,14 @@ public final class JacocoInstrumenter implements Worker.Interface {
   }
 
   private void processArg(Instrumenter jacoco, String[] args) throws Exception {
-    boolean skipOversizedMethods = false;
-    int firstPositional = 0;
-
-    while (firstPositional < args.length && args[firstPositional].startsWith("--")) {
-      String flag = args[firstPositional++];
-      if (SKIP_OVERSIZED_METHODS_FLAG.equals(flag)) {
-        skipOversizedMethods = true;
-      } else {
-        throw new Exception("unknown flag `" + flag + "` in arguments: " + Arrays.asList(args));
-      }
-    }
+    boolean skipOversizedMethods = args.length > 0 && SKIP_OVERSIZED_METHODS_FLAG.equals(args[0]);
+    int firstPositional = skipOversizedMethods ? 1 : 0;
 
     if (args.length - firstPositional < 3) {
       throw new Exception(
-          "expected format `[flags] in_path out_path src1 src2 ... srcN`  for arguments: "
+          "expected format `["
+              + SKIP_OVERSIZED_METHODS_FLAG
+              + "] in_path out_path src1 src2 ... srcN`  for arguments: "
               + Arrays.asList(args));
     }
 
