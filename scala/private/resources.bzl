@@ -18,13 +18,21 @@ def _target_path(resource, resource_strip_prefix):
 def _target_path_by_strip_prefix(resource, resource_strip_prefix):
     # Start from absolute resource path and then strip roots so we get to correct short path
     # resource.short_path sometimes give weird results ie '../' prefix
-    path = resource.path
-    if resource_strip_prefix != resource.owner.workspace_root:
-        path = _strip_prefix(path, resource.owner.workspace_root + "/")
-    path = _strip_prefix(path, resource.root.path + "/")
+    # A generated file's path has root.path before workspace_root (eg.
+    # bazel-out/.../bin/external/foo/pkg/res.txt), so root.path must come off first.
+    path = _strip_prefix(resource.path, resource.root.path + "/")
 
     # proto_library translates strip_import_prefix to proto_source_root which includes root so we have to strip it
     prefix = _strip_prefix(resource_strip_prefix, resource.root.path + "/")
+
+    # Whether workspace_root remains part of the path depends on the caller-supplied
+    # prefix: proto's virtual-imports paths embed workspace_root in prefix, ordinary
+    # prefixes are relative to workspace_root. Try stripping it and keep that result
+    # only when it matches prefix, rather than inferring the case from the prefix's
+    # spelling, which can coincidentally resemble either case.
+    path_without_workspace_root = _strip_prefix(path, resource.owner.workspace_root + "/")
+    if not path.startswith(prefix) or path_without_workspace_root.startswith(prefix):
+        path = path_without_workspace_root
     if not path.startswith(prefix):
         fail("Resource file %s is not under the specified prefix %s to strip" % (path, prefix))
     return path[len(prefix):]
