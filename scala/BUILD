@@ -7,6 +7,12 @@ load("//scala:scala_toolchain.bzl", "scala_toolchain")
 # listing it in those tests' `data` re-keys the tests when its fields change.
 exports_files(["semanticdb_provider.bzl"])
 
+# For //test/cross_build_test, whose default_2x_build_test drives the nested
+# test_cross_build module through this file's per-scala_version toolchain
+# providers; listing it in that test's `data` re-keys the test when they
+# change.
+exports_files(["toolchains_repo.bzl"])
+
 toolchain_type(
     name = "toolchain_type",
     visibility = ["//visibility:public"],

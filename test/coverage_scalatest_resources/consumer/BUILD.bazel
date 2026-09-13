@@ -1,4 +1,25 @@
 load("//scala:scala.bzl", "scala_library", "scala_test")
+load("//test/coverage_test:coverage_test.bzl", "coverage_test")
+
+coverage_test(
+    name = "coverage_matches_expected_test",
+    bazel_args = [
+        # Pinned to 2.12.21: each Scala version formats coverage.dat
+        # differently, so a diff against a fixed expectation needs a fixed
+        # version.
+        "--repo_env=SCALA_VERSION=2.12.21",
+        "--instrumentation_filter=^//test/coverage_scalatest_resources[:/]",
+    ],
+    expected_file = "test/coverage_scalatest_resources/expected-coverage.dat",
+    target = ":tests",
+)
+
+coverage_test(
+    name = "coverage_includes_resource_test_targets_test",
+    bazel_args = ["--instrument_test_targets=True"],
+    expected_line = "SF:test/coverage_scalatest_resources/consumer/src/test/scala/com/example/consumer/ConsumerSpec.scala",
+    target = ":tests",
+)
 
 scala_library(
     name = "consumer",
