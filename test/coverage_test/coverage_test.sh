@@ -12,6 +12,7 @@
 # Usage:
 #   coverage_test.sh --target <label> [--bazel-arg <flag>]...
 #                     (--expected <workspace-relative path> | --grep <pattern>)
+#                     [--reject-grep <pattern>] [--expected-output <pattern>]
 
 set -euo pipefail
 
@@ -22,6 +23,8 @@ target=""
 bazel_args=()
 expected=""
 grep_pattern=""
+reject_pattern=""
+expected_output_pattern=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -41,6 +44,14 @@ while [[ $# -gt 0 ]]; do
     grep_pattern="$2"
     shift 2
     ;;
+  --reject-grep)
+    reject_pattern="$2"
+    shift 2
+    ;;
+  --expected-output)
+    expected_output_pattern="$2"
+    shift 2
+    ;;
   *)
     echo "Unknown arg: $1" >&2
     exit 2
@@ -57,8 +68,21 @@ fi
 
 nested_bazel_setup rules_scala_coverage_output_base
 
+if [[ -n "${expected_output_pattern}" ]]; then
+  # A cached instrumenter action prints nothing on a later run, so an
+  # --expected-output check needs a clean output base to force re-execution
+  # (same reasoning as expect_build_failure.sh's --clean-before-build).
+  nested_bazel_run clean >/dev/null 2>&1
+fi
+
 if ! coverage_output="$(nested_bazel_run coverage "${bazel_args[@]}" "${target}" 2>&1)"; then
   echo "Expected \`bazel coverage ${target}\` to succeed, but it failed." >&2
+  echo "${coverage_output}" >&2
+  exit 1
+fi
+
+if [[ -n "${expected_output_pattern}" ]] && ! grep -q "${expected_output_pattern}" <<<"${coverage_output}"; then
+  echo "\`bazel coverage ${target}\` output does not contain expected text: ${expected_output_pattern}" >&2
   echo "${coverage_output}" >&2
   exit 1
 fi
@@ -77,6 +101,18 @@ if [[ -n "${expected}" ]]; then
 else
   if ! grep -q "${grep_pattern}" "${coverage_dat}"; then
     echo "coverage.dat for ${target} does not contain expected text: ${grep_pattern}" >&2
+    exit 1
+  fi
+fi
+
+if [[ -n "${reject_pattern}" ]]; then
+  reject_grep_status=0
+  grep -q -- "${reject_pattern}" "${coverage_dat}" || reject_grep_status="$?"
+  if [[ "${reject_grep_status}" -eq 0 ]]; then
+    echo "coverage.dat for ${target} contains rejected text: ${reject_pattern}" >&2
+    exit 1
+  elif [[ "${reject_grep_status}" -gt 1 ]]; then
+    echo "grep failed (exit ${reject_grep_status}) while checking for rejected text: ${reject_pattern}" >&2
     exit 1
   fi
 fi
