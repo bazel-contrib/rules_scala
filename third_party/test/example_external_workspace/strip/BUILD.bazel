@@ -6,3 +6,26 @@ scala_library(
     resources = ["nosrc_jar_resource.txt"],
     visibility = ["//visibility:public"],
 )
+
+genrule(
+    name = "generated_resource",
+    outs = ["nosrc_jar_generated_resource.txt"],
+    cmd = "echo generated > $@",
+)
+
+scala_library(
+    name = "noSrcsWithGeneratedResource",
+    resource_strip_prefix = "strip",
+    resources = [":generated_resource"],
+    visibility = ["//visibility:public"],
+)
+
+# `resource_strip_prefix` does not match the resource's path, so this library is
+# expected to fail to build. Tagged "manual" so wildcard builds skip it.
+scala_library(
+    name = "noSrcsWithGeneratedResourceWrongPrefix",
+    resource_strip_prefix = "wrong_prefix",
+    resources = [":generated_resource"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
