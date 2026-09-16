@@ -151,7 +151,7 @@ def _write_executable_non_windows(ctx, executable, rjars, main_class, jvm_flags,
             },
             is_executable = True,
         )
-        return [jacoco_metadata_file]
+        return struct(runfiles = depset([jacoco_metadata_file]))
     else:
         # RUNPATH is defined here:
         # https://github.com/bazelbuild/bazel/blob/0.4.5/src/main/java/com/google/devtools/build/lib/bazel/rules/java/java_stub_template.txt#L227
