@@ -12,8 +12,8 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 # external: forces a fresh run every time instead of reusing a cached PASS,
 # since re-executing the two builds is the only way this test can catch a
 # build turning non-deterministic.
-# target_compatible_with: limited to platforms where the original shell test
-# actually ran; Windows is new ground for this script's MSYS2 behavior.
+# target_compatible_with: Windows excluded -- this script's MSYS2 path and
+# shutdown behavior would be new ground there.
 sh_test(
     name = "build_is_identical_test",
     size = "enormous",
