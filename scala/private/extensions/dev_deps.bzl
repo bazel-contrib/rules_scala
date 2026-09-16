@@ -1,6 +1,5 @@
 """Repositories for testing rules_scala itself"""
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:scala_maven_import_external.bzl", "java_import_external")
 load(
@@ -9,9 +8,6 @@ load(
     "single_tag_values",
 )
 load("//third_party/repositories:repositories.bzl", "repositories")
-
-_BUILD_TOOLS_RELEASE = "8.2.1"
-_BUILD_TOOLS_INTEGRITY = "sha256-UxGTl7vOHNfkxZDhF9zaNDwghhmd5ikyEGyAczUmwmE="
 
 _settings_defaults = {
     "maven_servers": default_maven_server_urls(),
@@ -42,19 +38,6 @@ def dev_deps_repositories(
         maven_servers: servers to use when resolving Maven artifacts
         fetch_sources: retrieve Maven artifact sources when True
     """
-
-    # gazelle is still getting `buildtools` from its `go.mod` file, which breaks
-    # `bazel run //tools:lint_check` when we don't import it like this. See:
-    # - https://github.com/bazel-contrib/bazel-gazelle/blob/v0.43.0/MODULE.bazel#L32-L44
-    http_archive(
-        name = "com_github_bazelbuild_buildtools",
-        integrity = _BUILD_TOOLS_INTEGRITY,
-        strip_prefix = "buildtools-%s" % _BUILD_TOOLS_RELEASE,
-        url = (
-            "https://github.com/bazelbuild/buildtools/archive/v%s.tar.gz" %
-            _BUILD_TOOLS_RELEASE
-        ),
-    )
 
     # bazel's java_import_external has been altered in rules_scala to be a macro
     # based on jvm_import_external in order to allow for other jvm-language
