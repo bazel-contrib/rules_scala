@@ -23,3 +23,12 @@ scala_specs2_junit_test(
     unused_dependency_checker_mode = "off",
     deps = ["@example_external_workspace//strip:noSrcsWithResources"],
 )
+
+scala_specs2_junit_test(
+    name = "generatedResourceStripPrefixFromExternalRepoTest",
+    size = "small",
+    srcs = ["GeneratedResourceStripPrefixFromExternalRepoTest.scala"],
+    suffixes = ["Test"],
+    unused_dependency_checker_mode = "off",
+    deps = ["@example_external_workspace//strip:noSrcsWithGeneratedResource"],
+)
