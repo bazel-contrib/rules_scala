@@ -1,1 +1,2 @@
 DO NOT MERGE. Dummy stack for live-testing git-machete machete.github.retrieveByAuthor.
+Child of dummy/git-machete-rba-1. Still do not merge.
