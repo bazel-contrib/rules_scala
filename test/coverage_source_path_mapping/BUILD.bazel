@@ -1,0 +1,72 @@
+load("//scala:scala.bzl", "scala_library", "scala_test")
+load("//test/coverage_test:coverage_test.bzl", "coverage_test")
+
+# These sources declare a package deeper than their own directory, so covering them
+# exercises the explicit source path mapping in
+# JacocoInstrumenter.pathsForCoverageContent (see its doc).
+coverage_test(
+    name = "coverage_matches_expected_test",
+    # Pinned to 2.12.21: each Scala version formats coverage.dat differently, so a
+    # diff against a fixed expectation needs a fixed version.
+    bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
+    expected_file = "test/coverage_source_path_mapping/expected-coverage.dat",
+    target = ":test-source-path-mapping",
+)
+
+scala_test(
+    name = "test-source-path-mapping",
+    size = "small",
+    srcs = [
+        "TestSourcePathMapping.scala",
+    ],
+    deps = [
+        ":also_mapped",
+        ":mapped",
+    ],
+)
+
+scala_library(
+    name = "mapped",
+    srcs = [
+        "Mapped.scala",
+    ],
+)
+
+scala_library(
+    name = "also_mapped",
+    srcs = [
+        "AlsoMapped.scala",
+    ],
+)
+
+# Regression test for a source path mapping collision: both sources below are named
+# `Same.scala` and compile in the same action (one scala_library, since the instrumenter
+# sees one compilation unit's sources at a time), giving a mapping keyed on (package,
+# basename) two equally plausible pairings. Their paths already mirror their own package
+# (Maven-style), so the suffix match alone resolves each source correctly; this test
+# confirms each source's coverage lines land in its own record.
+coverage_test(
+    name = "coverage_matches_expected_same_basename_test",
+    bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
+    expected_file = "test/coverage_source_path_mapping/expected-coverage-same-basename.dat",
+    target = ":test-same-basename-mapping",
+)
+
+scala_test(
+    name = "test-same-basename-mapping",
+    size = "small",
+    srcs = [
+        "TestSameBasenameMapping.scala",
+    ],
+    deps = [
+        ":same_basenames",
+    ],
+)
+
+scala_library(
+    name = "same_basenames",
+    srcs = [
+        "maven_layout/com/example/coverage/aliasing/one/Same.scala",
+        "maven_layout/com/example/coverage/aliasing/two/Same.scala",
+    ],
+)
