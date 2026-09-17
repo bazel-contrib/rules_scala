@@ -95,6 +95,7 @@ def _scala_toolchain_impl(ctx):
         scala_test_jvm_flags = ctx.attr.scala_test_jvm_flags,
         enable_diagnostics_report = enable_diagnostics_report,
         jacocorunner = ctx.attr.jacocorunner,
+        coverage_skip_oversized_methods = ctx.attr.coverage_skip_oversized_methods,
         enable_stats_file = enable_stats_file,
         enable_semanticdb = ctx.attr.enable_semanticdb,
         semanticdb_bundle_in_jar = ctx.attr.semanticdb_bundle_in_jar,
@@ -163,6 +164,15 @@ _scala_toolchain = rule(
         ),
         "jacocorunner": attr.label(
             default = "@bazel_tools//tools/jdk:JacocoCoverage",
+        ),
+        "coverage_skip_oversized_methods": attr.bool(
+            default = False,
+            doc = (
+                "When instrumenting for coverage, pass a class through to the output jar " +
+                "uninstrumented if JaCoCo's probes would push one of its methods past the JVM's " +
+                "64KB method limit, instead of failing the build. Such a class is omitted from " +
+                "coverage reports, and a warning naming it is printed to stderr."
+            ),
         ),
         "enable_stats_file": attr.bool(
             default = True,
