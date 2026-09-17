@@ -10,3 +10,12 @@ sh_test(
     args = ["$(rootpath //test/jmh:test_benchmark)"],
     data = ["//test/jmh:test_benchmark"],
 )
+
+# Regresses scala_benchmark_jmh's jvm_flags passthrough: the benchmark throws
+# unless test.jmh.marker reaches its JVM, so this fails without the passthrough.
+sh_test(
+    name = "jvm_flags_test",
+    srcs = ["benchmark_test.sh"],
+    args = ["$(rootpath //test/jmh:test_benchmark_jvm_flags)"],
+    data = ["//test/jmh:test_benchmark_jvm_flags"],
+)
