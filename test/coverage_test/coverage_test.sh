@@ -81,7 +81,7 @@ if ! coverage_output="$(nested_bazel_run coverage "${bazel_args[@]}" "${target}"
   exit 1
 fi
 
-if [[ -n "${expected_output_pattern}" ]] && ! grep -q "${expected_output_pattern}" <<<"${coverage_output}"; then
+if [[ -n "${expected_output_pattern}" ]] && ! grep -q -- "${expected_output_pattern}" <<<"${coverage_output}"; then
   echo "\`bazel coverage ${target}\` output does not contain expected text: ${expected_output_pattern}" >&2
   echo "${coverage_output}" >&2
   exit 1

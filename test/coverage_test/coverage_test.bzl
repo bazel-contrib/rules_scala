@@ -44,7 +44,7 @@ def coverage_test(
 
     Exactly one of `expected_file`/`expected_line` must be given; `reject_line`
     is optional and can accompany either. All three check the real run's
-    coverage.dat, not the command's own output. Tagged
+    coverage.dat. Tagged
     `external` rather than fingerprinted for caching: the nested build reads
     the real source tree, not this test's runfiles (see nested_bazel.sh module
     docstring), so there is no correct cache key to give it short of never
