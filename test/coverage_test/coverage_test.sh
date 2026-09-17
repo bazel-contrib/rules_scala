@@ -69,8 +69,8 @@ fi
 nested_bazel_setup rules_scala_coverage_output_base
 
 if [[ -n "${expected_output_pattern}" ]]; then
-  # A cached instrumenter action prints nothing on a later run, so an
-  # --expected-output check needs a clean output base to force re-execution
+  # The instrumenter action only prints its warning when it actually runs, so
+  # --expected-output needs a clean output base to force that on a later run
   # (same reasoning as expect_build_failure.sh's --clean-before-build).
   nested_bazel_run clean >/dev/null 2>&1
 fi
