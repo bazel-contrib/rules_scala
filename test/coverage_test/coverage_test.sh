@@ -11,7 +11,7 @@
 #
 # Usage:
 #   coverage_test.sh --target <label> [--bazel-arg <flag>]...
-#                     (--expected <workspace-relative path> | --grep <pattern>)
+#                     (--expected <workspace-relative path> | --expect-line <pattern>)
 #                     [--reject-line <pattern>] [--expect-output <pattern>]
 
 set -euo pipefail
@@ -22,7 +22,7 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 target=""
 bazel_args=()
 expected=""
-grep_pattern=""
+expect_line_pattern=""
 reject_pattern=""
 expect_output_pattern=""
 
@@ -40,8 +40,8 @@ while [[ $# -gt 0 ]]; do
     expected="$2"
     shift 2
     ;;
-  --grep)
-    grep_pattern="$2"
+  --expect-line)
+    expect_line_pattern="$2"
     shift 2
     ;;
   --reject-line)
@@ -60,9 +60,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "${target}" ]] ||
-  { [[ -z "${expected}" ]] && [[ -z "${grep_pattern}" ]]; } ||
-  { [[ -n "${expected}" ]] && [[ -n "${grep_pattern}" ]]; }; then
-  echo "Usage: coverage_test.sh --target <label> [--bazel-arg <flag>]... (--expected <path> | --grep <pattern>)" >&2
+  { [[ -z "${expected}" ]] && [[ -z "${expect_line_pattern}" ]]; } ||
+  { [[ -n "${expected}" ]] && [[ -n "${expect_line_pattern}" ]]; }; then
+  echo "Usage: coverage_test.sh --target <label> [--bazel-arg <flag>]... (--expected <path> | --expect-line <pattern>)" >&2
   exit 2
 fi
 
@@ -99,8 +99,8 @@ if [[ -n "${expected}" ]]; then
     exit 1
   fi
 else
-  if ! grep -q "${grep_pattern}" "${coverage_dat}"; then
-    echo "coverage.dat for ${target} does not contain expected text: ${grep_pattern}" >&2
+  if ! grep -q "${expect_line_pattern}" "${coverage_dat}"; then
+    echo "coverage.dat for ${target} does not contain expected text: ${expect_line_pattern}" >&2
     exit 1
   fi
 fi

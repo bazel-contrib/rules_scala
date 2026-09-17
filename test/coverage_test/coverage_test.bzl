@@ -44,21 +44,22 @@ def coverage_test(
 
     Exactly one of `expected_file`/`expected_line` must be given;
     `reject_line` is optional and can accompany either. All three check the
-    real run's coverage.dat. Tagged `external` rather than fingerprinted for
-    caching: the nested build reads the real source tree, not this test's
-    runfiles (see nested_bazel.sh module docstring), so there is no correct
-    cache key to give it short of never caching at all -- `external` is
-    Bazel's own way of saying that. Tagged
-    `exclusive` because every coverage_test shares one nested output base (see
-    nested_bazel.sh): two of these running at once could race on the same
-    fixture's coverage.dat (e.g. one run's --instrument_test_targets=True
+    real run's coverage.dat.
+    Tagged `external` rather than fingerprinted for caching: the nested build
+    reads the real source tree, not this test's runfiles (see nested_bazel.sh
+    module docstring), so there is no correct cache key to give it short of
+    never caching at all -- `external` is Bazel's own way of saying that.
+    Tagged `exclusive` because every coverage_test shares one nested output
+    base (see nested_bazel.sh): two of these running at once could race on the
+    same fixture's coverage.dat (e.g. one run's --instrument_test_targets=True
     result landing where another run without it expected to read its own).
     Tagged `no-release`, like every other disk-heavy nested-bazel test, so the
-    release workflow's constrained disk budget skips it. Tagged
-    `skip-toolchain-sweep`: the nested `bazel coverage` runs under its own
-    output base with its own flags, so the outer build's `--extra_toolchains`
-    never reaches it and every toolchain sweep would otherwise repeat the same
-    result test_rules_scala.sh's default sweep already checked.
+    release workflow's constrained disk budget skips it.
+    Tagged `skip-toolchain-sweep`: the nested `bazel coverage` runs under its
+    own output base with its own flags, so the outer build's
+    `--extra_toolchains` never reaches it and every toolchain sweep would
+    otherwise repeat the same result test_rules_scala.sh's default sweep
+    already checked.
 
     Args:
         name: test target name.
@@ -98,7 +99,7 @@ def coverage_test(
     if expected_file:
         args += ["--expected", expected_file]
     else:
-        args += ["--grep", _quoted(expected_line)]
+        args += ["--expect-line", _quoted(expected_line)]
     if reject_line:
         args += ["--reject-line", _quoted(reject_line)]
     if expect_output:
