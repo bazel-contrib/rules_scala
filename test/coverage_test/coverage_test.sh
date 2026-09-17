@@ -11,7 +11,8 @@
 #
 # Usage:
 #   coverage_test.sh --target <label> [--bazel-arg <flag>]...
-#                     (--expected <workspace-relative path> | --grep <pattern>)
+#                     (--expected <workspace-relative path> | --expect-line <pattern>)
+#                     [--reject-line <pattern>] [--expect-output <pattern>]
 
 set -euo pipefail
 
@@ -21,7 +22,9 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 target=""
 bazel_args=()
 expected=""
-grep_pattern=""
+expect_line_pattern=""
+reject_pattern=""
+expect_output_pattern=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -37,8 +40,16 @@ while [[ $# -gt 0 ]]; do
     expected="$2"
     shift 2
     ;;
-  --grep)
-    grep_pattern="$2"
+  --expect-line)
+    expect_line_pattern="$2"
+    shift 2
+    ;;
+  --reject-line)
+    reject_pattern="$2"
+    shift 2
+    ;;
+  --expect-output)
+    expect_output_pattern="$2"
     shift 2
     ;;
   *)
@@ -49,16 +60,29 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "${target}" ]] ||
-  { [[ -z "${expected}" ]] && [[ -z "${grep_pattern}" ]]; } ||
-  { [[ -n "${expected}" ]] && [[ -n "${grep_pattern}" ]]; }; then
-  echo "Usage: coverage_test.sh --target <label> [--bazel-arg <flag>]... (--expected <path> | --grep <pattern>)" >&2
+  { [[ -z "${expected}" ]] && [[ -z "${expect_line_pattern}" ]]; } ||
+  { [[ -n "${expected}" ]] && [[ -n "${expect_line_pattern}" ]]; }; then
+  echo "Usage: coverage_test.sh --target <label> [--bazel-arg <flag>]... (--expected <path> | --expect-line <pattern>)" >&2
   exit 2
 fi
 
 nested_bazel_setup rules_scala_coverage_output_base
 
+if [[ -n "${expect_output_pattern}" ]]; then
+  # The instrumenter action only prints its warning when it actually runs, so
+  # --expect-output needs a clean output base to force that on a later run
+  # (same reasoning as expect_build_failure.sh's --clean-before-build).
+  nested_bazel_run clean >/dev/null 2>&1
+fi
+
 if ! coverage_output="$(nested_bazel_run coverage "${bazel_args[@]}" "${target}" 2>&1)"; then
   echo "Expected \`bazel coverage ${target}\` to succeed, but it failed." >&2
+  echo "${coverage_output}" >&2
+  exit 1
+fi
+
+if [[ -n "${expect_output_pattern}" ]] && ! grep -q -- "${expect_output_pattern}" <<<"${coverage_output}"; then
+  echo "\`bazel coverage ${target}\` output does not contain expected text: ${expect_output_pattern}" >&2
   echo "${coverage_output}" >&2
   exit 1
 fi
@@ -75,8 +99,20 @@ if [[ -n "${expected}" ]]; then
     exit 1
   fi
 else
-  if ! grep -q "${grep_pattern}" "${coverage_dat}"; then
-    echo "coverage.dat for ${target} does not contain expected text: ${grep_pattern}" >&2
+  if ! grep -q "${expect_line_pattern}" "${coverage_dat}"; then
+    echo "coverage.dat for ${target} does not contain expected text: ${expect_line_pattern}" >&2
+    exit 1
+  fi
+fi
+
+if [[ -n "${reject_pattern}" ]]; then
+  reject_grep_status=0
+  grep -q -- "${reject_pattern}" "${coverage_dat}" || reject_grep_status="$?"
+  if [[ "${reject_grep_status}" -eq 0 ]]; then
+    echo "coverage.dat for ${target} contains rejected text: ${reject_pattern}" >&2
+    exit 1
+  elif [[ "${reject_grep_status}" -gt 1 ]]; then
+    echo "grep failed (exit ${reject_grep_status}) while checking for rejected text: ${reject_pattern}" >&2
     exit 1
   fi
 fi
