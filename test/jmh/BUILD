@@ -59,6 +59,13 @@ scala_benchmark_jmh(
     deps = [":add_numbers_testonly"],
 )
 
+scala_benchmark_jmh(
+    name = "test_benchmark_jvm_flags",
+    srcs = ["JvmFlagsBenchmark.scala"],
+    jvm_flags = ["-Dtest.jmh.marker=set"],
+    visibility = ["//test/jmh/benchmark_test:__pkg__"],
+)
+
 scala_test(
     name = "jmh_command_line_parsing_test",
     args = ["-h"],

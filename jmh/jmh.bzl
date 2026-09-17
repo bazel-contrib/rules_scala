@@ -71,6 +71,7 @@ def scala_benchmark_jmh(**kw):
     tags = kw.get("tags", [])
     scalacopts = kw.get("scalacopts", [])
     main_class = kw.get("main_class", "org.openjdk.jmh.Main")
+    jvm_flags = kw.get("jvm_flags", [])
     runtime_jdk = kw.get(
         "runtime_jdk",
         "@rules_java//toolchains:current_java_runtime",
@@ -124,5 +125,6 @@ def scala_benchmark_jmh(**kw):
         tags = tags,
         unused_dependency_checker_mode = "off",
         runtime_jdk = runtime_jdk,
+        jvm_flags = jvm_flags,
         **({"visibility": kw["visibility"]} if "visibility" in kw else {})
     )
