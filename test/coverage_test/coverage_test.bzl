@@ -28,7 +28,7 @@ def coverage_test(
         expected_file = None,
         expected_line = None,
         reject_line = None,
-        expected_output = None,
+        expect_output = None,
         bazel_args = [],
         size = "large",
         tags = [
@@ -42,13 +42,13 @@ def coverage_test(
         **kwargs):
     """Declares an sh_test asserting a nested `bazel coverage` of `target` and its coverage.dat.
 
-    Exactly one of `expected_file`/`expected_line` must be given; `reject_line`
-    is optional and can accompany either. All three check the real run's
-    coverage.dat. Tagged
-    `external` rather than fingerprinted for caching: the nested build reads
-    the real source tree, not this test's runfiles (see nested_bazel.sh module
-    docstring), so there is no correct cache key to give it short of never
-    caching at all -- `external` is Bazel's own way of saying that. Tagged
+    Exactly one of `expected_file`/`expected_line` must be given;
+    `reject_line` is optional and can accompany either. All three check the
+    real run's coverage.dat. Tagged `external` rather than fingerprinted for
+    caching: the nested build reads the real source tree, not this test's
+    runfiles (see nested_bazel.sh module docstring), so there is no correct
+    cache key to give it short of never caching at all -- `external` is
+    Bazel's own way of saying that. Tagged
     `exclusive` because every coverage_test shares one nested output base (see
     nested_bazel.sh): two of these running at once could race on the same
     fixture's coverage.dat (e.g. one run's --instrument_test_targets=True
@@ -71,7 +71,7 @@ def coverage_test(
         reject_line: pattern that must NOT appear in the real run's
             coverage.dat. Can be combined with either `expected_file` or
             `expected_line`.
-        expected_output: pattern that must appear in the nested `bazel coverage`
+        expect_output: pattern that must appear in the nested `bazel coverage`
             command's own combined stdout/stderr, checked before the
             coverage.dat itself (e.g. a warning the instrumenter prints).
         bazel_args: extra flags forwarded verbatim to the nested `bazel
@@ -101,8 +101,8 @@ def coverage_test(
         args += ["--grep", _quoted(expected_line)]
     if reject_line:
         args += ["--reject-grep", _quoted(reject_line)]
-    if expected_output:
-        args += ["--expected-output", _quoted(expected_output)]
+    if expect_output:
+        args += ["--expect-output", _quoted(expect_output)]
 
     sh_test(
         name = name,

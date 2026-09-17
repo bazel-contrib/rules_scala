@@ -12,7 +12,7 @@
 # Usage:
 #   coverage_test.sh --target <label> [--bazel-arg <flag>]...
 #                     (--expected <workspace-relative path> | --grep <pattern>)
-#                     [--reject-grep <pattern>] [--expected-output <pattern>]
+#                     [--reject-grep <pattern>] [--expect-output <pattern>]
 
 set -euo pipefail
 
@@ -24,7 +24,7 @@ bazel_args=()
 expected=""
 grep_pattern=""
 reject_pattern=""
-expected_output_pattern=""
+expect_output_pattern=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -48,8 +48,8 @@ while [[ $# -gt 0 ]]; do
     reject_pattern="$2"
     shift 2
     ;;
-  --expected-output)
-    expected_output_pattern="$2"
+  --expect-output)
+    expect_output_pattern="$2"
     shift 2
     ;;
   *)
@@ -68,9 +68,9 @@ fi
 
 nested_bazel_setup rules_scala_coverage_output_base
 
-if [[ -n "${expected_output_pattern}" ]]; then
+if [[ -n "${expect_output_pattern}" ]]; then
   # The instrumenter action only prints its warning when it actually runs, so
-  # --expected-output needs a clean output base to force that on a later run
+  # --expect-output needs a clean output base to force that on a later run
   # (same reasoning as expect_build_failure.sh's --clean-before-build).
   nested_bazel_run clean >/dev/null 2>&1
 fi
@@ -81,8 +81,8 @@ if ! coverage_output="$(nested_bazel_run coverage "${bazel_args[@]}" "${target}"
   exit 1
 fi
 
-if [[ -n "${expected_output_pattern}" ]] && ! grep -q -- "${expected_output_pattern}" <<<"${coverage_output}"; then
-  echo "\`bazel coverage ${target}\` output does not contain expected text: ${expected_output_pattern}" >&2
+if [[ -n "${expect_output_pattern}" ]] && ! grep -q -- "${expect_output_pattern}" <<<"${coverage_output}"; then
+  echo "\`bazel coverage ${target}\` output does not contain expected text: ${expect_output_pattern}" >&2
   echo "${coverage_output}" >&2
   exit 1
 fi
