@@ -47,7 +47,7 @@ coverage_test(
     name = "oversized_method_skipped_when_enabled_test",
     target = ":test-oversized-method",
     bazel_args = ["--extra_toolchains=//test/toolchains:coverage_skip_oversized_methods"],
-    expected_output = "JacocoInstrumenter: skipping /coverage_oversized_method/OversizedMethod.class",
+    expect_output = "JacocoInstrumenter: skipping /coverage_oversized_method/OversizedMethod.class",
     expected_line = "SF:test/coverage_oversized_method/SmallClass.scala",
     reject_line = "OversizedMethod",
 )
