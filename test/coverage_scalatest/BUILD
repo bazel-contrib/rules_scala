@@ -1,4 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_library", "scala_test")
 load("//test/coverage_test:coverage_test.bzl", "coverage_test")
 
@@ -9,6 +10,29 @@ coverage_test(
     bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
     expected_file = "test/coverage_scalatest/expected-coverage.dat",
     target = ":test-scalatest",
+)
+
+sh_test(
+    name = "jacoco_metadata_in_runfiles_test",
+    size = "large",
+    srcs = ["//test/coverage_test:jacoco_metadata_runfiles_test.sh"],
+    args = ["--target", "//test/coverage_scalatest:test-scalatest"],
+    data = [
+        "//:MODULE.bazel",
+        "//test/expect_build_failure:nested_bazel.sh",
+    ],
+    tags = [
+        "no-sandbox",
+        "external",
+        "exclusive",
+        "requires-network",
+        "no-release",
+        "skip-toolchain-sweep",
+    ],
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
 )
 
 coverage_test(
