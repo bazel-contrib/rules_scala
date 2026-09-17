@@ -100,7 +100,7 @@ def coverage_test(
     else:
         args += ["--grep", _quoted(expected_line)]
     if reject_line:
-        args += ["--reject-grep", _quoted(reject_line)]
+        args += ["--reject-line", _quoted(reject_line)]
     if expect_output:
         args += ["--expect-output", _quoted(expect_output)]
 

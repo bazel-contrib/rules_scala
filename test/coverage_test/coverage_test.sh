@@ -12,7 +12,7 @@
 # Usage:
 #   coverage_test.sh --target <label> [--bazel-arg <flag>]...
 #                     (--expected <workspace-relative path> | --grep <pattern>)
-#                     [--reject-grep <pattern>] [--expect-output <pattern>]
+#                     [--reject-line <pattern>] [--expect-output <pattern>]
 
 set -euo pipefail
 
@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
     grep_pattern="$2"
     shift 2
     ;;
-  --reject-grep)
+  --reject-line)
     reject_pattern="$2"
     shift 2
     ;;
