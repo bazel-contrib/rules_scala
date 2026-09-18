@@ -1,4 +1,5 @@
-# This module's rules_proto toolchain resolution compiles protobuf's C++
-# sources from scratch, which needs C++17.
+# protobuf builds its own protoc/upb toolchain from C++ source by default
+# (this module doesn't opt into protobuf's prebuilt-protoc flag), which
+# needs C++17.
 common --cxxopt=-std=c++17
 common --host_cxxopt=-std=c++17
