@@ -1,18 +1,13 @@
 #!/usr/bin/env bash
-# Runs `bazel build //...` inside a nested Bazel module, as that module's own
+# Runs `bazel build //...` inside a nested Bazel module as that module's own
 # build root, and asserts it succeeds.
 #
-# The modules covered here are also wired into the root MODULE.bazel as
-# `dev_dependency` `local_path_override`s, so their own targets already get
-# built and tested as part of this repo's own `bazel test //...` -- but only
-# in the root's module-resolution context. A `single_version_override` on the
-# root module (e.g. for `protobuf`) only applies when the root module is the
-# actual build root, so building one of these modules as its OWN root can
-# resolve different dependency versions than the ones already proven via the
-# root's own build. This test covers that separately.
+# These modules are also wired into the root MODULE.bazel as `dev_dependency`
+# `local_path_override`s. A root-level `single_version_override` (e.g. for
+# `protobuf`) only applies when the root module is the build root, so MVS can
+# resolve a different version when one of these modules is built standalone.
 #
-# Usage: run_test.sh <module-dir>
-# <module-dir> is a repo-relative directory containing a MODULE.bazel file.
+# Usage: run_test.sh <module-dir>, a repo-relative dir with a MODULE.bazel.
 
 set -euo pipefail
 
