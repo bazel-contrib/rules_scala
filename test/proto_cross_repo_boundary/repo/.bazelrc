@@ -1,0 +1,6 @@
+# protobuf's own C++ sources (compiled here since this module uses
+# rules_proto's default toolchain resolution directly, unlike rules_scala's
+# own consumers, which route around it) need a C++17 compiler; this module's
+# own auto-detected C++ toolchain otherwise defaults to an older standard.
+common --cxxopt=-std=c++17
+common --host_cxxopt=-std=c++17
