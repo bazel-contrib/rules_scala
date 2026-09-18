@@ -1,0 +1,34 @@
+SF:test/coverage_source_path_mapping/maven_layout/com/example/coverage/aliasing/one/Same.scala
+FN:-1,com/example/coverage/aliasing/one/Same$::<clinit> ()V
+FN:3,com/example/coverage/aliasing/one/Same$::<init> ()V
+FN:5,com/example/coverage/aliasing/one/Same$::coveredOne (I)I
+FN:-1,com/example/coverage/aliasing/one/Same::coveredOne (I)I
+FNDA:1,com/example/coverage/aliasing/one/Same$::<clinit> ()V
+FNDA:1,com/example/coverage/aliasing/one/Same$::<init> ()V
+FNDA:1,com/example/coverage/aliasing/one/Same$::coveredOne (I)I
+FNDA:0,com/example/coverage/aliasing/one/Same::coveredOne (I)I
+FNF:4
+FNH:3
+DA:3,1
+DA:5,1
+DA:6,1
+LH:3
+LF:3
+end_of_record
+SF:test/coverage_source_path_mapping/maven_layout/com/example/coverage/aliasing/two/Same.scala
+FN:-1,com/example/coverage/aliasing/two/Same$::<clinit> ()V
+FN:3,com/example/coverage/aliasing/two/Same$::<init> ()V
+FN:5,com/example/coverage/aliasing/two/Same$::coveredTwo (I)I
+FN:-1,com/example/coverage/aliasing/two/Same::coveredTwo (I)I
+FNDA:1,com/example/coverage/aliasing/two/Same$::<clinit> ()V
+FNDA:1,com/example/coverage/aliasing/two/Same$::<init> ()V
+FNDA:1,com/example/coverage/aliasing/two/Same$::coveredTwo (I)I
+FNDA:0,com/example/coverage/aliasing/two/Same::coveredTwo (I)I
+FNF:4
+FNH:3
+DA:3,1
+DA:5,1
+DA:6,1
+LH:3
+LF:3
+end_of_record
