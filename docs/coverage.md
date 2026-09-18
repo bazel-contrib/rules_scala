@@ -160,6 +160,26 @@ You could also register the toolchain in your `WORKSPACE`.
 
 You can verify that the locally built `jacocorunner` works with `manual_test/coverage_local_jacocorunner/test.sh`.
 
+## Source file layout
+
+`bazel coverage` reports each source's coverage under the on-disk path Bazel
+gave it, matched by file name against the classes compiled from the same
+target. When a source's file name (without extension) is unique in the target
+and matches the outer class name of a class in the target, rules_scala maps
+that source to that class's package directory, even when the source's own
+directory doesn't mirror it. For example, `another/utils/Widget.scala`, which
+declares `package another.utils.nested` and `class Widget`, still gets mapped
+to `another/utils/nested/Widget.scala`.
+
+This mapping is skipped, and coverage falls back to a plain suffix match
+instead, whenever the file name leaves more than one pairing equally
+plausible: another source in the target shares the same file name, or a
+class of that name exists in more than one package. It's also skipped when
+no compiled class has that name at all. The suffix match then requires the
+source's on-disk directory to end with its package path. See
+`pathsForCoverageContent` in
+`src/java/io/bazel/rulesscala/coverage/instrumenter/JacocoInstrumenter.java`.
+
 ## Methods too large to instrument
 
 JaCoCo's probes add bytecode, so a method that is already close to the JVM's

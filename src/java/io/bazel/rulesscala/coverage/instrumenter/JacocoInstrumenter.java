@@ -16,8 +16,15 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator;
 
@@ -28,6 +35,13 @@ public final class JacocoInstrumenter implements Worker.Interface {
    * to the output jar uninstrumented, instead of failing the action.
    */
   private static final String SKIP_OVERSIZED_METHODS_FLAG = "--skip_oversized_methods";
+
+  /**
+   * Separates the real source path from the class-derived path in a {@code
+   * -paths-for-coverage.txt} entry. Must stay in sync with {@code
+   * JacocoLCOVFormatter.EXEC_PATH_DELIMITER}.
+   */
+  private static final String EXEC_PATH_DELIMITER = "///";
 
   public static void main(String[] args) throws Exception {
     Worker.workerMain(args, new JacocoInstrumenter());
@@ -62,10 +76,18 @@ public final class JacocoInstrumenter implements Worker.Interface {
 
     JarCreator jarCreator = new JarCreator(outPath);
 
+    // Jar-relative paths of every class we instrument, e.g. `/com/example/util/Time$.class`.
+    // Collected during the walk below and used to map sources onto their packages.
+    Set<String> instrumentedClassPaths = new LinkedHashSet<>();
+
     try (FileSystem inFS = FileSystems.newFileSystem(inPath, (ClassLoader) null)) {
       FileVisitor fileVisitor =
           createInstrumenterVisitor(
-              jacoco, instrumentedClassesDirectory, jarCreator, skipOversizedMethods);
+              jacoco,
+              instrumentedClassesDirectory,
+              jarCreator,
+              instrumentedClassPaths,
+              skipOversizedMethods);
       inFS.getRootDirectories()
           .forEach(
               root -> {
@@ -89,7 +111,8 @@ public final class JacocoInstrumenter implements Worker.Interface {
       Path pathsForCoverage = instrumentedClassesDirectory.resolve("-paths-for-coverage.txt");
       Files.write(
           pathsForCoverage,
-          String.join("\n", srcs).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+          pathsForCoverageContent(srcs, instrumentedClassPaths)
+              .getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
       jarCreator.addEntry(
           instrumentedClassesDirectory.relativize(pathsForCoverage).toString(), pathsForCoverage);
@@ -122,10 +145,89 @@ public final class JacocoInstrumenter implements Worker.Interface {
     return false;
   }
 
+  /**
+   * Builds the contents of `-paths-for-coverage.txt`. `JacocoLCOVFormatter`'s suffix match
+   * only resolves a source whose path on disk ends with its package path, so this also emits
+   * an explicit `<real path>///<class-derived path>` mapping for each source that names exactly
+   * one package holding a class named after it.
+   *
+   * <p>A source is skipped whenever its basename leaves more than one pairing equally
+   * plausible: either because another source shares that basename, or because more than one
+   * package holds a class named after it (a class name doesn't say which source declared it,
+   * only that some source did). It's also skipped when no package holds a matching class:
+   * {@code JacocoLCOVFormatter} reads every target's mappings into one combined set for the
+   * whole coverage run, so a mapping that isn't tied to a real class in this target could still
+   * collide with a real one from another target sharing the same package and basename.
+   */
+  static String pathsForCoverageContent(String[] srcs, Set<String> instrumentedClassPaths) {
+    Set<String> packageDirs = new LinkedHashSet<>();
+    Set<String> outerClassPaths = new HashSet<>();
+    for (String classPath : instrumentedClassPaths) {
+      packageDirs.add(packageDirOf(classPath));
+      outerClassPaths.add(outerClassPathOf(classPath));
+    }
+
+    Map<String, Integer> basenameCounts = new HashMap<>();
+    for (String src : srcs) {
+      basenameCounts.merge(fileNameOf(src), 1, Integer::sum);
+    }
+
+    List<String> preferred = new ArrayList<>();
+    for (String src : srcs) {
+      String fileName = fileNameOf(src);
+      if (basenameCounts.get(fileName) > 1) {
+        continue;
+      }
+      String matchingPackageDir = null;
+      for (String packageDir : packageDirs) {
+        if (outerClassPaths.contains(packageDir + "/" + stripExtension(fileName))) {
+          if (matchingPackageDir != null) {
+            matchingPackageDir = null;
+            break;
+          }
+          matchingPackageDir = packageDir;
+        }
+      }
+      if (matchingPackageDir != null) {
+        preferred.add(src + EXEC_PATH_DELIMITER + matchingPackageDir + "/" + fileName);
+      }
+    }
+
+    List<String> lines = new ArrayList<>(preferred);
+    lines.addAll(Arrays.asList(srcs));
+    return String.join("\n", lines);
+  }
+
+  private static String fileNameOf(String path) {
+    return path.substring(path.lastIndexOf('/') + 1);
+  }
+
+  /** `/com/example/util/Time$.class` -> `/com/example/util`; the default package -> `""`. */
+  static String packageDirOf(String classEntry) {
+    int lastSlash = classEntry.lastIndexOf('/');
+    return lastSlash <= 0 ? "" : classEntry.substring(0, lastSlash);
+  }
+
+  /**
+   * `/com/example/util/Cron$CronExpression.class` -> `/com/example/util/Cron`, i.e. the package
+   * directory plus the outermost class name, which for Scala is usually the source file's basename.
+   */
+  static String outerClassPathOf(String classEntry) {
+    String withoutExtension = stripExtension(classEntry);
+    int firstDollar = withoutExtension.indexOf('$', withoutExtension.lastIndexOf('/') + 1);
+    return firstDollar < 0 ? withoutExtension : withoutExtension.substring(0, firstDollar);
+  }
+
+  private static String stripExtension(String path) {
+    int lastDot = path.lastIndexOf('.');
+    return lastDot <= path.lastIndexOf('/') ? path : path.substring(0, lastDot);
+  }
+
   private SimpleFileVisitor createInstrumenterVisitor(
       Instrumenter jacoco,
       Path instrumentedClassesDirectory,
       JarCreator jarCreator,
+      Set<String> instrumentedClassPaths,
       boolean skipOversizedMethods) {
     return new SimpleFileVisitor<Path>() {
       @Override
@@ -182,6 +284,7 @@ public final class JacocoInstrumenter implements Worker.Interface {
             jarCreator.addEntry(inPath.toString(), inPath);
             return FileVisitResult.CONTINUE;
           }
+          instrumentedClassPaths.add(inPath.toString());
           jarCreator.addEntry(inPath.toString(), tempPath);
           jarCreator.addEntry(inPath.toString() + ".uninstrumented", inPath);
         } else {
