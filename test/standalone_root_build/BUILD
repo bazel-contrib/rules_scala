@@ -15,7 +15,7 @@ _NESTED_BAZEL_DATA = [
 ]
 
 # `external`: forces a fresh run every time, since these modules' files
-# can't be listed as `data` to bust the cache normally. See
+# can't be listed as `data` to invalidate the cache the normal way. See
 # test/scala_proto_library_action_label/BUILD.
 _NESTED_BAZEL_TAGS = [
     "exclusive",
