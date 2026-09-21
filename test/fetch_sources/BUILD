@@ -1,16 +1,9 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
-load("//scala:scala.bzl", "scala_library")
 
-scala_library(
-    name = "fetch_sources",
-    testonly = True,
-    srcs = ["FetchSources.scala"],
-    deps = ["@com_google_guava_guava_21_0//jar"],
-)
-
-# Tests using fetch_sources_test.sh depend upon `fetch_sources` being set for
-# `com_google_guava_guava_21_0` in `scala/private/extensions/dev_deps.bzl`;
-# without that, `fetched_by_default_test` would fail regardless of the env var.
+# Tests using fetch_sources_test.sh depend on `io_bazel_rules_scala_guava`
+# (fetched via scala_deps(), unaffected by the rules_jvm_external migration)
+# always fetching sources by default; only an explicit non-"true"
+# BAZEL_JVM_FETCH_SOURCES value turns that off. See scala_maven_import_external.bzl.
 sh_test(
     name = "fetched_by_default_test",
     size = "large",
