@@ -41,6 +41,10 @@ _STDLIB_JAR_PREFIXES = ["scala3-library_3-", "scala-library-"]
 _JAR_WRAPPER_PREFIXES = ["header_", "processed_"]
 _DIGITS = "0123456789"
 
+# Maven classifier suffixes that aren't compile classpath jars but would
+# otherwise parse as a bogus "version" (e.g. scala3-library_3-3.3.1-sources.jar).
+_NON_COMPILE_CLASSIFIER_SUFFIXES = ["-sources", "-javadoc"]
+
 # If basename is a (possibly wrapped/stamped) stdlib jar, returns its
 # (artifact prefix, version); otherwise (None, None).
 def _stdlib_jar_version(basename):
@@ -58,8 +62,11 @@ def _stdlib_jar_version(basename):
             version = name[len(prefix):]
 
             # A real version starts with a digit; excludes e.g. scala-library-utils-1.0.jar.
-            if version and version[0] in _DIGITS:
-                return prefix, version
+            if not version or version[0] not in _DIGITS:
+                continue
+            if any([version.endswith(suffix) for suffix in _NON_COMPILE_CLASSIFIER_SUFFIXES]):
+                continue
+            return prefix, version
     return None, None
 
 # The granularity two versions of the same artifact must agree on to coexist
