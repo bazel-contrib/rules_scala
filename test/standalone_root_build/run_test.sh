@@ -19,7 +19,10 @@ module_dir="$1"
 
 # shellcheck source=test/expect_build_failure/nested_bazel.sh
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
-nested_bazel_setup "rules_scala_standalone_root_build_output_base"
+# Short name: a module that compiles protobuf's own C++ sources (e.g.
+# test/proto_cross_repo_boundary/repo) builds deep _virtual_includes paths
+# that can hit MSVC's MAX_PATH; see https://bazel.build/configure/windows.
+nested_bazel_setup "rs_srb"
 cd "${NESTED_BAZEL_WORKSPACE}/${module_dir}"
 
 if ! output="$(nested_bazel_run build //... 2>&1)"; then
