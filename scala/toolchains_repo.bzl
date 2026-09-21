@@ -122,10 +122,11 @@ _SCALA_TOOLCHAIN_BUILD = """
 load(
     "@rules_scala//scala/private:macros/setup_scala_toolchain.bzl",
     "default_deps",
+    "repl_extra_deps",
     "setup_scala_toolchain",
 )
 load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
-load("@rules_scala//scala:scala_cross_version.bzl", "version_suffix")
+load("@rules_scala//scala:scala_cross_version.bzl", "repositories", "version_suffix")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
 [
@@ -160,6 +161,19 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         "semanticdb",
     ]
 ]
+
+# scala_repl_classpath isn't in _DEFAULT_DEPS (its extra deps depend on the
+# exact minor version, not just the major one -- see repl_extra_deps), so it
+# is computed separately from the other deps_id's above.
+declare_deps_provider(
+    name = "scala_repl_classpath_provider",
+    deps_id = "scala_repl_classpath",
+    visibility = ["//visibility:public"],
+    deps = select({{
+        "@rules_scala_config//:scala_version" + version_suffix(v): default_deps("scala_compile_classpath", v) + repositories(v, repl_extra_deps(v))
+        for v in SCALA_VERSIONS
+    }}),
+)
 """
 
 _TESTING_TOOLCHAIN_BUILD = """

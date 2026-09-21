@@ -320,12 +320,26 @@ scala_repl(
     srcs = ["A.scala"],
 )
 
-# Pinned to 3.7.4: from 3.8 the REPL moves into its own scala3-repl artifact
-# (fansi/pprint deps).
-# TODO: wire up scala3-repl support for 3.8+.
+# scala_repl under Scala 3 uses dotty.tools.repl.Main, not
+# scala.tools.nsc.MainGenericRunner.
 scala_repl(
     name = "Scala3Repl",
     scala_version = "3.7.4",
+)
+
+# From 3.8, dotty.tools.repl.Main moves into its own scala3-repl artifact
+# (fansi/pprint deps).
+scala_repl(
+    name = "Scala38Repl",
+    scala_version = "3.8.4",
+)
+
+# 3.9 splits the REPL further: a jline major-version bump and a
+# coursier-backed dependency-import feature replace the fansi/pprint deps
+# 3.8 needed.
+scala_repl(
+    name = "Scala39Repl",
+    scala_version = "3.9.0",
 )
 
 scala_library(
