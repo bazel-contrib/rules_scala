@@ -66,6 +66,14 @@ artifacts = {
             "@io_bazel_rules_scala_scala_library_2",
         ],
     },
+    "com_lihaoyi_fansi_3": {
+        "artifact": "com.lihaoyi:fansi_3:0.5.1",
+        "sha256": "df4b447704664563cb0fba9cf52d3fc7509654ab592824d5c2eb4647e6701ac4",
+        "srcjar_sha256": "0017223ee8749c2eeef568d12ff9280fa847107c9965bbbc407364f3e4c87dcd",
+        "deps": [
+            "@com_lihaoyi_sourcecode_3",
+        ],
+    },
     "com_lihaoyi_fastparse": {
         "artifact": "com.lihaoyi:fastparse_2.13:2.1.3",
         "sha256": "5064d3984aab8c48d2dbd6285787ac5c6d84a6bebfc02c6d431ce153cf91dec1",
@@ -85,12 +93,29 @@ artifacts = {
             "@com_lihaoyi_sourcecode",
         ],
     },
+    "com_lihaoyi_pprint_repl": {
+        "artifact": "com.lihaoyi:pprint_3:0.9.3",
+        "sha256": "2c06448522447fc7fb5707f9c7d28151f5da50c078b0ed0895617b6789427bdb",
+        "srcjar_sha256": "b6b568fa2020bf556b054440e3e86133615dbd48c447b3db950c39e0716e5531",
+        "deps": [
+            "@com_lihaoyi_fansi_3",
+            "@com_lihaoyi_sourcecode_3",
+        ],
+    },
     "com_lihaoyi_sourcecode": {
         "artifact": "com.lihaoyi:sourcecode_2.13:0.4.4",
         "sha256": "bd4e99aef8267a410b6ed716c487cf5256f801425f158a8c9cbd056eb032d80d",
         "srcjar_sha256": "854238ec90912d0621ec068cddd8854a81f67242785b5e6fbe42f87c255641e9",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
+        ],
+    },
+    "com_lihaoyi_sourcecode_3": {
+        "artifact": "com.lihaoyi:sourcecode_3:0.4.4",
+        "sha256": "40cc148f8baab769de72892443476a05eed7471a9b5cd2cbc2a47bf22cad30d3",
+        "srcjar_sha256": "668ca50953793b142482c3bc2eaf0c35f28d7efad3ec4119f76af0fdfbffe327",
+        "deps": [
+            "@io_bazel_rules_scala_scala_library",
         ],
     },
     "com_twitter__scalding_date": {
@@ -467,6 +492,14 @@ artifacts = {
         "artifact": "com.twitter:util-logging_2.13:21.2.0",
         "sha256": "90bd8318329907dcf7e161287473e27272b38ee6857e9d56ee8a1958608cc49d",
     },
+    "io_get_coursier_interface": {
+        "artifact": "io.get-coursier:interface:1.0.28",
+        "sha256": "7592fe49c789b55429483185ac22ac6da43680a39c53b818c50bca0fb7dd6a78",
+        "srcjar_sha256": "0ada36c8a3b6c77f7797c7751a8aa2fb40e01bbe50b87dc75b6e098da2086f91",
+        "deps": [
+            "@org_slf4j_slf4j_api",
+        ],
+    },
     "io_github_java_diff_utils_java_diff_utils": {
         "artifact": "io.github.java-diff-utils:java-diff-utils:4.16",
         "sha256": "620403030d676a4a27f780a3acec7438dee1b1651a1c804fa6bb11bb07399a6f",
@@ -549,6 +582,21 @@ artifacts = {
         "srcjar_sha256": "56672b16b5573d4c91e66ae6682ab3ef6d0ff4335ebffc4fdfe408bb4117b409",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
+        ],
+    },
+    "org_scala_lang_scala3_repl": {
+        "artifact": "org.scala-lang:scala3-repl_3:3.8.4",
+        "sha256": "18df5463f4e81e6f86cb24cfd394062257edc602e61e902f5f230259e1f943b4",
+        "srcjar_sha256": "6d3f01b86fa33443ebbcb8456780635a2db46590637dff7f57cc661d544b104d",
+        "deps": [
+            "@com_lihaoyi_fansi_3",
+            "@com_lihaoyi_pprint_repl",
+            "@io_get_coursier_interface",
+            "@org_jline_jline_native",
+            "@org_jline_jline_reader",
+            "@org_jline_jline_terminal",
+            "@org_jline_jline_terminal_jni",
+            "@org_virtuslab_using_directives",
         ],
     },
     "org_scala_lang_scalap": {
@@ -714,6 +762,11 @@ artifacts = {
             "@org_scalameta_io",
         ],
     },
+    "org_slf4j_slf4j_api": {
+        "artifact": "org.slf4j:slf4j-api:1.7.36",
+        "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0",
+        "srcjar_sha256": "15bc04357a3725b7a5153f132db71379f95e83b7b8590a86cc6d4ad77bfc150a",
+    },
     "org_springframework_spring_core": {
         "testonly": True,
         "artifact": "org.springframework:spring-core:5.1.5.RELEASE",
@@ -747,6 +800,11 @@ artifacts = {
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
         ],
+    },
+    "org_virtuslab_using_directives": {
+        "artifact": "org.virtuslab:using_directives:1.1.4",
+        "sha256": "f905fd8fd0d50e76bcaca3a9ef631a49587159f14cd5cc405fd3ade97c72c555",
+        "srcjar_sha256": "7b0bad901d0f02cd24e70c393085bb54502f7e363060333332d12fceed2b952e",
     },
     "scala_proto_rules_disruptor": {
         "artifact": "com.lmax:disruptor:3.4.2",
