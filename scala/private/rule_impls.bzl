@@ -33,6 +33,63 @@ def first_non_empty(*args):
             return arg
     return args[-1]
 
+# Basename prefixes of the Scala standard library's own jars.
+_STDLIB_JAR_PREFIXES = ["scala3-library_3-", "scala-library-"]
+
+# Prefixes a compile-jar-producing rule puts in front of those basenames
+# (rules_jvm_external's jvm_import: "header_"; a processed/re-signed jar: "processed_").
+_JAR_WRAPPER_PREFIXES = ["header_", "processed_"]
+_DIGITS = "0123456789"
+
+# If basename is a (possibly wrapped/stamped) stdlib jar, returns its
+# (artifact prefix, version); otherwise (None, None).
+def _stdlib_jar_version(basename):
+    if not basename.endswith(".jar"):
+        return None, None
+    name = basename[:-len(".jar")]
+    if name.endswith("-stamped"):
+        name = name[:-len("-stamped")]
+    for wrapper_prefix in _JAR_WRAPPER_PREFIXES:
+        if name.startswith(wrapper_prefix):
+            name = name[len(wrapper_prefix):]
+            break
+    for prefix in _STDLIB_JAR_PREFIXES:
+        if name.startswith(prefix):
+            version = name[len(prefix):]
+
+            # A real version starts with a digit; excludes e.g. scala-library-utils-1.0.jar.
+            if version and version[0] in _DIGITS:
+                return prefix, version
+    return None, None
+
+# Fails if classpath_jars carries two different versions of the same stdlib
+# artifact: that crashes the compiler with an unreadable error instead of
+# naming the mismatched dependency.
+def _fail_on_mismatched_stdlib_versions(target_label, classpath_jars):
+    versions_by_artifact = {}
+    for jar in classpath_jars.to_list():
+        artifact, version = _stdlib_jar_version(jar.basename)
+        if artifact == None:
+            continue
+        versions_by_artifact.setdefault(artifact, {})[version] = jar.path
+
+    for artifact, versions in versions_by_artifact.items():
+        if len(versions) > 1:
+            fail((
+                "{target}: multiple versions of {artifact} on the compile " +
+                "classpath: {versions}. A dependency was built against a " +
+                "different version of {artifact} than the toolchain's " +
+                "scala_version resolves; make sure every dependency that " +
+                "carries {artifact} was built against the same version."
+            ).format(
+                target = target_label,
+                artifact = artifact.rstrip("-"),
+                versions = ", ".join([
+                    "%s (%s)" % (version, path)
+                    for version, path in versions.items()
+                ]),
+            ))
+
 def compile_scala(
         ctx,
         target_label,
@@ -67,6 +124,7 @@ def compile_scala(
 
     toolchain = ctx.toolchains["//scala:toolchain_type"]
     compiler_classpath_jars = cjars if dependency_info.dependency_mode == "direct" else transitive_compile_jars
+    _fail_on_mismatched_stdlib_versions(target_label, compiler_classpath_jars)
     classpath_resources = getattr(ctx.files, "classpath_resources", [])
     scalacopts_expanded = [ctx.expand_location(v, input_plugins) for v in scalacopts]
     resource_paths = _resource_paths(resources, resource_strip_prefix)
