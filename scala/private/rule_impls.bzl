@@ -62,16 +62,27 @@ def _stdlib_jar_version(basename):
                 return prefix, version
     return None, None
 
-# Fails if classpath_jars carries two different versions of the same stdlib
-# artifact: that crashes the compiler with an unreadable error instead of
-# naming the mismatched dependency.
+# The granularity two versions of the same artifact must agree on to coexist
+# on one classpath. scala-library (Scala 2.x) keeps binary compatibility
+# within a major.minor line, so only a major.minor difference matters (mixing
+# 2.12 and 2.13 breaks; 2.12.20 vs 2.12.21 doesn't). scala3-library_3 has no
+# such guarantee across TASTy versions, so any version difference matters.
+def _compat_key(artifact, version):
+    if artifact == "scala-library-":
+        return ".".join(version.split(".")[:2])
+    return version
+
+# Fails if classpath_jars carries two incompatible versions of the same
+# stdlib artifact: that crashes the compiler with an unreadable error instead
+# of naming the mismatched dependency.
 def _fail_on_mismatched_stdlib_versions(target_label, classpath_jars):
     versions_by_artifact = {}
     for jar in classpath_jars.to_list():
         artifact, version = _stdlib_jar_version(jar.basename)
         if artifact == None:
             continue
-        versions_by_artifact.setdefault(artifact, {})[version] = jar.path
+        key = _compat_key(artifact, version)
+        versions_by_artifact.setdefault(artifact, {}).setdefault(key, (version, jar.path))
 
     for artifact, versions in versions_by_artifact.items():
         if len(versions) > 1:
@@ -86,7 +97,7 @@ def _fail_on_mismatched_stdlib_versions(target_label, classpath_jars):
                 artifact = artifact.rstrip("-"),
                 versions = ", ".join([
                     "%s (%s)" % (version, path)
-                    for version, path in versions.items()
+                    for version, path in versions.values()
                 ]),
             ))
 

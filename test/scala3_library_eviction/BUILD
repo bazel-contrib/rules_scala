@@ -93,6 +93,35 @@ scala_library(
     deps = [":third_party_stub_scala_library_only"],
 )
 
+# scala-library keeps binary compatibility within a major.minor line, so a
+# patch-only difference (2.13.18 vs 2.13.99 here) must not trip the check --
+# this is what real downstream builds normally carry.
+genrule(
+    name = "patch_only_scala_library_jar",
+    srcs = ["@io_bazel_rules_scala_scala_library_2_3_6_4//:scala-library-2.13.18.jar"],
+    outs = ["scala-library-2.13.99.jar"],
+    cmd = "cp $< $@",
+)
+
+scala_import(
+    name = "patch_only_rogue_scala_library",
+    jars = [":patch_only_scala_library_jar"],
+)
+
+scala_import(
+    name = "third_party_stub_patch_only_scala_library",
+    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    deps = [":patch_only_rogue_scala_library"],
+)
+
+scala_library(
+    name = "app_patch_only_scala_library_mismatch",
+    srcs = ["App.scala"],
+    scala_version = "3.6.4",
+    tags = ["manual"],
+    deps = [":third_party_stub_patch_only_scala_library"],
+)
+
 scala_toolchain(
     name = "transitive_impl",
     dependency_mode = "transitive",
@@ -176,4 +205,10 @@ expect_build_failure_test(
     expect = ["expected_scala_library_mismatch_error.txt"],
     no_fingerprint_reason = ":app_scala_library_only_mismatch fails during analysis under this toolchain (that's what this test asserts), so fixture_actions cannot analyse it to read its command lines",
     target = ":app_scala_library_only_mismatch",
+)
+
+expect_build_success_test(
+    name = "transitive_deps_mode_ignores_scala_library_patch_mismatch_test",
+    build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
+    target = ":app_patch_only_scala_library_mismatch",
 )
