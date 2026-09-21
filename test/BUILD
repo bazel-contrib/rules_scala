@@ -334,9 +334,10 @@ scala_repl(
     scala_version = "3.8.4",
 )
 
-# 3.9 splits the REPL further: a jline major-version bump and a
-# coursier-backed dependency-import feature replace the fansi/pprint deps
-# 3.8 needed.
+# 3.9 splits the REPL further: its own jline artifacts move to a new major
+# version, and a new scala3-directives-parser_3 dependency joins the
+# coursier/slf4j deps 3.8 already needed for its `:dep` command. fansi/pprint
+# are gone.
 scala_repl(
     name = "Scala39Repl",
     scala_version = "3.9.0",
