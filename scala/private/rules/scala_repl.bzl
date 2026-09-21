@@ -41,7 +41,7 @@ def _scala_repl_impl(ctx):
             ("scalainfo_provider", phase_scalainfo_provider_non_macro),
             ("write_manifest", phase_write_manifest),
             ("dependency", phase_dependency_common),
-            # need scala-compiler for MainGenericRunner below
+            # need scala-compiler for the REPL's main class below
             ("collect_jars", phase_collect_jars_repl),
             ("java_wrapper", phase_java_wrapper_repl),
             ("declare_executable", phase_declare_executable),

@@ -16,12 +16,15 @@ sh_test(
         "$(rootpath //test:ResourcesStripScalaBinaryRepl)",
         "--repl-with-sources",
         "$(rootpath //test:ReplWithSources)",
+        "--scala3-repl",
+        "$(rootpath //test:Scala3Repl)",
     ],
     data = [
         "//test:HelloLibRepl",
         "//test:HelloLibTestRepl",
         "//test:ReplWithSources",
         "//test:ResourcesStripScalaBinaryRepl",
+        "//test:Scala3Repl",
         "//test:ScalaLibBinaryRepl",
         # Not exercised at runtime, but its presence in `data` keeps it
         # build-checked, same as the shell original's `bazel build` over all
