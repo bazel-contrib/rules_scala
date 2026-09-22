@@ -18,7 +18,6 @@ load("@rules_java//java/common:java_common.bzl", "java_common")
 load("@rules_java//toolchains:toolchain_utils.bzl", "find_java_toolchain")
 load(":common.bzl", "rlocationpath_from_rootpath", _collect_plugin_paths = "collect_plugin_paths")
 load(":resources.bzl", _resource_paths = "paths")
-load(":stdlib_version_check.bzl", "fail_on_mismatched_stdlib_versions")
 
 def expand_location(ctx, flags):
     if hasattr(ctx.attr, "data"):
@@ -68,7 +67,6 @@ def compile_scala(
 
     toolchain = ctx.toolchains["//scala:toolchain_type"]
     compiler_classpath_jars = cjars if dependency_info.dependency_mode == "direct" else transitive_compile_jars
-    fail_on_mismatched_stdlib_versions(target_label, compiler_classpath_jars)
     classpath_resources = getattr(ctx.files, "classpath_resources", [])
     scalacopts_expanded = [ctx.expand_location(v, input_plugins) for v in scalacopts]
     resource_paths = _resource_paths(resources, resource_strip_prefix)

@@ -167,7 +167,6 @@ expect_build_failure_test(
     name = "transitive_deps_mode_rejects_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
     expect = ["expected_mismatch_error.txt"],
-    no_fingerprint_reason = ":app fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app",
 )
 
@@ -175,7 +174,6 @@ expect_build_failure_test(
     name = "plus_one_deps_mode_rejects_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:plusone"],
     expect = ["expected_mismatch_error.txt"],
-    no_fingerprint_reason = ":app fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app",
 )
 
@@ -189,7 +187,6 @@ expect_build_failure_test(
     name = "transitive_deps_mode_rejects_header_prefixed_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
     expect = ["expected_mismatch_error.txt"],
-    no_fingerprint_reason = ":app_header_prefixed fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app_header_prefixed",
 )
 
@@ -203,7 +200,6 @@ expect_build_failure_test(
     name = "transitive_deps_mode_rejects_mismatched_scala_library_alone_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
     expect = ["expected_scala_library_mismatch_error.txt"],
-    no_fingerprint_reason = ":app_scala_library_only_mismatch fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app_scala_library_only_mismatch",
 )
 
