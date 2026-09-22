@@ -18,6 +18,7 @@ load("@rules_java//java/common:java_common.bzl", "java_common")
 load("@rules_java//toolchains:toolchain_utils.bzl", "find_java_toolchain")
 load(":common.bzl", "rlocationpath_from_rootpath", _collect_plugin_paths = "collect_plugin_paths")
 load(":resources.bzl", _resource_paths = "paths")
+load(":stdlib_version_check.bzl", "fail_on_mismatched_stdlib_versions")
 
 def expand_location(ctx, flags):
     if hasattr(ctx.attr, "data"):
@@ -32,81 +33,6 @@ def first_non_empty(*args):
         if arg:
             return arg
     return args[-1]
-
-# Basename prefixes of the Scala standard library's own jars.
-_STDLIB_JAR_PREFIXES = ["scala3-library_3-", "scala-library-"]
-
-# Prefixes a compile-jar-producing rule puts in front of those basenames
-# (rules_jvm_external's jvm_import: "header_"; a processed/re-signed jar: "processed_").
-_JAR_WRAPPER_PREFIXES = ["header_", "processed_"]
-_DIGITS = "0123456789"
-
-# Maven classifier suffixes that aren't compile classpath jars but would
-# otherwise parse as a bogus "version" (e.g. scala3-library_3-3.3.1-sources.jar).
-_NON_COMPILE_CLASSIFIER_SUFFIXES = ["-sources", "-javadoc"]
-
-# If basename is a (possibly wrapped/stamped) stdlib jar, returns its
-# (artifact prefix, version); otherwise (None, None).
-def _stdlib_jar_version(basename):
-    if not basename.endswith(".jar"):
-        return None, None
-    name = basename[:-len(".jar")]
-    if name.endswith("-stamped"):
-        name = name[:-len("-stamped")]
-    for wrapper_prefix in _JAR_WRAPPER_PREFIXES:
-        if name.startswith(wrapper_prefix):
-            name = name[len(wrapper_prefix):]
-            break
-    for prefix in _STDLIB_JAR_PREFIXES:
-        if name.startswith(prefix):
-            version = name[len(prefix):]
-
-            # A real version starts with a digit; excludes e.g. scala-library-utils-1.0.jar.
-            if not version or version[0] not in _DIGITS:
-                continue
-            if any([version.endswith(suffix) for suffix in _NON_COMPILE_CLASSIFIER_SUFFIXES]):
-                continue
-            return prefix, version
-    return None, None
-
-# The granularity two versions of the same artifact must agree on to coexist
-# on one classpath. scala-library (Scala 2.x) keeps binary compatibility
-# within a major.minor line, so only a major.minor difference matters (mixing
-# 2.12 and 2.13 breaks; 2.12.20 vs 2.12.21 doesn't). scala3-library_3 has no
-# such guarantee across TASTy versions, so any version difference matters.
-def _compat_key(artifact, version):
-    if artifact == "scala-library-":
-        return ".".join(version.split(".")[:2])
-    return version
-
-# Fails if classpath_jars carries two incompatible versions of the same
-# stdlib artifact: that crashes the compiler with an unreadable error instead
-# of naming the mismatched dependency.
-def _fail_on_mismatched_stdlib_versions(target_label, classpath_jars):
-    versions_by_artifact = {}
-    for jar in classpath_jars.to_list():
-        artifact, version = _stdlib_jar_version(jar.basename)
-        if artifact == None:
-            continue
-        key = _compat_key(artifact, version)
-        versions_by_artifact.setdefault(artifact, {}).setdefault(key, (version, jar.path))
-
-    for artifact, versions in versions_by_artifact.items():
-        if len(versions) > 1:
-            fail((
-                "{target}: multiple versions of {artifact} on the compile " +
-                "classpath: {versions}. A dependency was built against a " +
-                "different version of {artifact} than the toolchain's " +
-                "scala_version resolves; make sure every dependency that " +
-                "carries {artifact} was built against the same version."
-            ).format(
-                target = target_label,
-                artifact = artifact.rstrip("-"),
-                versions = ", ".join([
-                    "%s (%s)" % (version, path)
-                    for version, path in versions.values()
-                ]),
-            ))
 
 def compile_scala(
         ctx,
@@ -142,7 +68,7 @@ def compile_scala(
 
     toolchain = ctx.toolchains["//scala:toolchain_type"]
     compiler_classpath_jars = cjars if dependency_info.dependency_mode == "direct" else transitive_compile_jars
-    _fail_on_mismatched_stdlib_versions(target_label, compiler_classpath_jars)
+    fail_on_mismatched_stdlib_versions(target_label, compiler_classpath_jars)
     classpath_resources = getattr(ctx.files, "classpath_resources", [])
     scalacopts_expanded = [ctx.expand_location(v, input_plugins) for v in scalacopts]
     resource_paths = _resource_paths(resources, resource_strip_prefix)

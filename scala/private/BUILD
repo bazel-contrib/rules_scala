@@ -1,3 +1,7 @@
+load(":stdlib_version_check_test.bzl", "stdlib_version_check_test_suite")
+
+stdlib_version_check_test_suite()
+
 # Declared inputs for nested Bazel tests. Listing these files in those tests'
 # `data` re-keys the tests when the logic changes.
 exports_files([

@@ -53,7 +53,7 @@ scala_library(
     deps = [":third_party_stub_header_prefixed"],
 )
 
-# Same version as the toolchain's own scala3-library_3 -- must not trip the check.
+# Same version as the toolchain's own scala3-library_3 -- the check must accept it.
 scala_import(
     name = "same_version_scala3_library",
     jars = ["@io_bazel_rules_scala_scala_library_3_6_4//:scala3-library_3-3.6.4.jar"],
@@ -94,8 +94,8 @@ scala_library(
 )
 
 # scala-library keeps binary compatibility within a major.minor line, so a
-# patch-only difference (2.13.18 vs 2.13.99 here) must not trip the check --
-# this is what real downstream builds normally carry.
+# patch-only difference (2.13.18 vs 2.13.99 here) is what downstream builds
+# normally carry, and the check must accept it.
 genrule(
     name = "patch_only_scala_library_jar",
     srcs = ["@io_bazel_rules_scala_scala_library_2_3_6_4//:scala-library-2.13.18.jar"],
@@ -167,7 +167,7 @@ expect_build_failure_test(
     name = "transitive_deps_mode_rejects_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
     expect = ["expected_mismatch_error.txt"],
-    no_fingerprint_reason = ":app fails during analysis under this toolchain (that's what this test asserts), so fixture_actions cannot analyse it to read its command lines",
+    no_fingerprint_reason = ":app fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app",
 )
 
@@ -175,7 +175,7 @@ expect_build_failure_test(
     name = "plus_one_deps_mode_rejects_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:plusone"],
     expect = ["expected_mismatch_error.txt"],
-    no_fingerprint_reason = ":app fails during analysis under this toolchain (that's what this test asserts), so fixture_actions cannot analyse it to read its command lines",
+    no_fingerprint_reason = ":app fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app",
 )
 
@@ -189,7 +189,7 @@ expect_build_failure_test(
     name = "transitive_deps_mode_rejects_header_prefixed_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
     expect = ["expected_mismatch_error.txt"],
-    no_fingerprint_reason = ":app_header_prefixed fails during analysis under this toolchain (that's what this test asserts), so fixture_actions cannot analyse it to read its command lines",
+    no_fingerprint_reason = ":app_header_prefixed fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app_header_prefixed",
 )
 
@@ -203,7 +203,7 @@ expect_build_failure_test(
     name = "transitive_deps_mode_rejects_mismatched_scala_library_alone_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
     expect = ["expected_scala_library_mismatch_error.txt"],
-    no_fingerprint_reason = ":app_scala_library_only_mismatch fails during analysis under this toolchain (that's what this test asserts), so fixture_actions cannot analyse it to read its command lines",
+    no_fingerprint_reason = ":app_scala_library_only_mismatch fails during analysis under this toolchain (that's what this test asserts); fixture_actions needs a successful analysis to read a target's command lines",
     target = ":app_scala_library_only_mismatch",
 )
 
