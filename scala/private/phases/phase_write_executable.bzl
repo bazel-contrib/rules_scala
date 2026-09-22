@@ -6,7 +6,7 @@ load("//scala/private:common.bzl", "rlocationpath_from_file")
 # DOCUMENT THIS
 #
 load(
-    "//scala/private:macros/setup_scala_toolchain.bzl",
+    "//scala/private:macros/repl_deps.bzl",
     "repl_is_known_supported",
 )
 load(
@@ -42,7 +42,7 @@ def phase_write_executable_repl(ctx, p):
         fail(
             "scala_repl has no _REPL_EXTRA_DEPS entry for Scala %s. " % toolchain.scala_version +
             "Check org.scala-lang:scala3-repl_3's published POM for this version " +
-            "and add one in setup_scala_toolchain.bzl (see the versions already there for the shape).",
+            "and add one in repl_deps.bzl (see the versions already there for the shape).",
         )
     main_class = (
         "dotty.tools.repl.Main" if toolchain.scala_version.startswith("3.") else "scala.tools.nsc.MainGenericRunner"
