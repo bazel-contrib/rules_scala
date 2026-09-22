@@ -6,10 +6,11 @@ load(
     "toolchain_plugin_present_test",
 )
 
-# The analysis tests never execute the plugin, so any jar works on any Scala
-# version. (A working compiler plugin, like
-# @rules_scala_test_maven//:org_typelevel_kind_projector, wouldn't: it's
-# built for Scala 2.)
+# These analysis tests never execute the plugin, so any jar works on any
+# Scala version, unlike a working compiler plugin -- e.g.
+# @rules_scala_test_maven//:org_typelevel_kind_projector_2_12_20, which is
+# built for Scala 2 specifically and would need to match the toolchain's
+# version.
 genrule(
     name = "dummy_plugin",
     outs = ["dummy_plugin.jar"],
