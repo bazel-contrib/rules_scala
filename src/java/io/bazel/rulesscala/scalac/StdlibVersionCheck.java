@@ -14,9 +14,15 @@ import java.util.Map;
  *
  * <p>This runs against the classpath actually passed to the compiler (scalac's own -classpath),
  * built by the existing Starlark dependency-collection logic (direct/plus-one/transitive modes,
- * exports, macro runtime jars). Checking here instead of flattening that classpath's depset in
- * Starlark avoids the analysis-time cost of an eager depset.to_list() on every compile, and
- * needs no separate replication of that Starlark exposure logic.
+ * exports, macro runtime jars). Reading it here, already flattened to a plain list for the
+ * compiler's own use, keeps the check at execution time instead of paying an eager
+ * depset.to_list() cost during Bazel's analysis phase, and reuses that Starlark exposure logic
+ * as is.
+ *
+ * <p>Scope: this only compares versions of the same artifact (scala3-library_3 against
+ * scala3-library_3, scala-library against scala-library). It has nothing to say about a Scala
+ * 2-compiled library consumed by a Scala 3 target or vice versa, a separate, binary-incompatible
+ * mixing problem.
  */
 class StdlibVersionCheck {
 
@@ -71,7 +77,7 @@ class StdlibVersionCheck {
 
         // A version starts with a digit, excluding a coincidental prefix
         // match like scala-library-utils-1.0.jar.
-        if (version.isEmpty() || !Character.isDigit(version.charAt(0))) {
+        if (version.isEmpty() || version.charAt(0) < '0' || version.charAt(0) > '9') {
           continue;
         }
         boolean isClassifierJar = false;
@@ -97,7 +103,7 @@ class StdlibVersionCheck {
   // format changes with each minor version, so any version difference matters.
   static String compatKey(String artifact, String version) {
     if (artifact.equals("scala-library-")) {
-      String[] parts = version.split("\\.");
+      String[] parts = version.split("\\.", -1);
       return parts.length >= 2 ? parts[0] + "." + parts[1] : version;
     }
     return version;
