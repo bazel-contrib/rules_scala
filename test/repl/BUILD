@@ -1,6 +1,9 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load(":repl_deps_test.bzl", "repl_deps_test_suite")
 
 package(default_testonly = 1)
+
+repl_deps_test_suite(name = "repl_deps_test")
 
 sh_test(
     name = "repl_test",
