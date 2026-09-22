@@ -106,10 +106,13 @@ class StdlibVersionCheck {
   // across patch releases within one minor line, so only a major.minor
   // difference matters there (mixing 2.12 and 2.13 breaks; 2.12.20 vs 2.12.21
   // doesn't; see https://docs.scala-lang.org/overviews/core/binary-compatibility-of-scala-releases.html).
-  // scala3-library_3 needs an exact match: Scala's compatibility guarantees
-  // exclude experimental APIs, and the scala.caps collision in
-  // https://github.com/scala/scala3/issues/22890 was exactly such a case, so a
-  // patch bump isn't a safe assumption there.
+  // scala3-library_3 needs an exact match: Scala's compatibility guarantees,
+  // patch releases included, explicitly exclude experimental features and
+  // APIs, and a build carries no cheap way to tell which patch bumps touch
+  // only stable surface. The scala.caps collision in
+  // https://github.com/scala/scala3/issues/22890 (an RC against a much older
+  // minor, not a patch pair) shows an experimental API breaking classpath
+  // compatibility exactly this way in practice.
   //
   // A version carrying anything beyond digits and dots (an RC, milestone, or
   // snapshot suffix) has no compatibility guarantee at all, so it's compared
