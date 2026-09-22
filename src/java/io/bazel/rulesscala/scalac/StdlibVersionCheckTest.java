@@ -86,6 +86,12 @@ public class StdlibVersionCheckTest {
   }
 
   @Test
+  public void compatKey_rcSuffixIsExactEvenForScalaLibrary() {
+    assertEquals(
+        "2.13.0-RC1", StdlibVersionCheck.compatKey("scala-library-", "2.13.0-RC1"));
+  }
+
+  @Test
   public void check_mismatchedScala3LibraryVersions_fails() {
     StdlibVersionCheck.MismatchedStdlibVersions exception =
         assertThrows(
@@ -110,6 +116,21 @@ public class StdlibVersionCheckTest {
   }
 
   @Test
+  public void check_scala3LibraryPatchOnlyDifference_fails() {
+    StdlibVersionCheck.MismatchedStdlibVersions exception =
+        assertThrows(
+            StdlibVersionCheck.MismatchedStdlibVersions.class,
+            () ->
+                StdlibVersionCheck.check(
+                    "//test:app",
+                    new String[] {
+                      "bazel-out/bin/scala3-library_3-3.7.3.jar",
+                      "bazel-out/bin/scala3-library_3-3.7.4.jar",
+                    }));
+    assertTrue(exception.getMessage().contains("multiple versions of scala3-library_3"));
+  }
+
+  @Test
   public void check_scalaLibraryMajorMinorDifference_fails() {
     StdlibVersionCheck.MismatchedStdlibVersions exception =
         assertThrows(
@@ -119,6 +140,23 @@ public class StdlibVersionCheckTest {
                     "//test:app",
                     new String[] {
                       "bazel-out/bin/scala-library-2.12.21.jar",
+                      "bazel-out/bin/scala-library-2.13.18.jar",
+                    }));
+    assertTrue(exception.getMessage().contains("multiple versions of scala-library"));
+  }
+
+  @Test
+  public void check_scalaLibraryRcVersusStable_fails() {
+    // An RC has no compatibility guarantee, so it's never coalesced into a
+    // stable release's major.minor group, even for scala-library.
+    StdlibVersionCheck.MismatchedStdlibVersions exception =
+        assertThrows(
+            StdlibVersionCheck.MismatchedStdlibVersions.class,
+            () ->
+                StdlibVersionCheck.check(
+                    "//test:app",
+                    new String[] {
+                      "bazel-out/bin/scala-library-2.13.0-RC1.jar",
                       "bazel-out/bin/scala-library-2.13.18.jar",
                     }));
     assertTrue(exception.getMessage().contains("multiple versions of scala-library"));

@@ -6,11 +6,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Fails a scala compile if its classpath carries two incompatible versions of the Scala standard
- * library, naming the mismatched dependency and both versions in the error.
+ * Fails a scala compile if its classpath carries two jars of the same Scala standard library
+ * artifact at incompatible versions (see compatKey for what counts as compatible per artifact),
+ * naming the mismatched dependency and both versions in the error.
  *
- * <p>Left unguarded, this crashes the compiler with an unreadable error; see
- * https://github.com/bazel-contrib/rules_scala/issues/1781.
+ * <p>Two physical stdlib jars on one classpath means two definitions for the same package/object
+ * names; if those definitions differ between versions (a real case: scala3-library_3's own
+ * scala.caps was reshaped between versions, see
+ * https://github.com/scala/scala3/issues/22890), the compiler crashes with an unreadable error
+ * ("package X contains object and package with same name") or, if the versions are also TASTy-
+ * incompatible, a raw TASTy-version error. See https://github.com/bazel-contrib/rules_scala/issues/1781.
  *
  * <p>This runs against the classpath actually passed to the compiler (scalac's own -classpath),
  * built by the existing Starlark dependency-collection logic (direct/plus-one/transitive modes,
@@ -19,10 +24,10 @@ import java.util.Map;
  * depset.to_list() cost during Bazel's analysis phase, and reuses that Starlark exposure logic
  * as is.
  *
- * <p>Scope: this only compares versions of the same artifact (scala3-library_3 against
- * scala3-library_3, scala-library against scala-library). It has nothing to say about a Scala
- * 2-compiled library consumed by a Scala 3 target or vice versa, a separate, binary-incompatible
- * mixing problem.
+ * <p>Scope: this compares versions within each stdlib artifact (scala3-library_3 against
+ * scala3-library_3, scala-library against scala-library). A Scala 3 target consuming a Scala
+ * 2.13-compiled library is a separate question, generally supported by Scala 3's own
+ * compatibility guarantees and outside what this check looks at.
  */
 class StdlibVersionCheck {
 
@@ -98,15 +103,33 @@ class StdlibVersionCheck {
 
   // The granularity two versions of the same artifact must agree on to coexist
   // on one classpath. scala-library (Scala 2.x) keeps binary compatibility
-  // within a major.minor line, so only a major.minor difference matters (mixing
-  // 2.12 and 2.13 breaks; 2.12.20 vs 2.12.21 doesn't). scala3-library_3's TASTy
-  // format changes with each minor version, so any version difference matters.
+  // across patch releases within one minor line, so only a major.minor
+  // difference matters there (mixing 2.12 and 2.13 breaks; 2.12.20 vs 2.12.21
+  // doesn't; see https://docs.scala-lang.org/overviews/core/binary-compatibility-of-scala-releases.html).
+  // scala3-library_3 needs an exact match: Scala's compatibility guarantees
+  // exclude experimental APIs, and the scala.caps collision in
+  // https://github.com/scala/scala3/issues/22890 was exactly such a case, so a
+  // patch bump isn't a safe assumption there.
+  //
+  // A version carrying anything beyond digits and dots (an RC, milestone, or
+  // snapshot suffix) has no compatibility guarantee at all, so it's compared
+  // for an exact match regardless of artifact.
   static String compatKey(String artifact, String version) {
-    if (artifact.equals("scala-library-")) {
-      String[] parts = version.split("\\.", -1);
-      return parts.length >= 2 ? parts[0] + "." + parts[1] : version;
+    if (!isPlainNumericVersion(version) || !artifact.equals("scala-library-")) {
+      return version;
     }
-    return version;
+    String[] parts = version.split("\\.", -1);
+    return parts.length >= 2 ? parts[0] + "." + parts[1] : version;
+  }
+
+  private static boolean isPlainNumericVersion(String version) {
+    for (int i = 0; i < version.length(); i++) {
+      char c = version.charAt(i);
+      if (c != '.' && (c < '0' || c > '9')) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // Fails if classpath carries two incompatible versions of the same stdlib artifact.
