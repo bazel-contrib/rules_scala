@@ -183,7 +183,11 @@ use_repo(
     for scala_version in SCALA_3_VERSIONS
 ]
 
-rules_scala_test_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+rules_scala_test_maven = use_extension(
+    "@rules_jvm_external//:extensions.bzl",
+    "maven",
+    dev_dependency = True,
+)
 
 # The plain "jffi" artifact doesn't ship native methods; //test/src/main/scala/scalarules/test/scala_import:jffi_native_external
 # needs the "native" classifier jar specifically to test importing a
