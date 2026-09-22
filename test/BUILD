@@ -320,6 +320,14 @@ scala_repl(
     srcs = ["A.scala"],
 )
 
+# Pinned to 3.7.4: from 3.8 the REPL moves into its own scala3-repl artifact
+# (fansi/pprint deps).
+# TODO: wire up scala3-repl support for 3.8+.
+scala_repl(
+    name = "Scala3Repl",
+    scala_version = "3.7.4",
+)
+
 scala_library(
     name = "jar_export",
     exports = ["@org_typelevel__cats_core//jar"],

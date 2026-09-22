@@ -33,9 +33,13 @@ def phase_write_executable_scalatest(ctx, p):
     return _phase_write_executable_default(ctx, p, args)
 
 def phase_write_executable_repl(ctx, p):
+    toolchain = ctx.toolchains["//scala:toolchain_type"]
+    main_class = (
+        "dotty.tools.repl.Main" if toolchain.scala_version.startswith("3.") else "scala.tools.nsc.MainGenericRunner"
+    )
     args = struct(
         jvm_flags = ["-Dscala.usejavacp=true"] + ctx.attr.jvm_flags,
-        main_class = "scala.tools.nsc.MainGenericRunner",
+        main_class = main_class,
     )
     return _phase_write_executable_default(ctx, p, args)
 
