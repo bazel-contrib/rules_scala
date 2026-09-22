@@ -21,5 +21,9 @@ setup_scala_toolchain(
     scala_compile_classpath = ["@scala_compiler"] + SCALA_LIBS,
     scala_library_classpath = SCALA_LIBS,
     scala_macro_classpath = SCALA_LIBS,
+    # This harness only proves a dt-patched compiler compiles Dummy.scala; it
+    # never runs scala_repl, so the repl classpath just needs to be some
+    # already-fetched set of labels, matching the compile classpath.
+    scala_repl_classpath = ["@scala_compiler"] + SCALA_LIBS,
     scala_xml_deps = [],
 )
