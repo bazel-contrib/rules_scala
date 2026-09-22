@@ -120,9 +120,12 @@ scala_toolchains_repo = repository_rule(
 
 _SCALA_TOOLCHAIN_BUILD = """
 load(
+    "@rules_scala//scala/private:macros/repl_deps.bzl",
+    "repl_extra_deps",
+)
+load(
     "@rules_scala//scala/private:macros/setup_scala_toolchain.bzl",
     "default_deps",
-    "repl_extra_deps",
     "setup_scala_toolchain",
 )
 load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
@@ -162,9 +165,9 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
     ]
 ]
 
-# scala_repl_classpath isn't in _DEFAULT_DEPS (its extra deps depend on the
-# exact minor version, not just the major one -- see repl_extra_deps), so it
-# is computed separately from the other deps_id's above.
+# scala_repl_classpath's extra deps key off the exact minor version (see
+# repl_extra_deps), finer-grained than _DEFAULT_DEPS's major-version buckets,
+# so it is computed separately from the other deps_id's above.
 declare_deps_provider(
     name = "scala_repl_classpath_provider",
     deps_id = "scala_repl_classpath",
