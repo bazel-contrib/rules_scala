@@ -95,6 +95,18 @@ if [[ "${scala_epoch}" == 2 && -z "${semanticdb_pluginjarpath}" ]]; then
   exit 1
 fi
 
+# Verify the files field is populated correctly:
+# - When bundled: files should be empty (count=0)
+# - When unbundled: files should contain the semanticdb files (count > 0)
+if [[ "${is_bundle}" -eq 1 && "${semanticdb_files_count}" -ne 0 ]]; then
+  echo "Error: SemanticdbInfo.files has ${semanticdb_files_count} files, expected 0 when bundled in jar" >&2
+  exit 1
+fi
+if [[ "${is_bundle}" -eq 0 && "${semanticdb_files_count}" -eq 0 ]]; then
+  echo "Error: SemanticdbInfo.files is empty, expected files when not bundled in jar" >&2
+  exit 1
+fi
+
 semanticdb_path="${execution_root}/${semanticdb_target_root}/META-INF/semanticdb/test/semanticdb/"
 for f in A.scala.semanticdb B.scala.semanticdb; do
   if [[ ! -f "${semanticdb_path}${f}" ]]; then
