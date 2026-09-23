@@ -100,6 +100,11 @@ scala_version_by_major_scala_version = {
     "3.9": _scala_version_3_9,
 }
 
+_SCALA_VERSION_ARTIFACT_IDS = [
+    "io_bazel_rules_scala_scala_compiler",
+    "io_bazel_rules_scala_scala_library",
+]
+
 def repositories(
         scala_version = None,
         for_artifact_ids = [],
@@ -124,9 +129,24 @@ def repositories(
         repository_scala_version = scala_version_by_major_scala_version[major_scala_version]
         default_version_matches = scala_version == repository_scala_version
 
-        if not default_version_matches and len(overriden_artifacts) == 0:
-            version_message = "Scala config (%s) version does not match repository version (%s)"
-            fail(version_message % (scala_version, repository_scala_version))
+        # Overriding other artifacts (e.g. ScalaTest) leaves the default
+        # compiler and library jars in place, so the check still applies.
+        overrides_scala_version = all([
+            id in overriden_artifacts
+            for id in _SCALA_VERSION_ARTIFACT_IDS
+        ])
+
+        if not default_version_matches and not overrides_scala_version:
+            version_message = (
+                "Scala config (%s) version does not match repository " +
+                "version (%s). Override %s for this version, or set " +
+                "validate_scala_version = False."
+            )
+            fail(version_message % (
+                scala_version,
+                repository_scala_version,
+                " and ".join(_SCALA_VERSION_ARTIFACT_IDS),
+            ))
 
     default_artifacts = artifacts_by_major_scala_version[major_scala_version]
     artifacts = dict(default_artifacts.items() + overriden_artifacts.items())
