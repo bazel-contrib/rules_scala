@@ -3,7 +3,8 @@
 # Overriding an artifact unrelated to the Scala version (here ScalaTest) must
 # keep the Scala version check on: with `scala_version = "2.13.14"` and no
 # repository for it, `scala_deps` must fail instead of fetching the default
-# 2.13 jars under the 2.13.14 name.
+# 2.13 jars under the 2.13.14 name. Overriding the compiler and library too must
+# then skip the check.
 #
 # The check runs while Bazel evaluates the `scala_deps` extension of a consumer
 # module, so the test synthesizes that module in the test's tmpdir and evaluates
@@ -73,6 +74,28 @@ fi
 
 if ! grep --quiet --fixed-strings "${expected}" <<<"${output}"; then
   echo "scala_deps failed, but without \"${expected}\":" >&2
+  echo "${output}" >&2
+  exit 1
+fi
+
+# Overriding the compiler and library for 2.13.14 as well must skip the check.
+cat >>MODULE.bazel <<'EOF'
+scala_deps.overridden_artifact(
+    name = "io_bazel_rules_scala_scala_compiler",
+    artifact = "org.scala-lang:scala-compiler:2.13.14",
+    sha256 = "17b7e1dd95900420816a3bc2788c8c7358c2a3c42899765a5c463a46bfa569a6",
+)
+scala_deps.overridden_artifact(
+    name = "io_bazel_rules_scala_scala_library",
+    artifact = "org.scala-lang:scala-library:2.13.14",
+    sha256 = "43e0ca1583df1966eaf02f0fbddcfb3784b995dd06bfc907209347758ce4b7e3",
+)
+EOF
+
+if ! output="$(nested_bazel_run mod show_extension \
+  @rules_scala//scala/extensions:deps.bzl%scala_deps 2>&1)"; then
+  echo "Expected scala_deps to succeed with the compiler and library" \
+    "overridden for 2.13.14, but it failed:" >&2
   echo "${output}" >&2
   exit 1
 fi
