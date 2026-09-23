@@ -1,0 +1,1 @@
+multiple versions of scala3-library_3 on the compile classpath

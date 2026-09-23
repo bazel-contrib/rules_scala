@@ -1,0 +1,1 @@
+This toolchain's scala_version is 3.6.4; a dependency was built against a different version of scala-library; make sure every dependency that carries scala-library was built against the same version.
