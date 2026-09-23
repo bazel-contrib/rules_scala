@@ -102,17 +102,21 @@ class StdlibVersionCheck {
   }
 
   // The granularity two versions of the same artifact must agree on to coexist
-  // on one classpath. scala-library (Scala 2.x) keeps binary compatibility
-  // across patch releases within one minor line, so only a major.minor
-  // difference matters there (mixing 2.12 and 2.13 breaks; 2.12.20 vs 2.12.21
+  // on one classpath. rules_scala calls the first two dot-separated numbers
+  // (2.12, 3.7, ...) the major version and the third the minor version (see
+  // extract_major_version/extract_minor_version in scala_cross_version.bzl).
+  //
+  // scala-library (Scala 2.x) keeps binary compatibility within one major
+  // version, so only a major-version difference matters there (mixing 2.12
+  // and 2.13 breaks; 2.12.20 vs 2.12.21, a minor-version bump within 2.12,
   // doesn't; see https://docs.scala-lang.org/overviews/core/binary-compatibility-of-scala-releases.html).
   // scala3-library_3 needs an exact match: Scala's compatibility guarantees,
-  // patch releases included, explicitly exclude experimental features and
-  // APIs, and a build carries no cheap way to tell which patch bumps touch
+  // minor-version bumps included, explicitly exclude experimental features
+  // and APIs, and a build carries no cheap way to tell which bump touches
   // only stable surface. The scala.caps collision in
   // https://github.com/scala/scala3/issues/22890 (an RC against a much older
-  // minor, not a patch pair) shows an experimental API breaking classpath
-  // compatibility exactly this way in practice.
+  // major version, not a same-major minor-version bump) shows an experimental
+  // API breaking classpath compatibility exactly this way in practice.
   //
   // A version carrying anything beyond digits and dots (an RC, milestone, or
   // snapshot suffix) has no compatibility guarantee at all, so it's compared
@@ -136,7 +140,7 @@ class StdlibVersionCheck {
   }
 
   // Fails if classpath carries two incompatible versions of the same stdlib artifact.
-  static void check(String targetLabel, String[] classpath) {
+  static void check(String targetLabel, String scalaVersion, String[] classpath) {
     Map<String, Map<String, String[]>> versionsByArtifact = new LinkedHashMap<>();
 
     for (String path : classpath) {
@@ -163,11 +167,11 @@ class StdlibVersionCheck {
         }
         throw new MismatchedStdlibVersions(
             String.format(
-                "%s: multiple versions of %s on the compile classpath: %s. A dependency was"
-                    + " built against a different version of %s than the toolchain's scala_version"
-                    + " resolves; make sure every dependency that carries %s was built against the"
+                "%s: multiple versions of %s on the compile classpath: %s. This toolchain's"
+                    + " scala_version is %s; a dependency was built against a different version"
+                    + " of %s; make sure every dependency that carries %s was built against the"
                     + " same version.",
-                targetLabel, artifact, versionsList, artifact, artifact));
+                targetLabel, artifact, versionsList, scalaVersion, artifact, artifact));
       }
     }
   }

@@ -94,8 +94,8 @@ scala_library(
 )
 
 # An RC has no compatibility guarantee, so it's never coalesced into a stable
-# release's major.minor group: 2.13.0-RC1 and 2.13.18 (the toolchain's own
-# scala-library, same major.minor line) still don't coexist.
+# release's major-version group: 2.13.0-RC1 and 2.13.18 (the toolchain's own
+# scala-library, same major version) still don't coexist.
 genrule(
     name = "rc_scala_library_jar",
     srcs = ["@io_bazel_rules_scala_scala_library_2_3_6_4//:scala-library-2.13.18.jar"],
@@ -122,9 +122,9 @@ scala_library(
     deps = [":third_party_stub_rc_scala_library"],
 )
 
-# scala-library keeps binary compatibility within a major.minor line, so a
-# patch-only difference (2.13.18 vs 2.13.99 here) is what downstream builds
-# normally carry, and the check must accept it.
+# scala-library keeps binary compatibility within one major version, so a
+# minor-version-only difference (2.13.18 vs 2.13.99 here) is what downstream
+# builds normally carry, and the check must accept it.
 genrule(
     name = "patch_only_scala_library_jar",
     srcs = ["@io_bazel_rules_scala_scala_library_2_3_6_4//:scala-library-2.13.18.jar"],
@@ -152,7 +152,7 @@ scala_library(
 )
 
 # Unlike scala-library, scala3-library_3 requires an exact match even for a
-# patch-only difference (3.6.4 vs 3.6.99 here): Scala's compatibility
+# minor-version-only difference (3.6.4 vs 3.6.99 here): Scala's compatibility
 # guarantees exclude experimental APIs, and the scala.caps collision this PR
 # fixes (#1781, scala/scala3#22890) was exactly such a case.
 genrule(
@@ -225,14 +225,20 @@ toolchain(
 expect_build_failure_test(
     name = "transitive_deps_mode_rejects_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
-    expect = ["expected_mismatch_error.txt"],
+    expect = [
+        "expected_mismatch_error.txt",
+        "expected_scala3_library_mismatch_tail.txt",
+    ],
     target = ":app",
 )
 
 expect_build_failure_test(
     name = "plus_one_deps_mode_rejects_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:plusone"],
-    expect = ["expected_mismatch_error.txt"],
+    expect = [
+        "expected_mismatch_error.txt",
+        "expected_scala3_library_mismatch_tail.txt",
+    ],
     target = ":app",
 )
 
@@ -245,7 +251,10 @@ expect_build_success_test(
 expect_build_failure_test(
     name = "transitive_deps_mode_rejects_header_prefixed_mismatched_stdlib_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
-    expect = ["expected_mismatch_error.txt"],
+    expect = [
+        "expected_mismatch_error.txt",
+        "expected_scala3_library_mismatch_tail.txt",
+    ],
     target = ":app_header_prefixed",
 )
 
@@ -258,14 +267,20 @@ expect_build_success_test(
 expect_build_failure_test(
     name = "transitive_deps_mode_rejects_mismatched_scala_library_alone_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
-    expect = ["expected_scala_library_mismatch_error.txt"],
+    expect = [
+        "expected_scala_library_mismatch_error.txt",
+        "expected_scala_library_mismatch_tail.txt",
+    ],
     target = ":app_scala_library_only_mismatch",
 )
 
 expect_build_failure_test(
     name = "transitive_deps_mode_rejects_scala_library_rc_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
-    expect = ["expected_scala_library_mismatch_error.txt"],
+    expect = [
+        "expected_scala_library_mismatch_error.txt",
+        "expected_scala_library_mismatch_tail.txt",
+    ],
     target = ":app_rc_scala_library_mismatch",
 )
 
@@ -278,6 +293,9 @@ expect_build_success_test(
 expect_build_failure_test(
     name = "transitive_deps_mode_rejects_scala3_library_patch_mismatch_test",
     build_args = ["--extra_toolchains=//test/scala3_library_eviction:transitive"],
-    expect = ["expected_mismatch_error.txt"],
+    expect = [
+        "expected_mismatch_error.txt",
+        "expected_scala3_library_mismatch_tail.txt",
+    ],
     target = ":app_patch_only_scala3_library_mismatch",
 )

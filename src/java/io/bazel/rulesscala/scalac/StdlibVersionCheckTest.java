@@ -99,17 +99,26 @@ public class StdlibVersionCheckTest {
             () ->
                 StdlibVersionCheck.check(
                     "//test:app",
+                    "3.6.4",
                     new String[] {
                       "bazel-out/bin/scala3-library_3-3.6.4.jar",
                       "bazel-out/bin/scala3-library_3-3.7.4.jar",
                     }));
-    assertTrue(exception.getMessage().contains("multiple versions of scala3-library_3"));
+    assertEquals(
+        "//test:app: multiple versions of scala3-library_3 on the compile classpath: 3.6.4"
+            + " (bazel-out/bin/scala3-library_3-3.6.4.jar), 3.7.4"
+            + " (bazel-out/bin/scala3-library_3-3.7.4.jar). This toolchain's scala_version is"
+            + " 3.6.4; a dependency was built against a different version of scala3-library_3;"
+            + " make sure every dependency that carries scala3-library_3 was built against the"
+            + " same version.",
+        exception.getMessage());
   }
 
   @Test
   public void check_scalaLibraryPatchOnlyDifference_passes() {
     StdlibVersionCheck.check(
         "//test:app",
+        "3.6.4",
         new String[] {
           "bazel-out/bin/scala-library-2.13.18.jar", "bazel-out/bin/scala-library-2.13.99.jar",
         });
@@ -123,6 +132,7 @@ public class StdlibVersionCheckTest {
             () ->
                 StdlibVersionCheck.check(
                     "//test:app",
+                    "3.7.4",
                     new String[] {
                       "bazel-out/bin/scala3-library_3-3.7.3.jar",
                       "bazel-out/bin/scala3-library_3-3.7.4.jar",
@@ -138,6 +148,7 @@ public class StdlibVersionCheckTest {
             () ->
                 StdlibVersionCheck.check(
                     "//test:app",
+                    "3.6.4",
                     new String[] {
                       "bazel-out/bin/scala-library-2.12.21.jar",
                       "bazel-out/bin/scala-library-2.13.18.jar",
@@ -148,13 +159,14 @@ public class StdlibVersionCheckTest {
   @Test
   public void check_scalaLibraryRcVersusStable_fails() {
     // An RC has no compatibility guarantee, so it's never coalesced into a
-    // stable release's major.minor group, even for scala-library.
+    // stable release's major-version group, even for scala-library.
     StdlibVersionCheck.MismatchedStdlibVersions exception =
         assertThrows(
             StdlibVersionCheck.MismatchedStdlibVersions.class,
             () ->
                 StdlibVersionCheck.check(
                     "//test:app",
+                    "3.6.4",
                     new String[] {
                       "bazel-out/bin/scala-library-2.13.0-RC1.jar",
                       "bazel-out/bin/scala-library-2.13.18.jar",
@@ -166,6 +178,7 @@ public class StdlibVersionCheckTest {
   public void check_sameVersionDifferentPaths_passes() {
     StdlibVersionCheck.check(
         "//test:app",
+        "3.6.4",
         new String[] {
           "bazel-out/a/scala3-library_3-3.6.4.jar", "bazel-out/b/scala3-library_3-3.6.4.jar",
         });
@@ -179,10 +192,32 @@ public class StdlibVersionCheckTest {
             () ->
                 StdlibVersionCheck.check(
                     "//test:app",
+                    "3.6.4",
                     new String[] {
                       "bazel-out/bin/scala3-library_3-3.6.4.jar",
                       "bazel-out/bin/header_scala3-library_3-3.7.4.jar",
                     }));
-    assertTrue(exception.getMessage().contains("multiple versions of scala3-library_3"));
+    assertEquals(
+        "//test:app: multiple versions of scala3-library_3 on the compile classpath: 3.6.4"
+            + " (bazel-out/bin/scala3-library_3-3.6.4.jar), 3.7.4"
+            + " (bazel-out/bin/header_scala3-library_3-3.7.4.jar). This toolchain's scala_version"
+            + " is 3.6.4; a dependency was built against a different version of"
+            + " scala3-library_3; make sure every dependency that carries scala3-library_3 was"
+            + " built against the same version.",
+        exception.getMessage());
+  }
+
+  @Test
+  public void check_sourcesJarAlongsideMatchingClasspath_passes() {
+    // A -sources jar for a third dependency shouldn't be mistaken for a
+    // mismatched stdlib version, or trip the check at all.
+    StdlibVersionCheck.check(
+        "//test:app",
+        "3.6.4",
+        new String[] {
+          "bazel-out/bin/scala3-library_3-3.6.4.jar",
+          "bazel-out/bin/scala3-library_3-3.6.4-sources.jar",
+          "bazel-out/bin/guava-21.0-sources.jar",
+        });
   }
 }
