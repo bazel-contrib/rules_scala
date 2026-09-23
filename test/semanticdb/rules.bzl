@@ -5,6 +5,10 @@ def semanticdb_vars_script_impl(ctx):
         out_script = ctx.actions.declare_file("%s.sh" % ctx.label.name)
         semanticdb_info = ctx.attr.dep[SemanticdbInfo]
 
+        # Count files in the files depset
+        files_list = semanticdb_info.files.to_list()
+        files_count = len(files_list)
+
         ctx.actions.expand_template(
             output = out_script,
             template = ctx.file._script,
@@ -13,6 +17,7 @@ def semanticdb_vars_script_impl(ctx):
                 "%ENABLED%": "1" if semanticdb_info.semanticdb_enabled else "0",
                 "%ISBUNDLED%": "1" if semanticdb_info.is_bundled_in_jar else "0",
                 "%PLUGINPATH%": "" if semanticdb_info.plugin_jar == None else semanticdb_info.plugin_jar.path,
+                "%FILESCOUNT%": str(files_count),
             },
         )
         return [

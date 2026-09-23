@@ -63,6 +63,7 @@ def phase_semanticdb(ctx, p):
             target_root = semanticdb_target_root,
             is_bundled_in_jar = toolchain.semanticdb_bundle_in_jar,
             plugin_jar = plugin_jar,
+            files = depset(output_files),
         )
 
         return struct(

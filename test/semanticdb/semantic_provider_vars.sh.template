@@ -1,5 +1,6 @@
-#!/bin/bash 
+#!/bin/bash
 semanticdb_target_root="%TARGETROOT%"
 semanticdb_enabled=%ENABLED%
 semanticdb_is_bundled=%ISBUNDLED%
 semanticdb_pluginjarpath="%PLUGINPATH%"
+semanticdb_files_count=%FILESCOUNT%
