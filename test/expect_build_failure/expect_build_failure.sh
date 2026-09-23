@@ -153,7 +153,7 @@ _resolve_message_file() {
   printf '%s' "${file}"
 }
 
-nested_bazel_setup "rules_scala_expect_build_failure_output_base_lane${lane}"
+nested_bazel_setup "ebf_lane${lane}"
 
 # Append file-backed flags (see --bazel-arg-file). Read here, after parsing, so
 # the shell never has to carry the raw value on a command line.
