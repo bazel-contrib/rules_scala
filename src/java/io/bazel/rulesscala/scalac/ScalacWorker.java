@@ -52,6 +52,8 @@ class ScalacWorker implements Worker.Interface {
   public void work(String[] args) throws Exception {
     CompileOptions ops = new CompileOptions(args);
 
+    StdlibVersionCheck.check(ops.currentTarget, ops.scalaVersion, ops.classpath);
+
     Path outputJarPath = Paths.get(ops.outputName);
 
     Path scalacOutPath = clearWorkDirectory(outputJarPath, ops.currentTarget, "_scalac");

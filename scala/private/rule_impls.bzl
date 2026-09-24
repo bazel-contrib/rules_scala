@@ -77,6 +77,7 @@ def compile_scala(
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)
     args.add("--CurrentTarget", target_label)
+    args.add("--ScalaVersion", toolchain.scala_version)
     args.add("--StampLabel", stamp_target_label if stamp_target_label != None else target_label)
     args.add("--JarOutput", output)
     args.add("--Manifest", manifest)

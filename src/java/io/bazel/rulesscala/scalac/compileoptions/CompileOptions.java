@@ -29,6 +29,7 @@ public class CompileOptions {
   public final String compilerDepsMode;
   public final String unusedDependencyCheckerMode;
   public final String currentTarget;
+  public final String scalaVersion;
   public final String stampLabel;
   public final String statsfile;
   public final boolean enableStatsFile;
@@ -66,6 +67,7 @@ public class CompileOptions {
     compilerDepsMode = args.getSingleOrError("CompilerDepsMode");
     unusedDependencyCheckerMode = args.getSingleOrError("UnusedDependencyCheckerMode");
     currentTarget = args.getSingleOrError("CurrentTarget");
+    scalaVersion = args.getSingleOrError("ScalaVersion");
     stampLabel = args.getSingleOrError("StampLabel");
     dependencyTrackingMethod = args.getSingleOrError("DependencyTrackingMethod");
 
