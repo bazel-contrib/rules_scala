@@ -1,15 +1,49 @@
 package io.bazel.rulesscala.coverage.instrumenter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class JacocoInstrumenterTest {
+
+  // A target whose sources all come from a dependency's srcjar has no source files to pass.
+  @Test
+  public void instrumentsAJarGivenNoSourceFiles() throws Exception {
+    String classEntry = JacocoInstrumenterTest.class.getName().replace('.', '/') + ".class";
+    Path dir = Files.createTempDirectory("instrumenter");
+    Path in = dir.resolve("in.jar");
+    Path out = dir.resolve("out.jar");
+    try (InputStream classBytes = getClass().getResourceAsStream("/" + classEntry);
+        OutputStream file = Files.newOutputStream(in);
+        JarOutputStream jar = new JarOutputStream(file)) {
+      jar.putNextEntry(new JarEntry(classEntry));
+      classBytes.transferTo(jar);
+    }
+
+    new JacocoInstrumenter().work(new String[] {in.toString(), out.toString()});
+
+    try (JarFile jar = new JarFile(out.toFile())) {
+      assertTrue(jar.getEntry(classEntry + ".uninstrumented") != null);
+      JarEntry paths = jar.getJarEntry("-paths-for-coverage.txt");
+      try (InputStream content = jar.getInputStream(paths)) {
+        assertEquals("", new String(content.readAllBytes(), StandardCharsets.UTF_8));
+      }
+    }
+  }
 
   @Test
   public void emitsAnExplicitMappingForAUniqueBasename() {

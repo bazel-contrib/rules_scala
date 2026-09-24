@@ -12,11 +12,24 @@ coverage_test(
     target = ":test-scalatest",
 )
 
+coverage_test(
+    name = "java_test_coverage_matches_expected_test",
+    # Pinned for the same reason as coverage_matches_expected_test above.
+    bazel_args = ["--repo_env=SCALA_VERSION=2.12.21"],
+    expected_file = "test/coverage_scalatest/expected-coverage-java-test.dat",
+    target = ":test-b2",
+)
+
 sh_test(
     name = "jacoco_metadata_in_runfiles_test",
     size = "large",
     srcs = ["//test/coverage_test:jacoco_metadata_runfiles_test.sh"],
-    args = ["--target", "//test/coverage_scalatest:test-scalatest"],
+    args = [
+        "--target",
+        "//test/coverage_scalatest:test-scalatest",
+        "--instrumented-jar",
+        "test/coverage_scalatest/a1.jar",
+    ],
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
@@ -61,7 +74,7 @@ java_test(
         "TestB2.java",
     ],
     tags = ["manual"],
-    test_class = "coverage.TestB2",
+    test_class = "coverage_scalatest.TestB2",
     deps = [
         ":b2",
     ],

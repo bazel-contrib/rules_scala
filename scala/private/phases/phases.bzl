@@ -30,7 +30,6 @@ load(
 load(
     "//scala/private:phases/phase_coverage.bzl",
     _phase_coverage_common = "phase_coverage_common",
-    _phase_coverage_library = "phase_coverage_library",
 )
 load("//scala/private:phases/phase_coverage_runfiles.bzl", _phase_coverage_runfiles = "phase_coverage_runfiles")
 load("//scala/private:phases/phase_declare_executable.bzl", _phase_declare_executable = "phase_declare_executable")
@@ -112,7 +111,6 @@ phase_jvm_flags = _phase_jvm_flags
 phase_scalacopts = _phase_scalacopts
 
 # coverage
-phase_coverage_library = _phase_coverage_library
 phase_coverage_common = _phase_coverage_common
 
 # coverage_runfiles
