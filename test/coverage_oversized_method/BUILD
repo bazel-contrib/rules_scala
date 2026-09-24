@@ -13,6 +13,8 @@ write_file(
 scala_library(
     name = "oversized_method",
     srcs = ["OversizedMethod.scala"],
+    # Its instrumentation fails by design; only the tests below build it.
+    tags = ["manual"],
 )
 
 scala_library(

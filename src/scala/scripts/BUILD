@@ -57,8 +57,12 @@ scala_library(
 
 scala_binary(
     name = "scalapb_worker",
+    # Under coverage, the toolchain's extra_generator_dependencies are
+    # offline-instrumented and call the JaCoCo runtime when the worker loads them.
+    jvm_flags = ["-Djacoco-agent.output=none"],
     main_class = "scripts.ScalaPBWorker",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@bazel_tools//tools/jdk:JacocoCoverage"],
     deps = [
         ":scalapb_worker_lib",
     ],
