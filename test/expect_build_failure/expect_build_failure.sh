@@ -153,6 +153,8 @@ _resolve_message_file() {
   printf '%s' "${file}"
 }
 
+# Short name: a longer one pushes rules_jvm_external's own internal tool's
+# runfiles path over Windows' 260-character path limit.
 nested_bazel_setup "ebf_lane${lane}"
 
 # Append file-backed flags (see --bazel-arg-file). Read here, after parsing, so

@@ -101,9 +101,8 @@ _nested_bazel_home_hint() {
 # caller that passes the same name shares that output base (each inner
 # `bazel --batch` waits on Bazel's own output-base lock rather than failing),
 # which keeps the extracted external repos warm and avoids multiplying ~1GB
-# of Scala jars across a separate output base per test. Keep this name short:
-# on Windows it can push a deeply-nested exec-tool runfiles path over the
-# 260-character limit.
+# of Scala jars across a separate output base per test. Keep this name short
+# (Windows path length limitation).
 nested_bazel_setup() {
   local output_base_name="${1:?nested_bazel_setup requires an output-base directory name}"
 
