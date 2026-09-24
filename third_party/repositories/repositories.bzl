@@ -100,9 +100,12 @@ scala_version_by_major_scala_version = {
     "3.9": _scala_version_3_9,
 }
 
+# Only Scala 2 has scala-reflect; `repositories()` keeps the ids present in the
+# default artifacts for the configured version.
 _SCALA_VERSION_ARTIFACT_IDS = [
     "io_bazel_rules_scala_scala_compiler",
     "io_bazel_rules_scala_scala_library",
+    "io_bazel_rules_scala_scala_reflect",
 ]
 
 def repositories(
@@ -124,16 +127,22 @@ def repositories(
     suffix = version_suffix(scala_version) if scala_version else ""
     scala_version = scala_version or SCALA_VERSION
     major_scala_version = extract_major_version(scala_version)
+    default_artifacts = artifacts_by_major_scala_version[major_scala_version]
 
     if validate_scala_version:
         repository_scala_version = scala_version_by_major_scala_version[major_scala_version]
         default_version_matches = scala_version == repository_scala_version
 
-        # Overriding other artifacts (e.g. ScalaTest) leaves the default
-        # compiler and library jars in place, so the check still applies.
+        # Overriding other artifacts (e.g. ScalaTest) leaves the default Scala
+        # jars in place, so the check still applies.
+        scala_version_artifact_ids = [
+            id
+            for id in _SCALA_VERSION_ARTIFACT_IDS
+            if id in default_artifacts
+        ]
         overrides_scala_version = all([
             id in overriden_artifacts
-            for id in _SCALA_VERSION_ARTIFACT_IDS
+            for id in scala_version_artifact_ids
         ])
 
         if not default_version_matches and not overrides_scala_version:
@@ -145,10 +154,9 @@ def repositories(
             fail(version_message % (
                 scala_version,
                 repository_scala_version,
-                " and ".join(_SCALA_VERSION_ARTIFACT_IDS),
+                ", ".join(scala_version_artifact_ids),
             ))
 
-    default_artifacts = artifacts_by_major_scala_version[major_scala_version]
     artifacts = dict(default_artifacts.items() + overriden_artifacts.items())
     for id in for_artifact_ids:
         if id not in artifacts:

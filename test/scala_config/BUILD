@@ -54,9 +54,9 @@ sh_test(
 )
 
 sh_test(
-    name = "unrelated_override_keeps_version_check_test",
+    name = "version_check_overrides_test",
     size = "large",
-    srcs = ["unrelated_override_keeps_version_check_test.sh"],
+    srcs = ["version_check_overrides_test.sh"],
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
