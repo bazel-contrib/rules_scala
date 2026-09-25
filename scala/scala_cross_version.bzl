@@ -20,7 +20,6 @@ def default_maven_server_urls():
         "https://repo.maven.apache.org/maven2",
         "https://maven-central.storage-download.googleapis.com/maven2",
         "https://mirror.bazel.build/repo1.maven.org/maven2",
-        "https://jcenter.bintray.com",
     ]
 
 def extract_major_version(scala_version):
