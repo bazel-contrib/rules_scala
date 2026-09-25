@@ -21,3 +21,8 @@ exports_files([
     "scala_3_8.bzl",
     "scala_3_9.bzl",
 ])
+
+# For //test/scala_config:version_check_overrides_test, which
+# asserts the Scala version check in this file; listing it in that test's `data`
+# re-keys the test when the check changes.
+exports_files(["repositories.bzl"])
