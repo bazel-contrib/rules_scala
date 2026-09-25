@@ -1,1 +1,1 @@
-buildozer 'remove deps @com_google_guava_guava_21_0//:com_google_guava_guava_21_0' //test/unused_dependency_checker/filtering:b
+buildozer 'remove deps @rules_scala_test_maven//:com_google_guava_guava' //test/unused_dependency_checker/filtering:b

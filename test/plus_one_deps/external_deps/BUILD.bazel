@@ -3,15 +3,16 @@ load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failu
 load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 
 # `a` uses a symbol reachable only transitively through
-# @org_springframework_spring_tx; only plus-one mode allows that. Tagged "manual"
-# so a default-toolchain wildcard build skips it; the test below reaches it
-# through a label, which bypasses "manual", and supplies the plus-one toolchain.
+# @rules_scala_test_maven//:org_springframework_spring_tx; only plus-one mode
+# allows that. Tagged "manual" so a default-toolchain wildcard build skips it;
+# the test below reaches it through a label, which bypasses "manual", and
+# supplies the plus-one toolchain.
 scala_library(
     name = "a",
     testonly = True,
     srcs = ["A.scala"],
     tags = ["manual"],
-    deps = ["@org_springframework_spring_tx"],
+    deps = ["@rules_scala_test_maven//:org_springframework_spring_tx"],
 )
 
 toolchain_build_test(
@@ -21,7 +22,8 @@ toolchain_build_test(
 )
 
 # Negative control: without the plus-one toolchain, `a`'s use of a transitive
-# symbol of @org_springframework_spring_tx is a strict-deps error.
+# symbol of @rules_scala_test_maven//:org_springframework_spring_tx is a
+# strict-deps error.
 expect_build_failure_test(
     name = "plus_one_deps_external_deps_undefined_fails_test",
     target = ":a",

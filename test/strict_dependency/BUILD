@@ -33,8 +33,8 @@ expect_build_success_test(
 )
 
 # The stamped label names a bzlmod module-extension repo (not exposed via
-# use_repo at the root, unlike the plain com_google_guava_guava_21_0 case
-# below), so its canonical name's separator ("~" vs "+") isn't a fixed string
+# use_repo at the root, unlike the plain rules_scala_test_maven case below),
+# so its canonical name's separator ("~" vs "+") isn't a fixed string
 # across the Bazel-version matrix this suite runs under. The expected message
 # starts right after that repo name, at the "//:" the label's package/target
 # part starts with, so the match is unaffected by whichever separator prints.

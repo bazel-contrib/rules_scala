@@ -31,7 +31,7 @@ scala_library(
     testonly = True,
     srcs = ["Empty.scala"],
     tags = ["manual"],
-    deps = ["@com_google_guava_guava_21_0"],
+    deps = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )
 
 scala_library(
@@ -39,7 +39,7 @@ scala_library(
     testonly = True,
     srcs = ["Empty.scala"],
     tags = ["manual"],
-    deps = ["@com_google_guava_guava_21_0"],
+    deps = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )
 
 toolchain_build_test(

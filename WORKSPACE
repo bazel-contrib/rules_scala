@@ -138,10 +138,6 @@ rbe_preconfig(
     toolchain = "ubuntu2004-bazel-java11",
 )
 
-load("//scala/private/extensions:dev_deps.bzl", "dev_deps_repositories")
-
-dev_deps_repositories()
-
 register_toolchains("//test/toolchains:java21_toolchain_definition")
 
 load(
@@ -153,3 +149,58 @@ load(
 rules_shell_dependencies()
 
 rules_shell_toolchains()
+
+rules_jvm_external_version = "6.8"
+
+http_archive(
+    name = "rules_jvm_external",
+    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
+    sha256 = "704a0197e4e966f96993260418f2542568198490456c21814f647ae7091f56f2",
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+
+rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("@rules_jvm_external//:specs.bzl", "maven")
+
+maven_install(
+    name = "rules_scala_test_maven",
+    artifacts = [
+        # The plain "jffi" artifact doesn't ship native methods; //test/src/main/scala/scalarules/test/scala_import:jffi_native_external
+        # needs the "native" classifier jar specifically to test importing a
+        # classified artifact.
+        maven.artifact(
+            group = "com.github.jnr",
+            artifact = "jffi",
+            version = "1.2.17",
+            classifier = "native",
+            force_version = True,
+            testonly = True,
+        ),
+        "com.google.guava:guava:21.0",
+        "org.apache.commons:commons-lang3:3.18.0",
+        "org.springframework:spring-core:6.2.11",
+        "org.springframework:spring-tx:6.2.11",
+        "org.typelevel:cats-core_2.12:2.13.0",
+        "org.typelevel:kind-projector_2.12.20:0.13.4",
+    ],
+    fetch_sources = True,
+    maven_install_json = "//:rules_scala_test_maven.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://mirror.bazel.build/repo1.maven.org/maven2",
+        "https://jcenter.bintray.com",
+    ],
+)
+
+load("@rules_scala_test_maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()

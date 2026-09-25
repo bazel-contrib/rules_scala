@@ -26,7 +26,7 @@ scala_library(
     name = "transitive_deps",
     testonly = True,
     srcs = ["UsesGuava.scala"],
-    deps = ["@com_google_guava_guava_21_0"],
+    deps = ["@rules_scala_test_maven//:com_google_guava_guava"],
 )
 
 # :a and :b both only resolve com.google.common under plus-one dependency mode.
