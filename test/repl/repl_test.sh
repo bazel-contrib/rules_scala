@@ -7,7 +7,8 @@
 # Usage:
 #   repl_test.sh --hello-lib-repl <path> --hello-lib-test-repl <path> \
 #       --scala-lib-binary-repl <path> --resources-strip-scala-binary-repl <path> \
-#       --repl-with-sources <path> --scala3-repl <path>
+#       --repl-with-sources <path> --scala3-repl <path> --scala38-repl <path> \
+#       --scala39-repl <path>
 
 set -euo pipefail
 
@@ -19,6 +20,8 @@ while [[ "$#" -gt 0 ]]; do
     --resources-strip-scala-binary-repl) resources_strip_scala_binary_repl="$2"; shift 2 ;;
     --repl-with-sources) repl_with_sources="$2"; shift 2 ;;
     --scala3-repl) scala3_repl="$2"; shift 2 ;;
+    --scala38-repl) scala38_repl="$2"; shift 2 ;;
+    --scala39-repl) scala39_repl="$2"; shift 2 ;;
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -28,8 +31,17 @@ echo "import scalarules.test._; TestUtil.foo" | "${hello_lib_test_repl}" -Xnojli
 echo "import scalarules.test._; ScalaLibBinary.main(Array())" | "${scala_lib_binary_repl}" -Xnojline | grep "A hui hou"
 echo "import scalarules.test._; ResourcesStripScalaBinary.main(Array())" | "${resources_strip_scala_binary_repl}" -Xnojline | grep "More Hello"
 echo "import scalarules.test._; A.main(Array())" | "${repl_with_sources}" -Xnojline | grep "4 8 15"
+
 # dotty's REPL keys its history file off the JVM's user.home property, so
 # point that at a scratch dir. -color:never drops ANSI escapes for the grep.
-scala3_history_home="${TEST_TMPDIR:-$(mktemp -d)}/scala3_repl_home"
-mkdir -p "${scala3_history_home}"
-echo "1 + 1" | "${scala3_repl}" "--jvm_flag=-Duser.home=${scala3_history_home}" -color:never | grep "res0: Int = 2"
+check_dotty_repl() {
+  local repl="$1"
+  local history_home
+  history_home="${TEST_TMPDIR:-$(mktemp -d)}/$(basename "${repl}")_home"
+  mkdir -p "${history_home}"
+  echo "1 + 1" | "${repl}" "--jvm_flag=-Duser.home=${history_home}" -color:never | grep "res0: Int = 2"
+}
+
+check_dotty_repl "${scala3_repl}"
+check_dotty_repl "${scala38_repl}"
+check_dotty_repl "${scala39_repl}"

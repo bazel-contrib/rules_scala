@@ -13,6 +13,7 @@ load(
     "URL_PREFIX",
     "URL_SUFFIX_BY_MAJOR_VERSION",
 )
+load("//scala/private:macros/repl_deps.bzl", "repl_extra_deps")
 
 def _dt_patched_compiler_impl(rctx):
     # Need to give the file a .zip extension so rctx.extract knows what type of archive it is
@@ -265,5 +266,16 @@ def scala_version_artifact_ids(scala_version):
             "org_scala_sbt_compiler_interface",
             "org_scala_sbt_util_interface",
         ])
+
+    # From 3.8, dotty.tools.repl.Main moves out of scala3-compiler into its
+    # own artifact with its own, version-specific extra deps -- see
+    # repl_extra_deps in repl_deps.bzl for the full story.
+    #
+    # repl_extra_deps's own callers (setup_scala_toolchain.bzl,
+    # toolchains_repo.bzl) build classpath labels, so its list uses the
+    # "@repo_name" form those need. This function's own result, like every
+    # other entry already in it above, is bare repo names -- lstrip("@")
+    # converts from one convention to the other.
+    result.extend([dep.lstrip("@") for dep in repl_extra_deps(scala_version)])
 
     return result

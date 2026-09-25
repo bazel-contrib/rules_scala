@@ -8,7 +8,8 @@ scala_repl(
     jvm_flags,
     scalac_jvm_flags,
     javac_jvm_flags,
-    unused_dependency_checker_mode
+    unused_dependency_checker_mode,
+    scala_version
 )
 ```
 
@@ -23,4 +24,14 @@ An example in this repo:
 ```txt
 bazel build test:HelloLibRepl
 bazel-bin/test/HelloLibRepl
+```
+
+`scala_version` pins the target to a specific Scala version, overriding the
+default toolchain's version:
+
+```py
+scala_repl(
+    name = "Scala3Repl",
+    scala_version = "3.9.0",
+)
 ```

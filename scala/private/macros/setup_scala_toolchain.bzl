@@ -2,6 +2,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:providers.bzl", "declare_deps_provider")
 load("//scala:scala_cross_version.bzl", "repositories", "version_suffix")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load("//scala/private:macros/repl_deps.bzl", "repl_extra_deps")
 
 def setup_scala_toolchain(
         name,
@@ -14,12 +15,14 @@ def setup_scala_toolchain(
         semanticdb_deps = None,
         enable_semanticdb = False,
         visibility = ["//visibility:public"],
+        scala_repl_classpath = None,
         **kwargs):
     scala_xml_provider = "%s_scala_xml_provider" % name
     parser_combinators_provider = "%s_parser_combinators_provider" % name
     scala_compile_classpath_provider = "%s_scala_compile_classpath_provider" % name
     scala_library_classpath_provider = "%s_scala_library_classpath_provider" % name
     scala_macro_classpath_provider = "%s_scala_macro_classpath_provider" % name
+    scala_repl_classpath_provider = "%s_scala_repl_classpath_provider" % name
     semanticdb_deps_provider = "%s_semanticdb_deps_provider" % name
 
     if scala_compile_classpath == None:
@@ -29,6 +32,15 @@ def setup_scala_toolchain(
         deps_id = "scala_compile_classpath",
         visibility = visibility,
         deps = scala_compile_classpath,
+    )
+
+    if scala_repl_classpath == None:
+        scala_repl_classpath = scala_compile_classpath + repositories(scala_version, repl_extra_deps(scala_version))
+    declare_deps_provider(
+        name = scala_repl_classpath_provider,
+        deps_id = "scala_repl_classpath",
+        visibility = visibility,
+        deps = scala_repl_classpath,
     )
 
     if scala_library_classpath == None:
@@ -82,6 +94,7 @@ def setup_scala_toolchain(
         scala_compile_classpath_provider,
         scala_library_classpath_provider,
         scala_macro_classpath_provider,
+        scala_repl_classpath_provider,
         semanticdb_deps_provider,
     ]
 
