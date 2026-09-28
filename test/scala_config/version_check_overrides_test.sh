@@ -128,12 +128,23 @@ add_override io_bazel_rules_scala_scala_reflect \
   8846baaa8cf43b1b19725ab737abff145ca58d14a4d02e75d71ca8f7ca5f2926
 expect_success "ScalaTest, the library, the compiler and scala-reflect"
 
-start_module "3.3.4"
-add_override io_bazel_rules_scala_scala_library \
-  org.scala-lang:scala3-library_3:3.3.4 \
+scala3_library=(
+  io_bazel_rules_scala_scala_library
+  org.scala-lang:scala3-library_3:3.3.4
   d95184acfcd814da2e051378e4962c653f4b468f4086452ab427af030482bd3c
-expect_mismatch_error "the library"
-add_override io_bazel_rules_scala_scala_compiler \
-  org.scala-lang:scala3-compiler_3:3.3.4 \
+)
+scala3_compiler=(
+  io_bazel_rules_scala_scala_compiler
+  org.scala-lang:scala3-compiler_3:3.3.4
   2cca65fdb92e2cc393786cae61b4f7bcb9032ad4be61f9cebae1dca72997e52f
+)
+
+start_module "3.3.4"
+add_override "${scala3_compiler[@]}"
+expect_mismatch_error "only the compiler"
+
+start_module "3.3.4"
+add_override "${scala3_library[@]}"
+expect_mismatch_error "only the library"
+add_override "${scala3_compiler[@]}"
 expect_success "the library and the compiler"
