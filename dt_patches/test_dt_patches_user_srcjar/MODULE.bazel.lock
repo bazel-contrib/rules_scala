@@ -218,7 +218,7 @@
   "moduleExtensions": {
     "@@compiler_sources+//:extensions.bzl%compiler_source_repos": {
       "general": {
-        "bzlTransitiveDigest": "DhzU8bWPbKMvMdGc7tZrixw2Miw9Sozjjr4RKtuj43A=",
+        "bzlTransitiveDigest": "nW8brnjcO9JfXYyMjsaWxcRAcaqAzm/ZBzibrlR4NO8=",
         "usagesDigest": "lK8oEbW3EqfevAN05oFwFMdJ09fD4LmzCP/XtrnDBW8=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -232,8 +232,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21.jar",
-                "https://jcenter.bintray.com/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.21/scala-compiler-2.12.21.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang:scala-compiler:2.12.21",
@@ -252,8 +251,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/scala-library/2.12.21/scala-library-2.12.21.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala-library/2.12.21/scala-library-2.12.21.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.21/scala-library-2.12.21.jar",
-                "https://jcenter.bintray.com/org/scala-lang/scala-library/2.12.21/scala-library-2.12.21.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.21/scala-library-2.12.21.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang:scala-library:2.12.21",
@@ -272,8 +270,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/scala-reflect/2.12.21/scala-reflect-2.12.21.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala-reflect/2.12.21/scala-reflect-2.12.21.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.12.21/scala-reflect-2.12.21.jar",
-                "https://jcenter.bintray.com/org/scala-lang/scala-reflect/2.12.21/scala-reflect-2.12.21.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.12.21/scala-reflect-2.12.21.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang:scala-reflect:2.12.21",
@@ -292,8 +289,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/scala3-library_3/3.8.4/scala3-library_3-3.8.4.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala3-library_3/3.8.4/scala3-library_3-3.8.4.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala3-library_3/3.8.4/scala3-library_3-3.8.4.jar",
-                "https://jcenter.bintray.com/org/scala-lang/scala3-library_3/3.8.4/scala3-library_3-3.8.4.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala3-library_3/3.8.4/scala3-library_3-3.8.4.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang:scala3-library_3:3.8.4",
@@ -312,8 +308,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/scala3-interfaces/3.8.4/scala3-interfaces-3.8.4.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/scala3-interfaces/3.8.4/scala3-interfaces-3.8.4.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala3-interfaces/3.8.4/scala3-interfaces-3.8.4.jar",
-                "https://jcenter.bintray.com/org/scala-lang/scala3-interfaces/3.8.4/scala3-interfaces-3.8.4.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/scala3-interfaces/3.8.4/scala3-interfaces-3.8.4.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang:scala3-interfaces:3.8.4",
@@ -332,8 +327,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/tasty-core_3/3.8.4/tasty-core_3-3.8.4.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/tasty-core_3/3.8.4/tasty-core_3-3.8.4.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/tasty-core_3/3.8.4/tasty-core_3-3.8.4.jar",
-                "https://jcenter.bintray.com/org/scala-lang/tasty-core_3/3.8.4/tasty-core_3-3.8.4.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/tasty-core_3/3.8.4/tasty-core_3-3.8.4.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang:tasty-core_3:3.8.4",
@@ -352,8 +346,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-sbt/compiler-interface/1.9.6/compiler-interface-1.9.6.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-sbt/compiler-interface/1.9.6/compiler-interface-1.9.6.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-sbt/compiler-interface/1.9.6/compiler-interface-1.9.6.jar",
-                "https://jcenter.bintray.com/org/scala-sbt/compiler-interface/1.9.6/compiler-interface-1.9.6.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-sbt/compiler-interface/1.9.6/compiler-interface-1.9.6.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-sbt:compiler-interface:1.9.6",
@@ -372,8 +365,7 @@
               "jar_urls": [
                 "https://repo.maven.apache.org/maven2/org/scala-lang/modules/scala-asm/9.7.0-scala-2/scala-asm-9.7.0-scala-2.jar",
                 "https://maven-central.storage-download.googleapis.com/maven2/org/scala-lang/modules/scala-asm/9.7.0-scala-2/scala-asm-9.7.0-scala-2.jar",
-                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/modules/scala-asm/9.7.0-scala-2/scala-asm-9.7.0-scala-2.jar",
-                "https://jcenter.bintray.com/org/scala-lang/modules/scala-asm/9.7.0-scala-2/scala-asm-9.7.0-scala-2.jar"
+                "https://mirror.bazel.build/repo1.maven.org/maven2/org/scala-lang/modules/scala-asm/9.7.0-scala-2/scala-asm-9.7.0-scala-2.jar"
               ],
               "srcjar_urls": [],
               "coordinates": "org.scala-lang.modules:scala-asm:9.7.0-scala-2",
@@ -614,7 +606,7 @@
     },
     "@@rules_scala+//scala/extensions:deps.bzl%scala_deps": {
       "general": {
-        "bzlTransitiveDigest": "T72l69U+HHWdVyhizo289DzPBQIiR5sK7LdBSSyV/JA=",
+        "bzlTransitiveDigest": "wKxvx7UObQKibk7ueyvAUPcUPYzSDY2EMORpJbFuM8A=",
         "usagesDigest": "OAPOVXkSehnFKF/zUyjEdSQFw9Dm7X5XVaEQJ8InlqU=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

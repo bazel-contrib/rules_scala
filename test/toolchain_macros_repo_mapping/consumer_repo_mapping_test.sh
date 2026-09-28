@@ -17,11 +17,6 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 
 nested_bazel_setup "rules_scala_toolchain_macros_repo_mapping_output_base"
 
-if nested_bazel_run version 2>/dev/null | grep --quiet '^Build label: 6\.'; then
-  echo "Skipping: consumer modules require bzlmod, not supported on Bazel 6."
-  exit 0
-fi
-
 # Bazel needs forward-slash native paths on Windows for the
 # `local_path_override` below; `cygpath -m` emits them.
 rules_scala_dir="${NESTED_BAZEL_WORKSPACE}"
