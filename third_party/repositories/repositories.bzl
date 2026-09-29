@@ -100,11 +100,13 @@ scala_version_by_major_scala_version = {
     "3.9": _scala_version_3_9,
 }
 
-# Only Scala 2 has scala-reflect; `repositories()` keeps the ids present in the
-# default artifacts for the configured version.
+# Jars whose overrides skip the Scala version check. `repositories()` keeps the
+# ids defined for the configured version, so Scala 3 requires only the compiler
+# and the library.
 _SCALA_VERSION_ARTIFACT_IDS = [
     "io_bazel_rules_scala_scala_compiler",
     "io_bazel_rules_scala_scala_library",
+    # The Scala 2 compiler requires scala-reflect of its exact version.
     "io_bazel_rules_scala_scala_reflect",
 ]
 
@@ -133,8 +135,6 @@ def repositories(
         repository_scala_version = scala_version_by_major_scala_version[major_scala_version]
         default_version_matches = scala_version == repository_scala_version
 
-        # Overriding other artifacts (e.g. ScalaTest) leaves the default Scala
-        # jars in place, so the check still applies.
         scala_version_artifact_ids = [
             id
             for id in _SCALA_VERSION_ARTIFACT_IDS

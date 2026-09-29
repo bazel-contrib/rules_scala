@@ -22,7 +22,7 @@ exports_files([
     "scala_3_9.bzl",
 ])
 
-# For //test/scala_config:version_check_overrides_test, which
-# asserts the Scala version check in this file; listing it in that test's `data`
-# re-keys the test when the check changes.
+# For //test/scala_config:version_check_overrides_test, which tests the Scala
+# version check in `repositories.bzl`; listing it in that test's `data` re-keys
+# the test when the check changes.
 exports_files(["repositories.bzl"])

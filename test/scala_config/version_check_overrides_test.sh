@@ -1,15 +1,8 @@
 #!/usr/bin/env bash
 #
-# Which `overridden_artifact` sets skip the Scala version check. With a
-# `scala_version` that has no repository, `scala_deps` must fail until the
-# library, the compiler and, on Scala 2, scala-reflect are all overridden (a
-# default scala-reflect next to an overridden compiler crashes scalac with a
-# NoSuchMethodError). Overriding an unrelated artifact such as ScalaTest must
-# keep the check on.
-#
-# The check runs while Bazel evaluates the `scala_deps` extension of a consumer
-# module, so the test synthesizes that module in the test's tmpdir and evaluates
-# the extension with the nested `bazel` from nested_bazel.sh.
+# Checks which `overridden_artifact` sets make `scala_deps` skip the Scala
+# version check. The check runs while Bazel evaluates the extension, so the test
+# evaluates it in a generated consumer module.
 
 set -euo pipefail
 
@@ -33,7 +26,6 @@ cd "${scratch_module}"
 
 scala_version=""
 
-# $1: the `scala_version` to configure; starts a module with no overrides.
 start_module() {
   scala_version="$1"
   cat >MODULE.bazel <<EOF
@@ -65,7 +57,6 @@ scala_deps.scala()
 EOF
 }
 
-# Args: repository name, Maven coordinates, sha256.
 add_override() {
   cat >>MODULE.bazel <<EOF
 scala_deps.overridden_artifact(
@@ -81,7 +72,6 @@ evaluate_scala_deps() {
     @rules_scala//scala/extensions:deps.bzl%scala_deps 2>&1
 }
 
-# $1: which overrides the module carries, for the failure message.
 expect_mismatch_error() {
   local expected="Scala config (${scala_version}) version does not match repository version"
   local output
@@ -99,7 +89,6 @@ expect_mismatch_error() {
   fi
 }
 
-# $1: which overrides the module carries, for the failure message.
 expect_success() {
   local output
   if ! output="$(evaluate_scala_deps)"; then
