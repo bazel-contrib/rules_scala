@@ -13,7 +13,7 @@ scala_import(
 # below :app without also compiling anything at the wrong version.
 scala_import(
     name = "third_party_stub",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":rogue_scala3_library"],
 )
 
@@ -41,7 +41,7 @@ scala_import(
 
 scala_import(
     name = "third_party_stub_header_prefixed",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":rogue_scala3_library_header_prefixed"],
 )
 
@@ -61,7 +61,7 @@ scala_import(
 
 scala_import(
     name = "third_party_stub_same_version",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":same_version_scala3_library"],
 )
 
@@ -81,7 +81,7 @@ scala_import(
 
 scala_import(
     name = "third_party_stub_scala_library_only",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":rogue_scala_library_only"],
 )
 
@@ -110,7 +110,7 @@ scala_import(
 
 scala_import(
     name = "third_party_stub_rc_scala_library",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":rc_rogue_scala_library"],
 )
 
@@ -139,7 +139,7 @@ scala_import(
 
 scala_import(
     name = "third_party_stub_patch_only_scala_library",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":patch_only_rogue_scala_library"],
 )
 
@@ -169,7 +169,7 @@ scala_import(
 
 scala_import(
     name = "third_party_stub_patch_only_scala3_library",
-    jars = ["@com_google_guava_guava_21_0//:guava-21.0.jar"],
+    jars = ["@rules_scala_test_maven//:com_google_guava_guava"],
     deps = [":patch_only_rogue_scala3_library"],
 )
 

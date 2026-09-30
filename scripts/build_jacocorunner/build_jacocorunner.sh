@@ -2,7 +2,7 @@
 #
 # Script to build custom version of `JacocoCoverage_jarjar_deploy.jar` from Jacoco and Bazel repositories.
 #
-# The script has three flavours: Bazel 5, 6, 7 (8 is treated as 7) and 9. Documenting the details for Bazel 7/8/9 here.
+# The script has three flavours: Bazel 6, 7 (8 is treated as 7) and 9. Documenting the details for Bazel 7/8/9 here.
 #
 # The default `JacocoCoverage_jarjar_deploy.jar` has some issues:
 #
@@ -69,7 +69,7 @@ bazel_major_version=$1
 if [ -z "$bazel_major_version" ]; then
   echo "Please provide Bazel major version"
   exit 1
-elif [[ "$bazel_major_version" -lt 5 || "$bazel_major_version" -gt 9 ]]; then
+elif [[ "$bazel_major_version" -lt 6 || "$bazel_major_version" -gt 9 ]]; then
   echo "Unsupported Bazel major version: $bazel_major_version"
   exit 1
 fi
@@ -92,14 +92,7 @@ jacoco_patches="$jacoco_patches 0001-Build-Jacoco-for-Bazel-$bazel_major_version
 
 bazel_repo=$build_dir/bazel
 bazel_remote=https://github.com/gergelyfabian/bazel
-if [ "$bazel_major_version" = "5" ]; then
-  # Take further fixes for Scala (2.11, 2.12 and 2.13) - branch in development:
-  jacoco_branch=0.8.7-scala
-  jacoco_version=0.8.7
-  bazel_version=6.0.0-pre.20220520.1
-  # Version of Bazel with extending Bazel's Jacoco interface implementation for our 0.8.7-scala jacoco branch.
-  bazel_branch=jacoco_0.8.7_scala
-elif [ "$bazel_major_version" = "6" ]; then
+if [ "$bazel_major_version" = "6" ]; then
   # Take further fixes for Scala (2.11, 2.12 and 2.13) - branch in development:
   jacoco_branch=0.8.7-scala
   jacoco_version=0.8.7

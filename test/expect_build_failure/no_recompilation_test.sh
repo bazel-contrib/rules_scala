@@ -44,7 +44,9 @@ fi
 
 # shellcheck source=test/expect_build_failure/nested_bazel.sh
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
-nested_bazel_setup "rules_scala_no_recomp_output_base"
+# Short name: a longer one pushes rules_jvm_external's own internal tool's
+# runfiles path over Windows' 260-character path limit.
+nested_bazel_setup "no_recomp_base"
 
 toolchain_args=()
 if [[ -n "${extra_toolchain}" ]]; then

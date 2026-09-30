@@ -92,6 +92,7 @@ _INTERNAL_ENTRIES = [
     "examples",
     "lint.sh",
     "manual_test",
+    "rules_scala_test_maven.json",
     "scripts",
     "test",
     "test_all.sh",
