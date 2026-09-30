@@ -271,11 +271,8 @@ def scala_version_artifact_ids(scala_version):
     # own artifact with its own, version-specific extra deps -- see
     # repl_extra_deps in repl_deps.bzl for the full story.
     #
-    # repl_extra_deps's own callers (setup_scala_toolchain.bzl,
-    # toolchains_repo.bzl) build classpath labels, so its list uses the
-    # "@repo_name" form those need. This function's own result, like every
-    # other entry already in it above, is bare repo names -- lstrip("@")
-    # converts from one convention to the other.
+    # repl_extra_deps returns "@repo_name" labels for setup_scala_toolchain.bzl's
+    # classpaths; this list holds bare repo names like every entry above.
     result.extend([dep.lstrip("@") for dep in repl_extra_deps(scala_version)])
 
     return result

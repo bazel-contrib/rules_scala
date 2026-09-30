@@ -320,15 +320,14 @@ scala_repl(
     srcs = ["A.scala"],
 )
 
-# scala_repl under Scala 3 uses dotty.tools.repl.Main, not
-# scala.tools.nsc.MainGenericRunner.
+# Scala 3.1 through 3.7 ship dotty.tools.repl.Main inside scala3-compiler.
 scala_repl(
     name = "Scala3Repl",
     scala_version = "3.7.4",
 )
 
-# From 3.8, dotty.tools.repl.Main moves into its own scala3-repl artifact
-# (fansi/pprint deps).
+# From 3.8 the REPL is its own scala3-repl artifact, pulling in fansi/pprint
+# for rendering and coursier/using_directives for its `:dep` command.
 scala_repl(
     name = "Scala38Repl",
     scala_version = "3.8.4",

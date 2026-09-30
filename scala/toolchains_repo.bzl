@@ -120,16 +120,13 @@ scala_toolchains_repo = repository_rule(
 
 _SCALA_TOOLCHAIN_BUILD = """
 load(
-    "@rules_scala//scala/private:macros/repl_deps.bzl",
-    "repl_extra_deps",
-)
-load(
     "@rules_scala//scala/private:macros/setup_scala_toolchain.bzl",
     "default_deps",
+    "default_repl_classpath",
     "setup_scala_toolchain",
 )
 load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
-load("@rules_scala//scala:scala_cross_version.bzl", "repositories", "version_suffix")
+load("@rules_scala//scala:scala_cross_version.bzl", "version_suffix")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
 [
@@ -173,7 +170,7 @@ declare_deps_provider(
     deps_id = "scala_repl_classpath",
     visibility = ["//visibility:public"],
     deps = select({{
-        "@rules_scala_config//:scala_version" + version_suffix(v): default_deps("scala_compile_classpath", v) + repositories(v, repl_extra_deps(v))
+        "@rules_scala_config//:scala_version" + version_suffix(v): default_repl_classpath(v)
         for v in SCALA_VERSIONS
     }}),
 )
