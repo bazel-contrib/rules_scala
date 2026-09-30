@@ -100,9 +100,8 @@ scala_version_by_major_scala_version = {
     "3.9": _scala_version_3_9,
 }
 
-# Jars whose overrides skip the Scala version check. `repositories()` keeps the
-# ids defined for the configured version, so Scala 3 requires only the compiler
-# and the library.
+# Jars whose overrides skip the Scala version check. Only the ids defined for the
+# configured version count, so Scala 3 needs just the compiler and the library.
 _SCALA_VERSION_ARTIFACT_IDS = [
     "io_bazel_rules_scala_scala_compiler",
     "io_bazel_rules_scala_scala_library",
@@ -135,27 +134,17 @@ def repositories(
         repository_scala_version = scala_version_by_major_scala_version[major_scala_version]
         default_version_matches = scala_version == repository_scala_version
 
-        scala_version_artifact_ids = [
+        missing_overrides = [
             id
             for id in _SCALA_VERSION_ARTIFACT_IDS
-            if id in default_artifacts
+            if id in default_artifacts and id not in overriden_artifacts
         ]
-        overrides_scala_version = all([
-            id in overriden_artifacts
-            for id in scala_version_artifact_ids
-        ])
 
-        if not default_version_matches and not overrides_scala_version:
-            version_message = (
-                "Scala config (%s) version does not match repository " +
-                "version (%s). Override %s for this version, or set " +
-                "validate_scala_version = False."
-            )
-            fail(version_message % (
-                scala_version,
-                repository_scala_version,
-                ", ".join(scala_version_artifact_ids),
-            ))
+        if not default_version_matches and missing_overrides:
+            version_message = "Scala config (%s) version does not match repository version (%s)"
+            fail(version_message % (scala_version, repository_scala_version) +
+                 ". Override %s, or set validate_scala_version = False." %
+                 ", ".join(missing_overrides))
 
     artifacts = dict(default_artifacts.items() + overriden_artifacts.items())
     for id in for_artifact_ids:
