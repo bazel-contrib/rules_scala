@@ -1,9 +1,9 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
-# Tests using fetch_sources_test.sh depend on `io_bazel_rules_scala_guava`
-# (fetched via scala_deps(), unaffected by the rules_jvm_external migration)
-# always fetching sources by default; only an explicit non-"true"
-# BAZEL_JVM_FETCH_SOURCES value turns that off. See scala_maven_import_external.bzl.
+# `io_bazel_rules_scala_guava` is one of the scala_proto toolchain's artifacts,
+# which scala_toolchains() always fetches with sources, so its source jar is
+# present unless BAZEL_JVM_FETCH_SOURCES is set to anything other than "true"
+# (case insensitive). See scala_maven_import_external.bzl.
 sh_test(
     name = "fetched_by_default_test",
     size = "large",

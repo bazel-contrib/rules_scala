@@ -41,6 +41,8 @@ nested_bazel_setup "rules_scala_fetch_sources_test_output_base"
 
 if [[ -n "${ENV_VALUE}" ]]; then
   export BAZEL_JVM_FETCH_SOURCES="${ENV_VALUE}"
+else
+  unset BAZEL_JVM_FETCH_SOURCES
 fi
 
 target="@io_bazel_rules_scala_guava//jar"
@@ -55,8 +57,7 @@ fi
 # own label the same way would fail outright (not just report absence) on the
 # runs where it was never fetched.
 #
-# cquery, not plain query: nested_bazel_run always passes --symlink_prefix
-# (needed for build/test/run), which plain `query` rejects outright.
+# cquery because plain `query` has no `--output=files`.
 main_jar_relpath="$(nested_bazel_run cquery --output=files "${target}")"
 execution_root="$(nested_bazel_run info execution_root)"
 main_jar_path="${execution_root}/${main_jar_relpath}"
