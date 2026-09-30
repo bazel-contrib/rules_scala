@@ -92,11 +92,10 @@ setup_scala_toolchain(
 )
 ```
 
-When you set `scala_compile_classpath`, `scala_repl` uses exactly that
-classpath too. From Scala 3.8 the REPL lives in its own
-`org.scala-lang:scala3-repl_3` artifact with its own dependencies, so a Scala
-3.8+ toolchain also needs `scala_repl_classpath` listing the compile classpath
-plus those jars for `scala_repl` to start.
+When you set `scala_compile_classpath`, `scala_repl` uses that classpath too.
+From Scala 3.8 the REPL lives in its own `org.scala-lang:scala3-repl_3` artifact
+with its own dependencies, so `scala_repl` starts only when those jars are on
+that classpath, or on `scala_repl_classpath` if you set it.
 
 #### Step 2
 
