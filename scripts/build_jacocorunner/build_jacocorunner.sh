@@ -92,6 +92,7 @@ jacoco_patches="$jacoco_patches 0001-Build-Jacoco-for-Bazel-$bazel_major_version
 
 bazel_repo=$build_dir/bazel
 bazel_remote=https://github.com/gergelyfabian/bazel
+bazel_build_flags=""
 if [ "$bazel_major_version" = "6" ]; then
   # Take further fixes for Scala (2.11, 2.12 and 2.13) - branch in development:
   jacoco_branch=0.8.7-scala
@@ -113,6 +114,8 @@ else
   # Version of Bazel with extending Bazel's Jacoco interface implementation for our 0.8.14-scala jacoco branch.
   bazel_version=10.0.0-pre.20251208.3
   bazel_branch=10.0.0-pre.20251208.3_jacoco_0.8.14_scala
+  # This Bazel emits Java 21 bytecode by default; 17 keeps the runner loadable on a Java 17 test runtime.
+  bazel_build_flags="--java_language_version=17"
 fi
 
 JAVA_VERSION=$(java -version 2>&1 | head -1 \
@@ -196,7 +199,7 @@ cp lib/org.jacoco.report-* org.jacoco.report-${jacoco_version}.jar
 cd ../../..
 
 # Build JacocoRunner.
-bazel build --check_direct_dependencies=off src/java_tools/junitrunner/java/com/google/testing/coverage:$bazel_build_target
+bazel build --check_direct_dependencies=off $bazel_build_flags src/java_tools/junitrunner/java/com/google/testing/coverage:$bazel_build_target
 cp bazel-bin/src/java_tools/junitrunner/java/com/google/testing/coverage/$bazel_build_target $destination_dir/
 # Make the jar writable to enable re-running the script.
 chmod +w $destination_dir/$bazel_build_target
