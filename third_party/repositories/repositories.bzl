@@ -100,15 +100,6 @@ scala_version_by_major_scala_version = {
     "3.9": _scala_version_3_9,
 }
 
-# Jars whose overrides skip the Scala version check. Only the ids defined for the
-# configured version count, so Scala 3 needs just the compiler and the library.
-_SCALA_VERSION_ARTIFACT_IDS = [
-    "io_bazel_rules_scala_scala_compiler",
-    "io_bazel_rules_scala_scala_library",
-    # The Scala 2 compiler requires scala-reflect of its exact version.
-    "io_bazel_rules_scala_scala_reflect",
-]
-
 def repositories(
         scala_version = None,
         for_artifact_ids = [],
@@ -134,10 +125,17 @@ def repositories(
         repository_scala_version = scala_version_by_major_scala_version[major_scala_version]
         default_version_matches = scala_version == repository_scala_version
 
+        # Every fetched default jar pinned at this Scala version needs an
+        # override: scalac crashes next to a mismatched scala-reflect or
+        # tasty-core, and on Scala 3.8+ scala-library carries this version.
         missing_overrides = [
             id
-            for id in _SCALA_VERSION_ARTIFACT_IDS
-            if id in default_artifacts and id not in overriden_artifacts
+            for id in for_artifact_ids
+            if id in default_artifacts and
+               default_artifacts[id]["artifact"].endswith(
+                   ":" + repository_scala_version,
+               ) and
+               id not in overriden_artifacts
         ]
 
         if not default_version_matches and missing_overrides:

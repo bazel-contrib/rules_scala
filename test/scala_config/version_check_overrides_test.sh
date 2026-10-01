@@ -117,23 +117,21 @@ add_override io_bazel_rules_scala_scala_reflect \
   8846baaa8cf43b1b19725ab737abff145ca58d14a4d02e75d71ca8f7ca5f2926
 expect_success "ScalaTest, the library, the compiler and scala-reflect"
 
-scala3_library=(
-  io_bazel_rules_scala_scala_library
-  org.scala-lang:scala3-library_3:3.3.4
-  d95184acfcd814da2e051378e4962c653f4b468f4086452ab427af030482bd3c
-)
-scala3_compiler=(
-  io_bazel_rules_scala_scala_compiler
-  org.scala-lang:scala3-compiler_3:3.3.4
-  2cca65fdb92e2cc393786cae61b4f7bcb9032ad4be61f9cebae1dca72997e52f
-)
-
-start_module "3.3.4"
-add_override "${scala3_compiler[@]}"
-expect_mismatch_error "only the compiler"
-
-start_module "3.3.4"
-add_override "${scala3_library[@]}"
-expect_mismatch_error "only the library"
-add_override "${scala3_compiler[@]}"
-expect_success "the library and the compiler"
+start_module "3.8.3"
+add_override io_bazel_rules_scala_scala_library \
+  org.scala-lang:scala3-library_3:3.8.3 \
+  740c79f7fc3dae2c5eef48e85f777d679a1f0f53fdbb780bf84dea0370220a61
+add_override io_bazel_rules_scala_scala_compiler \
+  org.scala-lang:scala3-compiler_3:3.8.3 \
+  cd5e5aa54b610e37522deea19344a9d9614d5fbc9cf052de08a66ceb7c1a8974
+add_override io_bazel_rules_scala_scala_interfaces \
+  org.scala-lang:scala3-interfaces:3.8.3 \
+  98bb43395ad33b65b7ea59ed3705fc14174b6179f4d21d561ae96ef97be563c0
+add_override io_bazel_rules_scala_scala_tasty_core \
+  org.scala-lang:tasty-core_3:3.8.3 \
+  1c771f2416b4e455b269981a17c0804b237eed120c8807af808f192085c3e516
+expect_mismatch_error "every Scala 3 jar but scala-library"
+add_override io_bazel_rules_scala_scala_library_2 \
+  org.scala-lang:scala-library:3.8.3 \
+  8b5164c4be2d7a86635966b419a08b393e58b3c7bc0cafb502e0f34248722b4e
+expect_success "every Scala 3 jar"
