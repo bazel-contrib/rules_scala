@@ -2,6 +2,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:providers.bzl", "declare_deps_provider")
 load("//scala:scala_cross_version.bzl", "repositories", "version_suffix")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load("//scala/private:macros/repl_deps.bzl", "repl_extra_deps")
 
 def setup_scala_toolchain(
         name,
@@ -14,13 +15,23 @@ def setup_scala_toolchain(
         semanticdb_deps = None,
         enable_semanticdb = False,
         visibility = ["//visibility:public"],
+        scala_repl_classpath = None,
         **kwargs):
     scala_xml_provider = "%s_scala_xml_provider" % name
     parser_combinators_provider = "%s_parser_combinators_provider" % name
     scala_compile_classpath_provider = "%s_scala_compile_classpath_provider" % name
     scala_library_classpath_provider = "%s_scala_library_classpath_provider" % name
     scala_macro_classpath_provider = "%s_scala_macro_classpath_provider" % name
+    scala_repl_classpath_provider = "%s_scala_repl_classpath_provider" % name
     semanticdb_deps_provider = "%s_semanticdb_deps_provider" % name
+
+    if scala_repl_classpath == None:
+        # A caller who supplies their own compiler jars also supplies their
+        # own repos, which may lack the REPL artifacts default_repl_classpath
+        # names, so their REPL gets exactly their compile classpath.
+        scala_repl_classpath = (
+            default_repl_classpath(scala_version) if scala_compile_classpath == None else scala_compile_classpath
+        )
 
     if scala_compile_classpath == None:
         scala_compile_classpath = default_deps("scala_compile_classpath", scala_version)
@@ -29,6 +40,13 @@ def setup_scala_toolchain(
         deps_id = "scala_compile_classpath",
         visibility = visibility,
         deps = scala_compile_classpath,
+    )
+
+    declare_deps_provider(
+        name = scala_repl_classpath_provider,
+        deps_id = "scala_repl_classpath",
+        visibility = visibility,
+        deps = scala_repl_classpath,
     )
 
     if scala_library_classpath == None:
@@ -82,6 +100,7 @@ def setup_scala_toolchain(
         scala_compile_classpath_provider,
         scala_library_classpath_provider,
         scala_macro_classpath_provider,
+        scala_repl_classpath_provider,
         semanticdb_deps_provider,
     ]
 
@@ -160,3 +179,6 @@ def default_deps(deps_id, scala_version):
     versions = _DEFAULT_DEPS[deps_id]
     deps = versions.get("any", []) + versions.get(scala_version[0], [])
     return repositories(scala_version, deps)
+
+def default_repl_classpath(scala_version):
+    return default_deps("scala_compile_classpath", scala_version) + repositories(scala_version, repl_extra_deps(scala_version))

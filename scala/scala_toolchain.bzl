@@ -113,6 +113,7 @@ def _default_dep_providers():
             "scala_compile_classpath",
             "scala_library_classpath",
             "scala_macro_classpath",
+            "scala_repl_classpath",
             "semanticdb",
         ]
     ]

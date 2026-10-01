@@ -6,6 +6,10 @@ load("//scala/private:common.bzl", "rlocationpath_from_file")
 # DOCUMENT THIS
 #
 load(
+    "//scala/private:macros/repl_deps.bzl",
+    "repl_is_known_supported",
+)
+load(
     "//scala/private:rule_impls.bzl",
     "expand_location",
     "first_non_empty",
@@ -34,6 +38,13 @@ def phase_write_executable_scalatest(ctx, p):
 
 def phase_write_executable_repl(ctx, p):
     toolchain = ctx.toolchains["//scala:toolchain_type"]
+    if not repl_is_known_supported(toolchain.scala_version):
+        fail(
+            "scala_repl has no _REPL_EXTRA_DEPS entry for Scala %s. " % toolchain.scala_version +
+            "Check org.scala-lang:scala3-repl_3's published POM for this version " +
+            "and add one in repl_deps.bzl (see the versions already there for the shape). " +
+            "Got here via your own scala_versions override? File an issue with rules_scala instead.",
+        )
     main_class = (
         "dotty.tools.repl.Main" if toolchain.scala_version.startswith("3.") else "scala.tools.nsc.MainGenericRunner"
     )
