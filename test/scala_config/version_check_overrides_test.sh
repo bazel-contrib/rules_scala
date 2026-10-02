@@ -130,6 +130,9 @@ add_override io_bazel_rules_scala_scala_interfaces \
 add_override io_bazel_rules_scala_scala_tasty_core \
   org.scala-lang:tasty-core_3:3.8.3 \
   1c771f2416b4e455b269981a17c0804b237eed120c8807af808f192085c3e516
+add_override org_scala_lang_scala3_repl \
+  org.scala-lang:scala3-repl_3:3.8.3 \
+  d00e3ab80898f3f0b221535f251f51b21b9d4db50539e6ceec54183a13ae7a01
 expect_mismatch_error "every Scala 3 jar but scala-library"
 add_override io_bazel_rules_scala_scala_library_2 \
   org.scala-lang:scala-library:3.8.3 \
