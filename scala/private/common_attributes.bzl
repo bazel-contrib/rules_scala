@@ -6,10 +6,6 @@ load(
     "//scala:plusone.bzl",
     _collect_plus_one_deps_aspect = "collect_plus_one_deps_aspect",
 )
-load(
-    "//scala/private:coverage_replacements_provider.bzl",
-    _coverage_replacements_provider = "coverage_replacements_provider",
-)
 
 common_attrs_for_plugin_bootstrapping = {
     "srcs": attr.label_list(allow_files = [
@@ -18,10 +14,7 @@ common_attrs_for_plugin_bootstrapping = {
         ".java",
     ]),
     "deps": attr.label_list(
-        aspects = [
-            _collect_plus_one_deps_aspect,
-            _coverage_replacements_provider.aspect,
-        ],
+        aspects = [_collect_plus_one_deps_aspect],
         providers = [[JavaInfo]],
     ),
     "plugins": attr.label_list(allow_files = [".jar"]),

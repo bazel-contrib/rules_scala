@@ -9,7 +9,7 @@
 # collection unintentionally, and it is never even built.
 #
 # Usage:
-#   jacoco_metadata_runfiles_test.sh --target <label>
+#   jacoco_metadata_runfiles_test.sh --target <label> --instrumented-jar <bazel-bin-relative path>
 
 set -euo pipefail
 
@@ -17,11 +17,16 @@ set -euo pipefail
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
 
 target=""
+instrumented_jar=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --target)
     target="$2"
+    shift 2
+    ;;
+  --instrumented-jar)
+    instrumented_jar="$2"
     shift 2
     ;;
   *)
@@ -31,8 +36,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "${target}" ]]; then
-  echo "Usage: jacoco_metadata_runfiles_test.sh --target <label>" >&2
+if [[ -z "${target}" ]] || [[ -z "${instrumented_jar}" ]]; then
+  echo "Usage: jacoco_metadata_runfiles_test.sh --target <label> --instrumented-jar <path>" >&2
   exit 2
 fi
 
@@ -55,8 +60,15 @@ if [[ ! -s "${metadata_file}" ]]; then
   exit 1
 fi
 
-if ! grep -q -- "-offline\.jar$" "${metadata_file}"; then
-  echo "${metadata_file} does not list any instrumented (-offline.jar) dependency jars:" >&2
+# An instrumented jar keeps each original class next to it as
+# `<class>.uninstrumented`.
+if ! grep -qx -- "${instrumented_jar}" "${metadata_file}"; then
+  echo "Expected ${metadata_file} to list ${instrumented_jar}; it lists:" >&2
   cat "${metadata_file}" >&2
+  exit 1
+fi
+listing="$(jar tf "${bazel_bin}/${instrumented_jar}")"
+if [[ "${listing}" != *".class.uninstrumented"* ]]; then
+  echo "Expected ${instrumented_jar} to be JaCoCo-instrumented (to hold .class.uninstrumented entries); it holds only plain classes." >&2
   exit 1
 fi

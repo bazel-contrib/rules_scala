@@ -28,7 +28,6 @@ def phase_write_executable_scalatest(ctx, p):
     )
 
     args = struct(
-        rjars = p.coverage_runfiles.rjars,
         jvm_flags = [
             "-DRULES_SCALA_ARGS_FILE=%s" % rlocationpath_from_file(ctx, p.runfiles.args_file),
         ] + expand_location(ctx, final_jvm_flags),
@@ -49,14 +48,13 @@ def phase_write_executable_repl(ctx, p):
         "dotty.tools.repl.Main" if toolchain.scala_version.startswith("3.") else "scala.tools.nsc.MainGenericRunner"
     )
     args = struct(
-        jvm_flags = ["-Dscala.usejavacp=true"] + ctx.attr.jvm_flags,
+        jvm_flags = ["-Dscala.usejavacp=true"] + _jacoco_output_flags(ctx) + ctx.attr.jvm_flags,
         main_class = main_class,
     )
     return _phase_write_executable_default(ctx, p, args)
 
 def phase_write_executable_junit_test(ctx, p):
     args = struct(
-        rjars = p.coverage_runfiles.rjars,
         jvm_flags = p.jvm_flags + ctx.attr.jvm_flags + ["-Dcom.google.testing.junit.runner.shouldInstallTestSecurityManager=false"],
         main_class = "com.google.testing.junit.runner.BazelTestRunner",
         use_jacoco = ctx.configuration.coverage_enabled,
@@ -64,13 +62,18 @@ def phase_write_executable_junit_test(ctx, p):
     return _phase_write_executable_default(ctx, p, args)
 
 def phase_write_executable_common(ctx, p):
-    return _phase_write_executable_default(ctx, p)
+    args = struct(jvm_flags = _jacoco_output_flags(ctx) + ctx.attr.jvm_flags)
+    return _phase_write_executable_default(ctx, p, args)
+
+# Keeps the JaCoCo runtime from writing jacoco.exec into the working directory.
+def _jacoco_output_flags(ctx):
+    return ["-Djacoco-agent.output=none"] if ctx.configuration.coverage_enabled else []
 
 def _phase_write_executable_default(ctx, p, _args = struct()):
     return _phase_write_executable(
         ctx,
         p,
-        _args.rjars if hasattr(_args, "rjars") else p.compile.rjars,
+        p.compile.rjars,
         _args.jvm_flags if hasattr(_args, "jvm_flags") else ctx.attr.jvm_flags,
         _args.use_jacoco if hasattr(_args, "use_jacoco") else False,
         _args.main_class if hasattr(_args, "main_class") else ctx.attr.main_class,

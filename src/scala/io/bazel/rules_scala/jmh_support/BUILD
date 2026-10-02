@@ -15,7 +15,11 @@ scala_library(
 
 scala_binary(
     name = "benchmark_generator",
+    # Under coverage, the benchmark jars are offline-instrumented and call the
+    # JaCoCo runtime when the generator initializes their classes.
+    jvm_flags = ["-Djacoco-agent.output=none"],
     main_class = "io.bazel.rules_scala.jmh_support.BenchmarkGenerator",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@bazel_tools//tools/jdk:JacocoCoverage"],
     deps = [":benchmark_generator_lib"],
 )
