@@ -216,7 +216,4 @@ uncovered, and `JacocoInstrumenter` prints a warning naming it. The default is
 
 ## Notes
 
-Please ensure these scripts use Java 8.
-
-This should be done in the script itself, as e.g. the manual test requires a higher Java version, so you could add some
-code at the header of the build script to select Java 8 (appropriate for your Java installation).
+`build_jacocorunner.sh` checks the Java version it runs with: Java 8 for `6`, Java 17 for `7` and `8`, Java 17 or 21 for `9`. The script header shows how to point it at a specific JDK.
