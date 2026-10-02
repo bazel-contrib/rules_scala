@@ -1,6 +1,9 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load(":repl_deps_test.bzl", "repl_deps_test_suite")
 
 package(default_testonly = 1)
+
+repl_deps_test_suite(name = "repl_deps_test")
 
 sh_test(
     name = "repl_test",
@@ -18,12 +21,18 @@ sh_test(
         "$(rootpath //test:ReplWithSources)",
         "--scala3-repl",
         "$(rootpath //test:Scala3Repl)",
+        "--scala38-repl",
+        "$(rootpath //test:Scala38Repl)",
+        "--scala39-repl",
+        "$(rootpath //test:Scala39Repl)",
     ],
     data = [
         "//test:HelloLibRepl",
         "//test:HelloLibTestRepl",
         "//test:ReplWithSources",
         "//test:ResourcesStripScalaBinaryRepl",
+        "//test:Scala38Repl",
+        "//test:Scala39Repl",
         "//test:Scala3Repl",
         "//test:ScalaLibBinaryRepl",
         # Not exercised at runtime, but its presence in `data` keeps it
