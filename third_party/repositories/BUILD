@@ -21,3 +21,8 @@ exports_files([
     "scala_3_8.bzl",
     "scala_3_9.bzl",
 ])
+
+exports_files(
+    ["repositories.bzl"],
+    visibility = ["//test/scala_config:__pkg__"],
+)

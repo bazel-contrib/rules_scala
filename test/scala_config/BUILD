@@ -52,3 +52,20 @@ sh_test(
         "requires-network",
     ],
 )
+
+sh_test(
+    name = "version_check_overrides_test",
+    size = "large",
+    srcs = ["version_check_overrides_test.sh"],
+    data = [
+        "//:MODULE.bazel",
+        "//test/expect_build_failure:nested_bazel.sh",
+        # Holds the check under test; editing it must re-run this test.
+        "//third_party/repositories:repositories.bzl",
+    ],
+    tags = [
+        "local",
+        "no-release",
+        "requires-network",
+    ],
+)
