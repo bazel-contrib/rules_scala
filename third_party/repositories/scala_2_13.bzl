@@ -6,11 +6,6 @@ Mostly generated and updated by scripts/create_repository.py.
 scala_version = "2.13.18"
 
 artifacts = {
-    "com_github_jnr_jffi_native": {
-        "testonly": True,
-        "artifact": "com.github.jnr:jffi:jar:native:1.2.17",
-        "sha256": "4eb582bc99d96c8df92fc6f0f608fd123d278223982555ba16219bf8be9f75a9",
-    },
     "com_google_android_annotations": {
         "artifact": "com.google.android:annotations:4.1.1.4",
         "sha256": "ba734e1e84c09d615af6a09d33034b4f0442f8772dec120efb376d86a565ae15",
@@ -33,19 +28,6 @@ artifacts = {
         "artifact": "com.google.errorprone:error_prone_annotations:2.45.0",
         "sha256": "6ba61510e22944e8aec3fe970972d088d8da132a24f2bc817a43c7b70665cc2b",
         "srcjar_sha256": "f8def362960be28236286f1c9ee9ba0112be25447c2a7c42efb13f8fc95a3016",
-    },
-    "com_google_guava_guava_21_0": {
-        "testonly": True,
-        "artifact": "com.google.guava:guava:21.0",
-        "sha256": "972139718abc8a4893fa78cba8cf7b2c903f35c97aaf44fa3031b0669948b480",
-        "deps": [
-            "@org_springframework_spring_core",
-        ],
-    },
-    "com_google_guava_guava_21_0_with_file": {
-        "testonly": True,
-        "artifact": "com.google.guava:guava:21.0",
-        "sha256": "972139718abc8a4893fa78cba8cf7b2c903f35c97aaf44fa3031b0669948b480",
     },
     "com_google_j2objc_j2objc_annotations": {
         "artifact": "com.google.j2objc:j2objc-annotations:3.1",
@@ -92,11 +74,6 @@ artifacts = {
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
-    },
-    "com_twitter__scalding_date": {
-        "testonly": True,
-        "artifact": "com.twitter:scalding-date_2.13:0.17.0",
-        "sha256": "973a7198121cc8dac9eeb3f325c93c497fe3b682f68ba56e34c1b210af7b15b4",
     },
     "com_typesafe_config": {
         "artifact": "com.typesafe:config:1.4.5",
@@ -450,11 +427,6 @@ artifacts = {
         "artifact": "net.java.dev.jna:jna:5.14.0",
         "sha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
     },
-    "org_apache_commons_commons_lang_3_5": {
-        "testonly": True,
-        "artifact": "org.apache.commons:commons-lang3:3.5",
-        "sha256": "8ac96fc686512d777fca85e144f196cd7cfe0c0aec23127229497d1a38ff651c",
-    },
     "org_checkerframework_checker_qual": {
         "artifact": "org.checkerframework:checker-qual:3.43.0",
         "sha256": "3fbc2e98f05854c3df16df9abaa955b91b15b3ecac33623208ed6424640ef0f6",
@@ -637,33 +609,6 @@ artifacts = {
             "@io_bazel_rules_scala_scala_library",
             "@org_scalameta_common",
             "@org_scalameta_io",
-        ],
-    },
-    "org_springframework_spring_core": {
-        "testonly": True,
-        "artifact": "org.springframework:spring-core:5.1.5.RELEASE",
-        "sha256": "f771b605019eb9d2cf8f60c25c050233e39487ff54d74c93d687ea8de8b7285a",
-    },
-    "org_springframework_spring_tx": {
-        "testonly": True,
-        "artifact": "org.springframework:spring-tx:5.1.5.RELEASE",
-        "sha256": "666f72b73c7e6b34e5bb92a0d77a14cdeef491c00fcb07a1e89eb62b08500135",
-        "deps": [
-            "@org_springframework_spring_core",
-        ],
-    },
-    "org_typelevel__cats_core": {
-        "testonly": True,
-        "artifact": "org.typelevel:cats-core_2.13:2.2.0",
-        "sha256": "6058d02418e4eb5f1919a1156d63d2d1b93f2c6190b1a1806ee2b73f8726a92f",
-    },
-    "org_typelevel_kind_projector": {
-        "artifact": "org.typelevel:kind-projector_2.13.18:0.13.4",
-        "sha256": "e4bac237aae1a530cc5c7f0c98723a2f9e4890b8ef02a8d0aa2afa8c79dce6c0",
-        "srcjar_sha256": "8bbb2471ab188e56fd0e3c62b0f18d92ffd4ee4fadcd12b9190c9cc26659e5fa",
-        "deps": [
-            "@io_bazel_rules_scala_scala_compiler",
-            "@io_bazel_rules_scala_scala_library",
         ],
     },
     "org_typelevel_paiges_core": {
