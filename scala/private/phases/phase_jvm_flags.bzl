@@ -3,7 +3,10 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 #
 # PHASE: jvm flags
 #
-# DOCUMENT THIS
+# Returns the JVM flags scala_junit_test uses to find test classes: the jars
+# to scan (from `tests_from`, or this target's own jars), `prefixes`,
+# `suffixes`, `suite_class` and `print_discovered_classes`.
+# phase_write_executable adds them to the launcher.
 #
 def phase_jvm_flags(ctx, p):
     if ctx.attr.tests_from:

@@ -3,7 +3,9 @@ load("//scala:providers.bzl", _ScalacProvider = "ScalacProvider")
 #
 # PHASE: scalac provider
 #
-# DOCUMENT THIS
+# Reads the Scala library, macro and REPL classpaths from the Scala
+# toolchain into a `ScalacProvider`. Each phase_collect_jars variant picks the
+# classpath its rule needs.
 #
 load("//scala/private/toolchain_deps:toolchain_deps.bzl", "find_deps_info_on", "find_deps_info_on_if_present")
 

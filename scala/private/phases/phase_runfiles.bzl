@@ -3,7 +3,10 @@ load("//scala/private:common.bzl", "rlocationpath_from_file")
 #
 # PHASE: runfiles
 #
-# DOCUMENT THIS
+# Lists the target's runfiles: its runtime jars, plus the Java wrapper and
+# Java runtime for executable rules. The scalatest variant also writes
+# `<name>.args` with the ScalaTest runner arguments. phase_default_info adds
+# the `runfiles` field to `DefaultInfo`.
 #
 def phase_runfiles_library(ctx, p):
     args = struct(

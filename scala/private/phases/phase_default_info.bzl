@@ -1,7 +1,10 @@
 #
 # PHASE: default_info
 #
-# DOCUMENT THIS
+# Builds the rule's `DefaultInfo` from the results of all earlier phases:
+# an `executable` field becomes the executable (at most one phase may set it),
+# `files` fields become default outputs, and `runfiles` fields, plus the Java
+# runtime, become runfiles.
 #
 
 load("//scala/private:rule_impls.bzl", "specified_java_runtime")
