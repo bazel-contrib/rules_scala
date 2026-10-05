@@ -1,7 +1,10 @@
 #
 # PHASE: java wrapper
 #
-# DOCUMENT THIS
+# Writes `<name>_wrapper.sh`, which runs `java` from the target's Java runtime,
+# or `$REAL_EXTERNAL_JAVA_BIN` when set. The REPL variant also passes
+# `scalacopts` and restores terminal settings on exit. phase_write_executable
+# uses the wrapper for the Unix launcher.
 #
 load("//scala/private:rule_impls.bzl", _java_bin = "java_bin")
 

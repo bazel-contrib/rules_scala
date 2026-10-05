@@ -1,7 +1,9 @@
 #
 # PHASE: collect srcjars
 #
-# DOCUMENT THIS
+# Collects srcjars from deps that return a legacy `srcjars` struct provider
+# (for example, generated code). phase_compile_library compiles their sources
+# into this target.
 #
 
 def phase_collect_srcjars(ctx, p):

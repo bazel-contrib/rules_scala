@@ -1,7 +1,7 @@
 #
 # PHASE: write manifest
 #
-# DOCUMENT THIS
+# Writes the jar manifest, with `Main-Class` when `main_class` is set.
 #
 load(
     "//scala/private:common.bzl",

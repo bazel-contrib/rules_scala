@@ -142,7 +142,7 @@ These are the relevant files
 - `scala/private/phases/phases.bzl`: re-expose phases for convenience
 - `scala/private/phases/phase_<PHASE_NAME>.bzl`: all the phase definitions
 
-Currently phase architecture is used by 7 rules:
+These rules use phases:
 
 - scala_library
 - scala_macro_library
@@ -151,6 +151,7 @@ Currently phase architecture is used by 7 rules:
 - scala_test
 - scala_junit_test
 - scala_repl
+- scala_proto_library
 
 If you need to expose providers to downstream targets you need to return a dict of providers (provider-name to provider instance) from your phase under the `external_providers` attribute.
 
