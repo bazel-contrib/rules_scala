@@ -119,16 +119,31 @@ def repositories(
     suffix = version_suffix(scala_version) if scala_version else ""
     scala_version = scala_version or SCALA_VERSION
     major_scala_version = extract_major_version(scala_version)
+    default_artifacts = artifacts_by_major_scala_version[major_scala_version]
 
     if validate_scala_version:
         repository_scala_version = scala_version_by_major_scala_version[major_scala_version]
         default_version_matches = scala_version == repository_scala_version
 
-        if not default_version_matches and len(overriden_artifacts) == 0:
-            version_message = "Scala config (%s) version does not match repository version (%s)"
-            fail(version_message % (scala_version, repository_scala_version))
+        # Every fetched default jar pinned at this Scala version needs an
+        # override: scalac crashes next to a mismatched scala-reflect or
+        # tasty-core, and on Scala 3.8+ scala-library carries this version.
+        missing_overrides = [
+            id
+            for id in for_artifact_ids
+            if id in default_artifacts and
+               default_artifacts[id]["artifact"].endswith(
+                   ":" + repository_scala_version,
+               ) and
+               id not in overriden_artifacts
+        ]
 
-    default_artifacts = artifacts_by_major_scala_version[major_scala_version]
+        if not default_version_matches and missing_overrides:
+            version_message = "Scala config (%s) version does not match repository version (%s)"
+            fail(version_message % (scala_version, repository_scala_version) +
+                 ". Override %s, or set validate_scala_version = False." %
+                 ", ".join(missing_overrides))
+
     artifacts = dict(default_artifacts.items() + overriden_artifacts.items())
     for id in for_artifact_ids:
         if id not in artifacts:
