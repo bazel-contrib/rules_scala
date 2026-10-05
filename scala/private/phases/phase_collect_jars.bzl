@@ -3,7 +3,10 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 #
 # PHASE: collect jars
 #
-# DOCUMENT THIS
+# Collects compile jars from `deps` and runtime jars from `deps` and
+# `runtime_deps`, plus the toolchain classpath the rule variant needs.
+# phase_compile uses the result, and `JarsToLabelsInfo` goes into the rule's
+# providers.
 #
 load("//scala/private:common.bzl", "collect_jars")
 

@@ -1,7 +1,9 @@
 #
 # PHASE: declare executable
 #
-# DOCUMENT THIS
+# Declares the launcher file: `<name>.exe` on Windows, `<name>` elsewhere.
+# phase_write_executable writes it, and phase_default_info returns it as the
+# rule's executable.
 #
 load("//scala/private:rule_impls.bzl", "is_windows")
 
