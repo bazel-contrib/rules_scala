@@ -1,7 +1,9 @@
 #
 # PHASE: merge jars
 #
-# DOCUMENT THIS
+# Merges the target's runtime jars (`p.compile.rjars`) into
+# `<name>_deploy.jar` with singlejar, setting `Main-Class` when `main_class` is
+# set.
 #
 load("//scala/private:rule_impls.bzl", "specified_java_compile_toolchain")
 
