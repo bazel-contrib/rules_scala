@@ -1,5 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_binary")
 load("@rules_scala_config//:config.bzl", "ENABLE_COMPILER_DEPENDENCY_TRACKING")
+load("//scala/private:jacoco_runtime.bzl", "JACOCO_RUNTIME_DEPS", "JACOCO_RUNTIME_JVM_FLAGS")
 
 DEFAULT_SCALAC_DEPS = [
     Label(dep)
@@ -28,19 +29,14 @@ _SCALAC_JAVACOPTS = [
     "-Xlint:-options",
 ]
 
-# Under coverage, macros on the compile classpath are offline-instrumented and
-# call the JaCoCo runtime while scalac expands them.
-_JACOCO_RUNTIME_DEPS = [Label("@bazel_tools//tools/jdk:JacocoCoverage")]
-_JACOCO_JVM_FLAGS = ["-Djacoco-agent.output=none"]
-
 def define_scalac(name = "scalac", srcs = DEFAULT_SRCS, deps = DEFAULT_SCALAC_DEPS):
     java_binary(
         name = name,
         srcs = srcs,
         javacopts = _SCALAC_JAVACOPTS,
         main_class = "io.bazel.rulesscala.scalac.ScalacWorker",
-        jvm_flags = _JACOCO_JVM_FLAGS,
-        runtime_deps = _JACOCO_RUNTIME_DEPS,
+        jvm_flags = JACOCO_RUNTIME_JVM_FLAGS,
+        runtime_deps = JACOCO_RUNTIME_DEPS,
         visibility = ["//visibility:public"],
         deps = ([
             Label("//third_party/dependency_analyzer/src/main/io/bazel/rulesscala/dependencyanalyzer/compiler:dep_reporting_compiler"),
@@ -53,8 +49,8 @@ def define_scalac_bootstrap(name = "scalac_bootstrap", srcs = DEFAULT_SRCS, deps
         srcs = srcs,
         javacopts = _SCALAC_JAVACOPTS,
         main_class = "io.bazel.rulesscala.scalac.ScalacWorker",
-        jvm_flags = _JACOCO_JVM_FLAGS,
-        runtime_deps = _JACOCO_RUNTIME_DEPS,
+        jvm_flags = JACOCO_RUNTIME_JVM_FLAGS,
+        runtime_deps = JACOCO_RUNTIME_DEPS,
         visibility = ["//visibility:public"],
         deps = deps,
     )

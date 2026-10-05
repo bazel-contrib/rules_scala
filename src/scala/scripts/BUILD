@@ -1,5 +1,6 @@
 load("//scala:scala.bzl", "scala_binary", "scala_library")
 load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
+load("//scala/private:jacoco_runtime.bzl", "JACOCO_RUNTIME_DEPS", "JACOCO_RUNTIME_JVM_FLAGS")
 
 scala_library(
     name = "scrooge_worker_lib",
@@ -57,12 +58,10 @@ scala_library(
 
 scala_binary(
     name = "scalapb_worker",
-    # Under coverage, the toolchain's extra_generator_dependencies are
-    # offline-instrumented and call the JaCoCo runtime when the worker loads them.
-    jvm_flags = ["-Djacoco-agent.output=none"],
+    jvm_flags = JACOCO_RUNTIME_JVM_FLAGS,
     main_class = "scripts.ScalaPBWorker",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@bazel_tools//tools/jdk:JacocoCoverage"],
+    runtime_deps = JACOCO_RUNTIME_DEPS,
     deps = [
         ":scalapb_worker_lib",
     ],

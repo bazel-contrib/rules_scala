@@ -1,8 +1,8 @@
 load("//scala:scala.bzl", "scala_binary", "scala_library", "scala_macro_library", "scala_test")
 load("//test/coverage_test:coverage_test.bzl", "coverage_test")
 
-# Under coverage every non-test target in this package is instrumented (the default
-# --instrumentation_filter), so the instrumented classes call the JaCoCo
+# `bazel coverage` instruments every non-test target in this package (the
+# default --instrumentation_filter), so the instrumented classes call the JaCoCo
 # runtime from two places: the macro while scalac expands it, and the binary
 # at run time.
 coverage_test(
