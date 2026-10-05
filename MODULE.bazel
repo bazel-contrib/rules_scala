@@ -217,7 +217,6 @@ rules_scala_test_maven.install(
         "https://repo.maven.apache.org/maven2",
         "https://maven-central.storage-download.googleapis.com/maven2",
         "https://mirror.bazel.build/repo1.maven.org/maven2",
-        "https://jcenter.bintray.com",
     ],
 )
 use_repo(rules_scala_test_maven, "rules_scala_test_maven")
