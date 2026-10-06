@@ -56,13 +56,6 @@ if [[ "${fake_root}" -eq 0 ]]; then
   fi
 fi
 
-# bzlmod's module-extension APIs used here require Bazel 7.1+ (this repo's own
-# MODULE.bazel declares the same floor via bazel_compatibility).
-if [[ "$(bazel --version)" =~ ^bazel\ 6\. ]]; then
-  echo "Skipping bzlmod macro test: requires Bazel 7.1 or newer."
-  exit 0
-fi
-
 # shellcheck source=test/expect_build_failure/nested_bazel.sh
 source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/test/expect_build_failure/nested_bazel.sh"
 nested_bazel_setup "rules_scala_bzlmod_macros_output_base"

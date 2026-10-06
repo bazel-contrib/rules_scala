@@ -247,4 +247,4 @@ When you run a deploy jar from a coverage build with `java -jar`, add
 
 ## Notes
 
-`build_jacocorunner.sh` checks the Java version it runs with: Java 8 for `6`, Java 17 for `7` and `8`, Java 17 or 21 for `9`. The script header shows how to point it at a specific JDK.
+`build_jacocorunner.sh` checks the Java version it runs with: Java 17 for `7` and `8`, Java 17 or 21 for `9`. The script header shows how to point it at a specific JDK.
