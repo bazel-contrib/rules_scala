@@ -216,4 +216,4 @@ uncovered, and `JacocoInstrumenter` prints a warning naming it. The default is
 
 ## Notes
 
-`build_jacocorunner.sh` checks the Java version it runs with: Java 8 for `6`, Java 17 for `7` and `8`, Java 17 or 21 for `9`. The script header shows how to point it at a specific JDK.
+`build_jacocorunner.sh` checks the Java version it runs with: Java 17 for `7` and `8`, Java 17 or 21 for `9`. The script header shows how to point it at a specific JDK.

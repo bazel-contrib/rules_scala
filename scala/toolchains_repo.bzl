@@ -111,7 +111,7 @@ scala_toolchains_repo = repository_rule(
         "twitter_scrooge": attr.bool(
             doc = "Instantiate the twitter_scrooge toolchain",
         ),
-        # attr.string_keyed_label_dict isn't available in Bazel 6
+        # attr.string_keyed_label_dict needs Bazel 7.4 or later.
         "twitter_scrooge_deps": attr.string_dict(
             doc = "twitter_scrooge toolchain dependency provider overrides",
         ),
