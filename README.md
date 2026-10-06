@@ -157,9 +157,6 @@ WORKSPACE system no longer exists in Bazel 9__][bazel-9].
 
 [bazel-9]: https://bazel.build/external/migration
 
-For best-effort Bazel 6 legacy `WORKSPACE` support, see [Limited Bazel 6.6.0
-compatibility](#6.6.0) below.
-
 Add the following configuration snippet to your `WORKSPACE` file and update the
 release `<VERSION>` and its `<SHA256>` as specified on the [rules_scala releases
 page][releases]. This snippet is designed to ensure that users pick up the
@@ -757,7 +754,7 @@ compatible with `rules_scala` 7.x.
 | Mode        | Supported Bazel versions |
 | :-:         |  :-: |
 | Bzlmod      | >= 7.1.0, 8.x, 9.x<br/>`rolling`, `last_green`                            |
-| `WORKSPACE` | >= 7.1.0, 8.x<br/>(see the [notes on 6.6.0 compatibility](#6.6.0)) |
+| `WORKSPACE` | >= 7.1.0, 8.x |
 
 `rules_scala` 7.0.0 uses `ScalaPB` 1.0.0-alpha.1 to support `protobuf` v28.2 and
 later, required by newer Bazel versions and other dependencies. Below are the
@@ -788,9 +785,8 @@ https://github.com/bazelbuild/rules_scala/pull/1710#issuecomment-2750001012).
 
 ### Using a prebuilt `@com_google_protobuf//:protoc` or C++ compiler flags
 
-Newer versions of `abseil-cpp`, required by newer versions of
-`@com_google_protobuf//:protoc`, fail to compile under Bazel 6 by default. The
-latest versions of `abseil-cpp` also fail to compile under Bazel 7 by default.
+The latest versions of `abseil-cpp`, required by newer versions of
+`@com_google_protobuf//:protoc`, fail to compile under Bazel 7 by default.
 [protoc will also fail to build on Windows when using MSVC](#protoc-msvc). You
 will have to choose one of the following approaches to resolve this problem.
 
@@ -904,9 +900,7 @@ that folder.
 
 __The main objective of `rules_scala` 7.x is to enable existing users to migrate
 to Bazel 8 and Bzlmod.__ To facilitate a gradual migration, it is compatible
-with both Bazel 7 and Bazel 8, and both legacy `WORKSPACE` and Bzlmod. It
-remains compatible with Bazel 6.6.0 builds using legacy `WORKSPACE` for the time
-being, but Bazel 6 is no longer officially supported.
+with both Bazel 7 and Bazel 8, and both legacy `WORKSPACE` and Bzlmod.
 
 `rules_java` 7.x contains the following breaking changes when upgrading from
 `rules_scala` 6.x.
@@ -1325,7 +1319,7 @@ upgrade by doing a global search and replace.
 
 However, `@bazel_tools//tools/jdk:toolchain_type` dependencies must remain for
 now, as there's not yet a corresponding [`toolchain_type()`](
-https://bazel.build/versions/6.1.0/reference/be/platform#toolchain_type) target
+https://bazel.build/reference/be/platforms-and-toolchains#toolchain_type) target
 in `@rules_java`.
 
 ### Builtin repositories no longer visible by default under Bzlmod
@@ -1408,31 +1402,8 @@ bazelbuild/bazel#25198 describes how the semantics of some instances of
 `$(rootpath)` fixed them.
 
 The good news is that replacing such instances `$(location)` with `$(rootpath)`
-is backwards compatible to Bazel 6 and 7. Updating them now will ensure future
+is backwards compatible to Bazel 7. Updating them now will ensure future
 compatibility.
-
-### <a id="6.6.0"></a>Limited Bazel 6.6.0 compatibility
-
-__`rules_scala` 7.x officially drops support for Bazel 6.__ Bzlmod builds with
-Bazel 6 won't work at all because [Bazel 6 doesn't support
-'use_repo_rule'](https://bazel.build/versions/6.6.0/rules/lib/globals#use_repo),
-which ['rules_jvm_external' >= 6.3 requires](
-https://github.com/bazelbuild/rules_scala/issues/1482#issuecomment-2515496234).
-
-At the moment, legacy `WORKSPACE` builds mostly continue to work with Bazel
-6.6.0, but may break at any time.
-
-#### Configuring the protocol compiler toolchain
-
-See [Using a prebuilt @com_google_protobuf//:protoc or C++ compiler
-flags][protoc-opts] for protocol compiler configuration requirements.
-
-[protoc-opts]: #using-a-prebuilt-com_google_protobufprotoc-or-c-compiler-flags
-
-#### Using older versions of `protobuf`
-
-See [Using earlier protobuf versions](#using-earlier-protobuf-versions) for
-details on using older versions of protobuf if necessary.
 
 ### `scala_proto` not supported for Scala 2.11
 
@@ -1444,11 +1415,7 @@ more recent `protobuf` versions via [ScalaPB 1.0.0-alpha1](
 https://github.com/scalapb/ScalaPB/releases/tag/v1.0.0-alpha.1), we had to
 remove the Scala 2.11 test cases.
 
-Building `scala_proto` for Scala 2.11 requires [building with Bazel 6.6.0
-under WORKSPACE](#6.6.0), with the maximum dependency versions specified in that
-section. It also requires applying the patch described in the [Using earlier
-`protobuf` versions](#old-protobuf) section.  While this may continue to work
-for some time, it is not officially supported.
+Official support for `scala_proto` with Scala 2.11 stopped.
 
 ### `scala_proto_toolchain` changes and new `scalapb_toolchain` macro
 
