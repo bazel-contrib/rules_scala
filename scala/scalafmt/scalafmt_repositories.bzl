@@ -13,14 +13,6 @@ _SCALAFMT_DEPS = [
     "org_typelevel_paiges_core",
 ] + SCALAPB_COMPILE_ARTIFACT_IDS
 
-_SCALAFMT_DEPS_2_11 = [
-    "com_geirsson_metaconfig_core",
-    "com_geirsson_metaconfig_typesafe_config",
-    "com_lihaoyi_pprint",
-    "org_scalameta_fastparse",
-    "org_scalameta_fastparse_utils",
-]
-
 _SCALAFMT_DEPS_2_12 = [
     "org_scalameta_io",
     "org_scalameta_mdoc_parser",
@@ -34,9 +26,6 @@ _SCALAFMT_DEPS_2_12 = [
 
 def scalafmt_artifact_ids(scala_version):
     major_version = extract_major_version(scala_version)
-
-    if major_version == "2.11":
-        return _SCALAFMT_DEPS + _SCALAFMT_DEPS_2_11
 
     extra_deps = []
 

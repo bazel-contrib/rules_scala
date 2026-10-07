@@ -50,8 +50,8 @@ options:
   --version SCALA_VERSION
                         Scala version for which to update repository
                         information; if not provided, updates all supported
-                        versions: 2.11.12, 2.12.21, 2.13.18, 3.1.3, 3.2.2,
-                        3.3.8, 3.4.3, 3.5.2, 3.6.4, 3.7.4, 3.8.4
+                        versions: 2.12.21, 2.13.18, 3.1.3, 3.2.2, 3.3.8,
+                        3.4.3, 3.5.2, 3.6.4, 3.7.4, 3.8.4
   --output_dir OUTPUT_DIR
                         Directory in which to generate or update repository
                         files (default: .../third_party/repositories)
@@ -61,7 +61,6 @@ To **update** the `scala_3_4.bzl` file:
 
 ```py
 ROOT_SCALA_VERSIONS = [
-    "2.11.12",
     "2.12.19",
     "2.13.14",
     "3.1.3",
@@ -77,7 +76,6 @@ To **create** a new `scala_3_7.bzl` file:
 
 ```py
 ROOT_SCALA_VERSIONS = [
-    "2.11.12",
     "2.12.19",
     "2.13.14",
     "3.1.3",

@@ -1,5 +1,4 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
-load("//third_party/repositories:scala_2_11.bzl", scala_2_11_version = "scala_version")
 load("//third_party/repositories:scala_2_12.bzl", scala_2_12_version = "scala_version")
 load("//third_party/repositories:scala_2_13.bzl", scala_2_13_version = "scala_version")
 load("//third_party/repositories:scala_3_1.bzl", scala_3_1_version = "scala_version")
@@ -82,7 +81,6 @@ sh_test(
         tags = _NESTED_BAZEL_TAGS,
     )
     for bzl_name, scala_version in [
-        ("scala_2_11", scala_2_11_version),
         ("scala_2_12", scala_2_12_version),
         ("scala_2_13", scala_2_13_version),
         ("scala_3_1", scala_3_1_version),

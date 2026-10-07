@@ -21,7 +21,6 @@ SCALA_VERSION = "2.12.21"
 # These versions match those required by some tests, including
 # //test_thirdparty_version.
 SCALA_2_VERSIONS = [
-    "2.11.12",
     "2.12.21",
     "2.13.18",
 ]
@@ -146,12 +145,8 @@ use_repo(
             "io_bazel_rules_scala_junit_junit",
             "io_bazel_rules_scala_scala_compiler",
             "io_bazel_rules_scala_scala_library",
-        ] + (
-            # We can remove this condition once we drop support for Scala 2.11.
-            [] if scala_version.startswith("2.11.") else [
-                "scala_proto_rules_scalapb_protoc_gen",
-            ]
-        )
+            "scala_proto_rules_scalapb_protoc_gen",
+        ]
     ]
     for scala_version in SCALA_VERSIONS
 ]

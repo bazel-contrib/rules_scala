@@ -19,8 +19,6 @@ from lib.update_integrity import (
 
 # These are matched with the versions from //dt_patches:dt_patch_test.sh.
 SCALA_VERSIONS = [
-    "2.11.12",
-] + [
     f'2.12.{patch}' for patch in range(1, 22)  # 2.12.1 to 2.12.21
 ] + [
     f'2.13.{patch}' for patch in range(0, 19)  # 2.13.0 to 2.13.18

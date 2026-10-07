@@ -13,12 +13,9 @@ load(
 )
 
 def _generators_jars(ctx):
-    generator_deps = ctx.attr.extra_generator_dependencies + [
-        ctx.attr._main_generator_dep,
-    ]
     return depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
-        for dep in generator_deps
+        for dep in ctx.attr.extra_generator_dependencies
     ])
 
 def _ignored_proto_targets_by_label(ctx):
@@ -88,19 +85,6 @@ scala_proto_toolchain = rule(
             [proto rules documentation](https://docs.bazel.build/versions/master/be/protocol-buffer.html#proto_library)
             """,
         ),
-        # `scripts.ScalaPbCodeGenerator` and `_main_generator_dep` are currently
-        # necessary to support protoc-bridge < 0.9.8, specifically 0.7.14
-        # required by Scala 2.11. See #1647 and scalapb/ScalaPB#1771.
-        #
-        # If we drop 2.11 support, restore `scalapb.ScalaPbCodeGenerator` here,
-        # remove `_main_generator_dep`, and delete
-        # `//src/scala/scripts:scalapb_codegenerator_wrapper` and its files.
-        "_main_generator_dep": attr.label(
-            default = "//src/scala/scripts:scalapb_codegenerator_wrapper",
-            allow_single_file = True,
-            executable = False,
-            cfg = "exec",
-        ),
     } | PROTOC_ATTR,
     fragments = PROTOC_FRAGMENTS,
     toolchains = PROTOC_TOOLCHAINS,
@@ -117,7 +101,7 @@ def scalapb_toolchain(name, opts = [], **kwargs):
     scala_proto_toolchain(
         name = name,
         generators = {
-            "scala": "scripts.ScalaPbCodeGenerator",
+            "scala": "scalapb.ScalaPbCodeGenerator",
         },
         generators_opts = {
             "scala": opts,

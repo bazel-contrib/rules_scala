@@ -15,7 +15,6 @@ import subprocess
 import sys
 
 ROOT_SCALA_VERSIONS = [
-    "2.11.12",
     "2.12.21",
     "2.13.18",
     "3.1.3",
@@ -97,45 +96,30 @@ def select_root_artifacts(scala_version, scala_major, is_scala_3) -> List[str]:
     # that jar. So we stick with protoc-gen_2.13 for now.
     protoc_bridge_major = scala_2_major
 
-    scalafmt_version = SCALAFMT_VERSION
-    scalapb_version = SCALAPB_VERSION
-    protoc_bridge_version = PROTOC_BRIDGE_VERSION
-    parser_combinators_version = PARSER_COMBINATORS_VERSION
-
-    if scala_major == '2.11':
-        scalafmt_version = '2.7.5'
-        scalapb_version = '0.9.8'
-        protoc_bridge_version = '0.7.14'
-        parser_combinators_version = '1.1.2'
-
     root_artifacts = [
         'com.google.api.grpc:proto-google-common-protos:' +
             PROTO_GOOGLE_COMMON_PROTOS_VERSION,
         f'com.google.guava:guava:{GUAVA_VERSION}',
         f'com.google.protobuf:protobuf-java:{PROTOBUF_JAVA_VERSION}',
         f'com.thesamet.scalapb:compilerplugin_{scalapb_major}:' +
-            scalapb_version,
+            SCALAPB_VERSION,
         f'com.thesamet.scalapb:protoc-bridge_{protoc_bridge_major}:' +
-            protoc_bridge_version,
+            PROTOC_BRIDGE_VERSION,
+        f'com.thesamet.scalapb:protoc-gen_{protoc_bridge_major}:' +
+            PROTOC_BRIDGE_VERSION,
         f'com.thesamet.scalapb:scalapb-runtime_{scalapb_major}:' +
-            scalapb_version,
+            SCALAPB_VERSION,
         f'com.thesamet.scalapb:scalapb-runtime-grpc_{scalapb_major}:' +
-            scalapb_version,
+            SCALAPB_VERSION,
         f'org.scala-lang.modules:scala-parser-combinators_{scala_2_major}:' +
-            parser_combinators_version,
+            PARSER_COMBINATORS_VERSION,
         f'org.scala-lang:scala-compiler:{scala_2_version}',
         f'org.scala-lang:scala-library:{scala_2_version}',
         f'org.scala-lang:scala-reflect:{scala_2_version}',
         f'org.scala-lang:scalap:{scala_2_version}',
-        f'org.scalameta:scalafmt-core_{scala_2_major}:{scalafmt_version}',
+        f'org.scalameta:scalafmt-core_{scala_2_major}:{SCALAFMT_VERSION}',
         f'org.scalatest:scalatest_{scala_major}:{SCALATEST_VERSION}',
     ] + [f'io.grpc:grpc-{lib}:{GRPC_VERSION}' for lib in GRPC_LIBS]
-
-    if scala_major != '2.11':
-        root_artifacts.append(
-            f'com.thesamet.scalapb:protoc-gen_{protoc_bridge_major}:' +
-            protoc_bridge_version,
-        )
 
     if scala_version == max_scala_2_version or is_scala_3:
         # Since the Scala 2.13 compiler is included in Scala 3 deps.

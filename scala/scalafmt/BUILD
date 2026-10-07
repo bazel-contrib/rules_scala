@@ -1,7 +1,6 @@
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala.bzl", "scala_binary")
 load("//scala:scala_cross_version.bzl", "version_suffix")
-load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
 load("//scala/scalafmt:phase_scalafmt_ext.bzl", "scalafmt_singleton")
 load("//scala/scalafmt/toolchain:toolchain.bzl", "export_scalafmt_deps")
 
@@ -19,10 +18,10 @@ filegroup(
 
 scala_binary(
     name = "scalafmt",
-    srcs = ["scalafmt/ScalafmtWorker.scala"] + select_for_scala_version(
-        before_2_12_0 = ["scalafmt/ScalafmtAdapter-2_11.scala"],
-        since_2_12_0 = ["scalafmt/ScalafmtAdapter.scala"],
-    ),
+    srcs = [
+        "scalafmt/ScalafmtAdapter.scala",
+        "scalafmt/ScalafmtWorker.scala",
+    ],
     main_class = "io.bazel.rules_scala.scalafmt.ScalafmtWorker",
     visibility = ["//visibility:public"],
     deps = [
