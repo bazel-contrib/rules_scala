@@ -48,20 +48,8 @@ load("@rules_java//java:repositories.bzl", "rules_java_toolchains")
 
 rules_java_toolchains()
 
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
-
-rules_proto_dependencies()
-
-load("@rules_proto//proto:setup.bzl", "rules_proto_setup")
-
-rules_proto_setup()
-
-load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
-
-rules_proto_toolchains()
-
-# Include this after loading `platforms`, `com_google_protobuf`, and
-# `rules_proto` to enable the `//protoc` prebuilt protocol compiler toolchains.
+# Include this after loading `platforms` and `com_google_protobuf` to enable the
+# `//protoc` prebuilt protocol compiler toolchains.
 load("@rules_scala//protoc:toolchains.bzl", "scala_protoc_toolchains")
 
 # This name can be anything, but we recommend `rules_scala_protoc_toolchains`.

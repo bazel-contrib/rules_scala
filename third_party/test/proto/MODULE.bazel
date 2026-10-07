@@ -2,7 +2,11 @@
 
 module(name = "proto")
 
-bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(
+    name = "protobuf",
+    version = "33.4",
+    repo_name = "com_google_protobuf",
+)
 bazel_dep(name = "rules_scala")
 local_path_override(
     module_name = "rules_scala",

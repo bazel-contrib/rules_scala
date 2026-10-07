@@ -15,7 +15,11 @@ local_path_override(
 )
 
 bazel_dep(name = "rules_java", version = "8.15.1")
-bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(
+    name = "protobuf",
+    version = "33.4",
+    repo_name = "com_google_protobuf",
+)
 bazel_dep(name = "rules_shell", version = "0.5.1")
 
 scala_config = use_extension(

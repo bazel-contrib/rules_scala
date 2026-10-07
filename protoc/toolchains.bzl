@@ -14,7 +14,7 @@ load("@platforms//host:extension.bzl", "host_platform_repo")
 # - https://github.com/bazelbuild/bazel/issues/22558
 host_platform_repo(name = "host_platform")
 
-# ...load `com_google_protobuf`, `rules_proto`, etc...
+# ...load `com_google_protobuf`, etc...
 
 load("@rules_scala//protoc:toolchains.bzl", "scala_protoc_toolchains")
 

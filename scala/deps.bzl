@@ -50,20 +50,20 @@ def rules_scala_dependencies():
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        sha256 = "b2340aa47faf7ef10a0328190319d3f3bee1b24f426d4ce8f4253b6f27ce16db",
-        strip_prefix = "protobuf-28.2",
-        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v28.2.tar.gz",
+        sha256 = "136a07aad488cc502b11c4416fe4a7df2dfdea1d0833a7a8211000bf952728ba",
+        strip_prefix = "protobuf-33.4",
+        url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v33.4.tar.gz",
     )
 
-    # The `WORKSPACE` snippets for different versions of `rules_proto` vary
-    # somewhat. See https://github.com/bazelbuild/rules_proto/releases for the
-    # corresponding `rules_proto` release for details.
+    # Outside macOS, Windows and Linux x86_64 (for example on Linux ARM64),
+    # `rules_java` builds `one_version` from source, which needs
+    # `@com_google_absl`. `protobuf_deps()` declares Abseil as `@abseil-cpp`.
     maybe(
         http_archive,
-        name = "rules_proto",
-        sha256 = "6fb6767d1bef535310547e03247f7518b03487740c11b6c6adb7952033fe1295",
-        strip_prefix = "rules_proto-6.0.2",
-        url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.2/rules_proto-6.0.2.tar.gz",
+        name = "com_google_absl",
+        integrity = "sha256-jF3/tZRlrthY/Y+cEgf1ljqPmtqNOcwVh392LHtERWA=",
+        strip_prefix = "abseil-cpp-76bb24329e8bf5f39704eb10d21b9a80befa7c81",
+        urls = ["https://github.com/abseil/abseil-cpp/archive/76bb24329e8bf5f39704eb10d21b9a80befa7c81.zip"],
     )
 
     workspace_compat()
