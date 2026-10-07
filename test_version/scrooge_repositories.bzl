@@ -38,13 +38,13 @@ def scrooge_repositories(version = None):
         use_custom_toolchain_deps = True
         _import_external(
             id = "io_bazel_rules_scala_scrooge_core",
-            artifact = "com.twitter:scrooge-core_2.11:18.6.0",
-            sha256 = "00351f73b555d61cfe7320ef3b1367a9641e694cfb8dfa8a733cfcf49df872e8",
+            artifact = "com.twitter:scrooge-core_2.12:18.6.0",
+            sha256 = "02a6d7cf9fe8d872dfabd20298e4315d677748708e153d8b464fd5abac9a7430",
         )
         _import_external(
             id = "io_bazel_rules_scala_scrooge_generator",
-            artifact = "com.twitter:scrooge-generator_2.11:18.6.0",
-            sha256 = "0f0027e815e67985895a6f3caa137f02366ceeea4966498f34fb82cabb11dee6",
+            artifact = "com.twitter:scrooge-generator_2.12:18.6.0",
+            sha256 = "e7d5da1e3f0e494d3c81a26f44f3e3dc92d7efd757133de8c71758646fd5a833",
             runtime_deps = [
                 "@io_bazel_rules_scala_guava",
                 "@io_bazel_rules_scala_mustache",
@@ -53,26 +53,26 @@ def scrooge_repositories(version = None):
         )
         _import_external(
             id = "io_bazel_rules_scala_util_core",
-            artifact = "com.twitter:util-core_2.11:18.6.0",
-            sha256 = "5336da4846dfc3db8ffe5ae076be1021828cfee35aa17bda9af461e203cf265c",
+            artifact = "com.twitter:util-core_2.12:18.6.0",
+            sha256 = "65bb92e70f95cbbfc640e54a5823a16154eac1a2631dc0211347e085aaa6ed0b",
         )
         _import_external(
             id = "io_bazel_rules_scala_util_logging",
-            artifact = "com.twitter:util-logging_2.11:18.6.0",
-            sha256 = "73ddd61cedabd4dab82b30e6c52c1be6c692b063b8ba310d716ead9e3b4e9267",
+            artifact = "com.twitter:util-logging_2.12:18.6.0",
+            sha256 = "c0cba01705e9321b3444adcd4a9ce27c2acefd27e14c13b5aec2c318ce1b4fdf",
         )
 
     elif version == "21.2.0":
         use_custom_toolchain_deps = True
         _import_external(
             id = "io_bazel_rules_scala_scrooge_core",
-            artifact = "com.twitter:scrooge-core_2.11:21.2.0",
-            sha256 = "d6cef1408e34b9989ea8bc4c567dac922db6248baffe2eeaa618a5b354edd2bb",
+            artifact = "com.twitter:scrooge-core_2.12:21.2.0",
+            sha256 = "1178f6cef63c9ad9e787ee7dbb26008d2a8cec9afee7629d0037c534d5b5d575",
         )
         _import_external(
             id = "io_bazel_rules_scala_scrooge_generator",
-            artifact = "com.twitter:scrooge-generator_2.11:21.2.0",
-            sha256 = "87094f01df2c0670063ab6ebe156bb1a1bcdabeb95bc45552660b030287d6acb",
+            artifact = "com.twitter:scrooge-generator_2.12:21.2.0",
+            sha256 = "ac5afecfd742ce07cf127b253df20ebf265d75d02d5f38bd8c683da194780862",
             runtime_deps = [
                 "@io_bazel_rules_scala_guava",
                 "@io_bazel_rules_scala_mustache",
@@ -81,13 +81,13 @@ def scrooge_repositories(version = None):
         )
         _import_external(
             id = "io_bazel_rules_scala_util_core",
-            artifact = "com.twitter:util-core_2.11:21.2.0",
-            sha256 = "31c33d494ca5a877c1e5b5c1f569341e1d36e7b2c8b3fb0356fb2b6d4a3907ca",
+            artifact = "com.twitter:util-core_2.12:21.2.0",
+            sha256 = "5d4ed75a26a3a2cc7fdc1dbeb29878a70024a8b7864287ed1e182dbca9c775a5",
         )
         _import_external(
             id = "io_bazel_rules_scala_util_logging",
-            artifact = "com.twitter:util-logging_2.11:21.2.0",
-            sha256 = "f3b62465963fbf0fe9860036e6255337996bb48a1a3f21a29503a2750d34f319",
+            artifact = "com.twitter:util-logging_2.12:21.2.0",
+            sha256 = "6110ea70a1ea65c477cec72b7a2ce2ec92427e081ff9366272cb7c3bcadf69a9",
         )
 
     toolchain_deps = {} if use_custom_toolchain_deps == False else {

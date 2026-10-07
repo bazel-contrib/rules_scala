@@ -58,20 +58,6 @@ test_compiler_srcjar_error() {
     build "--repo_env=SCALA_VERSION=${SCALA_VERSION}" //...
 }
 
-#$runner test_compiler_patch 2.11.0
-#$runner test_compiler_patch 2.11.1
-#$runner test_compiler_patch 2.11.2
-#$runner test_compiler_patch 2.11.3
-#$runner test_compiler_patch 2.11.4
-#$runner test_compiler_patch 2.11.5
-#$runner test_compiler_patch 2.11.6
-#$runner test_compiler_patch 2.11.7
-#$runner test_compiler_patch 2.11.8
-#$runner test_compiler_patch 2.11.9
-#$runner test_compiler_patch 2.11.10
-#$runner test_compiler_patch 2.11.11
-$runner test_compiler_patch 2.11.12
-
 #$runner test_compiler_patch 2.12.0
 $runner test_compiler_patch 2.12.1
 $runner test_compiler_patch 2.12.2

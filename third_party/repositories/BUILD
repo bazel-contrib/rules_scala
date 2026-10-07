@@ -10,7 +10,6 @@ exports_files([
 # which build under each of these files' pinned scala_version; listing them in
 # those tests' `data` re-keys the tests when a version is bumped.
 exports_files([
-    "scala_2_11.bzl",
     "scala_3_1.bzl",
     "scala_3_2.bzl",
     "scala_3_3.bzl",
