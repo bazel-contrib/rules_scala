@@ -1,9 +1,10 @@
 #
 # PHASE: collect exports jars
 #
-# Collects the jars of `exports`. Builtin phases leave this result unused
-# (phase_compile reads `ctx.attr.exports` itself); custom phases can read it
-# as `p.collect_exports_jars`.
+# Collects the jars of `exports`. The builtin rules leave this phase out
+# (phase_compile reads `ctx.attr.exports` itself); a custom rule or phase
+# adjustment can add it, and later phases read the result as
+# `p.collect_exports_jars`.
 #
 load("//scala/private:common.bzl", "collect_jars")
 
