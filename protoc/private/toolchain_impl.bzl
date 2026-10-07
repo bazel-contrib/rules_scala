@@ -5,22 +5,26 @@ compatibility. Inspired by:
 https://github.com/protocolbuffers/protobuf/pull/19679
 """
 
-load("@rules_proto//proto:proto_common.bzl", "toolchains")
+load("@com_google_protobuf//bazel/common:proto_common.bzl", "proto_common")
 
-PROTOC_TOOLCHAIN_ENABLED = not bool(toolchains.if_legacy_toolchain(True))
+PROTOC_TOOLCHAIN_ENABLED = (
+    proto_common.INCOMPATIBLE_ENABLE_PROTO_TOOLCHAIN_RESOLUTION
+)
 
 PROTOC_TOOLCHAIN_TYPE = Label("//protoc:toolchain_type")
 PROTOC_FRAGMENTS = ["proto"]
-PROTOC_ATTR = toolchains.if_legacy_toolchain({
+PROTOC_ATTR = {} if PROTOC_TOOLCHAIN_ENABLED else {
     "_protoc": attr.label(
         allow_files = True,
         cfg = "exec",
         default = configuration_field("proto", "proto_compiler"),
         executable = True,
     ),
-})
+}
 
-PROTOC_TOOLCHAINS = toolchains.use_toolchain(PROTOC_TOOLCHAIN_TYPE)
+PROTOC_TOOLCHAINS = [
+    config_common.toolchain_type(PROTOC_TOOLCHAIN_TYPE, mandatory = False),
+] if PROTOC_TOOLCHAIN_ENABLED else []
 
 def protoc_executable(ctx):
     """Returns `protoc` executable path for rules using `PROTOC_*` symbols.
