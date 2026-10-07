@@ -3,7 +3,7 @@ load(
     "java_proto_library",
 )
 load("@rules_java//java:java_library.bzl", "java_library")
-load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
 load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
 
 java_library(
