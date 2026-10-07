@@ -33,7 +33,6 @@ SBT_COMPILER_INTERFACE_VERSION = '1.12.0'
 SBT_UTIL_INTERFACE_VERSION = '1.12.4'
 SCALATEST_VERSION = "3.2.19"
 SCALAFMT_VERSION = "3.10.7"
-KIND_PROJECTOR_VERSION = "0.13.4"
 PROTOBUF_JAVA_VERSION = "4.33.5"
 JLINE_VERSION = '3.30.6'
 SCALAPB_VERSION = '1.0.0-alpha.3'
@@ -130,8 +129,6 @@ def select_root_artifacts(scala_version, scala_major, is_scala_3) -> List[str]:
         f'org.scala-lang:scalap:{scala_2_version}',
         f'org.scalameta:scalafmt-core_{scala_2_major}:{scalafmt_version}',
         f'org.scalatest:scalatest_{scala_major}:{SCALATEST_VERSION}',
-        f'org.typelevel:kind-projector_{scala_2_version}:' +
-            KIND_PROJECTOR_VERSION,
     ] + [f'io.grpc:grpc-{lib}:{GRPC_VERSION}' for lib in GRPC_LIBS]
 
     if scala_major != '2.11':
