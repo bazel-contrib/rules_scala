@@ -20,7 +20,6 @@ load(
 load(
     "//scala/private:phases/phases.bzl",
     "extras_phases",
-    "phase_collect_exports_jars",
     "phase_collect_jars_common",
     "phase_collect_jars_macro_library",
     "phase_collect_srcjars",
@@ -76,7 +75,6 @@ def _scala_library_impl(ctx):
             ("coverage", phase_coverage_library),
             ("merge_jars", phase_merge_jars),
             ("runfiles", phase_runfiles_library),
-            ("collect_exports_jars", phase_collect_exports_jars),
             ("default_info", phase_default_info),
         ],
     )
@@ -172,7 +170,6 @@ def _scala_library_for_plugin_bootstrapping_impl(ctx):
             ("compile", phase_compile_library_for_plugin_bootstrapping),
             ("merge_jars", phase_merge_jars),
             ("runfiles", phase_runfiles_library),
-            ("collect_exports_jars", phase_collect_exports_jars),
             ("default_info", phase_default_info),
         ],
     )
@@ -249,7 +246,6 @@ def _scala_macro_library_impl(ctx):
             ("coverage", phase_coverage_common),
             ("merge_jars", phase_merge_jars),
             ("runfiles", phase_runfiles_library),
-            ("collect_exports_jars", phase_collect_exports_jars),
             ("default_info", phase_default_info),
         ],
     )
