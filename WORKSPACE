@@ -57,7 +57,21 @@ scala_protoc_toolchains(name = "rules_scala_protoc_toolchains")
 
 load("//:scala_config.bzl", "scala_config")
 
-scala_config(enable_compiler_dependency_tracking = True)
+scala_config(
+    enable_compiler_dependency_tracking = True,
+    # Same list as SCALA_VERSIONS in MODULE.bazel.
+    scala_versions = [
+        "2.12.21",
+        "2.13.18",
+        "3.1.3",
+        "3.3.8",
+        "3.5.2",
+        "3.6.4",
+        "3.7.4",
+        "3.8.4",
+        "3.9.0",
+    ],
+)
 
 load("//scala:toolchains.bzl", "scala_register_toolchains", "scala_toolchains")
 
