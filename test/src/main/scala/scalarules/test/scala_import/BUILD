@@ -15,8 +15,10 @@ scala_import(
 scala_import(
     name = "jffi_native_external",
     testonly = True,
+    # The file path is the same under Bzlmod and WORKSPACE; rules_jvm_external
+    # gives this classified artifact a different target name in each.
     jars = [
-        "@rules_scala_test_maven//:com_github_jnr_jffi_native",
+        "@rules_scala_test_maven//:com/github/jnr/jffi/1.2.17/jffi-1.2.17-native.jar",
     ],
 )
 
