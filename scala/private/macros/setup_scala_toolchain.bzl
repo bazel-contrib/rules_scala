@@ -175,9 +175,28 @@ _DEFAULT_DEPS = {
     },
 }
 
+# Scala 3.10+ compiles against upstream ASM. Earlier Scala 3 releases use shaded scala-asm.
+_SCALA_3_UPSTREAM_ASM = [
+    "@io_bazel_rules_scala_org_ow2_asm_asm",
+    "@io_bazel_rules_scala_org_ow2_asm_asm_analysis",
+    "@io_bazel_rules_scala_org_ow2_asm_asm_commons",
+    "@io_bazel_rules_scala_org_ow2_asm_asm_tree",
+    "@io_bazel_rules_scala_org_ow2_asm_asm_util",
+]
+
 def default_deps(deps_id, scala_version):
     versions = _DEFAULT_DEPS[deps_id]
     deps = versions.get("any", []) + versions.get(scala_version[0], [])
+    if (
+        deps_id == "scala_compile_classpath" and
+        scala_version.startswith("3.") and
+        int(scala_version.split(".")[1]) >= 10
+    ):
+        deps = [
+            dep
+            for dep in deps
+            if dep != "@io_bazel_rules_scala_scala_asm"
+        ] + _SCALA_3_UPSTREAM_ASM
     return repositories(scala_version, deps)
 
 def default_repl_classpath(scala_version):

@@ -251,8 +251,9 @@ def scala_version_artifact_ids(scala_version):
         ])
 
     if scala_version.startswith("3."):
+        # Scala 3.10 replaced shaded scala-asm with upstream ASM.
+        uses_upstream_asm = int(scala_version.split(".")[1]) >= 10
         result.extend([
-            "io_bazel_rules_scala_scala_asm",
             "io_bazel_rules_scala_scala_compiler_2",
             "io_bazel_rules_scala_scala_interfaces",
             "io_bazel_rules_scala_scala_library_2",
@@ -266,6 +267,16 @@ def scala_version_artifact_ids(scala_version):
             "org_scala_sbt_compiler_interface",
             "org_scala_sbt_util_interface",
         ])
+        if uses_upstream_asm:
+            result.extend([
+                "io_bazel_rules_scala_org_ow2_asm_asm",
+                "io_bazel_rules_scala_org_ow2_asm_asm_analysis",
+                "io_bazel_rules_scala_org_ow2_asm_asm_commons",
+                "io_bazel_rules_scala_org_ow2_asm_asm_tree",
+                "io_bazel_rules_scala_org_ow2_asm_asm_util",
+            ])
+        else:
+            result.append("io_bazel_rules_scala_scala_asm")
 
     # From 3.8, dotty.tools.repl.Main moves out of scala3-compiler into its
     # own artifact with its own, version-specific extra deps -- see

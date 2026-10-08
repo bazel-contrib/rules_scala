@@ -21,6 +21,7 @@ load("//test/expect_build_failure:expect_build_failure.bzl", "expect_test_succes
         target = "//third_party/...",
     )
     for scala_version in [
+        "3.10.0", # Latest Next series version
         "3.9.0",  # Latest LTS 3.9 version
         "3.3.8",  # Latest LTS 3.3 version
         "3.1.3",  # First supported major for Scala 3, max supported JDK=18
