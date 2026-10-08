@@ -54,14 +54,6 @@ def rules_scala_dependencies():
 
     maybe(
         http_archive,
-        name = "rules_proto",
-        sha256 = "14a225870ab4e91869652cfd69ef2028277fc1dc4910d65d353b62d6e0ae21f4",
-        strip_prefix = "rules_proto-7.1.0",
-        url = "https://github.com/bazelbuild/rules_proto/releases/download/7.1.0/rules_proto-7.1.0.tar.gz",
-    )
-
-    maybe(
-        http_archive,
         name = "rules_python",
         sha256 = "8964aa1e7525fea5244ba737458694a057ada1be96a92998a41caa1983562d00",
         strip_prefix = "rules_python-1.8.5",

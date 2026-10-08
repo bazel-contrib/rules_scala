@@ -32,19 +32,9 @@ single_version_override(
     version = "${rules_java_version}",
 )
 
-bazel_dep(name = "rules_proto")
-single_version_override(
-    module_name = "rules_proto",
-    version = "${rules_proto_version}",
-)
-
-# Versions without protocolbuffers/protobuf#19679 require the patch for `protoc`
-# toolchainization.
 bazel_dep(name = "protobuf")
 single_version_override(
     module_name = "protobuf",
-    patch_strip = 1,
-    patches = ["//:protobuf.patch"],
     version = "${protobuf_version}",
 )
 
