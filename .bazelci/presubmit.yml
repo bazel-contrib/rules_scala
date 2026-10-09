@@ -21,10 +21,10 @@ tasks:
       - "//..."
       - "-//test_expect_failure/..."
   analyze_all_workspace:
-    # The analysis of analyze_all, with WORKSPACE in place of Bzlmod. It fails
-    # if WORKSPACE is missing a dependency or a Scala version that MODULE.bazel
-    # has. test/community_build/ uses repositories that only MODULE.bazel
-    # declares.
+    # This task does the analysis of analyze_all with WORKSPACE in place of
+    # Bzlmod. It fails if a target needs a dependency or a Scala version that
+    # only MODULE.bazel declares. test/community_build/ uses repositories that
+    # only MODULE.bazel declares.
     name: "bazel build //... --nobuild (WORKSPACE)"
     platform: ubuntu2004
     build_flags:

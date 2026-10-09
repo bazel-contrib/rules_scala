@@ -59,7 +59,7 @@ load("//:scala_config.bzl", "scala_config")
 
 scala_config(
     enable_compiler_dependency_tracking = True,
-    # Same list as SCALA_VERSIONS in MODULE.bazel.
+    # This list must be the same as SCALA_VERSIONS in MODULE.bazel.
     scala_versions = [
         "2.12.21",
         "2.13.18",
