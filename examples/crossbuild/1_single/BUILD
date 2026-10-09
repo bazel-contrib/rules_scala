@@ -3,11 +3,11 @@ load("@rules_scala//scala:scala.bzl", "scala_binary", "scala_library", "scala_te
 # Here we demonstrate the simplest case,
 # single binary, test or library for which we set a specific version or use the default one:
 
-# This one will be compiled by 2.11 compiler:
+# This one will be compiled by 2.12 compiler:
 scala_library(
-    name = "lib211",
+    name = "lib212",
     srcs = ["lib.scala"],
-    scala_version = "2.11.12",
+    scala_version = "2.12.21",
 )
 
 # This one will be compiled by 2.13 compiler:

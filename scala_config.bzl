@@ -4,8 +4,6 @@ load("//scala:scala_cross_version.bzl", "extract_major_version", "extract_minor_
 DEFAULT_SCALA_VERSION = "2.12.21"
 
 def _validate_supported_scala_version(scala_major_version, scala_minor_version):
-    if scala_major_version == "2.11" and int(scala_minor_version) != 12:
-        fail("Scala version must be 2.11.12 to use compiler dependency tracking with 2.11.")
     if scala_major_version == "2.12" and int(scala_minor_version) < 1:
         fail("Scala version must be newer or equal to 2.12.1 to use compiler dependency tracking.")
 

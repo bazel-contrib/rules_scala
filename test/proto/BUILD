@@ -26,7 +26,7 @@ scala_proto_toolchain(
         "//test/src/main/scala/scalarules/test/extra_protobuf_generator",
     ],
     generators = {
-        "scala": "scripts.ScalaPbCodeGenerator",
+        "scala": "scalapb.ScalaPbCodeGenerator",
         "jvm_extra_protobuf_generator": "scalarules.test.extra_protobuf_generator.ExtraProtobufGenerator",
     },
     generators_opts = {

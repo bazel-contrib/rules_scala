@@ -12,7 +12,7 @@
 # limitations under the License.
 
 """Helper functions for Scala cross-version support. Encapsulates the logic
-of abstracting over Scala major version (2.11, 2.12, etc) for dependency
+of abstracting over Scala major version (2.12, 2.13, etc) for dependency
 resolution."""
 
 def default_maven_server_urls():
@@ -23,7 +23,7 @@ def default_maven_server_urls():
     ]
 
 def extract_major_version(scala_version):
-    """Return major Scala version given a full version, e.g. "2.11.11" -> "2.11" """
+    """Return major Scala version given a full version, e.g. "2.13.18" -> "2.13" """
     return scala_version[:scala_version.find(".", 2)]
 
 def extract_minor_version(scala_version):
@@ -31,7 +31,7 @@ def extract_minor_version(scala_version):
 
 def extract_major_version_underscore(scala_version):
     """Return major Scala version with underscore given a full version,
-    e.g. "2.11.11" -> "2_11" """
+    e.g. "2.13.18" -> "2_13" """
     return extract_major_version(scala_version).replace(".", "_")
 
 def scala_mvn_artifact(

@@ -8,6 +8,7 @@ load(":source_fingerprint.bzl", "exposed_top_level_dirs_test")
 exports_files([
     "downstream_test_driver.sh",
     "dicer_protobuf_version.patch",
+    "dicer_scalapb_extends.patch",
     "joern_jssrc2cpg_smoke.patch",
 ])
 
@@ -101,7 +102,12 @@ downstream_test(
 downstream_test(
     name = "dicer_test",
     size = "enormous",
-    patches = ["//test/community_build:dicer_protobuf_version.patch"],
+    patches = [
+        "//test/community_build:dicer_protobuf_version.patch",
+        # Three of dicer's `(scalapb.message).extends` options name
+        # `com.databricks.rpc.RPC`, a class outside dicer's open-source tree.
+        "//test/community_build:dicer_scalapb_extends.patch",
+    ],
     repo_name = "dicer",
     scala_version = "2.12.21",
     smoke_test_targets = [

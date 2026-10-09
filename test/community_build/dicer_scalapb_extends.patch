@@ -1,0 +1,32 @@
+diff --git a/dicer/assigner/proto/preferred_assigner.proto b/dicer/assigner/proto/preferred_assigner.proto
+index a3ae5e2..8cda288 100644
+--- a/dicer/assigner/proto/preferred_assigner.proto
++++ b/dicer/assigner/proto/preferred_assigner.proto
+@@ -73,7 +73,6 @@ message PreferredAssignerValueP {
+ // on the health of the preferred assigner and, optionally, to update the knowledge of the current
+ // preferred assigner if the sender's knowledge is out of date.
+ message HeartbeatRequestP {
+-  option (scalapb.message).extends = "com.databricks.rpc.RPC[HeartbeatResponseP]";
+ 
+   // An identifier for the heartbeat. Used by the sender to associate responses with requests.
+   optional int64 op_id = 1;
+diff --git a/dicer/common/proto/common.proto b/dicer/common/proto/common.proto
+index b87445a..be3438e 100644
+--- a/dicer/common/proto/common.proto
++++ b/dicer/common/proto/common.proto
+@@ -309,7 +309,6 @@ message TargetP {
+ 
+ // Request sent by the Clerk or the Slicelet (Subscriber) to watch for changing assignments.
+ message ClientRequestP {
+-  option (scalapb.message).extends = "com.databricks.rpc.RPC[ClientResponseP]";
+ 
+   // Removed fields.
+   reserved 7, 8, 10;
+@@ -533,7 +532,6 @@ service AssignmentService {
+ 
+ // Request type for a `SquidLeaseRecallService.GetRecallStatus` RPC
+ message GetRecallStatusRequestP {
+-  option (scalapb.message).extends = "com.databricks.rpc.RPC[GetRecallStatusResponseP]";
+ 
+   // The name of the Dicer target to which the Slicelet belongs.
+   optional string target_name = 1;

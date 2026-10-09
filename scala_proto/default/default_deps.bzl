@@ -9,7 +9,6 @@
 
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala_cross_version.bzl", "repositories")
-load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
 
 _DEFAULT_DEP_PROVIDER_FORMAT = (
     "@rules_scala_toolchains//scala_proto:scalapb_%s_deps_provider"
@@ -61,9 +60,6 @@ DEFAULT_SCALAPB_WORKER_DEPS = [
     "@com_google_protobuf//:protobuf_java",
     "@scala_proto_rules_scalapb_compilerplugin",
     "@scala_proto_rules_scalapb_protoc_bridge",
-] + select_for_scala_version(
-    any_2_11 = [],
-    since_2_12 = repositories(SCALA_VERSION, [
-        "@scala_proto_rules_scalapb_protoc_gen",
-    ]),
-)
+] + repositories(SCALA_VERSION, [
+    "@scala_proto_rules_scalapb_protoc_gen",
+])
