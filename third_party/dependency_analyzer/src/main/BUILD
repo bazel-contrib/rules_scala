@@ -23,12 +23,11 @@ scala_library_for_plugin_bootstrapping(
         between_2_12_13_and_3 = [
             "io/bazel/rulesscala/dependencyanalyzer/Reporter213.scala",
         ],
-        # Scala 3.10 removed AbstractFile.underlyingSource.
         between_3_and_3_10 = [
-            "io/bazel/rulesscala/dependencyanalyzer3/JarOfAssociatedFile.scala",
+            "io/bazel/rulesscala/dependencyanalyzer3/CompilerCompat.scala",
         ],
         since_3_10 = [
-            "io/bazel/rulesscala/dependencyanalyzer3/JarOfAssociatedFile310.scala",
+            "io/bazel/rulesscala/dependencyanalyzer3/CompilerCompat310.scala",
         ],
     ),
     build_ijar = False,

@@ -46,6 +46,11 @@ use_repo(
     # Hardcoded versions
     "sbt_compiler_interface",
     "scala_asm",
+    "asm",
+    "asm_analysis",
+    "asm_commons",
+    "asm_tree",
+    "asm_util",
 )
 
 scala_deps = use_extension(

@@ -5,7 +5,8 @@ import dotty.tools.dotc.Compiler
 import dotty.tools.dotc.core.Contexts.*
 import dotty.tools.dotc.reporting.{StoreReporter, Diagnostic as CompilerDiagnostic}
 import dotty.tools.dotc.util.{NoSourcePosition, SourceFile, SourcePosition as CompilerSourcePosition}
-import dotty.tools.io.{Directory, PlainDirectory, VirtualDirectory}
+import dotty.tools.io.{Directory, PlainDirectory}
+import io.bazel.rulesscala.dependencyanalyzer.CompilerCompat
 
 import java.nio.file.Path
 
@@ -43,7 +44,7 @@ object TestUtil extends TestUtilCommon {
          ctx.settings.outputDir,
          outputPathOpt
            .map(output => new PlainDirectory(new Directory(output)))
-           .getOrElse(new VirtualDirectory("(memory)", None))
+           .getOrElse(CompilerCompat.inMemoryOutput("(memory)"))
        )
         .setSettings(
           ctx.settings

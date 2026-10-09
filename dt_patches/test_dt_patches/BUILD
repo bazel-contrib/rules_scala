@@ -10,7 +10,14 @@ SCALA_LIBS = ["@scala_library"] + select_for_scala_version(
         "@scala3_interfaces",
         "@scala3_library",
         "@tasty_core",
-        "@scala_asm",
+    ],
+    between_3_and_3_10 = ["@scala_asm"],
+    since_3_10 = [
+        "@asm",
+        "@asm_analysis",
+        "@asm_commons",
+        "@asm_tree",
+        "@asm_util",
     ],
     since_3_4 = ["@sbt_compiler_interface"],
 )

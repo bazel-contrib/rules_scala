@@ -34,7 +34,7 @@ class HighLevelCrawlUsedJarFinder:
         if assocFile != null then
           val path = assocFile.path
           if path.isClassFile || path.isTastyFile then
-            jars += JarOfAssociatedFile(assocFile)
+            jars += CompilerCompat.jarOfAssociatedFile(assocFile)
       }
     }
   }
