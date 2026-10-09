@@ -20,6 +20,21 @@ tasks:
     build_targets:
       - "//..."
       - "-//test_expect_failure/..."
+  analyze_all_workspace:
+    # This task does the analysis of analyze_all with WORKSPACE in place of
+    # Bzlmod. It fails if a target needs a dependency or a Scala version that
+    # only MODULE.bazel declares. test/community_build/ uses repositories that
+    # only MODULE.bazel declares.
+    name: "bazel build //... --nobuild (WORKSPACE)"
+    platform: ubuntu2004
+    build_flags:
+      - "--nobuild"
+      - "--noenable_bzlmod"
+      - "--enable_workspace"
+    build_targets:
+      - "//..."
+      - "-//test_expect_failure/..."
+      - "-//test/community_build/..."
   ubuntu2004:
     name: "bazel test //..."
     platform: ubuntu2004

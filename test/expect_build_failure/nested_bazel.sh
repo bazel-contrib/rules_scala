@@ -179,6 +179,10 @@ nested_bazel_run() {
   if [[ -n "${_nested_bazel_real_home}" && -d "${_nested_bazel_real_home}" ]]; then
     cmd=(env "HOME=${_nested_bazel_real_home}" "${cmd[@]}")
   fi
+  # TEST_SRCDIR points to the runfiles of this test. `bazel run` gives it to the
+  # binary, and the binary launcher then runs the files in these runfiles.
+  # Remove it so that the binary runs the files that the nested build makes.
+  cmd=(env -u TEST_SRCDIR "${cmd[@]}")
 
   # On Windows this script runs under MSYS2 bash, which auto-converts
   # POSIX-path-looking argv entries before exec'ing a native Windows binary
