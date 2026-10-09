@@ -1,7 +1,9 @@
 #
 # PHASE: coverage runfiles
 #
-# DOCUMENT THIS
+# In a coverage build, adds the JaCoCo runner from the Scala toolchain and the
+# LCOV merger to the runfiles of scala_test and scala_junit_test.
+# phase_default_info adds them to `DefaultInfo`.
 #
 
 def phase_coverage_runfiles(ctx, p):

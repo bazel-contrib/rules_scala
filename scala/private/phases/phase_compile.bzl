@@ -4,7 +4,20 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 #
 # PHASE: compile
 #
-# DOCUMENT THIS
+# Compiles the Scala sources with scalac and the Java sources with javac.
+# The Scala classes go into `<name>.jar`. The Java classes go into
+# `<name>_java.jar`. A library rule with sources also makes an ijar when
+# `build_ijar` is `True`. In a coverage build, scalac writes
+# `<name>-uninstrumented.jar` for each target with sources that Bazel selects
+# for instrumentation (`ctx.coverage_instrumented()`). JaCoCo then writes
+# `<name>.jar` from it.
+# `scala_library_for_plugin_bootstrapping` keeps the plain jar.
+# For `scala_binary` and `scala_repl`, a coverage build also adds the JaCoCo
+# runner to `rjars`.
+# The result sets `JavaInfo` in the rule's providers. `files` holds the jars of
+# this target. phase_default_info uses `files`. `rjars` also holds the runtime
+# jars of the dependencies. phase_runfiles, phase_merge_jars and
+# phase_write_executable use `rjars`. phase_jvm_flags uses `merged_provider`.
 #
 load(
     "//scala/private:paths.bzl",

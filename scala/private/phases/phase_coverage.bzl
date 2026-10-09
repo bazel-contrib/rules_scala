@@ -1,8 +1,9 @@
 #
 # PHASE: coverage
 #
-# Instrumentation itself happens in the compile phase; this phase only tells
-# `bazel coverage` which sources belong to the target.
+# Adds `InstrumentedFilesInfo` to the rule's providers. It tells
+# `bazel coverage` which source files belong to the target and which
+# dependencies to follow. phase_compile does the instrumentation.
 #
 
 def phase_coverage_common(ctx, p):

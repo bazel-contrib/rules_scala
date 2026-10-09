@@ -3,7 +3,14 @@ load("//scala/private:common.bzl", "rlocationpath_from_file")
 #
 # PHASE: write executable
 #
-# DOCUMENT THIS
+# Writes the launcher file that phase_declare_executable declares.
+# phase_default_info sets this file as the executable in `DefaultInfo`. The
+# launcher starts the main class of the rule with the runtime jars
+# (`p.compile.rjars`) and the JVM flags. It is a shell script from the Java
+# stub template, or an exe launcher on Windows. In a coverage build, the shell
+# script of the test variants starts `JacocoCoverageRunner`. The phase then
+# also writes `<name>.jacoco_metadata.txt` and returns it as `runfiles`.
+# phase_default_info adds that file to the runfiles in `DefaultInfo`.
 #
 load(
     "//scala/private:macros/repl_deps.bzl",
