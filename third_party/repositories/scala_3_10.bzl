@@ -503,6 +503,14 @@ artifacts = {
         "artifact": "com.twitter:util-logging_2.13:21.2.0",
         "sha256": "90bd8318329907dcf7e161287473e27272b38ee6857e9d56ee8a1958608cc49d",
     },
+    "io_get_coursier_interface": {
+        "artifact": "io.get-coursier:interface:1.0.29-M4",
+        "sha256": "a9173f8348005f7a64ae4748854c473e8acdc3433afad0cd37d82167aec272fc",
+        "srcjar_sha256": "472e004350e18061382dc97ac276d8f7e2b85c13d2a720593a44dc5886c025f8",
+        "deps": [
+            "@org_slf4j_slf4j_api",
+        ],
+    },
     "io_github_java_diff_utils_java_diff_utils": {
         "artifact": "io.github.java-diff-utils:java-diff-utils:4.16",
         "sha256": "620403030d676a4a27f780a3acec7438dee1b1651a1c804fa6bb11bb07399a6f",
@@ -540,6 +548,14 @@ artifacts = {
         "sha256": "43c36f0934545a9549fb3c8ff3afa361c320efe1c94759ecd09b340648397c80",
         "srcjar_sha256": "a0bcb1cc9bb3a9902ee4a6b1f7a16cac06734e7b44b6d7b85ba6b92693b67008",
     },
+    # scala3-repl_3:3.10.0 pins jline 4.3.1, a major bump from the 3.30.6
+    # this file already carries for the Scala 2.13 compiler bundled inside
+    # scala3-compiler_3, so it gets its own "_4"-suffixed set of artifacts.
+    "org_jline_jline_native_4": {
+        "artifact": "org.jline:jline-native:4.3.1",
+        "sha256": "ff94ab4bccc3c1549444082ce07a2760cbf1ad4dae04e43508597bd802bcb231",
+        "srcjar_sha256": "bc19d0539f602db947f5d94fc9f53c13cc22d1cbecf5d47636daceefe3cbf9ce",
+    },
     "org_jline_jline_reader": {
         "artifact": "org.jline:jline-reader:3.30.6",
         "sha256": "065ca5599713a8bf80fb11b24401ebe5be92816cda0fa9b73450d767a86dd07f",
@@ -548,12 +564,28 @@ artifacts = {
             "@org_jline_jline_terminal",
         ],
     },
+    "org_jline_jline_reader_4": {
+        "artifact": "org.jline:jline-reader:4.3.1",
+        "sha256": "02aa899906086ce9d9c992bb05aed776045e5915a180e717dcb661fb87ab84d3",
+        "srcjar_sha256": "4b282beaedd903ef59bb2697155f914d7954a47e278350e0eca648dec2ca8c9e",
+        "deps": [
+            "@org_jline_jline_terminal_4",
+        ],
+    },
     "org_jline_jline_terminal": {
         "artifact": "org.jline:jline-terminal:3.30.6",
         "sha256": "9a8dfde8a25b0a9687cf11e0dd4a128665e831f14f9ced85ffc284d3adbad374",
         "srcjar_sha256": "5d52ad88f8b83c7e82f72c6d66795cbd9f605aa48b40c2d475e597af2c5d73ef",
         "deps": [
             "@org_jline_jline_native",
+        ],
+    },
+    "org_jline_jline_terminal_4": {
+        "artifact": "org.jline:jline-terminal:4.3.1",
+        "sha256": "272927363471fdbf2f38710befbfe866acc1ed3472062a8ced02b16686f27bcc",
+        "srcjar_sha256": "9290648ed190add84fa15f482d92d760a4217e4f26d79255d1770ccd7015d72c",
+        "deps": [
+            "@org_jline_jline_native_4",
         ],
     },
     "org_jline_jline_terminal_jna": {
@@ -574,6 +606,15 @@ artifacts = {
             "@org_jline_jline_terminal",
         ],
     },
+    "org_jline_jline_terminal_jni_4": {
+        "artifact": "org.jline:jline-terminal-jni:4.3.1",
+        "sha256": "1c4873798f36412827087013e424199bced29da7c8421f3850cfe7f31f274c1c",
+        "srcjar_sha256": "c75238127017279e956c85608ccd2aa40ff9dd18542e2e7ad534db9348c4c534",
+        "deps": [
+            "@org_jline_jline_native_4",
+            "@org_jline_jline_terminal_4",
+        ],
+    },
     "org_jspecify_jspecify": {
         "artifact": "org.jspecify:jspecify:1.0.0",
         "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
@@ -585,6 +626,24 @@ artifacts = {
         "srcjar_sha256": "56672b16b5573d4c91e66ae6682ab3ef6d0ff4335ebffc4fdfe408bb4117b409",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
+        ],
+    },
+    "org_scala_lang_scala3_directives_parser": {
+        "artifact": "org.scala-lang:scala3-directives-parser_3:3.10.0",
+        "sha256": "2d28f3366f452296134228b0a165ca33cf9a962ae97566085ba59c8031cc2b2b",
+        "srcjar_sha256": "05f5e841759f03bd3e0679c2ca4710afdc2490c5bafdb49d658f6c586b73ce71",
+    },
+    "org_scala_lang_scala3_repl": {
+        "artifact": "org.scala-lang:scala3-repl_3:3.10.0",
+        "sha256": "648c00039a5b4234ba5e618fe9df615c14cd87a679d3943d915f3ccd2a451f0f",
+        "srcjar_sha256": "d40c588f4693ab95891b4226c9d8eedb9e3e25900d6bb15be8804f838bdb395c",
+        "deps": [
+            "@io_get_coursier_interface",
+            "@org_jline_jline_native_4",
+            "@org_jline_jline_reader_4",
+            "@org_jline_jline_terminal_4",
+            "@org_jline_jline_terminal_jni_4",
+            "@org_scala_lang_scala3_directives_parser",
         ],
     },
     "org_scala_lang_scalap": {
@@ -749,6 +808,11 @@ artifacts = {
             "@org_scalameta_common",
             "@org_scalameta_io",
         ],
+    },
+    "org_slf4j_slf4j_api": {
+        "artifact": "org.slf4j:slf4j-api:1.7.36",
+        "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0",
+        "srcjar_sha256": "15bc04357a3725b7a5153f132db71379f95e83b7b8590a86cc6d4ad77bfc150a",
     },
     "org_springframework_spring_core": {
         "testonly": True,

@@ -183,7 +183,12 @@ def dt_patched_compiler_setup(scala_version, scala_compiler_srcjar = None):
                 "//dt_patches:dt_compiler_%s.8.patch" % scala_major_version,
             )
     elif scala_major_version.startswith("3."):
-        patch = Label("//dt_patches:dt_compiler_3.patch")
+        # Scala 3.10 removed AbstractFile.underlyingSource. The 3.10 patch
+        # reports the enclosing jar instead.
+        scala3_minor = int(scala_major_version.split(".")[1])
+        patch = Label(
+            "//dt_patches:dt_compiler_3.10.patch" if scala3_minor >= 10 else "//dt_patches:dt_compiler_3.patch",
+        )
 
     build_file_content = "\n".join([
         "package(default_visibility = [\"//visibility:public\"])",
