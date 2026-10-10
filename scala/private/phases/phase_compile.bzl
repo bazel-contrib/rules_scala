@@ -4,7 +4,20 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 #
 # PHASE: compile
 #
-# DOCUMENT THIS
+# Compiles the Scala sources with scalac and the Java sources with javac.
+# The Scala classes go into `<name>.jar`. The Java classes go into
+# `<name>_java.jar`. A library rule with sources also makes an ijar when
+# `build_ijar` is `True`. In a coverage build, scalac writes
+# `<name>-uninstrumented.jar` for each target with sources that Bazel selects
+# for instrumentation (`ctx.coverage_instrumented()`). JaCoCo then writes
+# `<name>.jar` from it.
+# `scala_library_for_plugin_bootstrapping` keeps the plain jar.
+# For `scala_binary` and `scala_repl`, a coverage build also adds the JaCoCo
+# runner to `rjars`.
+# The result sets `JavaInfo` in the rule's providers. `files` holds the jars of
+# this target. phase_default_info uses `files`. `rjars` also holds the runtime
+# jars of the dependencies. phase_runfiles, phase_merge_jars and
+# phase_write_executable use `rjars`. phase_jvm_flags uses `merged_provider`.
 #
 load(
     "//scala/private:paths.bzl",
@@ -30,7 +43,7 @@ def phase_compile_binary(ctx, p):
                           ctx.attr.unused_dependency_checker_ignored_targets
         ],
     )
-    return _phase_compile_default(ctx, p, args)
+    return _with_jacoco_runtime(ctx, _phase_compile_default(ctx, p, args))
 
 def phase_compile_library(ctx, p):
     args = {
@@ -80,7 +93,7 @@ def phase_compile_repl(ctx, p):
                           ctx.attr.unused_dependency_checker_ignored_targets
         ],
     )
-    return _phase_compile_default(ctx, p, args)
+    return _with_jacoco_runtime(ctx, _phase_compile_default(ctx, p, args))
 
 def phase_compile_scalatest(ctx, p):
     args = struct(
@@ -93,6 +106,18 @@ def phase_compile_scalatest(ctx, p):
         ],
     )
     return _phase_compile_default(ctx, p, args)
+
+# Instrumented classes on an executable's classpath call the JaCoCo runtime.
+def _with_jacoco_runtime(ctx, out):
+    if not ctx.configuration.coverage_enabled:
+        return out
+    jacocorunner = ctx.toolchains["//scala:toolchain_type"].jacocorunner
+    return struct(
+        files = out.files,
+        rjars = depset(transitive = [out.rjars, jacocorunner.files], order = "preorder"),
+        merged_provider = out.merged_provider,
+        external_providers = out.external_providers,
+    )
 
 def phase_compile_common(ctx, p):
     return _phase_compile_default(ctx, p)
@@ -197,10 +222,12 @@ def _compile_or_empty(
         all_srcjars = depset(in_srcjars, transitive = [srcjars])
 
         sources = scala_srcs + java_srcs
+        instrument = ctx.coverage_instrumented() and hasattr(ctx.attr, "_code_coverage_instrumentation_worker")
+        scalac_jar = ctx.actions.declare_file(ctx.label.name + "-uninstrumented.jar") if instrument else ctx.outputs.jar
         _compile_scala(
             ctx,
             ctx.label,
-            ctx.outputs.jar,
+            scalac_jar,
             manifest,
             ctx.outputs.statsfile,
             ctx.outputs.diagnosticsfile,
@@ -223,6 +250,8 @@ def _compile_or_empty(
             unused_dependency_checker_ignored_targets,
             additional_outputs,
         )
+        if instrument:
+            _instrument_for_coverage(ctx, scalac_jar, ctx.outputs.jar)
 
         # build ijar if needed
         if buildijar:
@@ -263,6 +292,27 @@ def _compile_or_empty(
             full_jars = full_jars,
             merged_provider = merged_provider,
         )
+
+# Instruments in place of the plain jar, so every consumer of this target's
+# JavaInfo (scala_test, java_test, or any other rule) gets instrumented classes.
+def _instrument_for_coverage(ctx, input_jar, output_jar):
+    args = ctx.actions.args()
+    args.set_param_file_format("multiline")
+    args.use_param_file("@%s", use_always = True)
+    if ctx.toolchains["//scala:toolchain_type"].coverage_skip_oversized_methods:
+        args.add("--skip_oversized_methods")
+    args.add(input_jar)
+    args.add(output_jar)
+    args.add_all(ctx.files.srcs)
+
+    ctx.actions.run(
+        mnemonic = "JacocoInstrumenter",
+        inputs = [input_jar],
+        outputs = [output_jar],
+        executable = ctx.attr._code_coverage_instrumentation_worker.files_to_run,
+        execution_requirements = {"supports-workers": "1"},
+        arguments = [args],
+    )
 
 def _build_nosrc_jar(ctx):
     resource_tuples = _resource_paths(ctx.files.resources, ctx.attr.resource_strip_prefix)

@@ -14,10 +14,6 @@ load(
 )
 load("//scala/private:common_outputs.bzl", "common_outputs")
 load(
-    "//scala/private:coverage_replacements_provider.bzl",
-    _coverage_replacements_provider = "coverage_replacements_provider",
-)
-load(
     "//scala/private:phases/phases.bzl",
     "extras_phases",
     "phase_collect_jars_common",
@@ -26,7 +22,6 @@ load(
     "phase_compile_library",
     "phase_compile_library_for_plugin_bootstrapping",
     "phase_coverage_common",
-    "phase_coverage_library",
     "phase_default_info",
     "phase_dependency_common",
     "phase_dependency_library_for_plugin_bootstrapping",
@@ -47,10 +42,7 @@ load(
 
 _library_attrs = {
     "main_class": attr.string(),
-    "exports": attr.label_list(
-        allow_files = False,
-        aspects = [_coverage_replacements_provider.aspect],
-    ),
+    "exports": attr.label_list(allow_files = False),
 }
 
 ##
@@ -72,7 +64,7 @@ def _scala_library_impl(ctx):
             ("scalacopts", phase_scalacopts),
             ("semanticdb", phase_semanticdb),
             ("compile", phase_compile_library),
-            ("coverage", phase_coverage_library),
+            ("coverage", phase_coverage_common),
             ("merge_jars", phase_merge_jars),
             ("runfiles", phase_runfiles_library),
             ("default_info", phase_default_info),

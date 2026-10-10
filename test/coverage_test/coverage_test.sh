@@ -75,7 +75,7 @@ if [[ -n "${expect_output_pattern}" ]]; then
   nested_bazel_run clean >/dev/null 2>&1
 fi
 
-if ! coverage_output="$(nested_bazel_run coverage "${bazel_args[@]}" "${target}" 2>&1)"; then
+if ! coverage_output="$(nested_bazel_run coverage ${bazel_args[@]+"${bazel_args[@]}"} "${target}" 2>&1)"; then
   echo "Expected \`bazel coverage ${target}\` to succeed, but it failed." >&2
   echo "${coverage_output}" >&2
   exit 1

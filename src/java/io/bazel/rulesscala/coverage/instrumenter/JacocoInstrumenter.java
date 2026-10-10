@@ -57,11 +57,11 @@ public final class JacocoInstrumenter implements Worker.Interface {
     boolean skipOversizedMethods = args.length > 0 && SKIP_OVERSIZED_METHODS_FLAG.equals(args[0]);
     int firstPositional = skipOversizedMethods ? 1 : 0;
 
-    if (args.length - firstPositional < 3) {
+    if (args.length - firstPositional < 2) {
       throw new Exception(
           "expected format `["
               + SKIP_OVERSIZED_METHODS_FLAG
-              + "] in_path out_path src1 src2 ... srcN`  for arguments: "
+              + "] in_path out_path [src1 src2 ... srcN]`  for arguments: "
               + Arrays.asList(args));
     }
 
