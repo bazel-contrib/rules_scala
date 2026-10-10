@@ -37,9 +37,7 @@ class AstUsedJarFinder {
       if assocFile != null then
         val path = assocFile.nn.path
         if path.isTastyFile || path.isClassFile then
-          assocFile.underlyingSource // use .jar if defined
-          .orElse(Some(assocFile))   // or .class/.tasty file otherwise
-          .foreach(recordUse(_, pos))
+          recordUse(CompilerCompat.jarOfAssociatedFile(assocFile.nn), pos)
     }
 
     def exploreType(tpe: Type, pos: SourcePosition): Unit = {

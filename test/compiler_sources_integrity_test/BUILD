@@ -3,6 +3,7 @@ load("//third_party/repositories:scala_2_11.bzl", scala_2_11_version = "scala_ve
 load("//third_party/repositories:scala_2_12.bzl", scala_2_12_version = "scala_version")
 load("//third_party/repositories:scala_2_13.bzl", scala_2_13_version = "scala_version")
 load("//third_party/repositories:scala_3_1.bzl", scala_3_1_version = "scala_version")
+load("//third_party/repositories:scala_3_10.bzl", scala_3_10_version = "scala_version")
 load("//third_party/repositories:scala_3_2.bzl", scala_3_2_version = "scala_version")
 load("//third_party/repositories:scala_3_3.bzl", scala_3_3_version = "scala_version")
 load("//third_party/repositories:scala_3_4.bzl", scala_3_4_version = "scala_version")
@@ -94,6 +95,7 @@ sh_test(
         ("scala_3_7", scala_3_7_version),
         ("scala_3_8", scala_3_8_version),
         ("scala_3_9", scala_3_9_version),
+        ("scala_3_10", scala_3_10_version),
     ]
 ]
 

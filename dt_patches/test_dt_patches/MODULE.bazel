@@ -43,7 +43,12 @@ use_repo(
     "scala3_interfaces",
     "scala3_library",
     "tasty_core",
-    # Hardcoded versions
+    # Hardcoded versions. Alphabetical: bazel mod tidy rewrites this list.
+    "asm",
+    "asm_analysis",
+    "asm_commons",
+    "asm_tree",
+    "asm_util",
     "sbt_compiler_interface",
     "scala_asm",
 )

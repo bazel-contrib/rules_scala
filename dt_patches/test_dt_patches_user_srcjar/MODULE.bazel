@@ -43,7 +43,12 @@ use_repo(
     "scala3_interfaces",
     "scala3_library",
     "tasty_core",
-    # Hardcoded versions
+    # Hardcoded versions. Alphabetical: bazel mod tidy rewrites this list.
+    "asm",
+    "asm_analysis",
+    "asm_commons",
+    "asm_tree",
+    "asm_util",
     "sbt_compiler_interface",
     "scala_asm",
 )
@@ -191,6 +196,10 @@ scala_deps.compiler_srcjar(
 scala_deps.compiler_srcjar(
     url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.9.0/scala3-compiler_3-3.9.0-sources.jar",
     version = "3.9.0",
+)
+scala_deps.compiler_srcjar(
+    url = "https://repo1.maven.org/maven2/org/scala-lang/scala3-compiler_3/3.10.0/scala3-compiler_3-3.10.0-sources.jar",
+    version = "3.10.0",
 )
 
 register_toolchains(

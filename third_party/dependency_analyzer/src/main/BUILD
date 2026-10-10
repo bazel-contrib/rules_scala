@@ -23,6 +23,12 @@ scala_library_for_plugin_bootstrapping(
         between_2_12_13_and_3 = [
             "io/bazel/rulesscala/dependencyanalyzer/Reporter213.scala",
         ],
+        between_3_and_3_10 = [
+            "io/bazel/rulesscala/dependencyanalyzer3/CompilerCompat.scala",
+        ],
+        since_3_10 = [
+            "io/bazel/rulesscala/dependencyanalyzer3/CompilerCompat310.scala",
+        ],
     ),
     build_ijar = False,
     resources = select_for_scala_version(
