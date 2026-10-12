@@ -21,5 +21,5 @@ scala_test(
 scala_binary(
     name = "bin33",
     srcs = ["bin.scala"],
-    main_class = "X",
+    main_class = "C",
 )
