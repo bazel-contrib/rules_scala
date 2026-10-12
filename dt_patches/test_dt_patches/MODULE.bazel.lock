@@ -197,7 +197,7 @@
   "moduleExtensions": {
     "@@compiler_sources+//:extensions.bzl%compiler_source_repos": {
       "general": {
-        "bzlTransitiveDigest": "N9wR8ob4gYJo4sL+9Q5yMPYcWgR4leNnzv2t/XGPqYE=",
+        "bzlTransitiveDigest": "Qjhb+r5nJ313B7DnbYfJYt3mjEGb9hqcoMlPm/7W1cc=",
         "usagesDigest": "lK8oEbW3EqfevAN05oFwFMdJ09fD4LmzCP/XtrnDBW8=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
