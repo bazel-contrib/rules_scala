@@ -1,10 +1,8 @@
 package scalarules.test.extra_protobuf_generator
 
-import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.{CodeGeneratorRequest, CodeGeneratorResponse}
 import com.google.protobuf.Descriptors._
 import scalapb.compiler.{ProtobufGenerator, DescriptorImplicits, ProtoValidation, GeneratorException, GeneratorParams, FunctionalPrinter}
-import scalapb.options.compiler.Scalapb
 import protocbridge.{ProtocCodeGenerator, Artifact}
 import scala.collection.JavaConverters._
 
@@ -44,8 +42,6 @@ class CustomProtobufGenerator(
 object ExtraProtobufGenerator extends ProtocCodeGenerator {
    override def run(req: Array[Byte]): Array[Byte] = {
     val b = CodeGeneratorResponse.newBuilder
-    val registry = ExtensionRegistry.newInstance()
-    Scalapb.registerAllExtensions(registry)
     val request = CodeGeneratorRequest.parseFrom(req)
     handleCodeGeneratorRequest(request, b)
     b.build.toByteArray
