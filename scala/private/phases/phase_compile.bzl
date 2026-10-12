@@ -12,8 +12,8 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 # for instrumentation (`ctx.coverage_instrumented()`). JaCoCo then writes
 # `<name>.jar` from it.
 # `scala_library_for_plugin_bootstrapping` keeps the plain jar.
-# For `scala_binary` and `scala_repl`, a coverage build also adds the JaCoCo
-# runner to `rjars`.
+# For `scala_binary`, `scala_repl`, `scala_library` and `scala_macro_library`,
+# a coverage build also adds the JaCoCo runtime to `rjars`.
 # The result sets `JavaInfo` in the rule's providers. `files` holds the jars of
 # this target. phase_default_info uses `files`. `rjars` also holds the runtime
 # jars of the dependencies. phase_runfiles, phase_merge_jars and
@@ -58,7 +58,7 @@ def phase_compile_library(ctx, p):
     if hasattr(ctx.attr, "build_ijar"):
         args["buildijar"] = ctx.attr.build_ijar
 
-    return _phase_compile_default(ctx, p, struct(**args))
+    return _with_jacoco_runtime(ctx, _phase_compile_default(ctx, p, struct(**args)))
 
 def phase_compile_library_for_plugin_bootstrapping(ctx, p):
     args = struct(
@@ -107,7 +107,7 @@ def phase_compile_scalatest(ctx, p):
     )
     return _phase_compile_default(ctx, p, args)
 
-# Instrumented classes on an executable's classpath call the JaCoCo runtime.
+# Instrumented classes call the JaCoCo runtime when they run.
 def _with_jacoco_runtime(ctx, out):
     if not ctx.configuration.coverage_enabled:
         return out
