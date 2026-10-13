@@ -61,7 +61,6 @@ scala_config(
     enable_compiler_dependency_tracking = True,
     # This list must be the same as SCALA_VERSIONS in MODULE.bazel.
     scala_versions = [
-        "2.11.12",
         "2.12.21",
         "2.13.18",
         "3.1.3",
