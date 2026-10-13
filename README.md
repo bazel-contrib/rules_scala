@@ -123,12 +123,12 @@ If a newer `protobuf` version in the module graph breaks your build, use
 ```py
 bazel_dep(
     name = "protobuf",
-    version = "29.5",
+    version = "33.4",
     repo_name = "com_google_protobuf",
 )
 single_version_override(
     module_name = "protobuf",
-    version = "29.5",
+    version = "33.4",
 )
 ```
 
@@ -591,7 +591,7 @@ https://github.com/scalapb/ScalaPB) Maven artifacts. For extensive analysis,
 see bazelbuild/rules_scala#1647.
 
 The Bazel versions and dependency versions below represent the minimum versions
-compatible with `rules_scala` 7.x.
+compatible with `rules_scala` 8.x.
 
 - For the actual versions used by `rules_scala`, see
     [MODULE.bazel](./MODULE.bazel).
@@ -604,10 +604,9 @@ compatible with `rules_scala` 7.x.
 | Bzlmod      | >= 7.1.0, 8.x, 9.x<br/>`rolling`, `last_green`                            |
 | `WORKSPACE` | >= 7.1.0, 8.x |
 
-`rules_scala` 7.0.0 uses `ScalaPB` 1.0.0-alpha.1 to support `protobuf` v28.2 and
-later, required by newer Bazel versions and other dependencies. Below are the
-minimum versions of `protobuf` and related dependencies supported for Bazel 7,
-8, and 9.
+`rules_scala` 8.x uses `ScalaPB` 1.0.0-alpha.3 and requires `protobuf` v33.4 or
+later. Below are the minimum versions of `protobuf` and related dependencies
+supported for Bazel 7, 8, and 9.
 
 | Dependency | Bazel >= 7.1.0 | Bazel 8.x | Bazel 9.x |
 | :--------: | :------------: | :-------: | :-------: |
@@ -729,6 +728,61 @@ Note: __`bazel test //...` will not work__ since we have a sub-folder on the
 root folder which is meant to be used in a failure scenario in the integration
 tests. Similarly, to only build you should use `bazel build //src/...` due to
 that folder.
+
+## Breaking changes in `rules_scala` 8.x
+
+`rules_scala` 8.x removes support for old versions of Bazel, `protobuf`, and
+Scala. It contains the following breaking changes when upgrading from
+`rules_scala` 7.x.
+
+### Removal of Bazel 6 `WORKSPACE` support
+
+`rules_scala` requires at least Bazel 7.1.0. It removes the limited Bazel 6.6.0
+support for legacy `WORKSPACE` builds. If you still need Bazel 6, use a previous
+version of `rules_scala`.
+
+### Minimum of `protobuf` v33.4
+
+`rules_scala` requires at least `protobuf` v33.4.
+
+#### <a id="old-protobuf"></a>Using earlier `protobuf` versions
+
+If you can't update to `protobuf` v33.4 or later right now, use a previous
+version of `rules_scala`. The `rules_scala` 7.x README describes how to build
+with `protobuf` versions back to v25.5.
+
+### Removal of `rules_proto`
+
+`rules_scala` now loads `ProtoInfo` from `protobuf` and removes its
+`rules_proto` dependency. In a legacy `WORKSPACE` build,
+`rules_scala_dependencies()` stops defining the `rules_proto` repository.
+Remove the `rules_proto_dependencies()`, `rules_proto_setup()`, and
+`rules_proto_toolchains()` calls from your `WORKSPACE` file. If your own code
+loads from `@rules_proto`, import `rules_proto` yourself.
+
+### Minimum of `rules_java` 7.10.0
+
+With `rules_java` 7.x, `rules_scala` requires at least `rules_java` 7.10.0 and
+the `--experimental_google_legacy_api` flag. `protobuf` v33.4 needs both. With
+`rules_java` 8.x, the minimum stays 8.4.0.
+
+### Minimum of Scala 2.12
+
+`rules_scala` requires at least Scala 2.12. If you still need Scala 2.11, use a
+previous version of `rules_scala`.
+
+### `scala_proto` uses `scalapb.ScalaPbCodeGenerator`
+
+The default ScalaPB toolchain now uses ScalaPB's own generator class,
+`scalapb.ScalaPbCodeGenerator`. If a custom `scala_proto_toolchain` names
+`scripts.ScalaPbCodeGenerator` in `generators`, change it to
+`scalapb.ScalaPbCodeGenerator`. `rules_scala` deletes the
+`@rules_scala//src/scala/scripts:scalapb_codegenerator_wrapper` target that
+contained `scripts.ScalaPbCodeGenerator`. Remove all references to it.
+
+ScalaPB options on messages, such as `(scalapb.message).extends`, now take
+effect. If such an option names a class, that class must be on the compile
+classpath of the generated code.
 
 ## Breaking changes in `rules_scala` 7.x
 
@@ -1072,14 +1126,59 @@ MSVC builds of recent `protobuf` versions started failing, as first noted in
 bazelbuild/rules_scala#1710. If your Windows project breaks when building
 `protoc`, enable [protocol compiler toolchainization](#protoc) to fix it.
 
-### Minimum of `protobuf` v33.4
+### Minimum of `protobuf` v28.2
 
-`rules_scala` requires at least `protobuf` v33.4.
+`rules_scala` requires at least `protobuf` v28.2, and at least v29 for [protocol
+compiler toolchain](#protoc) support. No `ScalaPB` release supports `protobuf`
+v25.6, v26, or v27.
 
-#### <a id="old-protobuf"></a>Using earlier `protobuf` versions
+#### Using earlier `protobuf` versions
 
-If you can't update to `protobuf` v33.4 or later right now, use `rules_scala`
-7.x. Its README describes how to build with `protobuf` versions back to v25.5.
+If you can't update to `protobuf` v28.2 or later right now, build using Bazel 7
+and the following maximum versions of key dependencies. This is not officially
+supported, but should work for some time.
+
+| Dependency | Max compatible version | Reason |
+| :-: | :-: | :- |
+| `ScalaPB` | 0.11.17<br/>(0.9.8 for Scala 2.11) | Later versions only support `protobuf` >= v28.2. |
+| `protobuf` | v25.5 | Maximum version supported by `ScalaPB` 0.11.17. |
+| `rules_cc` | 0.0.9 | 0.0.10 requires Bazel 7 to define `CcSharedLibraryHintInfo`.<br/>0.0.13 requires at least `protobuf` v27.0. |
+| `rules_java` | 7.12.5 | 8.x requires `protobuf` v27 and later. |
+| `rules_proto` | 6.0.2 | Maximum version supporting `protobuf` v25.5 |
+
+You must also apply this patch, since [bazel/toolchains/proto_lang_toolchain.bzl
+only appears in protobuf v27.0 and later](
+https://github.com/protocolbuffers/protobuf/commit/d4d34abd7d66dc93c8f7f52f28411cd9c2867c29):
+
+```diff
+diff --git i/protoc/BUILD c/protoc/BUILD
+index 83a137f2..d3f4272b 100644
+--- i/protoc/BUILD
++++ c/protoc/BUILD
+@@ -1,8 +1,3 @@
+-load(
+-    "@com_google_protobuf//bazel/toolchains:proto_lang_toolchain.bzl",
+-    "proto_lang_toolchain",
+-)
+-
+ exports_files(
+     ["toolchains.bzl"],
+     visibility = ["//visibility:public"],
+@@ -13,13 +8,6 @@ toolchain_type(
+     visibility = ["//visibility:public"],
+ )
+ 
+-proto_lang_toolchain(
+-    name = "scala_protoc_toolchain",
+-    command_line = "unused-because-we-pass-protoc-to-scalapb",
+-    toolchain_type = ":toolchain_type",
+-    visibility = ["//visibility:public"],
+-)
+-
+ # Aliases the @protobuf >= v33.4 flag so test modules don't have to import
+ # @protobuf directly to handle the flag imported from .bazelrc.
+ alias(
+```
 
 ### Embedded resource paths no longer begin with `external/<repo_name>`
 
