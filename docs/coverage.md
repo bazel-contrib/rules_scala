@@ -184,9 +184,9 @@ source's on-disk directory to end with its package path. See
 
 JaCoCo's probes add bytecode, so a method that is already close to the JVM's
 64KB per-method limit goes over it once instrumented. ASM then throws
-`MethodTooLargeException`, `JacocoInstrumenter` fails, and every test that
-transitively depends on that library fails to build under `bazel coverage`,
-even though it compiles and tests fine without coverage.
+`MethodTooLargeException`, and `JacocoInstrumenter` fails. In a coverage build,
+the target with this class and every target that depends on it then fail to
+build.
 
 Set `coverage_skip_oversized_methods` on `scala_toolchain` to pass such a class
 through to the output jar uninstrumented instead of failing the build:
@@ -213,6 +213,35 @@ coverage --extra_toolchains="//path/to:coverage_skip_oversized_methods"
 The class is omitted from coverage reports altogether rather than reported as
 uncovered, and `JacocoInstrumenter` prints a warning naming it. The default is
 `False`, which keeps the original behaviour of failing the action.
+
+## Tools that run Scala code during the build
+
+In a coverage build, Bazel selects targets for instrumentation. For each
+selected Scala target with sources, rules_scala instruments the runtime jar.
+`scala_library_for_plugin_bootstrapping` keeps its uninstrumented jar. An
+instrumented class calls the JaCoCo runtime when it runs. rules_scala adds this
+runtime to `scala_binary`, `scala_repl`, the deploy jars and runfiles of
+`scala_library` and `scala_macro_library`, and its own build tools, such as
+scalac for macros.
+
+Some tools load the runtime jar of a Scala target during the build. An example
+is a code generator that loads its generator classes from a target in the
+target configuration. Such a tool needs the JaCoCo runtime too. Use one of
+these fixes:
+
+- Build the jars that the tool loads in the exec configuration
+  (`cfg = "exec"`). For a `genrule`, put them in `tools`. Bazel turns coverage
+  off in the exec configuration, so these jars keep their uninstrumented
+  classes.
+- Remove the target from instrumentation. `--instrumentation_filter` takes
+  regular expressions, for example
+  `--instrumentation_filter=^//,-^//path/to/generators[/:]`.
+- Add `@bazel_tools//tools/jdk:JacocoCoverage` to the `runtime_deps` of the
+  tool. Add `-Djacoco-agent.output=none` to its JVM flags. This flag stops the
+  runtime from writing a `jacoco.exec` file into the working directory.
+
+When you run a deploy jar from a coverage build with `java -jar`, add
+`-Djacoco-agent.output=none`.
 
 ## Notes
 

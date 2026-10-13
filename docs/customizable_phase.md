@@ -96,6 +96,8 @@ There are 5 possible relations:
 
 The symbols and words are interchangable. If `first` or `last` is used, it puts your custom phase at the beginning or the end of the phase list, `peer_name` is not needed.
 
+In a coverage build, the default `compile` phase of a Scala target with sources instruments its jar when `ctx.coverage_instrumented()` is true (see [coverage](coverage.md)). `scala_library_for_plugin_bootstrapping` keeps its jar uninstrumented. A phase that replaces `compile` must do this instrumentation too. Coverage reports show only the classes that JaCoCo instruments.
+
 Then you have to call the rule in a `BUILD`
 
 ```py
