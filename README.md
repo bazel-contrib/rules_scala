@@ -1128,57 +1128,8 @@ bazelbuild/rules_scala#1710. If your Windows project breaks when building
 
 ### Minimum of `protobuf` v28.2
 
-`rules_scala` requires at least `protobuf` v28.2, and at least v29 for [protocol
-compiler toolchain](#protoc) support. No `ScalaPB` release supports `protobuf`
-v25.6, v26, or v27.
-
-#### Using earlier `protobuf` versions
-
-If you can't update to `protobuf` v28.2 or later right now, build using Bazel 7
-and the following maximum versions of key dependencies. This is not officially
-supported, but should work for some time.
-
-| Dependency | Max compatible version | Reason |
-| :-: | :-: | :- |
-| `ScalaPB` | 0.11.17<br/>(0.9.8 for Scala 2.11) | Later versions only support `protobuf` >= v28.2. |
-| `protobuf` | v25.5 | Maximum version supported by `ScalaPB` 0.11.17. |
-| `rules_cc` | 0.0.9 | 0.0.10 requires Bazel 7 to define `CcSharedLibraryHintInfo`.<br/>0.0.13 requires at least `protobuf` v27.0. |
-| `rules_java` | 7.12.5 | 8.x requires `protobuf` v27 and later. |
-| `rules_proto` | 6.0.2 | Maximum version supporting `protobuf` v25.5 |
-
-You must also apply this patch, since [bazel/toolchains/proto_lang_toolchain.bzl
-only appears in protobuf v27.0 and later](
-https://github.com/protocolbuffers/protobuf/commit/d4d34abd7d66dc93c8f7f52f28411cd9c2867c29):
-
-```diff
-diff --git i/protoc/BUILD c/protoc/BUILD
-index 83a137f2..d3f4272b 100644
---- i/protoc/BUILD
-+++ c/protoc/BUILD
-@@ -1,8 +1,3 @@
--load(
--    "@com_google_protobuf//bazel/toolchains:proto_lang_toolchain.bzl",
--    "proto_lang_toolchain",
--)
--
- exports_files(
-     ["toolchains.bzl"],
-     visibility = ["//visibility:public"],
-@@ -13,13 +8,6 @@ toolchain_type(
-     visibility = ["//visibility:public"],
- )
- 
--proto_lang_toolchain(
--    name = "scala_protoc_toolchain",
--    command_line = "unused-because-we-pass-protoc-to-scalapb",
--    toolchain_type = ":toolchain_type",
--    visibility = ["//visibility:public"],
--)
--
- # Aliases the @protobuf >= v33.4 flag so test modules don't have to import
- # @protobuf directly to handle the flag imported from .bazelrc.
- alias(
-```
+`rules_scala` 7.x requires at least `protobuf` v28.2, and at least v29 for
+[protocol compiler toolchain](#protoc) support.
 
 ### Embedded resource paths no longer begin with `external/<repo_name>`
 
