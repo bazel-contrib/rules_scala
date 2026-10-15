@@ -25,8 +25,9 @@ class AstUsedJarFinder {
     def recordUse(source: AbstractFile, pos: SourcePosition): Unit = {
       // We prefer to report locations which have information (e.g.
       // we don't want NoPosition).
-      if !jars.get(source).exists(_.exists) then
+      if !jars.get(source).exists(_.exists) then {
         jars.put(source, pos)
+      }
     }
 
     def handleType(tpe: Type, pos: SourcePosition)(using Context): Unit =
@@ -34,10 +35,12 @@ class AstUsedJarFinder {
 
     def handleSymbol(sym: Symbol, pos: SourcePosition)(using Context): Unit = if sym.exists then {
       val assocFile = sym.associatedFile
-      if assocFile != null then
+      if assocFile != null then {
         val path = assocFile.nn.path
-        if path.isTastyFile || path.isClassFile then
+        if path.isTastyFile || path.isClassFile then {
           recordUse(CompilerCompat.jarOfAssociatedFile(assocFile.nn), pos)
+        }
+      }
     }
 
     def exploreType(tpe: Type, pos: SourcePosition): Unit = {
@@ -53,9 +56,10 @@ class AstUsedJarFinder {
       def visitNode(tree: Tree): Unit = {
         val shouldExamine = tree match {
           case tree: Select =>
-            tree.symbol.name match
+            tree.symbol.name match {
               case NameKinds.DefaultGetterName(_, _) => false
               case _ => true
+            }
           case _ => true
         }
         if !shouldExamine then return
@@ -79,9 +83,10 @@ class AstUsedJarFinder {
             // when foreachSubTree visits it.
             val symbol = qualifier.symbol
             selectors.foreach { selector =>
-              if selector.name != nme.WILDCARD && selector.rename != nme.WILDCARD then
+              if selector.name != nme.WILDCARD && selector.rename != nme.WILDCARD then {
                 val selected = symbol.info.member(selector.name).symbol
                 handleSymbol(selected, tree.sourcePos)
+              }
             }
           // Record the file of the referenced symbol, in addition to
           // the file of `tree.tpe` handled below. The two diverge for
