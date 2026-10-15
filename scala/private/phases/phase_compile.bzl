@@ -21,6 +21,7 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 # jars of the dependencies. phase_runfiles, phase_merge_jars and
 # phase_write_executable use `rjars`. phase_jvm_flags uses `merged_provider`.
 #
+load("//scala/private:common.bzl", "UninstrumentedJarsInfo")
 load(
     "//scala/private:paths.bzl",
     _get_files_with_extension = "get_files_with_extension",
@@ -180,15 +181,24 @@ def _phase_compile(
         additional_outputs,
     )
 
+    external_providers = {"JavaInfo": out.merged_provider}
+    if ctx.configuration.coverage_enabled:
+        external_providers["UninstrumentedJarsInfo"] = _uninstrumented_jars_info(ctx, out.uninstrumented_jar)
+
     # TODO: simplify the return values and use provider
     return struct(
         files = depset(out.full_jars),
         rjars = depset(out.full_jars, transitive = [rjars], order = "preorder"),
         merged_provider = out.merged_provider,
-        external_providers = {
-            "JavaInfo": out.merged_provider,
-        },
+        external_providers = external_providers,
     )
+
+def _uninstrumented_jars_info(ctx, uninstrumented_jar):
+    deps = ctx.attr.deps + getattr(ctx.attr, "exports", []) + getattr(ctx.attr, "runtime_deps", [])
+    return UninstrumentedJarsInfo(jars = depset(
+        [(ctx.outputs.jar, uninstrumented_jar)] if uninstrumented_jar else [],
+        transitive = [dep[UninstrumentedJarsInfo].jars for dep in deps if UninstrumentedJarsInfo in dep],
+    ))
 
 def _compile_or_empty(
         ctx,
@@ -216,6 +226,7 @@ def _compile_or_empty(
         return struct(
             full_jars = [ctx.outputs.jar],
             merged_provider = scala_compilation_provider,
+            uninstrumented_jar = None,
         )
     else:
         java_srcs = _get_files_with_extension(ctx, _java_extension)
@@ -293,6 +304,7 @@ def _compile_or_empty(
         return struct(
             full_jars = full_jars,
             merged_provider = merged_provider,
+            uninstrumented_jar = scalac_jar if instrument else None,
         )
 
 # Instruments in place of the plain jar, so every rule that runs this target's
