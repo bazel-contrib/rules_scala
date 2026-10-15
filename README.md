@@ -563,7 +563,7 @@ Please check [coverage.md](docs/coverage.md) for more details on coverage suppor
 
 ### With builtin toolchains
 
-`rules_scala` supports the last two released minor versions for each of Scala 2.11, 2.12, 2.13.
+`rules_scala` supports the last two released minor versions for each of Scala 2.12 and 2.13.
 Previous minor versions may work but are supported only on a best effort basis.
 
 The [Getting started](#getting-started) section illustrates how to select the
@@ -1225,7 +1225,7 @@ that can be used for further plugin options setup:
 scala_proto_toolchain(
     name = "example",
     generators = {
-        "scala": "scripts.ScalaPbCodeGenerator",
+        "scala": "scalapb.ScalaPbCodeGenerator",
         "jvm_extra_protobuf_generator": "scalarules.test.extra_protobuf_generator.ExtraProtobufGenerator",
     },
     generators_opts = {
