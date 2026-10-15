@@ -1,4 +1,4 @@
-load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
 load("//scala:scala.bzl", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//scala_proto:scala_proto.bzl", "scala_proto_library")
