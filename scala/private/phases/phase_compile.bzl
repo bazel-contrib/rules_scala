@@ -10,7 +10,9 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 # `build_ijar` is `True`. In a coverage build, scalac writes
 # `<name>-uninstrumented.jar` for each target with sources that Bazel selects
 # for instrumentation (`ctx.coverage_instrumented()`). JaCoCo then writes
-# `<name>.jar` from it.
+# `<name>.jar` from it. The compile jar (the ijar, or the jar itself without
+# `build_ijar`) comes from the uninstrumented jar, so dependents compile against
+# the same classes with or without coverage.
 # `scala_library_for_plugin_bootstrapping` keeps the plain jar.
 # For `scala_binary`, `scala_repl`, `scala_library` and `scala_macro_library`,
 # a coverage build also adds the JaCoCo runtime to `rjars`.
@@ -257,14 +259,14 @@ def _compile_or_empty(
         if buildijar:
             ijar = java_common.run_ijar(
                 ctx.actions,
-                jar = ctx.outputs.jar,
+                jar = scalac_jar,
                 target_label = ctx.label,
                 java_toolchain = specified_java_compile_toolchain(ctx),
             )
         else:
             #  macro code needs to be available at compile-time,
             #  so set ijar == jar
-            ijar = ctx.outputs.jar
+            ijar = scalac_jar
 
         source_jar = _pack_source_jar(ctx, scala_srcs, in_srcjars)
         scala_compilation_provider = _create_scala_compilation_provider(ctx, ijar, source_jar, deps_providers)
@@ -293,8 +295,8 @@ def _compile_or_empty(
             merged_provider = merged_provider,
         )
 
-# Instruments in place of the plain jar, so every consumer of this target's
-# JavaInfo (scala_test, java_test, or any other rule) gets instrumented classes.
+# Instruments in place of the plain jar, so every rule that runs this target's
+# classes (scala_test, java_test, or any other rule) gets instrumented classes.
 def _instrument_for_coverage(ctx, input_jar, output_jar):
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
