@@ -9,6 +9,6 @@ object Macro {
   def twiceImpl(c: blackbox.Context)(i: c.Expr[Int]): c.Expr[Int] = {
     import c.universe._
     val Literal(Constant(value: Int)) = i.tree
-    c.Expr[Int](Literal(Constant(Helper.twice(value))))
+    c.Expr[Int](Literal(Constant(JavaHelper.twice(value))))
   }
 }
