@@ -1,12 +1,12 @@
 load("//scala:scala.bzl", "scala_library", "scala_macro_library", "scala_test")
 load("//test/coverage_test:coverage_test.bzl", "coverage_test")
 
-# :app and :macro_app inline :lib under -Werror, so they only compile if the
-# classes of :lib on their compile classpath are free of JaCoCo probes: the
-# inliner refuses to copy the probe call. :macro_app also depends on :mac. The
-# jars of :mac and :lib come first on its compile classpath, and Mac.twice calls
-# Lib.twice while scalac expands the macro. :checked_app inlines a method of the
-# macro library :check itself, without expanding a macro.
+# Each app inlines :lib or :check under -Werror, so it compiles only if scalac
+# reads their classes before instrumentation: the inliner refuses to copy a
+# JaCoCo probe call. The runtime jars of a macro library come first on the
+# compile classpath. :mac gets :lib through the exports of :lib_exported, and
+# Mac.twice calls Lib.twice while scalac expands the macro. :check gets :lib
+# only as a runtime dependency.
 # Pinned to 2.13, whose -opt:inline flag the 2.12 default doesn't accept, so the
 # fixtures are `manual` and the default build skips them.
 coverage_test(
@@ -46,11 +46,17 @@ scala_library(
     tags = ["manual"],
 )
 
+scala_library(
+    name = "lib_exported",
+    tags = ["manual"],
+    exports = [":lib"],
+)
+
 scala_macro_library(
     name = "mac",
     srcs = ["Mac.scala"],
     tags = ["manual"],
-    deps = [":lib"],
+    deps = [":lib_exported"],
 )
 
 scala_library(
@@ -77,11 +83,15 @@ scala_library(
         "-Wopt",
     ],
     tags = ["manual"],
-    deps = [":check"],
+    deps = [
+        ":check",
+        ":lib",
+    ],
 )
 
 scala_macro_library(
     name = "check",
     srcs = ["Check.scala"],
     tags = ["manual"],
+    runtime_deps = [":lib"],
 )

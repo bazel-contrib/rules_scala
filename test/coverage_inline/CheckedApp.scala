@@ -2,7 +2,7 @@ package coverage_inline
 
 object CheckedApp {
   def checked(i: Int): Int = {
-    Check.positive(i)
+    Check.positive(Lib.twice(i))
     i
   }
 }
