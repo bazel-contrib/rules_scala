@@ -15,7 +15,7 @@ import java.util.Locale
 import scala.jdk.CollectionConverters.*
 import scala.annotation.nowarn
 
-class DependencyAnalyzer extends StandardPlugin:
+class DependencyAnalyzer extends StandardPlugin {
   override val name: String = "dependency-analyzer"
   override val description: String =
     "Analyzes the used dependencies. Can check and warn or fail the " +
@@ -41,6 +41,7 @@ class DependencyAnalyzer extends StandardPlugin:
         runsAfter = Set(jvm.GenBCode.name), runsBefore = Set.empty)
     )
   }
+}
 
 class DependencyAnalyzerPhase(
  handles: DependencyTrackingMethod,
@@ -76,9 +77,10 @@ class DependencyAnalyzerPhase(
       alternativeFiles.map(_ -> pos)
     }
 
-    ctx.reporter match
+    ctx.reporter match {
       case reporter: DepsTrackingReporter => reporter.registerAstUsedJars(usedJarPathToPositions.keys.toSet.asJava)
       case _ => ()
+    }
 
     if (settings.dependencyTrackingMethod != DependencyTrackingMethod.AstPlus) {
       if (settings.unusedDepsMode != AnalyzerMode.Off) {

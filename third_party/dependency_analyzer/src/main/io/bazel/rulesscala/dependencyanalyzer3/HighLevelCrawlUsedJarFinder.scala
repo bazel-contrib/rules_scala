@@ -8,15 +8,16 @@ import dotty.tools.dotc.core.Symbols.Symbol
 
 import scala.collection.mutable
 
-class HighLevelCrawlUsedJarFinder:
+class HighLevelCrawlUsedJarFinder {
 
-  def findUsedJars(using Context): Map[AbstractFile, SourcePosition] =
+  def findUsedJars(using Context): Map[AbstractFile, SourcePosition] = {
     val jars = mutable.Set.empty[AbstractFile]
     // Execute at first transform phases which happens after inlining and macros splicing (interpretation)
     atPhase(Phases.firstTransformPhase) {
       walkTopLevels(ctx.definitions.RootClass, jars)
     }
     jars.map(_ -> NoSourcePosition).toMap
+  }
 
   private def walkTopLevels(root: Symbol, jars: mutable.Set[AbstractFile])(using Context): Unit = {
     def packageClassOrSelf(sym: Symbol): Symbol =
@@ -31,11 +32,14 @@ class HighLevelCrawlUsedJarFinder:
       else if sym.is(Flags.Package) then walkTopLevels(sym, jars)
       else if sym.owner != root then { // exclude package class members
         val assocFile = sym.associatedFile
-        if assocFile != null then
+        if assocFile != null then {
           val path = assocFile.path
-          if path.isClassFile || path.isTastyFile then
+          if path.isClassFile || path.isTastyFile then {
             jars += CompilerCompat.jarOfAssociatedFile(assocFile)
+          }
+        }
       }
     }
   }
+}
 
