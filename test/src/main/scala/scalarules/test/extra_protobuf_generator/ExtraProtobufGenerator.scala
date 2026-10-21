@@ -1,10 +1,8 @@
 package scalarules.test.extra_protobuf_generator
 
-import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.{CodeGeneratorRequest, CodeGeneratorResponse}
 import com.google.protobuf.Descriptors._
 import scalapb.compiler.{ProtobufGenerator, DescriptorImplicits, ProtoValidation, GeneratorException, GeneratorParams, FunctionalPrinter}
-import scalapb.options.compiler.Scalapb
 import protocbridge.{ProtocCodeGenerator, Artifact}
 import scala.collection.JavaConverters._
 
@@ -15,11 +13,9 @@ class CustomProtobufGenerator(
   import implicits._
   import ProtobufGenerator._
 
-  val protobufAdapter = new ProtobufAdapter(implicits)
-
   def printCustomMessage(printer: FunctionalPrinter, message: Descriptor): FunctionalPrinter = {
     printer
-      .add(s"final case object Custom${protobufAdapter.nameSymbol(message)}{}")
+      .add(s"final case object Custom${message.scalaType.nameSymbol}{}")
   }
 
   override def generateSingleScalaFileForFileDescriptor(
@@ -35,7 +31,7 @@ class CustomProtobufGenerator(
     val b = CodeGeneratorResponse.File.newBuilder()
     b.setName(
       file.scalaDirectory + "/Custom" +
-      protobufAdapter.fileDescriptorObjectName(file) + ".scala"
+      file.fileDescriptorObject.name + ".scala"
     )
     b.setContent(code)
     List(b.build)
@@ -46,27 +42,8 @@ class CustomProtobufGenerator(
 object ExtraProtobufGenerator extends ProtocCodeGenerator {
    override def run(req: Array[Byte]): Array[Byte] = {
     val b = CodeGeneratorResponse.newBuilder
-
-    try {
-      val registry = ExtensionRegistry.newInstance()
-      Scalapb.registerAllExtensions(registry)
-      val request = CodeGeneratorRequest.parseFrom(req)
-      handleCodeGeneratorRequest(request, b)
-
-    } catch {
-      case e: Throwable =>
-        // Yes, we want to catch _all_ errors and send them back to the
-        // requestor. Otherwise uncaught errors will cause the generator to
-        // die and the worker invoking it to hang under protoc-bridge < 0.9.8.
-        // See #1647 and scalapb/ScalaPB#1771.
-        //
-        // Scala 2.11 is stuck at protoc-bridge 0.7.14. If/when we drop
-        // Scala 2.11 support, we can remove this `catch` block (and elide the
-        // `ProtobufAdapter` implementation and delete its files).
-        val stackStream = new java.io.ByteArrayOutputStream
-        e.printStackTrace(new java.io.PrintStream(stackStream))
-        b.setError(stackStream.toString())
-    }
+    val request = CodeGeneratorRequest.parseFrom(req)
+    handleCodeGeneratorRequest(request, b)
     b.build.toByteArray
   }
 
