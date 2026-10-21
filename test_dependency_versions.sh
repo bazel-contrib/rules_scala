@@ -86,15 +86,12 @@ do_build_and_test() {
   local bazelversion="7.1.0"
   local skylib_version="1.8.0"
   local platforms_version="0.0.9"
-  local protobuf_version="28.2"
-  local rules_java_version="7.6.0"
-  local rules_proto_version="6.0.0"
+  local protobuf_version="33.4"
+  local rules_java_version="7.10.0"
   local protoc_toolchain=""
   local legacy_api=""
   local bazel_major=""
   local bazel_minor=""
-  local protobuf_major=""
-  local protobuf_minor=""
   local current
   local arg
 
@@ -119,9 +116,6 @@ do_build_and_test() {
     --rules_java=*)
       rules_java_version="$arg"
       ;;
-    --rules_proto=*)
-      rules_proto_version="$arg"
-      ;;
     --protoc_toolchain=*)
       protoc_toolchain="$arg"
       case "$protoc_toolchain" in
@@ -145,8 +139,6 @@ do_build_and_test() {
 
   parse_major_and_minor_versions \
     'bazelversion' "$bazelversion" 'bazel_major' 'bazel_minor'
-  parse_major_and_minor_versions \
-    'protobuf' "$protobuf_version" 'protobuf_major' 'protobuf_minor'
 
   set -e
   echo "$bazelversion" >.bazelversion
@@ -186,20 +178,11 @@ do_build_and_test() {
     echo 'common --incompatible_use_plus_in_repo_names' >>.bazelrc
   fi
 
-  # Set up the `protobuf` prebuilt protocol compiler toolchain patch.
-  if [[ ( "$protobuf_major" -ge 29 && "$protobuf_major" -lt 33 ) ||
-        ( "$protobuf_major" -eq 33 && "$protobuf_minor" -lt 4  ) ]]; then
-    cp "${dir}/protoc/0001-protobuf-19679-rm-protoc-dep.patch" ./protobuf.patch
-  else
-    echo '' >./protobuf.patch
-  fi
-
   # Render the MODULE.bazel file and create an empty top level package.
   sed -e "s%\${skylib_version}%${skylib_version}%" \
     -e "s%\${platforms_version}%${platforms_version}%" \
     -e "s%\${protobuf_version}%${protobuf_version}%" \
     -e "s%\${rules_java_version}%${rules_java_version}%" \
-    -e "s%\${rules_proto_version}%${rules_proto_version}%" \
     "${dir}/deps/test/MODULE.bazel.template" >MODULE.bazel
 
   if [[ "$protoc_toolchain" == "rules_scala" ]]; then
@@ -217,7 +200,7 @@ do_build_and_test() {
 }
 
 test_minimum_supported_versions() {
-  do_build_and_test
+  do_build_and_test --legacy_api
 }
 
 test_bazel_7_with_rules_java_8() {
@@ -227,26 +210,20 @@ test_bazel_7_with_rules_java_8() {
 test_prebuilt_protoc_rules_java_7() {
   do_build_and_test \
     --protoc_toolchain=rules_scala \
-    --protobuf=29.0 \
     --rules_java=7.10.0 \
-    --rules_proto=7.0.0 \
     --legacy_api
 }
 
 test_prebuilt_protoc_rules_java_8_3_2() {
   do_build_and_test \
     --protoc_toolchain=rules_scala \
-    --protobuf=29.0 \
-    --rules_java=8.3.2 \
-    --rules_proto=7.0.0
+    --rules_java=8.3.2
 }
 
 test_prebuilt_protoc_from_protobuf_bazel_7() {
   do_build_and_test \
     --protoc_toolchain=protobuf \
-    --protobuf=33.4 \
     --rules_java=7.10.0 \
-    --rules_proto=7.1.0 \
     --legacy_api
 }
 
@@ -254,43 +231,33 @@ test_prebuilt_protoc_rules_java_8_3_0() {
   do_build_and_test \
     --protoc_toolchain=rules_scala \
     --bazelversion=7.3.2 \
-    --protobuf=29.0 \
-    --rules_java=8.3.0 \
-    --rules_proto=7.0.0
+    --rules_java=8.3.0
 }
 
 test_bazel_8() {
   do_build_and_test \
     --bazelversion=8.0.0 \
-    --protobuf=29.0 \
-    --rules_java=8.5.0 \
-    --rules_proto=7.0.0
+    --rules_java=8.5.0
 }
 
 test_prebuilt_protoc_from_protobuf_bazel_8() {
   do_build_and_test \
     --protoc_toolchain=protobuf \
     --bazelversion=8.0.0 \
-    --protobuf=33.4 \
-    --rules_java=8.5.0 \
-    --rules_proto=7.0.0
+    --rules_java=8.5.0
 }
 
 test_bazel_9() {
   do_build_and_test \
     --bazelversion=9.0.0 \
-    --protobuf=33.0 \
-    --rules_java=8.14.0 \
-    --rules_proto=7.0.0
+    --rules_java=8.14.0
 }
 
 test_prebuilt_protoc_from_protobuf_bazel_9() {
   do_build_and_test \
     --protoc_toolchain=protobuf \
     --bazelversion=9.0.0 \
-    --protobuf=33.4 \
-    --rules_java=8.14.0 \
-    --rules_proto=7.0.0
+    --rules_java=8.14.0
 }
 
 setup_suite

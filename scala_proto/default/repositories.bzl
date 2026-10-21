@@ -19,10 +19,8 @@ GUAVA_ARTIFACT_IDS = [
 ]
 
 def scala_proto_artifact_ids(scala_version):
-    return ([] if scala_version.startswith("2.11.") else [
+    return [
         "dev_dirs_directories",
-        "scala_proto_rules_scalapb_protoc_gen",
-    ]) + [
         "com_google_android_annotations",
         "com_google_code_gson_gson",
         "org_codehaus_mojo_animal_sniffer_annotations",
@@ -55,5 +53,6 @@ def scala_proto_artifact_ids(scala_version):
         "scala_proto_rules_proto_google_common_protos",
         "scala_proto_rules_scalapb_compilerplugin",
         "scala_proto_rules_scalapb_protoc_bridge",
+        "scala_proto_rules_scalapb_protoc_gen",
         "scala_proto_rules_scalapb_runtime_grpc",
     ] + SCALAPB_COMPILE_ARTIFACT_IDS + GUAVA_ARTIFACT_IDS

@@ -55,12 +55,6 @@ $runner test_scala_version "2.12.10" \
     "56b609e1bab9144fb51525bfa01ccd72028154fc40a58685a1e9adcbe7835730"
 
 
-$runner test_scala_version "2.11.12" \
-    "3e892546b72ab547cb77de4d840bcfd05c853e73390fed7370a8f19acb0735a0" \
-    "0b3d6fd42958ee98715ba2ec5fe221f4ca1e694d7c981b0ae0cd68e97baf6dce" \
-    "6ba385b450a6311a15c918cf8688b9af9327c6104f0ecbd35933cfcd3095fe04"
-
-
 # Earliest functioning versions of each major version
 
 $runner test_scala_version "2.12.0" \
@@ -68,14 +62,6 @@ $runner test_scala_version "2.12.0" \
     "0e72ec4ea955d0bad7f1a494e8df95163f1631df0ce8ec4f9f278fe4d5fd1824" \
     "f56553934378e6d3e8bf1d759a51f8b2fc4c99370774f0aaedaab8619517ccbe"
 
-
-# Note: 2.11.0-2.11.8 do not work due to an error unrelated to the plugin
-# Error is that argument -Ypartial-unification is invalid
-# Hence we start with 2.11.9.
-$runner test_scala_version "2.11.9" \
-    "fa01b414674cb38adc90ccf7a2042e82198dbb19dc41faccf0b5941ec08b1998" \
-    "e435d5ef31cc12dbf66719b7d5ab677ad739c63c3e451757b9688dcbeda0a984" \
-    "d932f809012d2cf832226b52a8bd82ed35b0257b1471c98968c0cd9ddf5327ab"
 
 # Intermediate versions of 2.12.x
 
@@ -131,18 +117,3 @@ $runner test_scala_version "2.12.9" \
     "5fd556459fd189b820db7d7c0a644ea5f7e8e032c421f2ad47038e72247fbf65" \
     "364ee6ffd45f4fb8f9de40d1473d266ed5c199a44c1d4e2bdc895b1fbe35c75f" \
     "4285ba64044d1a62b19304fe3ddd0088da240649c9fe2a6571c989feda1d0829"
-
-
-# Intermediate versions of 2.11.x
-
-
-$runner test_scala_version "2.11.10" \
-    "b70b748857213efe6f3a47d66acfa014c1bf51af3178b3a946eaae09f709fecc" \
-    "14a520328ea4ca7f423b30154a54d3df0a531a9c51f5e98eda272c9821bc5331" \
-    "fd896db4806875f538843ea24411e483ee4d0734710a108d0308ef108e83cf80"
-
-
-$runner test_scala_version "2.11.11" \
-    "5f929ed57c515ef9545497374eec88ffd129b8f04079dedb7e32107104325cdd" \
-    "f2ba1550a39304e5d06caaddfa226cdf0a4cbccee189828fa8c1ddf1110c4872" \
-    "73aef1a6ccabd3a3c15cc153ec846e12d0f045587a2a1d88cc1b49293f47cb20"

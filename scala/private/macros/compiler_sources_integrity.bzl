@@ -9,10 +9,6 @@ URL_SUFFIX_BY_MAJOR_VERSION = {
     "3": "scala3-compiler_3/{version}/scala3-compiler_3-{version}-sources.jar",
 }
 COMPILER_SOURCES = {
-    "2.11.12": {
-        "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.12/scala-compiler-2.11.12-sources.jar",
-        "integrity": "sha256-1XeX/jmC1p1W1DIEZFn1ty6HpCIXDZjPKVw7G76T9FY=",
-    },
     "2.12.1": {
         "url": "https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.1/scala-compiler-2.12.1-sources.jar",
         "integrity": "sha256-omHm4mF8PoxvsvZwNy3eLrdjHy8Rl3IQZQodb9P+yS8=",

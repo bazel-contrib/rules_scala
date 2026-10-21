@@ -1,4 +1,4 @@
-load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
 load(
     "//scala:scala.bzl",
     "scala_binary",
@@ -26,7 +26,7 @@ scala_proto_toolchain(
         "//test/src/main/scala/scalarules/test/extra_protobuf_generator",
     ],
     generators = {
-        "scala": "scripts.ScalaPbCodeGenerator",
+        "scala": "scalapb.ScalaPbCodeGenerator",
         "jvm_extra_protobuf_generator": "scalarules.test.extra_protobuf_generator.ExtraProtobufGenerator",
     },
     generators_opts = {
