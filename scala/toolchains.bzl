@@ -227,6 +227,7 @@ def scala_toolchains(
 
     scala_toolchains_repo(
         name = name,
+        scala = scala,
         scalatest = scalatest,
         junit = junit,
         specs2 = specs2,
