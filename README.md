@@ -759,10 +759,11 @@ loads from `@rules_proto`, import `rules_proto` yourself.
 
 ### Minimum of `rules_java` 8.3.0
 
-`rules_scala` requires at least `rules_java` 8.3.0 and drops support for
-`rules_java` 7.x. With Bzlmod, `protobuf` v33.4 already declares `rules_java`
-8.6.1. If your build overrides `rules_java` to 7.x, or declares `rules_java`
-7.x in its `WORKSPACE` file, update it to 8.3.0 or later. Remove
+`rules_scala` requires at least `rules_java` 8.3.0 with Bazel 7, 8.5.0 with
+Bazel 8, and 8.14.0 with Bazel 9. It drops support for `rules_java` 7.x. With
+Bzlmod, `protobuf` v33.4 already declares `rules_java` 8.6.1. If your build
+overrides `rules_java` to 7.x, or declares `rules_java` 7.x in its `WORKSPACE`
+file, update it to the minimum for your Bazel version or later. Remove
 `--experimental_google_legacy_api` if your build used it only for
 `rules_java` 7.x.
 
