@@ -108,7 +108,8 @@ test_overridden_artifacts_example() {
 
 test_twitter_scrooge_example() {
   # Tests for twitter_scrooge toolchain setup problems under Bzlmod from #1744.
-  # Neither of the errors occurred under `WORKSPACE`
+  # The `WORKSPACE` build checks that the label strings in the `WORKSPACE`
+  # toolchain options resolve.
   build_twitter_scrooge_example() {
     # `ERROR: no such package '@@[unknown repo...`
     bazel build //...
@@ -116,6 +117,9 @@ test_twitter_scrooge_example() {
 
     # `expected value of type 'string' for dict value element, but got Label`
     bazel build //:justscrooge
+    echo
+
+    bazel build --noenable_bzlmod --enable_workspace //...
   }
 
   run_in_example_dir twitter_scrooge build_twitter_scrooge_example
