@@ -89,7 +89,17 @@ test_semanticdb_example() {
 }
 
 test_cross_build_example() {
-  run_in_example_dir crossbuild bazel build //...
+  run_cross_build_example() {
+    bazel build //...
+
+    local target
+    for target in //1_single:bin33 //2_deps:bin213 //2_deps:bin33 \
+        //3_select:bin2 //3_select:bin3; do
+      bazel run "$target"
+    done
+  }
+
+  run_in_example_dir crossbuild run_cross_build_example
 }
 
 test_overridden_artifacts_example() {
