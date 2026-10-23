@@ -83,7 +83,7 @@ do_build_and_test() {
   # `README.md` and as set in the top level `MODULE.bazel` file. Update both
   # if/when a test fails and the appropriate solution is to increase any of
   # these minimum suported versions.
-  local bazelversion="7.7.1"
+  local bazelversion="7.4.0"
   local skylib_version="1.8.0"
   local platforms_version="0.0.9"
   local protobuf_version="33.4"
