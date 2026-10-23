@@ -161,11 +161,10 @@ http_archive(
 )
 
 # This imports the minimum versions supported by the minimum supported Bazel
-# version, plus `rules_java` 8.5.0. If you use `rules_java` 7 or an earlier
-# `rules_java` 8 version, the corresponding `load` statements are slightly
-# different. See the `WORKSPACE` snippet from
-# https://github.com/bazelbuild/rules_java/releases corresponding to the
-# `rules_java` version for details.
+# version, plus `rules_java` 8.5.0. If you use an earlier `rules_java` 8
+# version, the corresponding `load` statements are slightly different. See the
+# `WORKSPACE` snippet from https://github.com/bazelbuild/rules_java/releases
+# corresponding to the `rules_java` version for details.
 #
 # If you want the latest dependency versions, change `deps.bzl` to
 # `latest_deps.bzl`.
@@ -216,8 +215,6 @@ py_repositories()
 # Note that `rules_java` 8.x suggests loading `protobuf_deps()` after
 # `rules_java_dependencies` and before `rules_java_toolchains()`:
 # - https://github.com/bazelbuild/rules_java/releases/tag/8.9.0
-#
-# `rules_java` 7.x also works with this ordering.
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 
 protobuf_deps()
@@ -332,7 +329,7 @@ are:
 
 | Dependency | Bazel 7.7.1 | Bazel 8.0.0 | Bazel 9.0.0 |
 | :--------: | :-----: | :-----: | :-----: |
-| `rules_java` | 7.10.0 with<br/>`--experimental_google_legacy_api` | 8.5.0 | 8.14.0 |
+| `rules_java` | 8.3.0 | 8.5.0 | 8.14.0 |
 
 The `test_prebuilt_protoc_from_protobuf_bazel_{7,8,9}` test cases from
 [`test_dependency_versions.sh`][] validate these requirements.
@@ -379,15 +376,12 @@ prebuilt protocol compiler toolchain. [`test_dependency_versions.sh`][]
 validates these versions, and is the official source of truth for backwards
 compatibility.
 
-Note that `rules_java` can be as low as 8.3.0, compared to `rules_java` 8.5.0
-specified in [Compatible Bazel versions](#compatible-bazel-versions).
-
 | Dependency | Minimum version | Reason |
 | :-: | :-: | :- |
 | `protobuf` | v33.4 | Minimum version that `rules_scala` supports. |
 | Bazel | 7.7.1 | `module(bazel_compatibility = "...")` constraints in `MODULE.bazel` |
 | `platforms` | 0.0.9 | Creates the `@host_platform` repo used to auto-detect the toolchain for the host platform. |
-| `rules_java` | 7.10.0 (Bazel 7, with `--experimental_google_legacy_api`)<br/>8.3.0 | `protobuf` v29 needs 7.8.0 with `--experimental_google_legacy_api` for `ProguardSpecProvider`. Then it needs 7.10.0 for `//java/private:proto_support.bzl` visibility.<br/>`protobuf` v29 needs `@rules_java//java/private:proto_support.bzl` from v8.2.0. See [bazelbuild/rules_java@94d5617](https://github.com/bazelbuild/rules_java/commit/94d5617cf3d97ddda10c81ba05a865e8e3a0408e).<br/>v8.3.0 fixes bazelbuild/rules_java#233. |
+| `rules_java` | 8.3.0 | `protobuf` v29 needs `@rules_java//java/private:proto_support.bzl` from v8.2.0. See [bazelbuild/rules_java@94d5617](https://github.com/bazelbuild/rules_java/commit/94d5617cf3d97ddda10c81ba05a865e8e3a0408e).<br/>v8.3.0 fixes bazelbuild/rules_java#233. |
 
 #### Common setup
 
@@ -611,7 +605,7 @@ supported for Bazel 7, 8, and 9.
 | Dependency | Bazel >= 7.7.1 | Bazel 8.x | Bazel 9.x |
 | :--------: | :------------: | :-------: | :-------: |
 | `protobuf` | v33.4 | v33.4 | v33.4 |
-| `rules_java` | 7.10.0 with<br/>`--experimental_google_legacy_api`, 8.4.0 | 8.5.0 | 8.14.0 |
+| `rules_java` | 8.3.0 | 8.5.0 | 8.14.0 |
 
 [`test_dependency_versions.sh`][] validates these minimum dependency versions
 and is the official source of truth for backwards compatibility.
@@ -764,11 +758,15 @@ Remove the `rules_proto_dependencies()`, `rules_proto_setup()`, and
 `rules_proto_toolchains()` calls from your `WORKSPACE` file. If your own code
 loads from `@rules_proto`, import `rules_proto` yourself.
 
-### Minimum of `rules_java` 7.10.0
+### Minimum of `rules_java` 8.3.0
 
-With `rules_java` 7.x, `rules_scala` requires at least `rules_java` 7.10.0 and
-the `--experimental_google_legacy_api` flag. `protobuf` v33.4 needs both. With
-`rules_java` 8.x, the minimum stays 8.4.0.
+`rules_scala` requires at least `rules_java` 8.3.0 with Bazel 7, 8.5.0 with
+Bazel 8, and 8.14.0 with Bazel 9. It drops support for `rules_java` 7.x. With
+Bzlmod, `protobuf` v33.4 already declares `rules_java` 8.6.1. If your build
+overrides `rules_java` to 7.x, or declares `rules_java` 7.x in its `WORKSPACE`
+file, update it to the minimum for your Bazel version or later. Remove
+`--experimental_google_legacy_api` if your build used it only for
+`rules_java` 7.x.
 
 ### Minimum of Scala 2.12
 
