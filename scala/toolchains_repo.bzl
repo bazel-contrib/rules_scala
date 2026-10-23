@@ -29,8 +29,8 @@ def _generate_testing_toolchain_build_file_args(repo_attr):
     }
 
 def _stringify(value):
-    """Wraps string values in double quotes for use in `BUILD` files."""
-    return "\"%s\"" % value if type(value) == "string" else value
+    """Wraps string and Label values in double quotes for use in `BUILD` files."""
+    return "\"%s\"" % value if type(value) in ("string", "Label") else value
 
 def _stringify_args(args, indent = " " * 4):
     """Formats a dict as `BUILD` rule or macro arguments."""
@@ -111,8 +111,7 @@ scala_toolchains_repo = repository_rule(
         "twitter_scrooge": attr.bool(
             doc = "Instantiate the twitter_scrooge toolchain",
         ),
-        # attr.string_keyed_label_dict needs Bazel 7.4 or later.
-        "twitter_scrooge_deps": attr.string_dict(
+        "twitter_scrooge_deps": attr.string_keyed_label_dict(
             doc = "twitter_scrooge toolchain dependency provider overrides",
         ),
     },

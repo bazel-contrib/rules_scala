@@ -83,7 +83,7 @@ do_build_and_test() {
   # `README.md` and as set in the top level `MODULE.bazel` file. Update both
   # if/when a test fails and the appropriate solution is to increase any of
   # these minimum suported versions.
-  local bazelversion="7.1.0"
+  local bazelversion="7.7.1"
   local skylib_version="1.8.0"
   local platforms_version="0.0.9"
   local protobuf_version="33.4"
@@ -174,7 +174,7 @@ do_build_and_test() {
     echo 'common --experimental_google_legacy_api' >>.bazelrc
   fi
 
-  if [[ "$bazel_major" == "7" && "$bazel_minor" -ge 3 ]]; then
+  if [[ "$bazel_major" == "7" ]]; then
     echo 'common --incompatible_use_plus_in_repo_names' >>.bazelrc
   fi
 
@@ -230,7 +230,6 @@ test_prebuilt_protoc_from_protobuf_bazel_7() {
 test_prebuilt_protoc_rules_java_8_3_0() {
   do_build_and_test \
     --protoc_toolchain=rules_scala \
-    --bazelversion=7.3.2 \
     --rules_java=8.3.0
 }
 
