@@ -4,6 +4,12 @@ load("//scala:jars_to_labels.bzl", "JarsToLabelsInfo")
 load("//scala:plusone.bzl", "PlusOneDeps")
 load("//scala:providers.bzl", "ScalaInfo")
 
+# In a coverage build, pairs each instrumented jar of a Scala target and its
+# Scala dependencies with the jar that scalac wrote before instrumentation.
+UninstrumentedJarsInfo = provider(fields = {
+    "jars": "depset of (instrumented jar, uninstrumented jar) tuples",
+})
+
 def write_manifest_file(actions, output_file, main_class):
     # TODO(bazel-team): I don't think this classpath is what you want
     manifest = "Class-Path: \n"
@@ -67,13 +73,14 @@ def collect_jars(
         # providers as normal, but put their transitive runtime dependencies first on the classpath. Note that we
         # shouldn't encounter any issues with external dependencies, so long as they aren't `ijar`d.
         if ScalaInfo in dep_target and dep_target[ScalaInfo].contains_macros:
-            macro_classpath.append(java_provider.transitive_runtime_jars)
+            macro_runtime_jars = _uninstrumented(dep_target, java_provider.transitive_runtime_jars)
+            macro_classpath.append(macro_runtime_jars)
 
             add_labels_of_jars_to(
                 jars2labels,
                 dep_target,
                 [],
-                java_provider.transitive_runtime_jars.to_list(),
+                macro_runtime_jars.to_list(),
             )
 
     return struct(
@@ -83,6 +90,14 @@ def collect_jars(
         transitive_compile_jars = depset(order = "preorder", transitive = macro_classpath + transitive_compile_jars),
         deps_providers = deps_providers,
     )
+
+# The Scala inliner refuses to copy a method that calls the JaCoCo runtime, so
+# the macro classpath gets the jars before instrumentation, in the same order.
+def _uninstrumented(dep_target, jars):
+    if UninstrumentedJarsInfo not in dep_target:
+        return jars
+    uninstrumented = dict(dep_target[UninstrumentedJarsInfo].jars.to_list())
+    return depset([uninstrumented.get(jar, jar) for jar in jars.to_list()], order = "preorder")
 
 def collect_plugin_paths(plugins):
     """Get the actual jar paths of plugins as a depset."""
