@@ -88,6 +88,12 @@ tasks:
       # (`env: 'bazel': No such file`). Forward the client PATH into test actions
       # so the nested calls find last_green, as released-Bazel steps already do.
       - echo "test --test_env=PATH" >>.bazelrc
+      # Pin last_green for the test script: bazelisk resolves it on each call,
+      # and a new binary changes PATH, which invalidates all cached test results.
+      - USE_BAZEL_VERSION="$(curl -fsS https://storage.googleapis.com/bazel-builds/last_green_commit/github.com/bazelbuild/bazel.git/publish-bazel-binaries)" || exit 1
+      # bazelisk falls back to .bazelversion when this is empty.
+      - test -n "$USE_BAZEL_VERSION" || exit 1
+      - export USE_BAZEL_VERSION
       # Downstream consumer tests aren't expected to build against an
       # unreleased Bazel; skip them so a green here means an actual
       # last_green regression, not third-party noise.
