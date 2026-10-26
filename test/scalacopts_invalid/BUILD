@@ -31,6 +31,6 @@ scala_library(
     for scala_version, version_specific_message in [
         ("2.12.21", "expected_bad_option.txt"),
         ("2.13.18", "expected_bad_option.txt"),
-        ("3.3.8", "expected_not_valid_choice.txt"),
+        ("3.3.9", "expected_not_valid_choice.txt"),
     ]
 ]
