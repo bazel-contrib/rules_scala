@@ -99,7 +99,7 @@ expect_build_failure_test(
         # compiler is Java 17 bytecode). The nested `bazel test //...` runs under
         # the CI agent's local JDK (Java 11 on the macOS runner), so a newer 3.x
         # would fail to start there. The bug under test is not version-specific.
-        "--repo_env=SCALA_VERSION=3.3.8",
+        "--repo_env=SCALA_VERSION=3.3.9",
         _AST_PLUS_ERROR,
     ],
     expect = ["expected_unused_dep.txt"],

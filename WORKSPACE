@@ -64,12 +64,12 @@ scala_config(
         "2.12.21",
         "2.13.18",
         "3.1.3",
-        "3.3.8",
+        "3.3.9",  # LTS
         "3.5.2",
         "3.6.4",
         "3.7.4",
         "3.8.4",
-        "3.9.0",
+        "3.9.0",  # LTS
         "3.10.0",
     ],
 )
@@ -157,8 +157,8 @@ rules_jvm_external_version = "6.8"
 
 http_archive(
     name = "rules_jvm_external",
-    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
     sha256 = "704a0197e4e966f96993260418f2542568198490456c21814f647ae7091f56f2",
+    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
 )
 
@@ -180,12 +180,12 @@ maven_install(
         # needs the "native" classifier jar specifically to test importing a
         # classified artifact.
         maven.artifact(
-            group = "com.github.jnr",
+            testonly = True,
             artifact = "jffi",
-            version = "1.2.17",
             classifier = "native",
             force_version = True,
-            testonly = True,
+            group = "com.github.jnr",
+            version = "1.2.17",
         ),
         "com.google.guava:guava:21.0",
         "org.apache.commons:commons-lang3:3.18.0",

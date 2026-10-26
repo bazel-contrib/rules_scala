@@ -46,10 +46,10 @@ scala_protoc_toolchains(name = "rules_scala_protoc_toolchains")
 load("@rules_scala//:scala_config.bzl", "scala_config")
 
 scala_config(
-    scala_version = "3.3.8",
+    scala_version = "3.3.9",
     scala_versions = [
         "2.13.18",
-        "3.3.8",
+        "3.3.9",
     ],
 )
 
