@@ -16,7 +16,7 @@ coverage_test(
 # package skips them.
 coverage_test(
     name = "coverage_with_scala3_macro_test",
-    bazel_args = ["--repo_env=SCALA_VERSION=3.3.8"],
+    bazel_args = ["--repo_env=SCALA_VERSION=3.3.9"],
     expected_line = "SF:test/coverage_jacoco_runtime/UserScala3.scala",
     target = ":test_scala3",
 )

@@ -185,7 +185,7 @@ sh_test(
             "--toolchain=" + ("//test/semanticdb:semanticdb_bundle_toolchain" if is_bundle else "//test/semanticdb:semanticdb_nobundle_toolchain"),
             "--is-bundle=" + str(is_bundle),
             "--scala-epoch=" + str(scala_epoch),
-        ] + (["--repo_env=SCALA_VERSION=3.3.8"] if scala_epoch == 3 else []),
+        ] + (["--repo_env=SCALA_VERSION=3.3.9"] if scala_epoch == 3 else []),
         data = _SEMANTICDB_FIXTURE_DATA + (
             [] if scala_epoch == 3 else [":semantic_provider_vars_all_bundle_fixture_actions" if is_bundle else ":semantic_provider_vars_all_nobundle_fixture_actions"]
         ),
@@ -210,7 +210,7 @@ sh_test(
 _TOOLCHAIN_DEPS_SCALA_VERSIONS = [
     "2.12.21",
     "2.13.18",
-    "3.3.8",
+    "3.3.9",
     "3.10.0",
 ]
 
