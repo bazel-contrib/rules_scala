@@ -2,8 +2,8 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 # Each rule's output jar must be announced in the Build Event Protocol. Same
 # check, once per rule kind, off one parameterised script; all share one nested
-# output base (they are `exclusive`, so they serialize rather than multiply the
-# ~1GB of extracted Scala jars a separate base would cost).
+# output base and one resource lock, so they run one at a time and do not
+# multiply the ~1GB of extracted Scala jars a separate base would cost.
 [
     sh_test(
         name = "%s_jar_exposed_in_bep_test" % name,
@@ -18,7 +18,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
             "//test/expect_build_failure:nested_bazel.sh",
         ],
         tags = [
-            "exclusive",
+            "resources:build_event_protocol_lock:1",
             "local",
             "no-release",
             "requires-network",
