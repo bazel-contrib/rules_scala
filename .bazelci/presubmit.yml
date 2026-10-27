@@ -58,6 +58,11 @@ tasks:
       # sandboxing -- BUILDKITE reaches downstream_test_driver.sh (see
       # test/community_build/downstream_test.bzl) only with this forward.
       - "--test_env=BUILDKITE"
+      # bazelci.py passes --local_test_jobs=N. When N is more than 0, Bazel
+      # ignores the "resources:<name>:<n>" test tags, so the per-group locks in
+      # .bazelrc stop working. With 0, the locks apply, and the CPU count and --jobs
+      # set how many tests run at the same time.
+      - "--local_test_jobs=0"
   macos:
     name: "bazel test //..."
     platform: macos
@@ -67,6 +72,9 @@ tasks:
     test_targets:
       - "//..."
       - "-//test_expect_failure/..."
+    test_flags:
+      # See the ubuntu2004 task.
+      - "--local_test_jobs=0"
   test_rules_scala_linux:
     name: "./test_rules_scala"
     platform: ubuntu2004
@@ -144,6 +152,9 @@ tasks:
       - "//test_thirdparty_version/..."
     test_targets:
       - "//test_thirdparty_version/..."
+    test_flags:
+      # See the ubuntu2004 task.
+      - "--local_test_jobs=0"
   examples_linux:
     name: "./test_examples"
     platform: ubuntu2004
