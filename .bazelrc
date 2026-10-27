@@ -74,6 +74,8 @@ test --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resou
 # the "resources:<group>_lock:1" tag on each) at one running test at a time.
 # Tests in different groups still run together. Tests that write into the
 # source tree stay "exclusive" instead, so they run after the outer build ends.
+# These caps and the lane caps above apply only with --local_test_jobs=0 (the
+# default), see .bazelci/presubmit.yml.
 test --local_resources=build_event_protocol_lock=1 --local_resources=bzlmod_macros_lock=1
 test --local_resources=coverage_lock=1 --local_resources=cross_build_lock=1
 test --local_resources=diagnostics_reporter_lock=1 --local_resources=fetch_sources_lock=1
