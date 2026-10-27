@@ -183,7 +183,7 @@ def _phase_compile(
 
     external_providers = {"JavaInfo": out.merged_provider}
     if ctx.configuration.coverage_enabled:
-        external_providers["UninstrumentedJarsInfo"] = _uninstrumented_jars_info(ctx, out.uninstrumented_jar)
+        external_providers["UninstrumentedJarsInfo"] = _uninstrumented_jars_info(ctx, p, out)
 
     # TODO: simplify the return values and use provider
     return struct(
@@ -193,12 +193,23 @@ def _phase_compile(
         external_providers = external_providers,
     )
 
-def _uninstrumented_jars_info(ctx, uninstrumented_jar):
+def _uninstrumented_jars_info(ctx, p, out):
     deps = ctx.attr.deps + getattr(ctx.attr, "exports", []) + getattr(ctx.attr, "runtime_deps", [])
-    return UninstrumentedJarsInfo(jars = depset(
-        [(ctx.outputs.jar, uninstrumented_jar)] if uninstrumented_jar else [],
+    jars = depset(
+        [(ctx.outputs.jar, out.uninstrumented_jar)] if out.uninstrumented_jar else [],
         transitive = [dep[UninstrumentedJarsInfo].jars for dep in deps if UninstrumentedJarsInfo in dep],
-    ))
+    )
+    macro_runtime_jars = None
+    if hasattr(p, "scalainfo_provider") and p.scalainfo_provider.external_providers["ScalaInfo"].contains_macros:
+        # The Scala inliner refuses to copy a method that calls the JaCoCo
+        # runtime, so the macro classpath of a dependent gets the jars before
+        # instrumentation. Each dependent reuses this depset.
+        uninstrumented = dict(jars.to_list())
+        macro_runtime_jars = depset(
+            [uninstrumented.get(jar, jar) for jar in out.merged_provider.transitive_runtime_jars.to_list()],
+            order = "preorder",
+        )
+    return UninstrumentedJarsInfo(jars = jars, macro_runtime_jars = macro_runtime_jars)
 
 def _compile_or_empty(
         ctx,
