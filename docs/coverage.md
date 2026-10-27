@@ -222,7 +222,11 @@ Dependents compile against the classes before instrumentation, so the Scala
 inliner (`-opt:inline`) can copy methods from them. rules_scala also supplies
 these classes when scalac runs macros. The exception is a Scala library that a
 macro gets only through a target of another rule, such as `java_library` or
-`scala_import`: scalac then reads its instrumented classes. Scaladoc runs
+`scala_import`: scalac then reads its instrumented classes. To inline from such
+a library, remove it from instrumentation with `--instrumentation_filter`. The
+coverage report then omits that library. When the inliner copies a method into
+a dependent, the hits of the copy count for the dependent. The original method
+gets hits only from the calls that the inliner leaves in place. Scaladoc runs
 macros from the instrumented jars.
 `scala_library_for_plugin_bootstrapping` keeps its uninstrumented jar. An
 instrumented class calls the JaCoCo runtime when it runs. rules_scala adds this
