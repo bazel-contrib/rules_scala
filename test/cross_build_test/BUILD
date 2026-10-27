@@ -20,7 +20,7 @@ _NESTED_BAZEL_TAGS = [
     "local",
     "no-release",
     "requires-network",
-    "exclusive",
+    "resources:cross_build_lock:1",
     # Neither nested invocation inherits the outer sweep's --extra_toolchains
     # (nested_bazel_run builds its own command line from scratch), so a
     # toolchain sweep here always exercises the same configuration.
