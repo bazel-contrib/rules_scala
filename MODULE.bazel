@@ -12,7 +12,7 @@
 module(
     name = "rules_scala",
     version = "",
-    bazel_compatibility = [">=7.1.0"],
+    bazel_compatibility = [">=7.4.0"],
     compatibility_level = 7,
 )
 

@@ -237,12 +237,7 @@ def scala_toolchains(
         scala_proto_options = scala_proto_options["default_gen_opts"],
         jmh = jmh,
         twitter_scrooge = twitter_scrooge,
-        # When the minimum Bazel version is 7.4 or later, change this attribute to
-        # attr.string_keyed_label_dict and remove this conversion.
-        twitter_scrooge_deps = {
-            k: str(v)
-            for k, v in twitter_scrooge_options.items()
-        },
+        twitter_scrooge_deps = twitter_scrooge_options,
     )
 
 def scala_register_toolchains(name = _DEFAULT_TOOLCHAINS_REPO_NAME):
