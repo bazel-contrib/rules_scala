@@ -20,7 +20,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
             "//third_party/repositories:scala_2_13.bzl",
         ],
         tags = [
-            "exclusive",
+            "resources:scala_config_lock:1",
             "local",
             "no-release",
             "requires-network",
@@ -46,7 +46,7 @@ sh_test(
         "//:scala_config.bzl",
     ],
     tags = [
-        "exclusive",
+        "resources:scala_config_lock:1",
         "local",
         "no-release",
         "requires-network",

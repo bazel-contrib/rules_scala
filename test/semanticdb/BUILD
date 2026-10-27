@@ -151,7 +151,7 @@ sh_test(
     srcs = ["no_semanticdb_test.sh"],
     data = _SEMANTICDB_FIXTURE_DATA + [":all_lib_fixture_actions"],
     tags = [
-        "exclusive",
+        "resources:semanticdb_lock:1",
         "no-release",
         "no-remote-exec",
         "no-sandbox",
@@ -190,7 +190,7 @@ sh_test(
             [] if scala_epoch == 3 else [":semantic_provider_vars_all_bundle_fixture_actions" if is_bundle else ":semantic_provider_vars_all_nobundle_fixture_actions"]
         ),
         tags = [
-            "exclusive",
+            "resources:semanticdb_lock:1",
             "no-release",
             "no-remote-exec",
             "no-sandbox",
