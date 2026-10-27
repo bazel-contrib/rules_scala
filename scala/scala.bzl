@@ -13,6 +13,10 @@ load(
     _scaladoc_intransitive_aspect = "scaladoc_intransitive_aspect",
 )
 load(
+    "//scala/private:rules/scala_export.bzl",
+    _scala_export = "scala_export",
+)
+load(
     "//scala/private:rules/scala_junit_test.bzl",
     _scala_junit_test = "scala_junit_test",
 )
@@ -58,6 +62,7 @@ make_scala_doc_rule = _make_scala_doc_rule
 scaladoc_intransitive_aspect = _scaladoc_intransitive_aspect
 scala_doc = _make_scala_doc_rule()
 ScaladocAspectInfo = _ScaladocAspectInfo
+scala_export = _scala_export
 scala_junit_test = _scala_junit_test
 scala_library = _scala_library
 scala_library_for_plugin_bootstrapping = _scala_library_for_plugin_bootstrapping

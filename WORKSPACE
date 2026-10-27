@@ -153,15 +153,6 @@ rules_shell_dependencies()
 
 rules_shell_toolchains()
 
-rules_jvm_external_version = "6.8"
-
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = "704a0197e4e966f96993260418f2542568198490456c21814f647ae7091f56f2",
-    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
-)
-
 load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
 
 rules_jvm_external_deps()
@@ -206,3 +197,18 @@ maven_install(
 load("@rules_scala_test_maven//:defs.bzl", "pinned_maven_install")
 
 pinned_maven_install()
+
+http_archive(
+    name = "aspect_bazel_lib",
+    sha256 = "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
+        "https://github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
+    ],
+)
+
+load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies", "aspect_bazel_lib_register_toolchains")
+
+aspect_bazel_lib_dependencies()
+
+aspect_bazel_lib_register_toolchains()

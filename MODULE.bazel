@@ -56,7 +56,7 @@ single_version_override(
     version = "9.6.1",
 )
 
-bazel_dep(name = "rules_jvm_external", version = "6.8")
+bazel_dep(name = "rules_jvm_external", version = "6.9")
 bazel_dep(
     name = "protobuf",
     version = "33.4",
@@ -262,6 +262,7 @@ bazel_dep(
 bazel_dep(name = "buildifier_prebuilt", version = "8.5.1.4", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.8.5", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.0", dev_dependency = True)
 
 # Fetches real external consumers for downstream tests. See
 # test/community_build/README.md for what these are and how they work.
