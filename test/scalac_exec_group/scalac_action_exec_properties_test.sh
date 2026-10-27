@@ -30,10 +30,6 @@ if [[ -z "${expected}" || "${#targets[@]}" -eq 0 ]]; then
   exit 2
 fi
 
-# Shares the output base of the other nested-Bazel tests (see
-# expect_build_failure.sh): they run at the same Scala version, so the extracted
-# external repos stay warm instead of costing another ~1GB. Callers must tag
-# this test "exclusive" -- see the BUILD file.
 nested_bazel_setup "rules_scala_expect_build_failure_output_base"
 
 # One combined query over all targets rather than one per target: each nested

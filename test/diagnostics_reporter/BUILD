@@ -133,7 +133,7 @@ _FIXTURES = [
             ":diagnostics_reporter_test",
         ] + glob(["**/*"], allow_empty = True),
         tags = [
-            "exclusive",
+            "resources:diagnostics_reporter_lock:1",
             "local",
             "no-release",
             "requires-network",
