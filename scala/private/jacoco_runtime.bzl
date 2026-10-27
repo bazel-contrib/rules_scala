@@ -2,8 +2,9 @@
 
 # Some tools run code from other targets while they build: scalac and scaladoc
 # run macros, code generators run generator classes. In a coverage build
-# (`bazel coverage` or `--collect_code_coverage`), JaCoCo has instrumented that
-# code, so each of its classes calls the JaCoCo runtime library when it loads.
+# (`bazel coverage` or `--collect_code_coverage`), some of that code is
+# instrumented, and each instrumented class calls the JaCoCo runtime library
+# when it runs.
 # These tools therefore need the runtime library on their own classpath, or
 # they fail with NoClassDefFoundError.
 #
