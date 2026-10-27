@@ -161,10 +161,7 @@ http_archive(
 )
 
 # This imports the minimum versions supported by the minimum supported Bazel
-# version, plus `rules_java` 8.5.0. If you use an earlier `rules_java` 8
-# version, the corresponding `load` statements are slightly different. See the
-# `WORKSPACE` snippet from https://github.com/bazelbuild/rules_java/releases
-# corresponding to the `rules_java` version for details.
+# version.
 #
 # If you want the latest dependency versions, change `deps.bzl` to
 # `latest_deps.bzl`.
@@ -329,7 +326,7 @@ are:
 
 | Dependency | Bazel 7.4.0 | Bazel 8.0.0 | Bazel 9.0.0 |
 | :--------: | :-----: | :-----: | :-----: |
-| `rules_java` | 8.3.0 | 8.5.0 | 8.14.0 |
+| `rules_java` | 8.5.0 | 8.5.0 | 8.14.0 |
 
 The `test_prebuilt_protoc_from_protobuf_bazel_{7,8,9}` test cases from
 [`test_dependency_versions.sh`][] validate these requirements.
@@ -381,7 +378,7 @@ compatibility.
 | `protobuf` | v33.4 | Minimum version that `rules_scala` supports. |
 | Bazel | 7.4.0 | `module(bazel_compatibility = "...")` constraints in `MODULE.bazel` |
 | `platforms` | 0.0.9 | Creates the `@host_platform` repo used to auto-detect the toolchain for the host platform. |
-| `rules_java` | 8.3.0 | `protobuf` v29 needs `@rules_java//java/private:proto_support.bzl` from v8.2.0. See [bazelbuild/rules_java@94d5617](https://github.com/bazelbuild/rules_java/commit/94d5617cf3d97ddda10c81ba05a865e8e3a0408e).<br/>v8.3.0 fixes bazelbuild/rules_java#233. |
+| `rules_java` | 8.5.0 | Minimum version that `rules_scala` supports. |
 
 #### Common setup
 
@@ -605,7 +602,7 @@ supported for Bazel 7, 8, and 9.
 | Dependency | Bazel >= 7.4.0 | Bazel 8.x | Bazel 9.x |
 | :--------: | :------------: | :-------: | :-------: |
 | `protobuf` | v33.4 | v33.4 | v33.4 |
-| `rules_java` | 8.3.0 | 8.5.0 | 8.14.0 |
+| `rules_java` | 8.5.0 | 8.5.0 | 8.14.0 |
 
 [`test_dependency_versions.sh`][] validates these minimum dependency versions
 and is the official source of truth for backwards compatibility.
@@ -757,15 +754,18 @@ Remove the `rules_proto_dependencies()`, `rules_proto_setup()`, and
 `rules_proto_toolchains()` calls from your `WORKSPACE` file. If your own code
 loads from `@rules_proto`, import `rules_proto` yourself.
 
-### Minimum of `rules_java` 8.3.0
+### Minimum of `rules_java` 8.5.0
 
-`rules_scala` requires at least `rules_java` 8.3.0 with Bazel 7, 8.5.0 with
-Bazel 8, and 8.14.0 with Bazel 9. It drops support for `rules_java` 7.x. With
-Bzlmod, `protobuf` v33.4 already declares `rules_java` 8.6.1. If your build
-overrides `rules_java` to 7.x, or declares `rules_java` 7.x in its `WORKSPACE`
-file, update it to the minimum for your Bazel version or later. Remove
+`rules_scala` requires at least `rules_java` 8.5.0 with Bazel 7 and 8, and
+8.14.0 with Bazel 9. It drops support for `rules_java` 7.x. With Bzlmod,
+`protobuf` v33.4 already declares `rules_java` 8.6.1. If your build overrides
+`rules_java` to 7.x, or declares `rules_java` 7.x in its `WORKSPACE` file,
+update it to the minimum for your Bazel version or later. Remove
 `--experimental_google_legacy_api` if your build used it only for
 `rules_java` 7.x.
+
+Since `rules_java` 8.1.0, the default Java language version is 11, up from 8.
+To keep compiling Java sources for Java 8, set `--java_language_version=8`.
 
 ### Minimum of Scala 2.12
 

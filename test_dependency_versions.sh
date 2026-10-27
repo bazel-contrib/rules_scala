@@ -87,7 +87,7 @@ do_build_and_test() {
   local skylib_version="1.8.0"
   local platforms_version="0.0.9"
   local protobuf_version="33.4"
-  local rules_java_version="8.3.0"
+  local rules_java_version="8.5.0"
   local protoc_toolchain=""
   local bazel_major=""
   local bazel_minor=""
@@ -195,33 +195,22 @@ test_minimum_supported_versions() {
   do_build_and_test
 }
 
-test_prebuilt_protoc_rules_java_8_3_2() {
-  do_build_and_test \
-    --protoc_toolchain=rules_scala \
-    --rules_java=8.3.2
-}
-
 test_prebuilt_protoc_from_protobuf_bazel_7() {
   do_build_and_test --protoc_toolchain=protobuf
 }
 
-test_prebuilt_protoc_rules_java_8_3_0() {
-  do_build_and_test \
-    --protoc_toolchain=rules_scala \
-    --rules_java=8.3.0
+test_prebuilt_protoc_rules_scala() {
+  do_build_and_test --protoc_toolchain=rules_scala
 }
 
 test_bazel_8() {
-  do_build_and_test \
-    --bazelversion=8.0.0 \
-    --rules_java=8.5.0
+  do_build_and_test --bazelversion=8.0.0
 }
 
 test_prebuilt_protoc_from_protobuf_bazel_8() {
   do_build_and_test \
     --protoc_toolchain=protobuf \
-    --bazelversion=8.0.0 \
-    --rules_java=8.5.0
+    --bazelversion=8.0.0
 }
 
 test_bazel_9() {
