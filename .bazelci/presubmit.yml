@@ -60,8 +60,8 @@ tasks:
       - "--test_env=BUILDKITE"
       # bazelci.py passes --local_test_jobs=N. When N is more than 0, Bazel
       # ignores the "resources:<name>:<n>" test tags, so the per-group locks in
-      # .bazelrc stop working. With 0, the locks apply, and the CPU count and --jobs
-      # set how many tests run at the same time.
+      # .bazelrc stop working. With 0, the locks apply, and the CPU and memory
+      # of the machine and --jobs set how many tests run at the same time.
       - "--local_test_jobs=0"
   macos:
     name: "bazel test //..."
