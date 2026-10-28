@@ -61,7 +61,7 @@ build:ci-cache-gcs --google_default_credentials
 build:ci-cache-gcs --remote_timeout=3600
 build:ci-cache-gcs --remote_max_connections=200
 
-# Caps each of the 3 lanes expect_build_failure_test's nested tests hash into
+# Caps each of the 6 lanes expect_build_failure_test's nested tests hash into
 # (see the "resources:laneN_lock:1" tag in expect_build_failure.bzl) at one
 # running test at a time, so two tests in the same lane access their shared
 # nested output base one at a time. A higher macOS amount was tried, to work
@@ -69,6 +69,7 @@ build:ci-cache-gcs --remote_max_connections=200
 # resource delays every unrelated test alongside it, but its own script-level
 # lock caused more timeouts than this flat cap, so 1 stayed uniform.
 test --local_resources=lane0_lock=1 --local_resources=lane1_lock=1 --local_resources=lane2_lock=1
+test --local_resources=lane3_lock=1 --local_resources=lane4_lock=1 --local_resources=lane5_lock=1
 
 # Caps each group of nested-bazel tests that share one nested output base (see
 # the "resources:<group>_lock:1" tag on each) at one running test at a time.
