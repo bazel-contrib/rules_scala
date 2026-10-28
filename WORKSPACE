@@ -5,6 +5,16 @@ load("//scala:latest_deps.bzl", "rules_scala_dependencies")
 
 rules_scala_dependencies()
 
+# Before `protobuf_deps()`, which declares an older version.
+rules_jvm_external_version = "6.9"
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = "7277554de7f63345c639399f5156fe592361de39ffcd3c5424b985c847510bcf",
+    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
+)
+
 # Only include the next two statements if using
 # `--incompatible_enable_proto_toolchain_resolution`.
 load("@platforms//host:extension.bzl", "host_platform_repo")
@@ -197,18 +207,3 @@ maven_install(
 load("@rules_scala_test_maven//:defs.bzl", "pinned_maven_install")
 
 pinned_maven_install()
-
-http_archive(
-    name = "aspect_bazel_lib",
-    sha256 = "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
-        "https://github.com/bazelbuild/aspect_bazel_lib/releases/download/2.22.0/aspect_bazel_lib-2.22.0.tar.gz",
-    ],
-)
-
-load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies", "aspect_bazel_lib_register_toolchains")
-
-aspect_bazel_lib_dependencies()
-
-aspect_bazel_lib_register_toolchains()
