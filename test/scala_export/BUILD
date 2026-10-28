@@ -1,5 +1,5 @@
-load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
-load("@rules_scala//scala:scala.bzl", "scala_export", "scala_library")
+load("@rules_scala//scala:scala.bzl", "scala_library")
+load("@rules_scala//scala:scala_export.bzl", "scala_export")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 scala_library(
@@ -31,8 +31,16 @@ scala_export(
     unused_dependency_checker_mode = "off",
     deps = [
         ":dep",
+        ":deploy_env_dep",
         ":external_dep",
     ],
+)
+
+scala_export(
+    name = "testonly_export",
+    testonly = True,
+    srcs = ["Dependency.scala"],
+    maven_coordinates = "com.example:testonly:1.0.0",
 )
 
 genrule(
@@ -57,10 +65,17 @@ sh_test(
     ],
 )
 
-diff_test(
+sh_test(
     name = "validate-pom",
-    file1 = ":test-pom",
-    file2 = "pom.golden.xml",
+    srcs = ["diff.sh"],
+    args = [
+        "$(rootpath :test-pom)",
+        "$(rootpath pom.golden.xml)",
+    ],
+    data = [
+        ":test-pom",
+        "pom.golden.xml",
+    ],
 )
 
 genrule(
@@ -72,8 +87,15 @@ genrule(
     cmd = "for SRC in $(SRCS); do jar tf $$SRC >> $@; done",
 )
 
-diff_test(
+sh_test(
     name = "validate-scaladocs",
-    file1 = ":scaladocs.txt",
-    file2 = "scaladocs.golden.txt",
+    srcs = ["diff.sh"],
+    args = [
+        "$(rootpath :scaladocs.txt)",
+        "$(rootpath scaladocs.golden.txt)",
+    ],
+    data = [
+        ":scaladocs.txt",
+        "scaladocs.golden.txt",
+    ],
 )
