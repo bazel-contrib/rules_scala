@@ -13,17 +13,17 @@ set -euox pipefail
 
 classes_file=$(rlocation rules_scala/test/scala_export/classes.txt)
 
-if grep -q DeployEnvDependency.class "$classes_file"; then
+if grep -q /DeployEnvDependency.class "$classes_file"; then
   echo "Unexpectedly found DeployEnvDependency class in jar"
   exit 1
 fi
 
-if ! grep -q Dependency.class "$classes_file"; then
+if ! grep -q /Dependency.class "$classes_file"; then
   echo "Missing Dependency class from jar"
   exit 1
 fi
 
-if ! grep -q Main.class "$classes_file"; then
+if ! grep -q /Main.class "$classes_file"; then
   echo "Missing Main class from jar"
   exit 1
 fi  

@@ -1,4 +1,5 @@
-load("@rules_jvm_external//:defs.bzl", "create_jar", "maven_export")
+load("@bazel_skylib//rules:run_binary.bzl", "run_binary")
+load("@rules_jvm_external//:defs.bzl", "maven_export")
 load("//scala/private:rules/scala_doc.bzl", "make_scala_doc_rule", "scaladoc_intransitive_aspect")
 load("//scala/private:rules/scala_library.bzl", "scala_library")
 
@@ -25,7 +26,8 @@ def scala_export(
         publish_maven_metadata = False,
         **kwargs):
     """Extends `scala_library` to allow maven artifacts to be uploaded. This
-    rule is the Scala version of `java_export`.
+    rule is the Scala version of `java_export`. It needs `rules_jvm_external`
+    6.9 or later, which a legacy `WORKSPACE` must declare itself.
 
     This macro can be used as a drop-in replacement for `scala_library`, but
     also generates an implicit `name.publish` target that can be run to publish
@@ -60,8 +62,9 @@ def scala_export(
     To skip generation of the javadoc jar, add the `no-javadocs` tag to the target.
 
     Generated rules:
-      * `name`: A `scala_library` that other rules can depend upon.
-      * `name-docs`: A scaladoc jar file (published as javadoc).
+      * `name`: The artifact's jar, for other rules to depend upon.
+      * `name-lib`: The `scala_library` that compiles the sources.
+      * `name-javadoc`: A scaladoc jar file (published as javadoc).
       * `name-pom`: The pom.xml file.
       * `name.publish`: To be executed by `bazel run` to publish to a maven repo.
 
@@ -78,9 +81,8 @@ def scala_export(
     maven_coordinates_tags = ["maven_coordinates=%s" % maven_coordinates]
     lib_name = "%s-lib" % name
 
-    javadocopts = kwargs.pop("javadocopts", None)
     doc_resources = kwargs.pop("doc_resources", [])
-    classifier_artifacts = kwargs.pop("classifier_artifacts", {})
+    classifier_artifacts = dict(kwargs.pop("classifier_artifacts", {}))
 
     scala_library(
         name = lib_name,
@@ -95,14 +97,26 @@ def scala_export(
         scala_doc(
             name = scaladocs_name,
             deps = [":" + lib_name],
+            scalacopts = kwargs.get("scalacopts", []),
+            tags = tags,
+            testonly = testonly,
             visibility = visibility,
         )
 
+        # This is the body of rules_jvm_external's `create_jar`, which accepts
+        # only `name`, `inputs` and `out`, so it cannot set `testonly`.
         javadoc_jar_name = name + "-javadoc"
-        create_jar(
+        javadoc_jar = name + "-javadoc.jar"
+        javadoc_inputs = [":" + scaladocs_name] + doc_resources
+        run_binary(
             name = javadoc_jar_name,
-            inputs = [":" + scaladocs_name] + doc_resources,
-            out = name + "-javadoc.jar",
+            srcs = javadoc_inputs,
+            outs = [javadoc_jar],
+            tool = "@rules_jvm_external//private/tools/java/com/github/bazelbuild/rules_jvm_external/jar:CreateJar",
+            args = ["$(location %s)" % javadoc_jar] + ["$(location %s)" % i for i in javadoc_inputs],
+            tags = tags,
+            testonly = testonly,
+            visibility = visibility,
         )
         classifier_artifacts["javadoc"] = javadoc_jar_name
 
