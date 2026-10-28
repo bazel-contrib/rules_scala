@@ -37,15 +37,6 @@ def rules_scala_dependencies():
 
     maybe(
         http_archive,
-        name = "rules_jvm_external",
-        urls = [
-            "https://github.com/bazelbuild/rules_jvm_external/releases/download/6.9/rules_jvm_external-6.9.tar.gz",
-        ],
-        sha256 = "3c41eae4226a7dfdce7b213bc541557b8475c92da71e2233ec7c306630243a65",
-    )
-
-    maybe(
-        http_archive,
         name = "com_google_protobuf",
         sha256 = "136a07aad488cc502b11c4416fe4a7df2dfdea1d0833a7a8211000bf952728ba",
         strip_prefix = "protobuf-33.4",
