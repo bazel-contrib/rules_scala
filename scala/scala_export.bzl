@@ -24,6 +24,7 @@ def scala_export(
         tags = [],
         testonly = None,
         publish_maven_metadata = False,
+        scala_library_maven_deps = Label("@rules_scala_toolchains//scala:scala_library_maven_deps"),
         **kwargs):
     """Extends `scala_library` to allow maven artifacts to be uploaded. This
     rule is the Scala version of `java_export`. It needs `rules_jvm_external`
@@ -75,6 +76,13 @@ def scala_export(
       deploy_env: A list of labels of java targets to exclude from the generated jar
       visibility: The visibility of the target
       publish_maven_metadata: Whether to publish a maven-metadata.xml
+      scala_library_maven_deps: A target that exports the Scala standard
+        library with `maven_coordinates` tags, which puts the standard library
+        in the pom and removes it from the jar. The default target exports the
+        jars of the default Scala toolchain. Give your own target if your
+        toolchain sets a different `scala_library_classpath`. Use your own
+        target or `None` with `scala_toolchains(scala = False)`, which skips the
+        default target. `None` adds no target.
       kwargs: These are passed to [`scala_library`](https://github.com/bazelbuild/rules_scala/blob/master/docs/scala_library.md),
         and so may contain any valid parameter for that rule.
     """
@@ -84,8 +92,13 @@ def scala_export(
     doc_resources = kwargs.pop("doc_resources", [])
     classifier_artifacts = dict(kwargs.pop("classifier_artifacts", {}))
 
+    exports = kwargs.pop("exports", [])
+    if scala_library_maven_deps:
+        exports = exports + [scala_library_maven_deps]
+
     scala_library(
         name = lib_name,
+        exports = exports,
         tags = tags + maven_coordinates_tags,
         testonly = testonly,
         visibility = visibility,
