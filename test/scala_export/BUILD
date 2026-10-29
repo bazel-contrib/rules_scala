@@ -65,18 +65,56 @@ sh_test(
     ],
 )
 
-sh_test(
-    name = "validate-pom",
-    srcs = ["diff.sh"],
-    args = [
-        "$(rootpath :test-pom)",
-        "$(rootpath pom.golden.xml)",
-    ],
-    data = [
-        ":test-pom",
-        "pom.golden.xml",
-    ],
+scala_export(
+    name = "scala3_export",
+    srcs = ["Dependency.scala"],
+    maven_coordinates = "com.example:scala3:1.0.0",
+    scala_version = "3.7.4",
 )
+
+scala_export(
+    name = "bundled_stdlib_export",
+    srcs = ["ExternalDependency.scala"],
+    maven_coordinates = "com.example:bundled:1.0.0",
+    scala_library_maven_deps = None,
+)
+
+[
+    genrule(
+        name = "list-%s-classes" % target,
+        srcs = [":%s-project" % target],
+        outs = ["%s_classes.txt" % target],
+        cmd = "jar tf $< > $@",
+    )
+    for target in [
+        "external_dep",
+        "bundled_stdlib_export",
+    ]
+]
+
+# The Scala standard library goes in the pom with compile scope, and its classes
+# stay out of the jar. The jar check uses `:external_dep`, because the `deploy_env` of `:test`
+# also removes them.
+[
+    sh_test(
+        name = name,
+        srcs = ["//test/string_checks:string_in_file.sh"],
+        args = [
+            expected,
+            string,
+            "$(rootpath %s)" % file,
+        ],
+        data = [file],
+    )
+    for name, expected, string, file in [
+        ("pom-has-external", "true", "external", ":test-pom"),
+        ("pom-has-scala-library", "true", "scala-library", ":test-pom"),
+        ("pom-has-scala3-library", "true", "scala3-library_3", ":scala3_export-pom"),
+        ("pom-has-compile-scope", "false", "runtime", ":scala3_export-pom"),
+        ("jar-has-no-scala-classes", "false", "scala/", ":external_dep_classes.txt"),
+        ("bundled-jar-has-scala-classes", "true", "scala/", ":bundled_stdlib_export_classes.txt"),
+    ]
+]
 
 genrule(
     name = "list-scaladocs",
