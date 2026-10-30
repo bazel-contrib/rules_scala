@@ -6,4 +6,12 @@ class InlineTest extends AnyFunSuite {
   test("inlined call") {
     assert(App.four == 4)
   }
+
+  test("inlined call next to a macro") {
+    assert(MacroApp.four == 4)
+  }
+
+  test("inlined call into a macro library") {
+    assert(CheckedApp.checked(1) == 1)
+  }
 }

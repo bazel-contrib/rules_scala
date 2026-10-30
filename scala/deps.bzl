@@ -26,18 +26,6 @@ def rules_scala_dependencies():
         sha256 = "5eda539c841265031c2f82d8ae7a3a6490bd62176e0c038fc469eabf91f6149b",
     )
 
-    # If using `rules_java` between 7.6.0 and 8.4.0, the `WORKSPACE` statements
-    # are different. See:
-    # - https://github.com/bazelbuild/rules_java/releases/tag/7.6.0
-    #maybe(
-    #    http_archive,
-    #    name = "rules_java",
-    #    urls = [
-    #        "https://github.com/bazelbuild/rules_java/releases/download/7.6.0/rules_java-7.6.0.tar.gz",
-    #    ],
-    #    sha256 = "1da22389fe688c515ed732d01a2b18f3961eb4431aec40dcbaa043b58ba7941e",
-    #)
-
     maybe(
         http_archive,
         name = "rules_java",

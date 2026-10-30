@@ -1,13 +1,16 @@
+load("@rules_java//java:defs.bzl", "java_library")
 load("//scala:scala.bzl", "scala_binary", "scala_library", "scala_macro_library", "scala_test")
 load("//test/coverage_test:coverage_test.bzl", "coverage_test")
 
 # `bazel coverage` instruments every library and binary in this package (the
 # default --instrumentation_filter), so the instrumented classes also call the
-# JaCoCo runtime outside the test JVM: in the macro while scalac expands it, and
-# in the binary and the library deploy jar at run time.
+# JaCoCo runtime outside the test JVM: in the binary and the library deploy jar
+# at run time, and in :java_helper while scalac expands the macro. scalac gets
+# the Scala jars of a macro before instrumentation, and Bazel instruments the
+# Java jars.
 coverage_test(
     name = "coverage_with_macro_binary_and_deploy_jar_test",
-    expected_line = "SF:test/coverage_jacoco_runtime/Helper.scala",
+    expected_line = "SF:test/coverage_jacoco_runtime/User.scala",
     target = ":test",
 )
 
@@ -39,7 +42,7 @@ scala_macro_library(
     name = "macro_scala3",
     srcs = ["MacroScala3.scala"],
     tags = ["manual"],
-    deps = [":helper"],
+    deps = [":java_helper"],
 )
 
 scala_test(
@@ -75,7 +78,12 @@ scala_library(
 scala_macro_library(
     name = "macro",
     srcs = ["Macro.scala"],
-    deps = [":helper"],
+    deps = [":java_helper"],
+)
+
+java_library(
+    name = "java_helper",
+    srcs = ["JavaHelper.java"],
 )
 
 scala_library(
