@@ -122,7 +122,8 @@ genrule(
         ":test-javadoc",
     ],
     outs = ["scaladocs.txt"],
-    cmd = "for SRC in $(SRCS); do jar tf $$SRC >> $@; done",
+    # The order of jar entries differs on Windows.
+    cmd = "jar tf $< | LC_ALL=C sort > $@",
 )
 
 sh_test(
