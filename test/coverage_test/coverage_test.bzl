@@ -34,7 +34,7 @@ def coverage_test(
         tags = [
             "no-sandbox",
             "external",
-            "exclusive",
+            "resources:coverage_lock:1",
             "requires-network",
             "no-release",
             "skip-toolchain-sweep",
@@ -49,10 +49,11 @@ def coverage_test(
     reads the real source tree, not this test's runfiles (see nested_bazel.sh
     module docstring), so there is no correct cache key to give it short of
     never caching at all -- `external` is Bazel's own way of saying that.
-    Tagged `exclusive` because every coverage_test shares one nested output
-    base (see nested_bazel.sh): two of these running at once could race on the
-    same fixture's coverage.dat (e.g. one run's --instrument_test_targets=True
-    result landing where another run without it expected to read its own).
+    Tagged `resources:coverage_lock:1` because every coverage_test shares one
+    nested output base (see nested_bazel.sh): two of these running at once
+    could race on the same fixture's coverage.dat (e.g. one run's
+    --instrument_test_targets=True result landing where another run without it
+    expected to read its own).
     Tagged `no-release`, like every other disk-heavy nested-bazel test, so the
     release workflow's constrained disk budget skips it.
     Tagged `skip-toolchain-sweep`: the nested `bazel coverage` runs under its

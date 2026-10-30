@@ -245,13 +245,13 @@ def _nested_bazel_test(
     # result is also kept out of the shared cache. `no-remote-exec` because
     # this reads this machine's tree.
     #
-    # Splits the shared nested output base into 3 lanes (hash(name) % 3) so
+    # Splits the shared nested output base into 6 lanes (hash(name) % 6) so
     # tests in different lanes run concurrently instead of all serializing on
     # one shared output base. The `resources:laneN_lock:1` tag asks each test
     # for one unit of its lane's lock; .bazelrc caps every laneN_lock at 1, so
     # two same-lane tests always queue behind each other and never touch
     # their shared output base at the same time.
-    lane = hash(name) % 3
+    lane = hash(name) % 6
     args += ["--lane", str(lane)]
     execution_tags = tags + ["no-remote-exec", "resources:lane%d_lock:1" % lane]
 
