@@ -56,7 +56,7 @@ single_version_override(
     version = "9.6.1",
 )
 
-bazel_dep(name = "rules_jvm_external", version = "6.8")
+bazel_dep(name = "rules_jvm_external", version = "6.9")
 bazel_dep(
     name = "protobuf",
     version = "33.4",
