@@ -168,8 +168,8 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
     ]
 ]
 
-# The `scala_library_classpath` jars carry `maven_coordinates` tags, so
-# `scala_export` lists them in the pom and leaves them out of the jar.
+# The `scala_library_classpath` jars have `maven_coordinates` tags. Thus
+# `scala_export` lists them in the pom and removes them from the jar.
 java_library(
     name = "scala_library_maven_deps",
     visibility = ["//visibility:public"],

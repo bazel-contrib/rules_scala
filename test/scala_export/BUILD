@@ -92,9 +92,9 @@ scala_export(
     ]
 ]
 
-# The Scala standard library goes in the pom with compile scope, and its classes
-# stay out of the jar. The jar check uses `:external_dep`, because the `deploy_env` of `:test`
-# also removes them.
+# The pom lists the Scala standard library with compile scope, and the jar
+# omits its classes. The jar check uses `:external_dep`, because the
+# `deploy_env` of `:test` also removes these classes.
 [
     sh_test(
         name = name,
