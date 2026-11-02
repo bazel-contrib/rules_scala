@@ -1,5 +1,6 @@
 load("@bazel_skylib//lib:dicts.bzl", _dicts = "dicts")
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
+load("//scala:providers.bzl", "ScalaInfo")
 load("//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
 load(
     "//scala/private:common.bzl",
@@ -105,7 +106,7 @@ def make_scala_library(*extras):
         ],
         exec_groups = {"scalac": exec_group()},
         cfg = scala_version_transition,
-        provides = [JavaInfo],
+        provides = [JavaInfo, ScalaInfo],
         implementation = _scala_library_impl,
     )
 
@@ -211,7 +212,7 @@ def make_scala_library_for_plugin_bootstrapping(*extras):
         ],
         exec_groups = {"scalac": exec_group()},
         cfg = scala_version_transition,
-        provides = [JavaInfo],
+        provides = [JavaInfo, ScalaInfo],
         implementation = _scala_library_for_plugin_bootstrapping_impl,
     )
 
@@ -288,7 +289,7 @@ def make_scala_macro_library(*extras):
         ],
         exec_groups = {"scalac": exec_group()},
         cfg = scala_version_transition,
-        provides = [JavaInfo],
+        provides = [JavaInfo, ScalaInfo],
         implementation = _scala_macro_library_impl,
     )
 

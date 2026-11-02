@@ -2,6 +2,7 @@
 
 load("@bazel_skylib//lib:dicts.bzl", _dicts = "dicts")
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
+load("//scala:providers.bzl", "ScalaInfo")
 load("//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
 load("//scala/private:common.bzl", "sanitize_string_for_usage")
 load(
@@ -129,7 +130,7 @@ def make_scala_test(*extras):
         ],
         exec_groups = {"scalac": exec_group()},
         cfg = scala_version_transition,
-        provides = [JavaInfo],
+        provides = [JavaInfo, ScalaInfo],
         implementation = _scala_test_impl,
     )
 

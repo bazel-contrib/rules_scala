@@ -5,5 +5,5 @@ import scala.quoted.*
 object MacroScala3 {
   inline def twice(inline i: Int): Int = ${ twiceImpl('i) }
 
-  def twiceImpl(i: Expr[Int])(using Quotes): Expr[Int] = Expr(Helper.twice(i.valueOrAbort))
+  def twiceImpl(i: Expr[Int])(using Quotes): Expr[Int] = Expr(JavaHelper.twice(i.valueOrAbort))
 }

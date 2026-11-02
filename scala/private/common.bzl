@@ -4,6 +4,13 @@ load("//scala:jars_to_labels.bzl", "JarsToLabelsInfo")
 load("//scala:plusone.bzl", "PlusOneDeps")
 load("//scala:providers.bzl", "ScalaInfo")
 
+# In a coverage build, pairs each instrumented jar of a Scala target and its
+# Scala dependencies with the jar that scalac wrote before instrumentation.
+UninstrumentedJarsInfo = provider(fields = {
+    "jars": "depset of (instrumented jar, uninstrumented jar) tuples",
+    "macro_runtime_jars": "For a macro library: its transitive runtime jars in the same order, with each instrumented jar replaced by its uninstrumented jar. None for other targets.",
+})
+
 def write_manifest_file(actions, output_file, main_class):
     # TODO(bazel-team): I don't think this classpath is what you want
     manifest = "Class-Path: \n"
@@ -67,13 +74,16 @@ def collect_jars(
         # providers as normal, but put their transitive runtime dependencies first on the classpath. Note that we
         # shouldn't encounter any issues with external dependencies, so long as they aren't `ijar`d.
         if ScalaInfo in dep_target and dep_target[ScalaInfo].contains_macros:
-            macro_classpath.append(java_provider.transitive_runtime_jars)
+            macro_runtime_jars = java_provider.transitive_runtime_jars
+            if UninstrumentedJarsInfo in dep_target:
+                macro_runtime_jars = dep_target[UninstrumentedJarsInfo].macro_runtime_jars
+            macro_classpath.append(macro_runtime_jars)
 
             add_labels_of_jars_to(
                 jars2labels,
                 dep_target,
                 [],
-                java_provider.transitive_runtime_jars.to_list(),
+                macro_runtime_jars.to_list(),
             )
 
     return struct(

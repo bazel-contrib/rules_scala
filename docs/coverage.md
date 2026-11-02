@@ -218,13 +218,21 @@ uncovered, and `JacocoInstrumenter` prints a warning naming it. The default is
 
 In a coverage build, Bazel selects targets for instrumentation. For each
 selected Scala target with sources, rules_scala instruments the runtime jar.
-Dependents still compile against the uninstrumented classes, so the Scala
-inliner (`-opt:inline`) works the same with or without coverage.
+Dependents compile against the classes before instrumentation, so the Scala
+inliner (`-opt:inline`) can copy methods from them. rules_scala also supplies
+these classes when scalac runs macros. The exception is a Scala library that a
+macro gets only through a target of another rule, such as `java_library` or
+`scala_import`: scalac then reads its instrumented classes. To inline from such
+a library, remove it from instrumentation with `--instrumentation_filter`. The
+coverage report then omits that library. When the inliner copies a method into
+a dependent, the hits of the copy count for the dependent. The original method
+gets hits only from the calls that the inliner leaves in place. Scaladoc runs
+macros from the instrumented jars.
 `scala_library_for_plugin_bootstrapping` keeps its uninstrumented jar. An
 instrumented class calls the JaCoCo runtime when it runs. rules_scala adds this
 runtime to `scala_binary`, `scala_repl`, the deploy jars and runfiles of
 `scala_library` and `scala_macro_library`, and its own build tools, such as
-scalac for macros.
+scalac for macros that call instrumented Java code.
 
 Some tools load the runtime jar of a Scala target during the build. An example
 is a code generator that loads its generator classes from a target in the
