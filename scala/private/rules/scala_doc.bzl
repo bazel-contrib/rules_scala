@@ -26,7 +26,7 @@ def _scaladoc_intransitive_aspect_impl(target, ctx):
     return _scaladoc_aspect_impl(target, ctx, transitive = False)
 
 def _scaladoc_aspect_impl(target, ctx, transitive = True):
-    """Collect source files and compile_jars from JavaInfo-returning deps."""
+    """Collect sources, jars and Scala versions from JavaInfo-returning deps."""
 
     src_files = depset()
     class_jars = depset()
@@ -137,7 +137,8 @@ def _scala3_doc(ctx, output_path, compile_jars):
     java_runtime = ctx.attr._java_host_runtime[java_common.JavaRuntimeInfo]
 
     # `java` reads all arguments from the file, so the command line stays short
-    # on Windows. The file has one argument on each line.
+    # on Windows. Scaladoc's own `@file` reader fails on a quote in an
+    # argument, so the rule runs `java` with a `java` argument file.
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)

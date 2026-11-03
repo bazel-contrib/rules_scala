@@ -1,6 +1,6 @@
-load("@bazel_skylib//lib:unittest.bzl", "analysistest", "asserts")
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load("//scala:scala.bzl", "ScaladocAspectInfo", "make_scala_doc_rule", "scaladoc_intransitive_aspect")
+load("//test/expect_build_failure:expect_analysis_failure.bzl", "make_expect_analysis_failure_test")
 
 scala_doc_intransitive = make_scala_doc_rule(scaladoc_intransitive_aspect)  #Only scaladoc specified deps
 
@@ -20,17 +20,6 @@ _old_fields_aspect = aspect(
 
 scala_doc_old_fields = make_scala_doc_rule(_old_fields_aspect)
 
-def _without_doc_classpath_failure_impl(ctx):
-    env = analysistest.begin(ctx)
-    asserts.expect_failure(env, "Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain.")
-    return analysistest.end(env)
-
-# Asserts the error of Scala 3 `scala_doc` under the toolchain
-# `:scala3_without_doc_classpath`.
-scaladoc_without_doc_classpath_failure_test = analysistest.make(
-    _without_doc_classpath_failure_impl,
-    expect_failure = True,
-    config_settings = {
-        "//command_line_option:extra_toolchains": [str(Label(":scala3_without_doc_classpath"))],
-    },
-)
+expect_analysis_failure_without_doc_classpath_test = make_expect_analysis_failure_test({
+    "//command_line_option:extra_toolchains": ["//test/toolchains/scala_doc_classpath_missing:toolchain"],
+})

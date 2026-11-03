@@ -2,10 +2,9 @@ load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
-load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
-load("scaladoc.bzl", "scala_doc_intransitive", "scala_doc_old_fields", "scaladoc_without_doc_classpath_failure_test")
+load("scaladoc.bzl", "scala_doc_intransitive", "scala_doc_old_fields", "expect_analysis_failure_without_doc_classpath_test")
 
 package(default_testonly = 1)
 
@@ -116,13 +115,17 @@ scala_library(
 scala_library(
     name = "Sibling",
     srcs = ["Sibling.scala"],
+)
+
+scala_library(
+    name = "Scala2Lib",
+    srcs = ["Sibling.scala"],
     scala_version = "2.13.18",
 )
 
 scala_library(
     name = "Siblings",
     srcs = ["Siblings.scala"],
-    scala_version = "2.13.18",
     deps = [
         ":A",
         ":Sibling",
@@ -131,7 +134,6 @@ scala_library(
 
 scala_doc(
     name = "scaladoc_siblings",
-    scala_version = "2.13.18",
     deps = [":Siblings"],
 )
 
@@ -175,6 +177,29 @@ scala_library(
     ],
 )
 
+_OTHER_SCALA3_VERSIONS = [
+    "3.1.3",
+    "3.10.0",
+]
+
+[
+    scala_library(
+        name = "Scala3Enum_" + version.replace(".", "_"),
+        srcs = ["Color.scala"],
+        scala_version = version,
+    )
+    for version in _OTHER_SCALA3_VERSIONS
+]
+
+[
+    scala_doc(
+        name = "scaladoc_scala3_" + version.replace(".", "_"),
+        scala_version = version,
+        deps = [":Scala3Enum_" + version.replace(".", "_")],
+    )
+    for version in _OTHER_SCALA3_VERSIONS
+]
+
 [
     genrule(
         name = name + "_pages",
@@ -186,7 +211,7 @@ scala_library(
         "scaladoc_siblings",
         "scaladoc_scala3_transitive",
         "scaladoc_scala3_intransitive",
-    ]
+    ] + ["scaladoc_scala3_" + v.replace(".", "_") for v in _OTHER_SCALA3_VERSIONS]
 ]
 
 scala_doc(
@@ -221,6 +246,9 @@ scala_doc_intransitive(
         ("scaladoc_scala3_intransitive", "true", "./scalarules/test/scaladoc/Drawing.html"),
         ("scaladoc_scala3_intransitive", "false", "./scalarules/test/scaladoc/Color.html"),
         ("scaladoc_scala3_intransitive", "false", "./scalarules/test/scaladoc/Shape.html"),
+    ] + [
+        ("scaladoc_scala3_" + v.replace(".", "_"), "true", "./scalarules/test/scaladoc/Color.html")
+        for v in _OTHER_SCALA3_VERSIONS
     ]
 ]
 
@@ -274,7 +302,7 @@ scala_doc(
     name = "scaladoc_scala3_over_scala2",
     scala_version = "3.7.4",
     tags = ["manual"],
-    deps = [":Sibling"],
+    deps = [":Scala2Lib"],
 )
 
 expect_analysis_failure_test(
@@ -289,28 +317,6 @@ expect_analysis_failure_test(
     target_under_test = ":scaladoc_version_mismatch",
 )
 
-# The dep_providers list of a toolchain made before `scala_doc_classpath`
-# existed.
-scala_toolchain(
-    name = "scala3_without_doc_classpath_impl",
-    dep_providers = [
-        "@rules_scala_toolchains//scala:scala_xml_provider",
-        "@rules_scala_toolchains//scala:parser_combinators_provider",
-        "@rules_scala_toolchains//scala:scala_compile_classpath_provider",
-        "@rules_scala_toolchains//scala:scala_library_classpath_provider",
-        "@rules_scala_toolchains//scala:scala_macro_classpath_provider",
-        "@rules_scala_toolchains//scala:semanticdb_provider",
-    ],
-    testonly = False,
-)
-
-toolchain(
-    name = "scala3_without_doc_classpath",
-    target_settings = ["@rules_scala_config//:scala_version_3_7_4"],
-    toolchain = ":scala3_without_doc_classpath_impl",
-    toolchain_type = "//scala:toolchain_type",
-)
-
 scala_doc(
     name = "scaladoc_without_doc_classpath",
     scala_version = "3.7.4",
@@ -318,7 +324,9 @@ scala_doc(
     deps = [":Scala3Enum"],
 )
 
-scaladoc_without_doc_classpath_failure_test(
+expect_analysis_failure_without_doc_classpath_test(
     name = "scaladoc_without_doc_classpath_test",
+    message = "Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain.",
+    tags = ["skip-toolchain-sweep"],
     target_under_test = ":scaladoc_without_doc_classpath",
 )

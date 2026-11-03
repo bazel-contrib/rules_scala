@@ -39,7 +39,7 @@ def setup_scala_toolchain(
         # A caller who supplies their own compiler jars may lack the Scaladoc
         # repos, so Scala 3 `scala_doc` then needs `scala_doc_classpath`.
         scala_doc_classpath = (
-            default_deps("scala_doc_classpath", scala_version) if scala_compile_classpath == None else []
+            default_doc_classpath(scala_version) if scala_compile_classpath == None else []
         )
     declare_deps_provider(
         name = scala_doc_classpath_provider,
@@ -201,19 +201,6 @@ _SCALA_3_UPSTREAM_ASM = [
 ]
 
 def default_deps(deps_id, scala_version):
-    if deps_id == "scala_doc_classpath":
-        # Scala 2 Scaladoc runs from `scala_compile_classpath`. The Scala 3
-        # compiler artifacts of some versions omit `scala3-interfaces` from
-        # their deps, so Scala 3 Scaladoc also gets `scala_compile_classpath`.
-        if not scala_version.startswith("3."):
-            return []
-        return repositories(scala_version, ["@io_bazel_rules_scala_scaladoc"]) + _default_deps(
-            "scala_compile_classpath",
-            scala_version,
-        )
-    return _default_deps(deps_id, scala_version)
-
-def _default_deps(deps_id, scala_version):
     versions = _DEFAULT_DEPS[deps_id]
     deps = versions.get("any", []) + versions.get(scala_version[0], [])
     if (
@@ -230,3 +217,11 @@ def _default_deps(deps_id, scala_version):
 
 def default_repl_classpath(scala_version):
     return default_deps("scala_compile_classpath", scala_version) + repositories(scala_version, repl_extra_deps(scala_version))
+
+def default_doc_classpath(scala_version):
+    # Scala 2 Scaladoc runs from `scala_compile_classpath`. The Scala 3
+    # compiler artifacts of some versions omit `scala3-interfaces` from their
+    # deps, so Scala 3 Scaladoc also gets `scala_compile_classpath`.
+    if not scala_version.startswith("3."):
+        return []
+    return repositories(scala_version, ["@io_bazel_rules_scala_scaladoc"]) + default_deps("scala_compile_classpath", scala_version)

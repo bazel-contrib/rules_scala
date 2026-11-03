@@ -195,8 +195,8 @@ def scala_toolchains(
                 for id in scala_version_artifact_ids(scala_version)
             })
             version_specific_artifact_ids.update({
-                id: False
-                for id in scaladoc_artifact_ids(scala_version)
+                id: fetch
+                for id, fetch in scaladoc_artifact_ids(scala_version, fetch_sources).items()
                 if id not in version_specific_artifact_ids
             })
 

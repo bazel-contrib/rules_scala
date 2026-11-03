@@ -13,8 +13,8 @@ for targets, including sources from upstream deps. Readily hostable HTML is writ
 With Scala 3, `scala_doc` runs the Scala 3 Scaladoc. It reads the TASTy files
 of the compiled deps, so `scalacopts` gives Scaladoc options, for example
 `-source-links`. The Scala version of `scala_doc` and of its Scala deps must be
-the same major version: set `scala_version` on `scala_doc` to the version of the
-deps.
+the same major version: set [`scala_version`](cross-compilation.md) on
+`scala_doc` to the version of the deps.
 
 Scaladoc can be somewhat slow to build. In that case, you can tell Bazel to build this target manually,
 i.e. only when named explicitly and not through wildcards: `tags = ["manual"]`.
@@ -51,5 +51,4 @@ pkg_tar(
 | --------------------- | ----------------------------------------------------- |
 | name                  | `Name, required`<br/>A unique name for this target. |
 | deps                  | `List of labels, optional`<br/>Labels for which you want to create scaladoc. |
-| scalacopts            | `List of strings, optional`<br/>Extra compiler options for this library to be passed to scalac. |
-| scala_version         | `String, optional`<br/>The Scala version of the Scaladoc tool. It also applies to the deps that inherit their Scala version. |
+| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |

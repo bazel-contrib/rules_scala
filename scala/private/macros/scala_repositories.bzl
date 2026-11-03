@@ -299,26 +299,28 @@ def scala_version_artifact_ids(scala_version):
 
 SCALADOC_ARTIFACT_ID = "io_bazel_rules_scala_scaladoc"
 
-def scaladoc_artifact_ids(scala_version):
+def scaladoc_artifact_ids(scala_version, fetch_sources):
     """Returns the Scala 3 Scaladoc artifact and all of its dependencies.
-
-    Some of these artifacts publish no sources jar, so their repos skip it.
 
     Args:
         scala_version: Scala version string.
+        fetch_sources: whether to fetch the sources jars.
 
     Returns:
-        List of artifact ids from third_party/repositories/scala_3_*.bzl.
+        Dict from each artifact id in third_party/repositories/scala_3_*.bzl to
+        its `fetch_sources` value. An artifact without `srcjar_sha256` publishes
+        no sources jar, for example `flexmark-util`, so it gets False.
     """
     if not scala_version.startswith("3."):
-        return []
+        return {}
     artifacts = artifacts_by_major_scala_version[
         extract_major_version(scala_version)
     ]
     ids = {SCALADOC_ARTIFACT_ID: None}
     pending = [SCALADOC_ARTIFACT_ID]
 
-    # Starlark has no `while`, and each pass takes one artifact.
+    # Each artifact goes into `pending` at most once, so `len(artifacts)`
+    # passes are enough.
     for _ in range(len(artifacts)):
         if not pending:
             break
@@ -328,4 +330,7 @@ def scaladoc_artifact_ids(scala_version):
             if id not in ids:
                 ids[id] = None
                 pending.append(id)
-    return list(ids)
+    return {
+        id: fetch_sources and "srcjar_sha256" in artifacts[id]
+        for id in ids
+    }
