@@ -40,21 +40,21 @@ def _scaladoc_aspect_impl(target, ctx, transitive = True):
 
     # Sometimes we only want to generate scaladocs for a single target and not all of its
     # dependencies
-    transitive_srcs = depset()
-    transitive_plugins = depset()
+    transitive_srcs = []
+    transitive_plugins = []
 
     if transitive:
         for dep in ctx.rule.attr.deps:
             if ScaladocAspectInfo in dep:
                 aspec_info = dep[ScaladocAspectInfo]
-                transitive_srcs = aspec_info.src_files
-                transitive_plugins = aspec_info.plugins
+                transitive_srcs.append(aspec_info.src_files)
+                transitive_plugins.append(aspec_info.plugins)
 
     return [ScaladocAspectInfo(
-        src_files = depset(transitive = [src_files, transitive_srcs]),
+        src_files = depset(transitive = [src_files] + transitive_srcs),
         compile_jars = depset(transitive = [compile_jars]),
         macro_classpath = depset(transitive = macro_classpath),
-        plugins = depset(transitive = [plugins, transitive_plugins]),
+        plugins = depset(transitive = [plugins] + transitive_plugins),
     )]
 
 _scaladoc_transitive_aspect = aspect(

@@ -103,3 +103,46 @@ toolchain_build_test(
     extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
     target = ":scaladoc_C",
 )
+
+scala_library(
+    name = "Sibling",
+    srcs = ["Sibling.scala"],
+)
+
+scala_library(
+    name = "Siblings",
+    srcs = ["Siblings.scala"],
+    deps = [
+        ":A",
+        ":Sibling",
+    ],
+)
+
+scala_doc(
+    name = "scaladoc_siblings",
+    deps = [":Siblings"],
+)
+
+genrule(
+    name = "scaladoc_siblings_pages",
+    srcs = [":scaladoc_siblings"],
+    outs = ["scaladoc_siblings_pages.txt"],
+    cmd = "(cd $< && find -L . -type f -name '*.html') | LC_ALL=C sort > $@",
+)
+
+[
+    sh_test(
+        name = "scaladoc_siblings_has_" + page,
+        srcs = ["//test/string_checks:string_in_file.sh"],
+        args = [
+            "true",
+            "'./%s$$.html'" % page,
+            "$(rootpath :scaladoc_siblings_pages)",
+        ],
+        data = [":scaladoc_siblings_pages"],
+    )
+    for page in [
+        "A",
+        "Sibling",
+    ]
+]
