@@ -14,6 +14,10 @@ load(
     "URL_SUFFIX_BY_MAJOR_VERSION",
 )
 load("//scala/private:macros/repl_deps.bzl", "repl_extra_deps")
+load(
+    "//third_party/repositories:repositories.bzl",
+    "artifacts_by_major_scala_version",
+)
 
 def _dt_patched_compiler_impl(rctx):
     # Need to give the file a .zip extension so rctx.extract knows what type of archive it is
@@ -292,3 +296,36 @@ def scala_version_artifact_ids(scala_version):
     result.extend([dep.lstrip("@") for dep in repl_extra_deps(scala_version)])
 
     return result
+
+SCALADOC_ARTIFACT_ID = "io_bazel_rules_scala_scaladoc"
+
+def scaladoc_artifact_ids(scala_version):
+    """Returns the Scala 3 Scaladoc artifact and all of its dependencies.
+
+    Some of these artifacts publish no sources jar, so their repos skip it.
+
+    Args:
+        scala_version: Scala version string.
+
+    Returns:
+        List of artifact ids from third_party/repositories/scala_3_*.bzl.
+    """
+    if not scala_version.startswith("3."):
+        return []
+    artifacts = artifacts_by_major_scala_version[
+        extract_major_version(scala_version)
+    ]
+    ids = {SCALADOC_ARTIFACT_ID: None}
+    pending = [SCALADOC_ARTIFACT_ID]
+
+    # Starlark has no `while`, and each pass takes one artifact.
+    for _ in range(len(artifacts)):
+        if not pending:
+            break
+        artifact = artifacts[pending.pop()]
+        for dep in artifact.get("deps", []) + artifact.get("runtime_deps", []):
+            id = dep.lstrip("@")
+            if id not in ids:
+                ids[id] = None
+                pending.append(id)
+    return list(ids)

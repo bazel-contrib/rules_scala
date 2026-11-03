@@ -16,6 +16,7 @@ def setup_scala_toolchain(
         enable_semanticdb = False,
         visibility = ["//visibility:public"],
         scala_repl_classpath = None,
+        scala_doc_classpath = None,
         **kwargs):
     scala_xml_provider = "%s_scala_xml_provider" % name
     parser_combinators_provider = "%s_parser_combinators_provider" % name
@@ -23,6 +24,7 @@ def setup_scala_toolchain(
     scala_library_classpath_provider = "%s_scala_library_classpath_provider" % name
     scala_macro_classpath_provider = "%s_scala_macro_classpath_provider" % name
     scala_repl_classpath_provider = "%s_scala_repl_classpath_provider" % name
+    scala_doc_classpath_provider = "%s_scala_doc_classpath_provider" % name
     semanticdb_deps_provider = "%s_semanticdb_deps_provider" % name
 
     if scala_repl_classpath == None:
@@ -32,6 +34,19 @@ def setup_scala_toolchain(
         scala_repl_classpath = (
             default_repl_classpath(scala_version) if scala_compile_classpath == None else scala_compile_classpath
         )
+
+    if scala_doc_classpath == None:
+        # A caller who supplies their own compiler jars may lack the Scaladoc
+        # repos, so Scala 3 `scala_doc` then needs `scala_doc_classpath`.
+        scala_doc_classpath = (
+            default_deps("scala_doc_classpath", scala_version) if scala_compile_classpath == None else []
+        )
+    declare_deps_provider(
+        name = scala_doc_classpath_provider,
+        deps_id = "scala_doc_classpath",
+        visibility = visibility,
+        deps = scala_doc_classpath,
+    )
 
     if scala_compile_classpath == None:
         scala_compile_classpath = default_deps("scala_compile_classpath", scala_version)
@@ -101,6 +116,7 @@ def setup_scala_toolchain(
         scala_library_classpath_provider,
         scala_macro_classpath_provider,
         scala_repl_classpath_provider,
+        scala_doc_classpath_provider,
         semanticdb_deps_provider,
     ]
 
@@ -185,6 +201,19 @@ _SCALA_3_UPSTREAM_ASM = [
 ]
 
 def default_deps(deps_id, scala_version):
+    if deps_id == "scala_doc_classpath":
+        # Scala 2 Scaladoc runs from `scala_compile_classpath`. The Scala 3
+        # compiler artifacts of some versions omit `scala3-interfaces` from
+        # their deps, so Scala 3 Scaladoc also gets `scala_compile_classpath`.
+        if not scala_version.startswith("3."):
+            return []
+        return repositories(scala_version, ["@io_bazel_rules_scala_scaladoc"]) + _default_deps(
+            "scala_compile_classpath",
+            scala_version,
+        )
+    return _default_deps(deps_id, scala_version)
+
+def _default_deps(deps_id, scala_version):
     versions = _DEFAULT_DEPS[deps_id]
     deps = versions.get("any", []) + versions.get(scala_version[0], [])
     if (

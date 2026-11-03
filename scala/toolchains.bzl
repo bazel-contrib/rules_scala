@@ -8,6 +8,7 @@ load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
 load(
     "//scala/private:macros/scala_repositories.bzl",
     "scala_version_artifact_ids",
+    "scaladoc_artifact_ids",
     "setup_scala_compiler_sources",
 )
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
@@ -192,6 +193,11 @@ def scala_toolchains(
             version_specific_artifact_ids.update({
                 id: fetch_sources
                 for id in scala_version_artifact_ids(scala_version)
+            })
+            version_specific_artifact_ids.update({
+                id: False
+                for id in scaladoc_artifact_ids(scala_version)
+                if id not in version_specific_artifact_ids
             })
 
         if scala_proto:

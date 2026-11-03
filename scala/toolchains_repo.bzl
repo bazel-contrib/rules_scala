@@ -157,6 +157,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         "scala_compile_classpath",
         "scala_library_classpath",
         "scala_macro_classpath",
+        "scala_doc_classpath",
         "semanticdb",
     ]
 ]
