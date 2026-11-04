@@ -109,6 +109,7 @@ def scala_export(
             name = scaladocs_name,
             deps = [":" + lib_name],
             scalacopts = kwargs.get("scalacopts", []),
+            scala_version = kwargs.get("scala_version"),
             tags = tags,
             testonly = testonly,
             visibility = visibility,

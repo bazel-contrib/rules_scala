@@ -113,8 +113,16 @@ scala_export(
         ("pom-has-compile-scope", "false", "runtime", ":scala3_export-pom"),
         ("jar-has-no-scala-classes", "false", "scala/", ":external_dep_classes.txt"),
         ("bundled-jar-has-scala-classes", "true", "scala/", ":bundled_stdlib_export_classes.txt"),
+        ("scala3-javadoc-has-dependency", "true", "scala_export/Dependency.html", ":scala3_scaladocs.txt"),
     ]
 ]
+
+genrule(
+    name = "list-scala3-scaladocs",
+    srcs = [":scala3_export-javadoc"],
+    outs = ["scala3_scaladocs.txt"],
+    cmd = "jar tf $< > $@",
+)
 
 genrule(
     name = "list-scaladocs",
