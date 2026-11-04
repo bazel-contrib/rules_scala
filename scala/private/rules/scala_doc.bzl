@@ -7,6 +7,7 @@ load("//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_t
 load("//scala/private:common.bzl", "collect_plugin_paths")
 load(
     "//scala/private/toolchain_deps:toolchain_deps.bzl",
+    "find_deps_info_on",
     "find_deps_info_on_if_present",
 )
 
@@ -109,9 +110,13 @@ def _scala3_doc(ctx, output_path, compile_jars):
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
     if not doc_classpath or not doc_classpath.deps:
         fail("%s: Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain." % ctx.label)
+
+    # For some Scala 3 versions, `scala3-interfaces` comes only from
+    # `scala_compile_classpath`, so Scaladoc also gets that classpath.
+    compile_classpath = find_deps_info_on(ctx, _SCALA_TOOLCHAIN, "scala_compile_classpath")
     doc_jars = depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
-        for dep in doc_classpath.deps
+        for dep in doc_classpath.deps + compile_classpath.deps
     ])
 
     # Scaladoc reads a jar input only together with a `.tasty` file input.

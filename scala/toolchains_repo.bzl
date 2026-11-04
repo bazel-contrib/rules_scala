@@ -121,7 +121,6 @@ _SCALA_TOOLCHAIN_BUILD = """
 load(
     "@rules_scala//scala/private:macros/setup_scala_toolchain.bzl",
     "default_deps",
-    "default_doc_classpath",
     "default_repl_classpath",
     "setup_scala_toolchain",
 )
@@ -159,6 +158,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         "scala_library_classpath",
         "scala_macro_classpath",
         "semanticdb",
+        "scala_doc_classpath",
     ]
 ]
 
@@ -171,16 +171,6 @@ declare_deps_provider(
     visibility = ["//visibility:public"],
     deps = select({{
         "@rules_scala_config//:scala_version" + version_suffix(v): default_repl_classpath(v)
-        for v in SCALA_VERSIONS
-    }}),
-)
-
-declare_deps_provider(
-    name = "scala_doc_classpath_provider",
-    deps_id = "scala_doc_classpath",
-    visibility = ["//visibility:public"],
-    deps = select({{
-        "@rules_scala_config//:scala_version" + version_suffix(v): default_doc_classpath(v)
         for v in SCALA_VERSIONS
     }}),
 )
