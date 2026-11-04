@@ -217,6 +217,10 @@ _OTHER_SCALA3_VERSIONS = [
 scala_doc(
     name = "scaladoc_scala3_transitive",
     scala_version = "3.7.4",
+    scalacopts = [
+        "-project-footer",
+        "It's C:\\temp \"x\"",
+    ],
     deps = [":Scala3Drawing"],
 )
 
@@ -252,19 +256,9 @@ scala_doc_intransitive(
     ]
 ]
 
-scala_doc(
-    name = "scaladoc_scala3",
-    scala_version = "3.7.4",
-    scalacopts = [
-        "-project-footer",
-        "It's C:\\temp \"x\"",
-    ],
-    deps = [":Scala3Enum"],
-)
-
 genrule(
     name = "scaladoc_scala3_pages",
-    srcs = [":scaladoc_scala3"],
+    srcs = [":scaladoc_scala3_transitive"],
     outs = ["scaladoc_scala3_pages.html"],
     cmd = "cat $</index.html $</scalarules/test/scaladoc/Color.html > $@",
 )
@@ -317,16 +311,9 @@ expect_analysis_failure_test(
     target_under_test = ":scaladoc_version_mismatch",
 )
 
-scala_doc(
-    name = "scaladoc_without_doc_classpath",
-    scala_version = "3.7.4",
-    tags = ["manual"],
-    deps = [":Scala3Enum"],
-)
-
 expect_analysis_failure_without_doc_classpath_test(
     name = "scaladoc_without_doc_classpath_test",
     message = "Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain.",
     tags = ["skip-toolchain-sweep"],
-    target_under_test = ":scaladoc_without_doc_classpath",
+    target_under_test = ":scaladoc_scala3_transitive",
 )

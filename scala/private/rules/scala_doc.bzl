@@ -177,13 +177,7 @@ def _scala_doc_impl(ctx):
     # scaladoc warns if you don't have the output directory already created, which is annoying.
     output_path = ctx.actions.declare_directory("{}.html".format(ctx.attr.name))
 
-    # Collect all source files and compile_jars to pass to scaladoc by way of an aspect.
-    src_files = depset(transitive = [dep[ScaladocAspectInfo].src_files for dep in ctx.attr.deps])
     compile_jars = depset(transitive = [dep[ScaladocAspectInfo].compile_jars for dep in ctx.attr.deps])
-
-    # See the documentation for `collect_jars` in `scala/private/common.bzl` to understand why this is prepended to the
-    # classpath
-    macro_classpath = depset(transitive = [dep[ScaladocAspectInfo].macro_classpath for dep in ctx.attr.deps])
 
     # Scala 3 Scaladoc reads TASTy, which Scala 2 omits. Scala 2 Scaladoc
     # compiles the sources, and Scala 3 syntax makes it fail.
@@ -203,6 +197,13 @@ def _scala_doc_impl(ctx):
     if scala3:
         _scala3_doc(ctx, output_path, compile_jars)
         return [DefaultInfo(files = depset(direct = [output_path]))]
+
+    # Collect all source files to pass to scaladoc by way of an aspect.
+    src_files = depset(transitive = [dep[ScaladocAspectInfo].src_files for dep in ctx.attr.deps])
+
+    # See the documentation for `collect_jars` in `scala/private/common.bzl` to understand why this is prepended to the
+    # classpath
+    macro_classpath = depset(transitive = [dep[ScaladocAspectInfo].macro_classpath for dep in ctx.attr.deps])
 
     # Get the 'real' paths to the plugin jars.
     plugins = collect_plugin_paths(depset(transitive = [dep[ScaladocAspectInfo].plugins for dep in ctx.attr.deps]).to_list())
