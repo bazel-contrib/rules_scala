@@ -194,9 +194,12 @@ def scala_toolchains(
                 id: fetch_sources
                 for id in scala_version_artifact_ids(scala_version)
             })
+            # The default Scala 3 toolchain depends on Scaladoc, so all builds
+            # that use it download these jars. To keep this download small,
+            # the build gets only the class jars of Scaladoc.
             version_specific_artifact_ids.update({
-                id: fetch
-                for id, fetch in scaladoc_artifact_ids(scala_version, fetch_sources).items()
+                id: False
+                for id in scaladoc_artifact_ids(scala_version)
                 if id not in version_specific_artifact_ids
             })
 
