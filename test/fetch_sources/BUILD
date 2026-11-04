@@ -15,6 +15,7 @@ sh_test(
     ],
     tags = [
         "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
@@ -35,6 +36,7 @@ sh_test(
     ],
     tags = [
         "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
@@ -55,6 +57,7 @@ sh_test(
     ],
     tags = [
         "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
@@ -75,6 +78,7 @@ sh_test(
     ],
     tags = [
         "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",

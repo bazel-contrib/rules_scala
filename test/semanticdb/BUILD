@@ -152,6 +152,7 @@ sh_test(
     data = _SEMANTICDB_FIXTURE_DATA + [":all_lib_fixture_actions"],
     tags = [
         "resources:semanticdb_lock:1",
+        "resources:nested_bazel:1",
         "no-release",
         "no-remote-exec",
         "no-sandbox",
@@ -191,6 +192,7 @@ sh_test(
         ),
         tags = [
             "resources:semanticdb_lock:1",
+            "resources:nested_bazel:1",
             "no-release",
             "no-remote-exec",
             "no-sandbox",

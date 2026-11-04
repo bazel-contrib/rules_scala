@@ -17,5 +17,6 @@ sh_test(
         "local",
         "no-release",
         "requires-network",
+        "resources:nested_bazel:1",
     ],
 )

@@ -19,6 +19,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
         ],
         tags = [
             "resources:build_event_protocol_lock:1",
+            "resources:nested_bazel:1",
             "local",
             "no-release",
             "requires-network",
