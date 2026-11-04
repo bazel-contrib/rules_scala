@@ -81,3 +81,8 @@ test --local_resources=build_event_protocol_lock=1 --local_resources=bzlmod_macr
 test --local_resources=coverage_lock=1 --local_resources=cross_build_lock=1
 test --local_resources=diagnostics_reporter_lock=1 --local_resources=fetch_sources_lock=1
 test --local_resources=scala_config_lock=1 --local_resources=semanticdb_lock=1
+
+# With --local_test_jobs=0, at most four tests with the
+# "resources:nested_bazel:1" tag can run at the same time.
+# Each nested build can use all CPUs and large amounts of memory.
+test --local_resources=nested_bazel=4

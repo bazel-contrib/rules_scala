@@ -24,6 +24,7 @@ compiler_dependency_tracking_test_suite(name = "compiler_dependency_tracking_tes
         ],
         tags = [
             "resources:scala_config_lock:1",
+            "resources:nested_bazel:1",
             "local",
             "no-release",
             "requires-network",
@@ -54,6 +55,7 @@ sh_test(
     ],
     tags = [
         "resources:scala_config_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",

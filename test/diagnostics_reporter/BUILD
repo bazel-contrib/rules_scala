@@ -134,6 +134,7 @@ _FIXTURES = [
         ] + glob(["**/*"], allow_empty = True),
         tags = [
             "resources:diagnostics_reporter_lock:1",
+            "resources:nested_bazel:1",
             "local",
             "no-release",
             "requires-network",
