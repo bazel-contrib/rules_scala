@@ -299,20 +299,22 @@ def scala_version_artifact_ids(scala_version):
 
 SCALADOC_ARTIFACT_ID = "io_bazel_rules_scala_scaladoc"
 
-def scaladoc_artifact_ids(scala_version):
+def scaladoc_artifact_ids(scala_version, overridden_artifacts = {}):
     """Returns the Scala 3 Scaladoc artifact and all of its dependencies.
 
     Args:
         scala_version: Scala version string.
+        overridden_artifacts: artifacts that replace the ones in
+            third_party/repositories/scala_3_*.bzl, with their own deps.
 
     Returns:
-        List of artifact ids from third_party/repositories/scala_3_*.bzl.
+        List of artifact ids.
     """
     if not scala_version.startswith("3."):
         return []
     artifacts = artifacts_by_major_scala_version[
         extract_major_version(scala_version)
-    ]
+    ] | overridden_artifacts
     ids = {SCALADOC_ARTIFACT_ID: None}
     pending = [SCALADOC_ARTIFACT_ID]
 
@@ -321,7 +323,8 @@ def scaladoc_artifact_ids(scala_version):
     for _ in range(len(artifacts)):
         if not pending:
             break
-        artifact = artifacts[pending.pop()]
+        # `repositories()` reports an unknown id.
+        artifact = artifacts.get(pending.pop(), {})
         for dep in artifact.get("deps", []) + artifact.get("runtime_deps", []):
             id = dep.lstrip("@")
             if id not in ids:
