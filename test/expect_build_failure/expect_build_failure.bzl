@@ -253,7 +253,7 @@ def _nested_bazel_test(
     # their shared output base at the same time.
     lane = hash(name) % 6
     args += ["--lane", str(lane)]
-    execution_tags = tags + ["no-remote-exec", "resources:lane%d_lock:1" % lane]
+    execution_tags = tags + ["no-remote-exec", "resources:lane%d_lock:1" % lane, "resources:nested_bazel:1"]
 
     # De-duplicate by canonical label: `code_under_test` re-lists files that are
     # also named explicitly (e.g. the expect/reject `.txt`s, passed as `:foo.txt`),
