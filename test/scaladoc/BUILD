@@ -177,8 +177,10 @@ scala_library(
     ],
 )
 
+# Scala 3.3.1 is the oldest Scala 3 version that runs on JDK 21, which CI
+# also uses.
 _OTHER_SCALA3_VERSIONS = [
-    "3.1.3",
+    "3.3.9",
     "3.10.0",
 ]
 
