@@ -51,4 +51,4 @@ pkg_tar(
 | --------------------- | ----------------------------------------------------- |
 | name                  | `Name, required`<br/>A unique name for this target. |
 | deps                  | `List of labels, optional`<br/>Labels for which you want to create scaladoc. |
-| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |
+| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options, and it also gets the `plugins` and `scalacopts` of the Scala toolchain. `scala_doc` skips a toolchain option that has `#` or `"`. |
