@@ -5,6 +5,16 @@ load("//scala:latest_deps.bzl", "rules_scala_dependencies")
 
 rules_scala_dependencies()
 
+# Before `protobuf_deps()`, which declares an older version.
+rules_jvm_external_version = "6.9"
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = "7277554de7f63345c639399f5156fe592361de39ffcd3c5424b985c847510bcf",
+    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
+)
+
 # Only include the next two statements if using
 # `--incompatible_enable_proto_toolchain_resolution`.
 load("@platforms//host:extension.bzl", "host_platform_repo")
@@ -152,15 +162,6 @@ load(
 rules_shell_dependencies()
 
 rules_shell_toolchains()
-
-rules_jvm_external_version = "6.8"
-
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = "704a0197e4e966f96993260418f2542568198490456c21814f647ae7091f56f2",
-    strip_prefix = "rules_jvm_external-%s" % rules_jvm_external_version,
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % rules_jvm_external_version,
-)
 
 load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
 

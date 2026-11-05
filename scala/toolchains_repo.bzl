@@ -125,6 +125,7 @@ load(
     "setup_scala_toolchain",
 )
 load("@rules_scala//scala:providers.bzl", "declare_deps_provider")
+load("@rules_java//java:java_library.bzl", "java_library")
 load("@rules_scala//scala:scala_cross_version.bzl", "version_suffix")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
 
@@ -161,6 +162,17 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         "scala_doc_classpath",
     ]
 ]
+
+# The `scala_library_classpath` jars have `maven_coordinates` tags. Thus
+# `scala_export` lists them in the pom and removes them from the jar.
+java_library(
+    name = "scala_library_maven_deps",
+    visibility = ["//visibility:public"],
+    exports = select({{
+        "@rules_scala_config//:scala_version" + version_suffix(v): default_deps("scala_library_classpath", v)
+        for v in SCALA_VERSIONS
+    }}),
+)
 
 # scala_repl_classpath's extra deps key off the exact minor version (see
 # repl_extra_deps), finer-grained than _DEFAULT_DEPS's major-version buckets,
