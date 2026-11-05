@@ -447,3 +447,50 @@ expect_analysis_failure_test(
     message = "Scala 3 `scala_doc` sets `-siteroot`. Use `site_srcs` and `site_root` for static site files.",
     target_under_test = ":scaladoc_scala3_siteroot_opt",
 )
+
+# Scala 2.13 rejects a postfix operator without `-language:postfixOps`. Only
+# the toolchain sets this option, so these targets build only under that
+# toolchain. The toolchain also sets an option with a space, and Scaladoc
+# fails if it splits this option.
+scala_library(
+    name = "Postfix",
+    srcs = ["Postfix.scala"],
+    scala_version = "2.13.18",
+    tags = ["manual"],
+)
+
+scala_doc(
+    name = "scaladoc_Postfix",
+    scala_version = "2.13.18",
+    tags = ["manual"],
+    deps = [":Postfix"],
+)
+
+toolchain_build_test(
+    name = "scaladoc_Postfix_test",
+    extra_toolchains = ["//test/toolchains/scala_doc_options:postfix_ops"],
+    target = ":scaladoc_Postfix",
+)
+
+# Scala 2 reads `*` in a type as a type lambda only with the kind-projector
+# plugin. Only the toolchain loads this plugin, so these targets build only
+# under that toolchain.
+scala_library(
+    name = "KindProjector",
+    srcs = ["KindProjector.scala"],
+    scala_version = "2.12.21",
+    tags = ["manual"],
+)
+
+scala_doc(
+    name = "scaladoc_KindProjector",
+    scala_version = "2.12.21",
+    tags = ["manual"],
+    deps = [":KindProjector"],
+)
+
+toolchain_build_test(
+    name = "scaladoc_KindProjector_test",
+    extra_toolchains = ["//test/toolchains/scala_doc_options:kind_projector"],
+    target = ":scaladoc_KindProjector",
+)

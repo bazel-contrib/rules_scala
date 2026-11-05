@@ -185,7 +185,8 @@ def _scala_doc_impl(ctx):
     compile_jars = depset(transitive = [dep[ScaladocAspectInfo].compile_jars for dep in ctx.attr.deps])
 
     # Scala 2 Scaladoc compiles the sources, and Scala 3 syntax makes it fail.
-    scala_version = ctx.toolchains[_SCALA_TOOLCHAIN].scala_version
+    toolchain = ctx.toolchains[_SCALA_TOOLCHAIN]
+    scala_version = toolchain.scala_version
     scala3 = scala_version.startswith("3.")
     # A custom aspect can make `ScaladocAspectInfo` without the newer fields.
     scala_versions = depset(transitive = [getattr(dep[ScaladocAspectInfo], "scala_versions", depset()) for dep in ctx.attr.deps])
@@ -213,7 +214,7 @@ def _scala_doc_impl(ctx):
     macro_classpath = depset(transitive = [dep[ScaladocAspectInfo].macro_classpath for dep in ctx.attr.deps])
 
     # Get the 'real' paths to the plugin jars.
-    plugins = collect_plugin_paths(depset(transitive = [dep[ScaladocAspectInfo].plugins for dep in ctx.attr.deps]).to_list())
+    plugins = collect_plugin_paths(toolchain.plugins + depset(transitive = [dep[ScaladocAspectInfo].plugins for dep in ctx.attr.deps]).to_list())
 
     # Construct the full classpath depset since we need to add compiler plugins too.
     classpath = depset(transitive = [macro_classpath, plugins, compile_jars])
@@ -225,6 +226,14 @@ def _scala_doc_impl(ctx):
     args.use_param_file(param_file_arg = "@%s", use_always = True)
     args.add("-usejavacp")
     args.add("-nowarn")  # turn off warnings for now since they can obscure actual errors for large scala_doc targets
+    # The compiler reads each toolchain option as one argument. Scaladoc splits
+    # its argument file on whitespace outside double quotes, and ignores the
+    # text after `#`. Thus quote each option, and skip an option that has `#`
+    # or `"`.
+    args.add_all(
+        [opt for opt in toolchain.scalacopts if "#" not in opt and '"' not in opt],
+        format_each = "\"%s\"",
+    )
     args.add_all(ctx.attr.scalacopts)
     # output_path is a directory, and Args#add rejects those because they may expand to
     # multiple values. add_all with expand_directories = False passes it as one mapped path.

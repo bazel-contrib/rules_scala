@@ -77,6 +77,6 @@ pkg_tar(
 | --------------------- | ----------------------------------------------------- |
 | name                  | `Name, required`<br/>A unique name for this target. |
 | deps                  | `List of labels, optional`<br/>Labels for which you want to create scaladoc. |
-| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |
+| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options, and it also gets the `plugins` and `scalacopts` of the Scala toolchain. `scala_doc` skips a toolchain option that has `#` or `"`. |
 | site_srcs             | `List of labels, optional`<br/>Static site files for Scala 3 Scaladoc. All files must be under `site_root`. Scala 2 `scala_doc` fails if this is not empty. |
 | site_root             | `String, optional`<br/>The root directory of `site_srcs`, relative to the package of this target. The default is the package directory. |
