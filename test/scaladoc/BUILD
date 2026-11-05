@@ -270,7 +270,7 @@ sh_test(
     srcs = ["//test/string_checks:string_in_file.sh"],
     args = [
         "true",
-        "'The red color'",
+        "'scaladoc_scala3_has_doc_comment looks for this text in the scala_doc output.'",
         "$(rootpath :scaladoc_scala3_pages)",
     ],
     data = [":scaladoc_scala3_pages"],
