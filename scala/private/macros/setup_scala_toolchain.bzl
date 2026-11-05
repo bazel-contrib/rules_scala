@@ -16,6 +16,7 @@ def setup_scala_toolchain(
         enable_semanticdb = False,
         visibility = ["//visibility:public"],
         scala_repl_classpath = None,
+        scala_doc_classpath = None,
         **kwargs):
     scala_xml_provider = "%s_scala_xml_provider" % name
     parser_combinators_provider = "%s_parser_combinators_provider" % name
@@ -23,6 +24,7 @@ def setup_scala_toolchain(
     scala_library_classpath_provider = "%s_scala_library_classpath_provider" % name
     scala_macro_classpath_provider = "%s_scala_macro_classpath_provider" % name
     scala_repl_classpath_provider = "%s_scala_repl_classpath_provider" % name
+    scala_doc_classpath_provider = "%s_scala_doc_classpath_provider" % name
     semanticdb_deps_provider = "%s_semanticdb_deps_provider" % name
 
     if scala_repl_classpath == None:
@@ -32,6 +34,19 @@ def setup_scala_toolchain(
         scala_repl_classpath = (
             default_repl_classpath(scala_version) if scala_compile_classpath == None else scala_compile_classpath
         )
+
+    if scala_doc_classpath == None:
+        # A caller who supplies their own compiler jars may lack the Scaladoc
+        # repos, so Scala 3 `scala_doc` then needs `scala_doc_classpath`.
+        scala_doc_classpath = (
+            default_deps("scala_doc_classpath", scala_version) if scala_compile_classpath == None else []
+        )
+    declare_deps_provider(
+        name = scala_doc_classpath_provider,
+        deps_id = "scala_doc_classpath",
+        visibility = visibility,
+        deps = scala_doc_classpath,
+    )
 
     if scala_compile_classpath == None:
         scala_compile_classpath = default_deps("scala_compile_classpath", scala_version)
@@ -101,6 +116,7 @@ def setup_scala_toolchain(
         scala_library_classpath_provider,
         scala_macro_classpath_provider,
         scala_repl_classpath_provider,
+        scala_doc_classpath_provider,
         semanticdb_deps_provider,
     ]
 
@@ -172,6 +188,9 @@ _DEFAULT_DEPS = {
     },
     "semanticdb": {
         "2": ["@org_scalameta_semanticdb_scalac"],
+    },
+    "scala_doc_classpath": {
+        "3": ["@io_bazel_rules_scala_scaladoc"],
     },
 }
 

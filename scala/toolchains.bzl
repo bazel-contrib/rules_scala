@@ -8,6 +8,7 @@ load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
 load(
     "//scala/private:macros/scala_repositories.bzl",
     "scala_version_artifact_ids",
+    "scaladoc_artifact_ids",
     "setup_scala_compiler_sources",
 )
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
@@ -224,6 +225,25 @@ def scala_toolchains(
             overriden_artifacts = overridden_artifacts,
             validate_scala_version = (scala and validate_scala_version),
         )
+
+        # The default Scala 3 toolchain depends on Scaladoc, so all builds
+        # that use it download the Scaladoc-only jars. To keep this download
+        # small, the build fetches only their class jars. A build that
+        # overrides the compiler jars for its own Scala version needs only
+        # those overrides. Its `scala_doc` can fail until it overrides the
+        # Scaladoc artifacts too.
+        if scala:
+            repositories(
+                scala_version = scala_version,
+                for_artifact_ids = [
+                    id
+                    for id in scaladoc_artifact_ids(scala_version, overridden_artifacts)
+                    if id not in all_artifacts
+                ],
+                maven_servers = maven_servers,
+                fetch_sources = False,
+                overriden_artifacts = overridden_artifacts,
+            )
 
     scala_toolchains_repo(
         name = name,
