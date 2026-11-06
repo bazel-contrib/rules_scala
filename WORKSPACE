@@ -82,6 +82,7 @@ scala_toolchains(
     junit = True,
     scala_proto = True,
     scalafmt = True,
+    scaladoc = True,
     scalatest = True,
     specs2 = True,
     twitter_scrooge = True,

@@ -6,6 +6,35 @@ Mostly generated and updated by scripts/create_repository.py.
 scala_version = "3.9.0"
 
 artifacts = {
+    "com_fasterxml_jackson_core_jackson_annotations": {
+        "artifact": "com.fasterxml.jackson.core:jackson-annotations:2.21",
+        "sha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b",
+        "srcjar_sha256": "71fe6323d91b16d5d1007fd1e1533fa06bb369abde74f68a42a68c0f8f061a8b",
+    },
+    "com_fasterxml_jackson_core_jackson_core": {
+        "artifact": "com.fasterxml.jackson.core:jackson-core:2.13.4",
+        "sha256": "4c2e043200edd9ee7ba6fc378bd5c17784a5bf2388e152d208068b51fd0839cf",
+        "srcjar_sha256": "6abd09c8116e11fc2b51b577161208e6364b0aaf454bc7b2004bd981e32b4868",
+    },
+    "com_fasterxml_jackson_core_jackson_databind": {
+        "artifact": "com.fasterxml.jackson.core:jackson-databind:2.13.4.2",
+        "sha256": "ba1a368137f9b92f48dd07f299ff7a782a69487b853ef5578215426fcde8f08b",
+        "srcjar_sha256": "200709b6228820c13f77d5627197b387c42d26ff15f7a737662f12e193e072b1",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@com_fasterxml_jackson_core_jackson_core",
+        ],
+    },
+    "com_fasterxml_jackson_datatype_jackson_datatype_jsr310": {
+        "artifact": "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2",
+        "sha256": "cf5034791afbbec5139d539c1a94194f172d52a516ad9c25aad5f235a937c747",
+        "srcjar_sha256": "bd4af65370497f452bdac399c9d88f348a2fbae98d3c30a3854f85e3ad8fd85a",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@com_fasterxml_jackson_core_jackson_core",
+            "@com_fasterxml_jackson_core_jackson_databind",
+        ],
+    },
     "com_google_android_annotations": {
         "artifact": "com.google.android:annotations:4.1.1.4",
         "sha256": "ba734e1e84c09d615af6a09d33034b4f0442f8772dec120efb376d86a565ae15",
@@ -79,6 +108,260 @@ artifacts = {
         "artifact": "com.typesafe:config:1.4.5",
         "sha256": "4a4b0affb22a9572409d3a6bde99ce3f2045c551cadc1ca7fe09690892c526c3",
         "srcjar_sha256": "4e17ad7d6a83922a9f1f7b65a33a2d33052a85314303d6f6e318ca3caf9c5d75",
+    },
+    "com_vladsch_flexmark_flexmark": {
+        "artifact": "com.vladsch.flexmark:flexmark:0.64.8",
+        "sha256": "3133878d108f0e1964d7d427f379a7433e1b71a45f9f3c1fab7ed0ac0301d3b0",
+        "srcjar_sha256": "41740277308867e41377ef4f60331ebbe03ab7b2f49362de80d18c6b8798773a",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_builder",
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_dependency",
+            "@com_vladsch_flexmark_flexmark_util_format",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@com_vladsch_flexmark_flexmark_util_visitor",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_anchorlink": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-anchorlink:0.64.8",
+        "sha256": "36d6849df8548a71b0f87eb97d3690864b960a8e4979fedf865418c8903453a6",
+        "srcjar_sha256": "617772031194b87f04fca825f45034597557bd26e82d3d2d4c7842d864ce0c91",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_autolink": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-autolink:0.64.8",
+        "sha256": "4850d6f895ec3f2932635829d74ff9a2fb00918965bb91c000ab497d603e11b8",
+        "srcjar_sha256": "44fd15f2753b803a82f9b02b9e88eacb7aa7a2ea9e6a6dd48f906aa93e1a30c7",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+            "@org_nibor_autolink_autolink",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_emoji": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-emoji:0.64.8",
+        "sha256": "012d2db51463afd84702627e493fedce42eb7deb1bae309ddcefd181ab283cbe",
+        "srcjar_sha256": "e01bdf91dfedc722fa5ee5989ac150871f27695145901721e6950ce80c7d448a",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_jira_converter",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_gfm_strikethrough": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-gfm-strikethrough:0.64.8",
+        "sha256": "fc6cad026fbd036b3ffd0448264360a5f1b572756ef3427ff022715b7fc5f1c3",
+        "srcjar_sha256": "e51a1672d372423aaad44bf0429d14dd062ca6982dd47ec45e0463bf513d54c2",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_gfm_tasklist": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-gfm-tasklist:0.64.8",
+        "sha256": "c86754ba8f0ffe997fa448da2a6ab2cfdbea9b381884cfed6f74bf513b77f5a9",
+        "srcjar_sha256": "db06db3c564d14044fa7365f7143cf5ca271671e94740b56831854a1abca25fb",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_ins": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-ins:0.64.8",
+        "sha256": "5b61b83c31cb0bd3273cbf12aed3887b63b8bdc6dfa17b03ecf479cf1ce176bd",
+        "srcjar_sha256": "8ee12a6e34044eaafb058798602c4bb2b46ab235a94f5e72482b0540e6cf6b60",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_superscript": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-superscript:0.64.8",
+        "sha256": "457933324d1ca9f283bc15a1842777c6df0385f318fcceade4de41621395e402",
+        "srcjar_sha256": "628711efc1998df2f5b2af310918be89e73f96f326bd884285ff73601f926485",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_tables": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-tables:0.64.8",
+        "sha256": "cdf82d26e112e96ade7e370138aeb16920b7e2d411d20c6c15cb1acfacd1ef1f",
+        "srcjar_sha256": "52c8e007ae8f1fe8179817061cb26e8d0bb4b610fa0c2d3cf3c4fcec2039544c",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_wikilink": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-wikilink:0.64.8",
+        "sha256": "f32ef779eefb4c3b80d5bebf3c4b7ad7206fc46e083a5901cf51db7b4535ff79",
+        "srcjar_sha256": "1725a70c052e3429231f8ef0a62127192c76a680df2aa5cdf2821728dc99ce6b",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_yaml_front_matter": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-yaml-front-matter:0.64.8",
+        "sha256": "6c60b85db4cc851301c1a52d712dc0909c5d2da9bd17ebae4d97a3a03afe22ee",
+        "srcjar_sha256": "b94144340803e5ccd4ccda01e0554edaca5e54030b8fd72cbbdb48d2c3ed8367",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_jira_converter": {
+        "artifact": "com.vladsch.flexmark:flexmark-jira-converter:0.64.8",
+        "sha256": "ccc1c3a9659a104b75a53a2321e9c1d4cedb05acd867d4366d8b8e1647bd37dd",
+        "srcjar_sha256": "227d96a52bc99cd04ebbcad779b10a7a672828f0103cca7814865ef62081079b",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_ext_gfm_strikethrough",
+            "@com_vladsch_flexmark_flexmark_ext_ins",
+            "@com_vladsch_flexmark_flexmark_ext_superscript",
+            "@com_vladsch_flexmark_flexmark_ext_tables",
+            "@com_vladsch_flexmark_flexmark_ext_wikilink",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util": {
+        "artifact": "com.vladsch.flexmark:flexmark-util:0.64.8",
+        "sha256": "1e24c891dac9532bb722be7122c7026fb47868c3de36c02400eed8e9ad535727",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_builder",
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_dependency",
+            "@com_vladsch_flexmark_flexmark_util_format",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_options",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@com_vladsch_flexmark_flexmark_util_visitor",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_ast": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-ast:0.64.8",
+        "sha256": "a5342f644c6a5f37d502f225c3a0cb699c263621c82e720d9c08eba5a9f3b8d3",
+        "srcjar_sha256": "4e36e21ec7a4ac9e976ae35a6c09544585c24f5fe7682178014e53f755aa3456",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@com_vladsch_flexmark_flexmark_util_visitor",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_builder": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-builder:0.64.8",
+        "sha256": "afb9c88d9f652451e75f1ab069ad7ddd791d712eb211c51d8d2a83494240875d",
+        "srcjar_sha256": "e1250a03bf9f478193094e25c8e8193d64a5290c8dfacd2322a8d277d90d03e9",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_collection": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-collection:0.64.8",
+        "sha256": "031ff01408d0f54c6235db18d451dc6e6b15b859b0ec1e40ff3429a82375082a",
+        "srcjar_sha256": "a1484f5cb100b2a8a9f732748bf6d4ee75f72892e3915900d901c134403dedcf",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_data": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-data:0.64.8",
+        "sha256": "83ceb5989ab0205054bf1b42446f55cb6da14c10aa7c2bda05d6a2504670f353",
+        "srcjar_sha256": "12dbc4e9e5fa92c20113ad6381fdc9ed2f4eed4ee3f6c29eb12b911e17a99b45",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_dependency": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-dependency:0.64.8",
+        "sha256": "e41adb5e8144699b61b78d50eb004eeb7de84f90c4c63626609e6cee5ea28b42",
+        "srcjar_sha256": "6606ced6643520748893fa39186705c9f99406178240fa06a08f131e06c139f6",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_format": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-format:0.64.8",
+        "sha256": "6c9ac87686474edf0117b3f838d9dcb3b965fa72be4998d2177b598013679f73",
+        "srcjar_sha256": "e5200a49b80877159ce13e1ea588f315d0f62e27ae05685dc9420ba2d3660649",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_html": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-html:0.64.8",
+        "sha256": "5b19e6506aff7913c74ad725af7c2b8a9f23958e6324bf0710c5a645a4663017",
+        "srcjar_sha256": "88fabc24d8c94f9ef27204f8c9cf679daeff61ae970c71eafd5a9a94891fdec9",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_misc": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-misc:0.64.8",
+        "sha256": "74472ca81a9080e51ea1a4f11c270898e3d6c242c92275fab47eb993806c8f2b",
+        "srcjar_sha256": "93d87943c488545fa7e4ec5f6d7a1869febeb9ab781852afa51930c3d67628fb",
+        "deps": [
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_options": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-options:0.64.8",
+        "sha256": "2489f41e9caf1d9f8061833b311b25403925cbb631fff2b8c069192804d6fc88",
+        "srcjar_sha256": "384dd1c89b76482f9938a59f53626c944877f5bc5f02662ae965a09d4402e495",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_sequence": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-sequence:0.64.8",
+        "sha256": "6e22976fe4e9b8de94fd529991ecb2d79cc482aad94985367470a93be1d82631",
+        "srcjar_sha256": "d83ac60aff8c7f55b2dff38ea89c2cc8c57b8a36db91943136f355303cb73f14",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_visitor": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-visitor:0.64.8",
+        "sha256": "d9b3002a833a078c45e139568b306dab0ac117ff9046c6a1f9e180c0154563fc",
+        "srcjar_sha256": "ac98028eb53715db30ae025e90394e8ad6c276e26dfe47b77d6c18369873673e",
+        "deps": [
+            "@org_jetbrains_annotations",
+        ],
     },
     "dev_dirs_directories": {
         "artifact": "dev.dirs:directories:26",
@@ -258,6 +541,14 @@ artifacts = {
             "@io_bazel_rules_scala_scala_library",
         ],
     },
+    "io_bazel_rules_scala_scala_tasty_inspector": {
+        "artifact": "org.scala-lang:scala3-tasty-inspector_3:3.9.0",
+        "sha256": "469fa2c2a8ed7e24982cd6dde46c3f3285b3fdf215ac8dc704beeab13049aac6",
+        "srcjar_sha256": "77da3bf427490344a147891d051480699c850243654f4baed733f38443d981ef",
+        "deps": [
+            "@io_bazel_rules_scala_scala_compiler",
+        ],
+    },
     "io_bazel_rules_scala_scala_xml": {
         "artifact": "org.scala-lang.modules:scala-xml_3:2.1.0",
         "sha256": "48f22343575f4b1d6550eecc42d4b7f0a0d30223c72f015d8d893feab4cbeecd",
@@ -272,6 +563,30 @@ artifacts = {
         "srcjar_sha256": "bbfa9bf00870adf3587cc98dd374a32394e817c0a22a0285deed3fa20ef3e82c",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
+        ],
+    },
+    "io_bazel_rules_scala_scaladoc": {
+        "artifact": "org.scala-lang:scaladoc_3:3.9.0",
+        "sha256": "94999459933feaf43675337a54b51b3b410aafa0d28bbf79278ebba9b6d04986",
+        "srcjar_sha256": "8499755247f1822a8e8e6b253697439dc5ba3a12ca762ad613e38b9a23597c37",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_ext_anchorlink",
+            "@com_vladsch_flexmark_flexmark_ext_autolink",
+            "@com_vladsch_flexmark_flexmark_ext_emoji",
+            "@com_vladsch_flexmark_flexmark_ext_gfm_strikethrough",
+            "@com_vladsch_flexmark_flexmark_ext_gfm_tasklist",
+            "@com_vladsch_flexmark_flexmark_ext_tables",
+            "@com_vladsch_flexmark_flexmark_ext_wikilink",
+            "@com_vladsch_flexmark_flexmark_ext_yaml_front_matter",
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@io_bazel_rules_scala_scala_compiler",
+            "@io_bazel_rules_scala_scala_tasty_inspector",
+            "@nl_big_o_liqp",
+            "@org_jsoup_jsoup",
+            "@tools_jackson_dataformat_jackson_dataformat_yaml",
         ],
     },
     "io_bazel_rules_scala_scalatest": {
@@ -466,6 +781,18 @@ artifacts = {
         "sha256": "b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0",
         "srcjar_sha256": "1e8dd4205deab6eb9d6045ad9e69a8754fc21029d56ede1dcd9f22a5e06571a7",
     },
+    "nl_big_o_liqp": {
+        "artifact": "nl.big-o:liqp:0.9.2.3",
+        "sha256": "1f7dc450a0e116dcf9be7f7285f531bd59c6f9a88a85377bb0f716678e2d838a",
+        "srcjar_sha256": "effe55f82f8b5e048da1cd72653724cf238129c6ad1d5bf8fc12e876e871bb49",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@com_fasterxml_jackson_core_jackson_core",
+            "@com_fasterxml_jackson_core_jackson_databind",
+            "@com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+            "@ua_co_k_strftime4j",
+        ],
+    },
     "org_checkerframework_checker_qual": {
         "artifact": "org.checkerframework:checker-qual:3.43.0",
         "sha256": "3fbc2e98f05854c3df16df9abaa955b91b15b3ecac33623208ed6424640ef0f6",
@@ -474,6 +801,11 @@ artifacts = {
         "artifact": "org.codehaus.mojo:animal-sniffer-annotations:1.26",
         "sha256": "342f4d815eae69bb980620d0a622862709be37d38f47577675b42c739a962da9",
         "srcjar_sha256": "56d2844b620f4742f4b1c47d83357745b39cb26c45423d1249066c15eca31a86",
+    },
+    "org_jetbrains_annotations": {
+        "artifact": "org.jetbrains:annotations:24.0.1",
+        "sha256": "61666dbce7e42e6c85b43c04fcfb8293a21dcb55b3c80e869270ce42c01a6b35",
+        "srcjar_sha256": "40978d2ac2fe28e0fc2e1eddc443057572ab775986d7afc83cc0c48cc65652ab",
     },
     "org_jline_jline": {
         "artifact": "org.jline:jline:jar:jdk8:3.30.6",
@@ -551,10 +883,20 @@ artifacts = {
             "@org_jline_jline_terminal_4",
         ],
     },
+    "org_jsoup_jsoup": {
+        "artifact": "org.jsoup:jsoup:1.22.2",
+        "sha256": "596785996d3c6df16f544c232d10a9a1d88783b2a4740cf5251cb616f2be704d",
+        "srcjar_sha256": "3aed3e38ec1e0373eb6755213b01d197802f858850bce20e63d99c93e08818bc",
+    },
     "org_jspecify_jspecify": {
         "artifact": "org.jspecify:jspecify:1.0.0",
         "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
         "srcjar_sha256": "adf0898191d55937fb3192ba971826f4f294292c4a960740f3c27310e7b70296",
+    },
+    "org_nibor_autolink_autolink": {
+        "artifact": "org.nibor.autolink:autolink:0.6.0",
+        "sha256": "a80be030f6386f18111cad9161c0b6983157352a1b59a59e6002172f0d321c04",
+        "srcjar_sha256": "26d6fba888c9e332f6357773ef0500a7552c2453779a7d3e5d163e079546d8a8",
     },
     "org_scala_lang_modules_scala_collection_compat": {
         "artifact": "org.scala-lang.modules:scala-collection-compat_2.13:2.14.0",
@@ -749,6 +1091,11 @@ artifacts = {
         "artifact": "org.slf4j:slf4j-api:1.7.36",
         "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0",
         "srcjar_sha256": "15bc04357a3725b7a5153f132db71379f95e83b7b8590a86cc6d4ad77bfc150a",
+    },
+    "org_snakeyaml_snakeyaml_engine": {
+        "artifact": "org.snakeyaml:snakeyaml-engine:3.0.1",
+        "sha256": "0b638c8806112215e02e58e95cbd9e9a69d4bd540991f47553d053919994cc94",
+        "srcjar_sha256": "a9ff0dd1deb1781fb478bb17dd5b9758859a0419531a543608d6ca391449562c",
     },
     "org_typelevel_paiges_core": {
         "artifact": "org.typelevel:paiges-core_2.13:0.4.4",
@@ -1063,5 +1410,34 @@ artifacts = {
             "@scala_proto_rules_grpc_stub",
             "@scala_proto_rules_scalapb_runtime",
         ],
+    },
+    "tools_jackson_core_jackson_core": {
+        "artifact": "tools.jackson.core:jackson-core:3.1.2",
+        "sha256": "bbb00763f5998f03a26f21e47ed500f253c7fc5c158fa3e8a41dbf97aa7416fd",
+        "srcjar_sha256": "a0d6dbb49a2f424b12d3e0161e6f2d341ed2ef3aa697db87704f956df4a51b5a",
+    },
+    "tools_jackson_core_jackson_databind": {
+        "artifact": "tools.jackson.core:jackson-databind:3.1.2",
+        "sha256": "0a366b1c2f6321e466c2970847b1251a5dc7201b680f320594230b77bfc8ddb2",
+        "srcjar_sha256": "be5ae6b79a88c36c73caaa9353d2858e038045d51e50464b2b29a9a32ad63148",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@tools_jackson_core_jackson_core",
+        ],
+    },
+    "tools_jackson_dataformat_jackson_dataformat_yaml": {
+        "artifact": "tools.jackson.dataformat:jackson-dataformat-yaml:3.1.2",
+        "sha256": "3980240691d86564b60e8672d28379124abdd2c5ee2dbdc3f214322afa6a4a4a",
+        "srcjar_sha256": "766b23d551291171b18e67a59b469007fac7d9146242d8976d53af9fbf0aa509",
+        "deps": [
+            "@org_snakeyaml_snakeyaml_engine",
+            "@tools_jackson_core_jackson_core",
+            "@tools_jackson_core_jackson_databind",
+        ],
+    },
+    "ua_co_k_strftime4j": {
+        "artifact": "ua.co.k:strftime4j:1.0.6",
+        "sha256": "d37cabad2f97a746fa811f04c01c9e4b5f6636fff05e294f4e5324c051dd7495",
+        "srcjar_sha256": "c4e97074d607a1f2195a8b10b026a957ceb8f70de4b13a2c59529af27fccc1f7",
     },
 }
