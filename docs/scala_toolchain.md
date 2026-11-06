@@ -98,9 +98,9 @@ with its own dependencies, so `scala_repl` starts only when those jars are on
 that classpath, or on `scala_repl_classpath` if you set it.
 
 With Scala 3, `scala_doc` runs the `org.scala-lang:scaladoc_3` artifact from
-`scala_doc_classpath`. When you set `scala_compile_classpath`, also set
-`scala_doc_classpath` to that artifact and its dependencies, or Scala 3
-`scala_doc` fails.
+`scala_doc_classpath`. To use Scala 3 `scala_doc` with
+`setup_scala_toolchain()`, set `scala_doc_classpath` to that artifact and its
+dependencies.
 
 #### Step 2
 

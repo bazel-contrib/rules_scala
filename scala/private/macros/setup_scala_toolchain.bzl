@@ -16,7 +16,7 @@ def setup_scala_toolchain(
         enable_semanticdb = False,
         visibility = ["//visibility:public"],
         scala_repl_classpath = None,
-        scala_doc_classpath = None,
+        scala_doc_classpath = [],
         **kwargs):
     scala_xml_provider = "%s_scala_xml_provider" % name
     parser_combinators_provider = "%s_parser_combinators_provider" % name
@@ -35,12 +35,6 @@ def setup_scala_toolchain(
             default_repl_classpath(scala_version) if scala_compile_classpath == None else scala_compile_classpath
         )
 
-    if scala_doc_classpath == None:
-        # A caller who supplies their own compiler jars may lack the Scaladoc
-        # repos, so Scala 3 `scala_doc` then needs `scala_doc_classpath`.
-        scala_doc_classpath = (
-            default_deps("scala_doc_classpath", scala_version) if scala_compile_classpath == None else []
-        )
     declare_deps_provider(
         name = scala_doc_classpath_provider,
         deps_id = "scala_doc_classpath",

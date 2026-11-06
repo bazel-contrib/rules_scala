@@ -16,6 +16,10 @@ of the compiled deps, so `scalacopts` gives Scaladoc options, for example
 the same major version: set [`scala_version`](cross-compilation.md) on
 `scala_doc` to the version of the deps.
 
+Scala 3 `scala_doc` needs the Scaladoc jars. To download them and add them to
+the default Scala toolchains, use `scala_deps.scaladoc()` in `MODULE.bazel` or
+`scala_toolchains(scaladoc = True)` in `WORKSPACE`.
+
 Scaladoc can be somewhat slow to build. In that case, you can tell Bazel to build this target manually,
 i.e. only when named explicitly and not through wildcards: `tags = ["manual"]`.
 

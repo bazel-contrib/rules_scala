@@ -10,6 +10,7 @@ Provides the `scala_deps` module extension with the following tag classes:
 - `junit`
 - `specs2`
 - `scalafmt`
+- `scaladoc`
 - `scala_proto`
 - `twitter_scrooge`
 - `jmh`
@@ -164,6 +165,9 @@ _toolchain_tag_classes = {
     "scalafmt": tag_class(
         attrs = _scalafmt_attrs,
         doc = "Configures the Scalafmt toolchain",
+    ),
+    "scaladoc": tag_class(
+        doc = "Adds the Scala 3 Scaladoc jars to the Scala toolchains",
     ),
     "scala_proto": tag_class(
         attrs = _scala_proto_attrs,

@@ -109,7 +109,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
     if not doc_classpath or not doc_classpath.deps:
-        fail("%s: Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain." % ctx.label)
+        fail("%s: Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain. Enable it with `scala_deps.scaladoc()` or `scala_toolchains(scaladoc = True)`." % ctx.label)
 
     # For some Scala 3 versions, `scala3-interfaces` comes only from
     # `scala_compile_classpath`, so Scaladoc also gets that classpath.

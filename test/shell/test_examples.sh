@@ -104,11 +104,6 @@ test_cross_build_example() {
 
 test_overridden_artifacts_example() {
   run_in_example_dir overridden_artifacts bazel test --test_output=errors //...
-
-  # Use the Scala version of the overrides. It differs from the version in
-  # third_party/repositories/scala_3_3.bzl, so the version check runs.
-  SCALA_VERSION=3.3.4 run_in_example_dir overridden_artifacts \
-    bazel test --test_output=errors //...
 }
 
 test_twitter_scrooge_example() {

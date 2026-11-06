@@ -331,3 +331,24 @@ def scaladoc_artifact_ids(scala_version, overridden_artifacts = {}):
                 ids[id] = None
                 pending.append(id)
     return list(ids)
+
+def check_scaladoc_version(scala_version, overridden_artifacts = {}):
+    """Fails if the Scaladoc and Scala compiler artifacts differ in version.
+
+    Args:
+        scala_version: Scala 3 version string.
+        overridden_artifacts: artifacts that replace the ones in
+            third_party/repositories/scala_3_*.bzl.
+    """
+    artifacts = artifacts_by_major_scala_version[
+        extract_major_version(scala_version)
+    ] | overridden_artifacts
+    compiler = artifacts["io_bazel_rules_scala_scala_compiler"]["artifact"]
+    scaladoc = artifacts[SCALADOC_ARTIFACT_ID]["artifact"]
+    compiler_version = compiler.split(":")[-1]
+    if scaladoc.split(":")[-1] != compiler_version:
+        fail(
+            "Scaladoc artifact %s must have the version of compiler artifact %s. " % (scaladoc, compiler) +
+            "Override %s and io_bazel_rules_scala_scala_tasty_inspector " % SCALADOC_ARTIFACT_ID +
+            "with version %s, or set validate_scala_version = False." % compiler_version,
+        )
