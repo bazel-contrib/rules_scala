@@ -37,6 +37,7 @@ def _scaladoc_aspect_impl(target, ctx, transitive = True):
     toolchain = ctx.toolchains[_SCALA_TOOLCHAIN]
     if ScalaInfo in target and toolchain:
         scala_versions.append(toolchain.scala_version)
+    scala3 = scala_versions and scala_versions[0].startswith("3.")
 
     # We really only care about visited targets with srcs, so only look at those.
     if hasattr(ctx.rule.attr, "srcs"):
@@ -44,7 +45,9 @@ def _scaladoc_aspect_impl(target, ctx, transitive = True):
         src_files = depset([file for file in ctx.rule.files.srcs if file.extension.lower() in ["java", "scala"]])
 
         compile_jars = target[JavaInfo].transitive_compile_time_jars
-        class_jars = depset([output.class_jar for output in target[JavaInfo].java_outputs])
+        # Only Scala 3 writes TASTy.
+        if scala3:
+            class_jars = depset([output.class_jar for output in target[JavaInfo].java_outputs])
 
         if hasattr(ctx.rule.attr, "plugins"):
             plugins = depset(ctx.rule.attr.plugins)
@@ -185,14 +188,15 @@ def _scala_doc_impl(ctx):
 
     compile_jars = depset(transitive = [dep[ScaladocAspectInfo].compile_jars for dep in ctx.attr.deps])
 
-    # Scala 3 Scaladoc reads TASTy, which Scala 2 omits. Scala 2 Scaladoc
-    # compiles the sources, and Scala 3 syntax makes it fail.
+    # Scala 2 Scaladoc compiles the sources, and Scala 3 syntax makes it fail.
+    # Scala 3 Scaladoc reads TASTy, and keeps Scala 2 deps on the classpath
+    # only.
     scala_version = ctx.toolchains[_SCALA_TOOLCHAIN].scala_version
     scala3 = scala_version.startswith("3.")
     # A custom aspect can make `ScaladocAspectInfo` without the newer fields.
     scala_versions = depset(transitive = [getattr(dep[ScaladocAspectInfo], "scala_versions", depset()) for dep in ctx.attr.deps])
     for dep_version in scala_versions.to_list():
-        if dep_version.startswith("3.") != scala3:
+        if dep_version.startswith("3.") and not scala3:
             fail("%s: a dependency uses Scala %s, and this target uses Scala %s. Set `scala_version = \"%s\"` on this target." % (
                 ctx.label,
                 dep_version,

@@ -213,6 +213,7 @@ _OTHER_SCALA3_VERSIONS = [
         "scaladoc_siblings",
         "scaladoc_scala3_transitive",
         "scaladoc_scala3_intransitive",
+        "scaladoc_scala3_over_scala2",
     ] + ["scaladoc_scala3_" + v.replace(".", "_") for v in _OTHER_SCALA3_VERSIONS]
 ]
 
@@ -252,6 +253,7 @@ scala_doc_intransitive(
         ("scaladoc_scala3_intransitive", "true", "./scalarules/test/scaladoc/Drawing.html"),
         ("scaladoc_scala3_intransitive", "false", "./scalarules/test/scaladoc/Color.html"),
         ("scaladoc_scala3_intransitive", "false", "./scalarules/test/scaladoc/Shape.html"),
+        ("scaladoc_scala3_over_scala2", "true", "./$lessempty$greater$/UsesSibling$.html"),
     ] + [
         ("scaladoc_scala3_" + v.replace(".", "_"), "true", "./scalarules/test/scaladoc/Color.html")
         for v in _OTHER_SCALA3_VERSIONS
@@ -294,17 +296,17 @@ scala_doc(
     deps = [":Scala3Enum"],
 )
 
-scala_doc(
-    name = "scaladoc_scala3_over_scala2",
+scala_library(
+    name = "UsesScala2",
+    srcs = ["UsesSibling.scala"],
     scala_version = "3.7.4",
-    tags = ["manual"],
     deps = [":Scala2Lib"],
 )
 
-expect_analysis_failure_test(
-    name = "scaladoc_scala3_over_scala2_test",
-    message = "a dependency uses Scala 2.13.18, and this target uses Scala 3.7.4",
-    target_under_test = ":scaladoc_scala3_over_scala2",
+scala_doc(
+    name = "scaladoc_scala3_over_scala2",
+    scala_version = "3.7.4",
+    deps = [":UsesScala2"],
 )
 
 expect_analysis_failure_test(

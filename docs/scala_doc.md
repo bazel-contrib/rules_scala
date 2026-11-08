@@ -12,9 +12,11 @@ for targets, including sources from upstream deps. Readily hostable HTML is writ
 
 With Scala 3, `scala_doc` runs the Scala 3 Scaladoc. It reads the TASTy files
 of the compiled deps, so `scalacopts` gives Scaladoc options, for example
-`-source-links`. The Scala version of `scala_doc` and of its Scala deps must be
-the same major version: set [`scala_version`](cross-compilation.md) on
-`scala_doc` to the version of the deps.
+`-source-links`. Set [`scala_version`](cross-compilation.md) on `scala_doc` to
+the version of the deps. Scala 3 `scala_doc` writes pages for the Scala 3 deps
+only. Java deps and Scala 2 deps stay on the classpath, so Scaladoc can read
+the types they define. Scala 3 `scala_doc` writes the API pages only, and
+static site support (`-siteroot`) can come in a later change.
 
 Scala 3 `scala_doc` needs the Scaladoc jars. To download them and add them to
 the default Scala toolchains, use `scala_deps.scaladoc()` in `MODULE.bazel` or
