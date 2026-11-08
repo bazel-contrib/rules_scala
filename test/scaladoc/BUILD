@@ -331,3 +331,20 @@ expect_analysis_failure_without_doc_classpath_test(
     tags = ["skip-toolchain-sweep"],
     target_under_test = ":scaladoc_scala3_transitive",
 )
+
+scala_doc(
+    name = "scaladoc_scala3_line_break",
+    scala_version = "3.9.0",
+    scalacopts = [
+        "-project-footer",
+        "first\nsecond",
+    ],
+    tags = ["manual"],
+    deps = [":Scala3Shape"],
+)
+
+expect_analysis_failure_test(
+    name = "scaladoc_scala3_line_break_test",
+    message = "each `scalacopts` value of Scala 3 `scala_doc` must be one line",
+    target_under_test = ":scaladoc_scala3_line_break",
+)

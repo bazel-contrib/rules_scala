@@ -1,6 +1,5 @@
 """Scaladoc support"""
 
-load("@rules_java//java/common:java_common.bzl", "java_common")
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load("//scala:providers.bzl", "ScalaInfo")
 load("//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
@@ -101,13 +100,6 @@ scaladoc_intransitive_aspect = aspect(
     toolchains = [config_common.toolchain_type(_SCALA_TOOLCHAIN, mandatory = False)],
 )
 
-def _java_argfile_escape(arg):
-    # Inside quotes, a `java` argument file reads `\\`, `\"`, `\n` and `\r` as
-    # escapes.
-    if type(arg) == "File":
-        arg = arg.path
-    return arg.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r")
-
 def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
@@ -122,61 +114,31 @@ def _scala3_doc(ctx, output_path, compile_jars):
         for dep in doc_classpath.deps + compile_classpath.deps
     ])
 
-    # Scaladoc reads a jar input only together with a `.tasty` file input.
-    # Thus extract each jar into a directory, and give the directories to
-    # Scaladoc.
     infos = [dep[ScaladocAspectInfo] for dep in ctx.attr.deps]
     if not all([hasattr(info, "class_jars") for info in infos]):
         fail("%s: Scala 3 `scala_doc` needs `class_jars` in `ScaladocAspectInfo`. Set it in the aspect of this rule." % ctx.label)
-    class_dirs = []
     class_jars = depset(transitive = [info.class_jars for info in infos])
-    for i, jar in enumerate(class_jars.to_list()):
-        class_dir = ctx.actions.declare_directory("%s_tasty/%d" % (ctx.attr.name, i))
-        ctx.actions.run(
-            inputs = [jar],
-            outputs = [class_dir],
-            executable = ctx.executable._zipper,
-            arguments = ["x", jar.path, "-d", class_dir.path],
-            mnemonic = "ScalaDocExtract",
-            progress_message = "Extracting TASTy for scaladoc %{label}",
-        )
-        class_dirs.append(class_dir)
 
-    java_runtime = ctx.attr._java_host_runtime[java_common.JavaRuntimeInfo]
+    # The runner reads one argument on each line of the params file.
+    for opt in ctx.attr.scalacopts:
+        if "\n" in opt or "\r" in opt:
+            fail("%s: each `scalacopts` value of Scala 3 `scala_doc` must be one line: %r" % (ctx.label, opt))
 
-    # `java` reads all arguments from the file, so the command line stays short
-    # on Windows. Scaladoc's own `@file` reader fails on a quote in an
-    # argument, so the rule runs `java` with a `java` argument file.
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)
-    quoted = {"format_each": '"%s"', "map_each": _java_argfile_escape}
-    quoted_classpath = {
-        "format_joined": '"%s"',
-        "join_with": ctx.configuration.host_path_separator,
-        "map_each": _java_argfile_escape,
-    }
-    args.add("-classpath")
-    args.add_joined(doc_jars, **quoted_classpath)
-    args.add("dotty.tools.scaladoc.Main")
-
-    # Scaladoc reads static site pages from `-siteroot`, which is `./docs` by
-    # default. Without a sandbox, `./docs` is the `docs` directory of the main
-    # repository. This path stays empty, so Scaladoc writes only the API pages.
-    args.add("-siteroot")
-    args.add_all([output_path.path + "_siteroot"], **quoted)
-    args.add("-project")
-    args.add_all([ctx.label.name] + ctx.attr.scalacopts, **quoted)
+    args.add_all(doc_jars, format_each = "--scaladoc_jar=%s")
+    args.add_all(class_jars, format_each = "--tasty_jar=%s")
+    args.add("-project", ctx.label.name)
+    args.add_all(ctx.attr.scalacopts)
     args.add("-d")
-    args.add_all([output_path], expand_directories = False, **quoted)
-    args.add("-classpath")
-    args.add_joined(compile_jars, **quoted_classpath)
-    args.add_all(class_dirs, expand_directories = False, **quoted)
+    args.add_all([output_path], expand_directories = False)
+    args.add_joined("-classpath", compile_jars, join_with = ctx.configuration.host_path_separator)
 
     ctx.actions.run(
-        inputs = depset(class_dirs, transitive = [doc_jars, compile_jars, java_runtime.files]),
+        inputs = depset(transitive = [doc_jars, compile_jars, class_jars]),
         outputs = [output_path],
-        executable = java_runtime.java_executable_exec_path,
+        executable = ctx.executable._scala3_scaladoc,
         mnemonic = "ScalaDoc",
         progress_message = "scaladoc {}".format(ctx.label),
         arguments = [args],
@@ -189,8 +151,6 @@ def _scala_doc_impl(ctx):
     compile_jars = depset(transitive = [dep[ScaladocAspectInfo].compile_jars for dep in ctx.attr.deps])
 
     # Scala 2 Scaladoc compiles the sources, and Scala 3 syntax makes it fail.
-    # Scala 3 Scaladoc reads TASTy, and keeps Scala 2 deps on the classpath
-    # only.
     scala_version = ctx.toolchains[_SCALA_TOOLCHAIN].scala_version
     scala3 = scala_version.startswith("3.")
     # A custom aspect can make `ScaladocAspectInfo` without the newer fields.
@@ -257,18 +217,15 @@ def make_scala_doc_rule(aspect = _scaladoc_transitive_aspect):
                 providers = [JavaInfo],
             ),
             "scalacopts": attr.string_list(),
-            "_java_host_runtime": attr.label(
-                default = "@rules_java//toolchains:current_host_java_runtime",
-            ),
             "_scaladoc": attr.label(
                 cfg = "exec",
                 executable = True,
                 default = "//src/scala/io/bazel/rules_scala/scaladoc_support:scaladoc_generator",
             ),
-            "_zipper": attr.label(
+            "_scala3_scaladoc": attr.label(
                 cfg = "exec",
                 executable = True,
-                default = "@bazel_tools//tools/zip:zipper",
+                default = "//src/java/io/bazel/rulesscala/scaladoc:runner",
             ),
         } | toolchain_transition_attr,
         doc = "Generate Scaladoc HTML documentation for source files in from the given dependencies.",
