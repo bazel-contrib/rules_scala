@@ -109,7 +109,7 @@ toolchain_build_test(
 scala_library(
     name = "Scala3Enum",
     srcs = ["Color.scala"],
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
 )
 
 scala_library(
@@ -150,7 +150,7 @@ build_test(
 
 scala_doc_old_fields(
     name = "scaladoc_old_fields_scala3",
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
     tags = ["manual"],
     deps = [":Scala3Enum"],
 )
@@ -164,21 +164,20 @@ expect_analysis_failure_test(
 scala_library(
     name = "Scala3Shape",
     srcs = ["Shape.scala"],
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
 )
 
 scala_library(
     name = "Scala3Drawing",
     srcs = ["Drawing.scala"],
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
     deps = [
         ":Scala3Enum",
         ":Scala3Shape",
     ],
 )
 
-# Scala 3.3.1 is the oldest Scala 3 version that runs on JDK 21, which CI
-# also uses.
+# The older LTS line and the newest Scala 3 version.
 _OTHER_SCALA3_VERSIONS = [
     "3.3.9",
     "3.10.0",
@@ -219,7 +218,7 @@ _OTHER_SCALA3_VERSIONS = [
 
 scala_doc(
     name = "scaladoc_scala3_transitive",
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
     scalacopts = [
         "-project-footer",
         "It's C:\\temp \"x\"",
@@ -229,7 +228,7 @@ scala_doc(
 
 scala_doc_intransitive(
     name = "scaladoc_scala3_intransitive",
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
     deps = [":Scala3Drawing"],
 )
 
@@ -299,19 +298,19 @@ scala_doc(
 scala_library(
     name = "UsesScala2",
     srcs = ["UsesSibling.scala"],
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
     deps = [":Scala2Lib"],
 )
 
 scala_doc(
     name = "scaladoc_scala3_over_scala2",
-    scala_version = "3.7.4",
+    scala_version = "3.9.0",
     deps = [":UsesScala2"],
 )
 
 expect_analysis_failure_test(
     name = "scaladoc_version_mismatch_test",
-    message = "a dependency uses Scala 3.7.4, and this target uses Scala 2.13.18",
+    message = "a dependency uses Scala 3.9.0, and this target uses Scala 2.13.18",
     target_under_test = ":scaladoc_version_mismatch",
 )
 

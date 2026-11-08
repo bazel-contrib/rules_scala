@@ -18,7 +18,7 @@ scala_toolchain(
 
 toolchain(
     name = "toolchain",
-    target_settings = ["@rules_scala_config//:scala_version_3_7_4"],
+    target_settings = ["@rules_scala_config//:scala_version_3_9_0"],
     toolchain = ":toolchain_impl",
     toolchain_type = "//scala:toolchain_type",
     visibility = ["//test/scaladoc:__pkg__"],
