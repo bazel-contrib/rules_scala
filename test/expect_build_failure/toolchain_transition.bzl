@@ -26,7 +26,7 @@ toolchains_transition = transition(
 def _impl(ctx):
     return [DefaultInfo(files = ctx.attr.target[0][DefaultInfo].files)]
 
-_build_under_toolchains = rule(
+build_under_toolchains = rule(
     implementation = _impl,
     attrs = {
         "extra_toolchains": attr.string_list(
@@ -61,7 +61,7 @@ def toolchain_build_test(name, target, extra_toolchains, **kwargs):
         tags = tags + ["skip-toolchain-sweep"]
 
     under_name = name + "_under_toolchains"
-    _build_under_toolchains(
+    build_under_toolchains(
         name = under_name,
         testonly = True,
         tags = tags,

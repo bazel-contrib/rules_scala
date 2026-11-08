@@ -3,7 +3,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
-load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
+load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
 load("scaladoc.bzl", "scala_doc_intransitive", "scala_doc_old_fields", "expect_analysis_failure_without_doc_classpath_test")
 
 package(default_testonly = 1)
@@ -295,17 +295,28 @@ scala_doc(
     deps = [":Scala3Enum"],
 )
 
+# With transitive deps on the compile classpath, as in a toolchain sweep of
+# test_rules_scala.sh, Scala 3 code that uses Scala 2 code gets two
+# scala-library versions. Thus build it with the registered toolchains only.
 scala_library(
     name = "UsesScala2",
     srcs = ["UsesSibling.scala"],
     scala_version = "3.9.0",
+    tags = ["manual"],
     deps = [":Scala2Lib"],
 )
 
 scala_doc(
-    name = "scaladoc_scala3_over_scala2",
+    name = "scaladoc_scala3_over_scala2_doc",
     scala_version = "3.9.0",
+    tags = ["manual"],
     deps = [":UsesScala2"],
+)
+
+build_under_toolchains(
+    name = "scaladoc_scala3_over_scala2",
+    extra_toolchains = [],
+    target = ":scaladoc_scala3_over_scala2_doc",
 )
 
 expect_analysis_failure_test(
