@@ -154,7 +154,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         deps = select({{
             "@rules_scala_config//:scala_version" + version_suffix(v): default_deps(deps_id, v)
             for v in SCALA_VERSIONS
-        }}),
+        }}) if deps_id != "scala_doc_classpath" or {scaladoc} else [],
     )
     for deps_id in [
         "scala_xml",
@@ -163,18 +163,9 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         "scala_library_classpath",
         "scala_macro_classpath",
         "semanticdb",
+        "scala_doc_classpath",
     ]
 ]
-
-declare_deps_provider(
-    name = "scala_doc_classpath_provider",
-    deps_id = "scala_doc_classpath",
-    visibility = ["//visibility:public"],
-    deps = select({{
-        "@rules_scala_config//:scala_version" + version_suffix(v): default_deps("scala_doc_classpath", v)
-        for v in SCALA_VERSIONS
-    }}) if {scaladoc} else [],
-)
 
 # scala_repl_classpath's extra deps key off the exact minor version (see
 # repl_extra_deps), finer-grained than _DEFAULT_DEPS's major-version buckets,
