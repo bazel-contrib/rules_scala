@@ -156,6 +156,12 @@ def _scala3_doc(ctx, output_path, compile_jars):
     args.add("-classpath")
     args.add_joined(doc_jars, **quoted_classpath)
     args.add("dotty.tools.scaladoc.Main")
+
+    # Scaladoc reads static site pages from `-siteroot`, which is `./docs` by
+    # default. Without a sandbox, `./docs` is the `docs` directory of the main
+    # repository. This path stays empty, so Scaladoc writes only the API pages.
+    args.add("-siteroot")
+    args.add_all([output_path.path + "_siteroot"], **quoted)
     args.add("-project")
     args.add_all([ctx.label.name] + ctx.attr.scalacopts, **quoted)
     args.add("-d")
