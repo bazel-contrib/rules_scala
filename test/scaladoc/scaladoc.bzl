@@ -23,3 +23,7 @@ scala_doc_old_fields = make_scala_doc_rule(_old_fields_aspect)
 expect_analysis_failure_without_doc_classpath_test = make_expect_analysis_failure_test({
     "//command_line_option:extra_toolchains": ["//test/toolchains/scala_doc_classpath_missing:toolchain"],
 })
+
+expect_analysis_failure_with_scaladoc_version_mismatch_test = make_expect_analysis_failure_test({
+    "//command_line_option:extra_toolchains": ["//test/toolchains/scala_doc_version_mismatch:toolchain"],
+})

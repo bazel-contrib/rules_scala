@@ -4,7 +4,7 @@ load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
-load("scaladoc.bzl", "scala_doc_intransitive", "scala_doc_old_fields", "expect_analysis_failure_without_doc_classpath_test")
+load("scaladoc.bzl", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields")
 
 package(default_testonly = 1)
 
@@ -323,6 +323,13 @@ expect_analysis_failure_test(
     name = "scaladoc_version_mismatch_test",
     message = "a dependency uses Scala 3.9.0, and this target uses Scala 2.13.18",
     target_under_test = ":scaladoc_version_mismatch",
+)
+
+expect_analysis_failure_with_scaladoc_version_mismatch_test(
+    name = "scaladoc_version_mismatch_with_compiler_test",
+    message = "Scaladoc 3.3.9 runs only with Scala compiler 3.3.9, and the Scala toolchain gives compiler 3.9.0.",
+    tags = ["skip-toolchain-sweep"],
+    target_under_test = ":scaladoc_scala3_transitive",
 )
 
 expect_analysis_failure_without_doc_classpath_test(

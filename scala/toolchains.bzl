@@ -7,7 +7,6 @@ load("//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
 load(
     "//scala/private:macros/scala_repositories.bzl",
-    "check_scaladoc_version",
     "scala_version_artifact_ids",
     "scaladoc_artifact_ids",
     "setup_scala_compiler_sources",
@@ -200,9 +199,6 @@ def scala_toolchains(
             })
 
         if scala and scaladoc and scala_version.startswith("3."):
-            if validate_scala_version:
-                check_scaladoc_version(scala_version, overridden_artifacts)
-
             # Maven Central has only class jars for some Scaladoc deps, such
             # as flexmark-util 0.64.8.
             version_specific_artifact_ids.update({

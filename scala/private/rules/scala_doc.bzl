@@ -100,6 +100,16 @@ scaladoc_intransitive_aspect = aspect(
     toolchains = [config_common.toolchain_type(_SCALA_TOOLCHAIN, mandatory = False)],
 )
 
+def _jar_version(deps, artifact):
+    # Maven jar names are `<artifact>-<version>.jar`, sometimes with a prefix
+    # such as `processed_`.
+    for dep in deps:
+        for jar in dep[JavaInfo].transitive_runtime_jars.to_list():
+            i = jar.basename.find(artifact + "-")
+            if i == 0 or (i > 0 and jar.basename[i - 1] == "_"):
+                return jar.basename[i + len(artifact) + 1:].removesuffix(".jar")
+    return None
+
 def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
@@ -113,6 +123,15 @@ def _scala3_doc(ctx, output_path, compile_jars):
         dep[JavaInfo].transitive_runtime_jars
         for dep in doc_classpath.deps + compile_classpath.deps
     ])
+    scaladoc_version = _jar_version(doc_classpath.deps, "scaladoc_3")
+    compiler_version = _jar_version(compile_classpath.deps, "scala3-compiler_3")
+    if scaladoc_version and compiler_version and scaladoc_version != compiler_version:
+        fail("%s: Scaladoc %s runs only with Scala compiler %s, and the Scala toolchain gives compiler %s. Use the same version for both." % (
+            ctx.label,
+            scaladoc_version,
+            scaladoc_version,
+            compiler_version,
+        ))
 
     infos = [dep[ScaladocAspectInfo] for dep in ctx.attr.deps]
     if not all([hasattr(info, "class_jars") for info in infos]):
