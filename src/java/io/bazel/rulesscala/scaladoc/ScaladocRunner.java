@@ -2,8 +2,6 @@ package io.bazel.rulesscala.scaladoc;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,15 +17,13 @@ import java.util.zip.ZipFile;
  * Runs Scala 3 Scaladoc.
  *
  * <p>The only argument is {@code @<file>}, with one argument on each line. The file starts with
- * {@code --scaladoc_jar=<jar>} and {@code --tasty_jar=<jar>} lines, and the Scaladoc arguments
- * follow them.
+ * {@code --tasty_jar=<jar>} lines, and the Scaladoc arguments follow them.
  *
  * <p>Scaladoc reads a jar only together with a {@code .tasty} file input. Thus the runner copies
  * the {@code .tasty} files of each {@code --tasty_jar} into a directory, and gives the
  * directories to Scaladoc.
  */
 public class ScaladocRunner {
-  private static final String SCALADOC_JAR_FLAG = "--scaladoc_jar=";
   private static final String TASTY_JAR_FLAG = "--tasty_jar=";
 
   public static void main(String[] args) throws Exception {
@@ -42,14 +38,11 @@ public class ScaladocRunner {
     // only the API pages.
     Path siteRoot = Files.createDirectory(tmp.resolve("siteroot"));
     List<String> scaladocArgs = new ArrayList<>(List.of("-siteroot", siteRoot.toString()));
-    List<URL> classpath = new ArrayList<>();
     List<String> lines = Files.readAllLines(Paths.get(args[0].substring(1)));
     int i = 0;
     for (; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (line.startsWith(SCALADOC_JAR_FLAG)) {
-        classpath.add(Paths.get(line.substring(SCALADOC_JAR_FLAG.length())).toUri().toURL());
-      } else if (line.startsWith(TASTY_JAR_FLAG)) {
+      if (line.startsWith(TASTY_JAR_FLAG)) {
         Path dir = tmp.resolve("tasty").resolve(Integer.toString(i));
         extractTasty(line.substring(TASTY_JAR_FLAG.length()), dir);
         scaladocArgs.add(dir.toString());
@@ -59,11 +52,7 @@ public class ScaladocRunner {
     }
     scaladocArgs.addAll(lines.subList(i, lines.size()));
 
-    ClassLoader loader =
-        new URLClassLoader(classpath.toArray(new URL[0]), ClassLoader.getPlatformClassLoader());
-    Thread.currentThread().setContextClassLoader(loader);
-    loader
-        .loadClass("dotty.tools.scaladoc.Main")
+    Class.forName("dotty.tools.scaladoc.Main")
         .getMethod("main", String[].class)
         .invoke(null, (Object) scaladocArgs.toArray(new String[0]));
   }

@@ -115,14 +115,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
     if not doc_classpath or not doc_classpath.deps:
         fail("%s: Scala 3 `scala_doc` needs `scala_doc_classpath` on the Scala toolchain. Enable it with `scala_deps.scaladoc()` or `scala_toolchains(scaladoc = True)`." % ctx.label)
-
-    # For some Scala 3 versions, `scala3-interfaces` comes only from
-    # `scala_compile_classpath`, so Scaladoc also gets that classpath.
     compile_classpath = find_deps_info_on(ctx, _SCALA_TOOLCHAIN, "scala_compile_classpath")
-    doc_jars = depset(transitive = [
-        dep[JavaInfo].transitive_runtime_jars
-        for dep in doc_classpath.deps + compile_classpath.deps
-    ])
     scaladoc_version = _jar_version(doc_classpath.deps, "scaladoc_3")
     compiler_version = _jar_version(compile_classpath.deps, "scala3-compiler_3")
     if scaladoc_version and compiler_version and scaladoc_version != compiler_version:
@@ -146,7 +139,6 @@ def _scala3_doc(ctx, output_path, compile_jars):
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)
-    args.add_all(doc_jars, format_each = "--scaladoc_jar=%s")
     args.add_all(class_jars, format_each = "--tasty_jar=%s")
     args.add("-project", ctx.label.name)
     args.add_all(ctx.attr.scalacopts)
@@ -155,7 +147,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
     args.add_joined("-classpath", compile_jars, join_with = ctx.configuration.host_path_separator)
 
     ctx.actions.run(
-        inputs = depset(transitive = [doc_jars, compile_jars, class_jars]),
+        inputs = depset(transitive = [compile_jars, class_jars]),
         outputs = [output_path],
         executable = ctx.executable._scala3_scaladoc,
         mnemonic = "ScalaDoc",

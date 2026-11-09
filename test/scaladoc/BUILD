@@ -355,3 +355,10 @@ expect_analysis_failure_test(
     message = "each `scalacopts` value of Scala 3 `scala_doc` must be one line",
     target_under_test = ":scaladoc_scala3_line_break",
 )
+
+# Scala 2 `scala_doc` runs without `scala_doc_classpath`.
+toolchain_build_test(
+    name = "scaladoc_scala2_without_doc_classpath_test",
+    extra_toolchains = ["//test/toolchains/scala_doc_classpath_missing:toolchain_scala2"],
+    target = ":scaladoc_old_fields",
+)
