@@ -319,15 +319,15 @@ def scaladoc_artifact_ids(scala_version, overridden_artifacts = {}):
     pending = [SCALADOC_ARTIFACT_ID]
 
     # Each artifact goes into `pending` at most once, so `len(artifacts)`
-    # passes are enough.
+    # passes are enough. `repositories()` reports an unknown id.
     for _ in range(len(artifacts)):
         if not pending:
             break
-        # `repositories()` reports an unknown id.
-        artifact = artifacts.get(pending.pop(), {})
+        artifact = artifacts[pending.pop()]
         for dep in artifact.get("deps", []) + artifact.get("runtime_deps", []):
             id = dep.lstrip("@")
             if id not in ids:
                 ids[id] = None
-                pending.append(id)
+                if id in artifacts:
+                    pending.append(id)
     return list(ids)
