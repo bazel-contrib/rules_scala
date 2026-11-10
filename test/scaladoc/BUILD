@@ -252,7 +252,9 @@ scala_doc_intransitive(
         ("scaladoc_scala3_intransitive", "true", "./scalarules/test/scaladoc/Drawing.html"),
         ("scaladoc_scala3_intransitive", "false", "./scalarules/test/scaladoc/Color.html"),
         ("scaladoc_scala3_intransitive", "false", "./scalarules/test/scaladoc/Shape.html"),
-        ("scaladoc_scala3_over_scala2", "true", "./$lessempty$greater$/UsesSibling$.html"),
+        # Scaladoc puts the empty package in `$lessempty$greater$`, and on
+        # Windows the test arg loses `$lessempty$greater`. Match the page only.
+        ("scaladoc_scala3_over_scala2", "true", "/UsesSibling$.html"),
     ] + [
         ("scaladoc_scala3_" + v.replace(".", "_"), "true", "./scalarules/test/scaladoc/Color.html")
         for v in _OTHER_SCALA3_VERSIONS
