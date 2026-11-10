@@ -40,8 +40,8 @@ sh_test(
     srcs = ["config_bzl_reflects_env_test.sh"],
     args = [
         "--repo_env=SCALA_VERSION=0.0.0",
-        # sh_test shell-parses args; preserve the quotes in generated config.bzl.
-        "SCALA_MAJOR_VERSION=\\'0.0\\'",
+        # Windows and Unix sh_test runners parse quoted args differently.
+        "SCALA_MAJOR_VERSION=__QUOTE__0.0__QUOTE__",
     ],
     data = [
         "//:MODULE.bazel",

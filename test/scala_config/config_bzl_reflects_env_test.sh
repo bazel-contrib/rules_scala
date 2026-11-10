@@ -16,7 +16,10 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 nested_bazel_setup "rules_scala_scala_config_output_base"
 
 repo_env_flag="$1"
-expected="$2"
+# Encode literal single quotes in BUILD args so both Unix and Windows runners
+# pass the same value to the script.
+quote="'"
+expected="${2//__QUOTE__/${quote}}"
 if [[ "${3:-}" == "expect-failure" ]]; then
   if build_output="$(nested_bazel_run build "${repo_env_flag}" @rules_scala_config//:all 2>&1)"; then
     echo "Expected @rules_scala_config to reject ${repo_env_flag}, but it built successfully." >&2
