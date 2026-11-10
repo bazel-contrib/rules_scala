@@ -37,7 +37,12 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 sh_test(
     name = "config_bzl_reflects_scala_version_test",
     size = "large",
-    srcs = ["config_bzl_reflects_scala_version_test.sh"],
+    srcs = ["config_bzl_reflects_env_test.sh"],
+    args = [
+        "--repo_env=SCALA_VERSION=0.0.0",
+        # sh_test shell-parses args; preserve the quotes in generated config.bzl.
+        "SCALA_MAJOR_VERSION=\\'0.0\\'",
+    ],
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
@@ -55,10 +60,40 @@ sh_test(
 
 # The module extension must convert a repository environment string to the
 # boolean accepted by scala_config's repository rule.
+[
+    sh_test(
+        name = "config_bzl_reflects_compiler_tracking_%s_env_test" % value.lower(),
+        size = "large",
+        srcs = ["config_bzl_reflects_env_test.sh"],
+        args = [
+            "--repo_env=ENABLE_COMPILER_DEPENDENCY_TRACKING=%s" % value,
+            "ENABLE_COMPILER_DEPENDENCY_TRACKING=%s" % value,
+        ],
+        data = [
+            "//:MODULE.bazel",
+            "//test/expect_build_failure:nested_bazel.sh",
+            "//:scala_config.bzl",
+            "//scala/extensions:config.bzl",
+        ],
+        tags = [
+            "exclusive",
+            "local",
+            "no-release",
+            "requires-network",
+        ],
+    )
+    for value in ["True", "False"]
+]
+
 sh_test(
-    name = "config_bzl_reflects_compiler_tracking_env_test",
+    name = "invalid_compiler_tracking_env_test",
     size = "large",
-    srcs = ["config_bzl_reflects_compiler_tracking_env_test.sh"],
+    srcs = ["config_bzl_reflects_env_test.sh"],
+    args = [
+        "--repo_env=ENABLE_COMPILER_DEPENDENCY_TRACKING=true",
+        "\"ENABLE_COMPILER_DEPENDENCY_TRACKING must be True or False, got true\"",
+        "expect-failure",
+    ],
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",

@@ -41,7 +41,7 @@ _settings_attrs = {
         doc = (
             "Enables `scala_toolchain` dependency tracking features. " +
             "Overridden by the `ENABLE_COMPILER_DEPENDENCY_TRACKING` " +
-            "environment variable."
+            "environment variable, which must be `True` or `False`."
         ),
     ),
 }

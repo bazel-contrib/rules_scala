@@ -36,6 +36,8 @@ def _store_config(repository_ctx):
         "ENABLE_COMPILER_DEPENDENCY_TRACKING",
         str(repository_ctx.attr.enable_compiler_dependency_tracking),
     )
+    if enable_compiler_dependency_tracking not in ["True", "False"]:
+        fail("ENABLE_COMPILER_DEPENDENCY_TRACKING must be True or False, got %s" % enable_compiler_dependency_tracking)
 
     scala_major_version = extract_major_version(scala_version)
 
