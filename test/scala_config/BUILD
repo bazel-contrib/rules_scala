@@ -53,6 +53,26 @@ sh_test(
     ],
 )
 
+# The module extension must convert a repository environment string to the
+# boolean accepted by scala_config's repository rule.
+sh_test(
+    name = "config_bzl_reflects_compiler_tracking_env_test",
+    size = "large",
+    srcs = ["config_bzl_reflects_compiler_tracking_env_test.sh"],
+    data = [
+        "//:MODULE.bazel",
+        "//test/expect_build_failure:nested_bazel.sh",
+        "//:scala_config.bzl",
+        "//scala/extensions:config.bzl",
+    ],
+    tags = [
+        "exclusive",
+        "local",
+        "no-release",
+        "requires-network",
+    ],
+)
+
 sh_test(
     name = "version_check_overrides_test",
     size = "large",

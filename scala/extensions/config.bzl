@@ -66,8 +66,8 @@ def _scala_config_impl(module_ctx):
         scala_versions = versions.keys(),
         enable_compiler_dependency_tracking = menv.get(
             "ENABLE_COMPILER_DEPENDENCY_TRACKING",
-            settings["enable_compiler_dependency_tracking"],
-        ),
+            str(settings["enable_compiler_dependency_tracking"]),
+        ) == "True",
     )
     return module_ctx.extension_metadata(reproducible = True)
 
