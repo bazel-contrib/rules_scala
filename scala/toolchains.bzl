@@ -8,6 +8,7 @@ load("//scala:toolchains_repo.bzl", "scala_toolchains_repo")
 load(
     "//scala/private:macros/scala_repositories.bzl",
     "scala_version_artifact_ids",
+    "scaladoc_artifact_ids",
     "setup_scala_compiler_sources",
 )
 load("//scala/private:toolchain_defaults.bzl", "TOOLCHAIN_DEFAULTS")
@@ -92,6 +93,7 @@ def scala_toolchains(
         junit = False,
         specs2 = False,
         scalafmt = False,
+        scaladoc = False,
         scala_proto = False,
         jmh = False,
         twitter_scrooge = False):
@@ -138,6 +140,8 @@ def scala_toolchains(
         specs2: whether to instantiate the Specs2 JUnit toolchain
         scalafmt: boolean or dictionary of Scalafmt options:
             - default_config: default Scalafmt config file target
+        scaladoc: whether to download the Scala 3 Scaladoc jars and add them
+            to the default Scala toolchains, so Scala 3 `scala_doc` can run
         scala_proto: boolean or dictionary of `setup_scala_proto_toolchain()`
             options
         jmh: whether to instantiate the Java Microbenchmarks Harness toolchain
@@ -194,6 +198,14 @@ def scala_toolchains(
                 for id in scala_version_artifact_ids(scala_version)
             })
 
+        if scala and scaladoc and scala_version.startswith("3."):
+            # Maven Central has only class jars for some Scaladoc deps, such
+            # as flexmark-util 0.64.8.
+            version_specific_artifact_ids.update({
+                id: False
+                for id in scaladoc_artifact_ids(scala_version, overridden_artifacts)
+                if id not in version_specific_artifact_ids
+            })
         if scala_proto:
             version_specific_artifact_ids.update({
                 id: True
@@ -232,6 +244,7 @@ def scala_toolchains(
         specs2 = specs2,
         scalafmt = scalafmt,
         scalafmt_default_config = scalafmt_options["default_config"],
+        scaladoc = scala and scaladoc,
         scala_proto = scala_proto,
         scala_proto_options = scala_proto_options["default_gen_opts"],
         jmh = jmh,

@@ -114,6 +114,7 @@ def _default_dep_providers():
             "scala_library_classpath",
             "scala_macro_classpath",
             "scala_repl_classpath",
+            "scala_doc_classpath",
             "semanticdb",
         ]
     ]

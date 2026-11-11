@@ -10,6 +10,18 @@ scala_doc(
 `scala_doc` generates [Scaladoc](https://docs.scala-lang.org/style/scaladoc.html) for sources
 for targets, including sources from upstream deps. Readily hostable HTML is written to a `name.html` output folder.
 
+With Scala 3, `scala_doc` runs the Scala 3 Scaladoc. It reads the TASTy files
+of the compiled deps, so `scalacopts` gives Scaladoc options, for example
+`-source-links`. Set [`scala_version`](cross-compilation.md) on `scala_doc` to
+the version of the deps. Scala 3 `scala_doc` writes API pages for the Scala 3
+sources only. Scaladoc reads the types of Java sources, Java deps and Scala 2
+deps from the classpath. Static site support (`-siteroot`) can come in a later
+change.
+
+Scala 3 `scala_doc` needs the Scaladoc jars. To download them and add them to
+the default Scala toolchains, use `scala_deps.scaladoc()` in `MODULE.bazel` or
+`scala_toolchains(scaladoc = True)` in `WORKSPACE`.
+
 Scaladoc can be somewhat slow to build. In that case, you can tell Bazel to build this target manually,
 i.e. only when named explicitly and not through wildcards: `tags = ["manual"]`.
 
@@ -45,4 +57,4 @@ pkg_tar(
 | --------------------- | ----------------------------------------------------- |
 | name                  | `Name, required`<br/>A unique name for this target. |
 | deps                  | `List of labels, optional`<br/>Labels for which you want to create scaladoc. |
-| scalacopts            | `List of strings, optional`<br/>Extra compiler options for this library to be passed to scalac. |
+| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |

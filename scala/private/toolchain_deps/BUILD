@@ -29,3 +29,10 @@ common_toolchain_deps(
     deps_id = "semanticdb",
     visibility = ["//visibility:public"],
 )
+
+common_toolchain_deps(
+    name = "scala_doc_classpath",
+    deps_id = "scala_doc_classpath",
+    optional = True,
+    visibility = ["//visibility:public"],
+)
