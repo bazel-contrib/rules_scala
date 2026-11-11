@@ -43,6 +43,8 @@ def _mapped_3_8_and_3_9_have_extra_deps_test(ctx):
 
     for dep in ["@org_scala_lang_scala3_repl", "@org_jline_jline_reader_4"]:
         asserts.true(env, dep in deps_3_9, "expected %s in 3.9's repl deps" % dep)
+        asserts.false(env, dep in deps_3_10, "expected %s to be absent from 3.10's repl deps" % dep)
+    for dep in ["@io_bazel_rules_scala_scala_repl", "@org_jline_jline_reader"]:
         asserts.true(env, dep in deps_3_10, "expected %s in 3.10's repl deps" % dep)
     asserts.true(
         env,
