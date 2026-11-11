@@ -180,7 +180,7 @@ scala_library(
 # The older LTS line and the newest Scala 3 version.
 _OTHER_SCALA3_VERSIONS = [
     "3.3.9",
-    "3.10.0",
+    "3.10.1",
 ]
 
 [
