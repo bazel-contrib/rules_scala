@@ -3,7 +3,7 @@
 Mostly generated and updated by scripts/create_repository.py.
 """
 
-scala_version = "3.10.0"
+scala_version = "3.10.1"
 
 artifacts = {
     "com_fasterxml_jackson_core_jackson_annotations": {
@@ -175,6 +175,15 @@ artifacts = {
         "deps": [
             "@com_vladsch_flexmark_flexmark",
             "@com_vladsch_flexmark_flexmark_jira_converter",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_footnotes": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-footnotes:0.64.8",
+        "sha256": "ae5244254e270ae6479803870fa791fe0ae12be242f72e47979412a8ae16df06",
+        "srcjar_sha256": "e8fc55fd57cebb683b0886667f40029d23a4e1d2c6a5fabf70b692bfde8dc502",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
             "@com_vladsch_flexmark_flexmark_util",
         ],
     },
@@ -444,39 +453,39 @@ artifacts = {
         "sha256": "a9c72760e12c199e2a2c28f1a126ebf0cc5b51c0b58d46472596fc32f7f92534",
     },
     "io_bazel_rules_scala_org_ow2_asm_asm": {
-        "artifact": "org.ow2.asm:asm:9.10.1",
-        "sha256": "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb",
-        "srcjar_sha256": "cb29bf42b4008972c566944d377192aa1b2d90275b9cfa9a7fa86de669fde11c",
+        "artifact": "org.ow2.asm:asm:9.11.1",
+        "sha256": "ae4e6e10d59d0a1500317764b21881ad883f8550e33c66e6142f7032c6fb566c",
+        "srcjar_sha256": "3cfc56ad047260d8ccff50cd55af8922a9c9e2b0439c6eba801dbfaf0870a3ae",
     },
     "io_bazel_rules_scala_org_ow2_asm_asm_analysis": {
-        "artifact": "org.ow2.asm:asm-analysis:9.10.1",
-        "sha256": "dede75a21306b65974ecd8f87114ff6970f09fb794157a4ca09ab25c888c2bfc",
-        "srcjar_sha256": "a85db3987f46505bba104ab1d267692aaa1937792007dcdffad34f54c76193ef",
+        "artifact": "org.ow2.asm:asm-analysis:9.11.1",
+        "sha256": "3a91769287d0a186333d6e384e5d4eec37e4b8f705dcf920ff4aea4cc452fac2",
+        "srcjar_sha256": "44341d32582772e438aea69c4a5a3b060fda1d5004e93e4f09857bc548ab7c14",
         "deps": [
             "@io_bazel_rules_scala_org_ow2_asm_asm_tree",
         ],
     },
     "io_bazel_rules_scala_org_ow2_asm_asm_commons": {
-        "artifact": "org.ow2.asm:asm-commons:9.10.1",
-        "sha256": "6d0abefb7cbf972ea16edb37ec14835372505063a45f976ab7ea889ed9497895",
-        "srcjar_sha256": "a26e55103e094a0f6df75a7b5e578bd7b4ad73abd2641b0fa2ac97db70641906",
+        "artifact": "org.ow2.asm:asm-commons:9.11.1",
+        "sha256": "6a5095ec53726156a78b2cd2efd45bc4e877754eca7c234f61224a53d6bfa661",
+        "srcjar_sha256": "3a432534d33bed91412c6dcf8b75805e21c5a360844c01f48dab9bb68aedb314",
         "deps": [
             "@io_bazel_rules_scala_org_ow2_asm_asm",
             "@io_bazel_rules_scala_org_ow2_asm_asm_tree",
         ],
     },
     "io_bazel_rules_scala_org_ow2_asm_asm_tree": {
-        "artifact": "org.ow2.asm:asm-tree:9.10.1",
-        "sha256": "3dfb0d5b6a106cd40b5b250e39935fbf2f927f4477546a5369a3ac609cf0506b",
-        "srcjar_sha256": "93a9406bb68abff43f491891625e0d3c7edce87b70d2370ec1ea4627c9ead090",
+        "artifact": "org.ow2.asm:asm-tree:9.11.1",
+        "sha256": "2b15c3c1b288a9fad3bb2cd6d988ba9521554914ed1f2a2029141fa3f483154a",
+        "srcjar_sha256": "203604136ea5f116a261aa10a415d25a8e74897749c128e532853ec4a748c572",
         "deps": [
             "@io_bazel_rules_scala_org_ow2_asm_asm",
         ],
     },
     "io_bazel_rules_scala_org_ow2_asm_asm_util": {
-        "artifact": "org.ow2.asm:asm-util:9.10.1",
-        "sha256": "1bb99d091fba2597dc6d51193e9bbcf0d8447e7ed96bd8f0198b18152f09655c",
-        "srcjar_sha256": "a7cbc3782c5384837149f84869dcc24625ed9a0bcaec9e929e69c44abf8f7125",
+        "artifact": "org.ow2.asm:asm-util:9.11.1",
+        "sha256": "23fdffacdfc38f447cbd8b80e058f462451fa5d4709e437067d530fa6513579d",
+        "srcjar_sha256": "cf9be492118a6c8e2ebf8ec7f2389eb904b21eef0d8419897c7e7ed93aafc244",
         "deps": [
             "@io_bazel_rules_scala_org_ow2_asm_asm",
             "@io_bazel_rules_scala_org_ow2_asm_asm_analysis",
@@ -528,9 +537,9 @@ artifacts = {
         "sha256": "75ac366e8ecb691e06a7e85041eed0f67919a646e5262fa0901225698c104375",
     },
     "io_bazel_rules_scala_scala_compiler": {
-        "artifact": "org.scala-lang:scala3-compiler_3:3.10.0",
-        "sha256": "51e241938950723faebe420eb4d3bd4da3a1b686f6be574ad0ff4040a6b4bc1f",
-        "srcjar_sha256": "21b2a1cedb5f274f999a716ce1b7778814ec103fbb3f643999a51aedc6e23ab0",
+        "artifact": "org.scala-lang:scala3-compiler_3:3.10.1",
+        "sha256": "786e93def1988c1c59d6348d335333f3624cfaee0d4191cbcc9040b46aa11992",
+        "srcjar_sha256": "006f707b278696a21261e0b6b722360b00f20830114e8ad5b7a21801cb45cccf",
         "deps": [
             "@io_bazel_rules_scala_org_ow2_asm_asm_commons",
             "@io_bazel_rules_scala_org_ow2_asm_asm_util",
@@ -551,23 +560,27 @@ artifacts = {
             "@org_jline_jline",
         ],
     },
+    "io_bazel_rules_scala_scala_directives_parser": {
+        "artifact": "org.scala-lang:scala3-directives-parser_3:3.10.1",
+        "sha256": "25dff9d1cb98fe00cefde42374f91e6be4d9d0ee453e9fcb2d7154826964c21f",
+    },
     "io_bazel_rules_scala_scala_interfaces": {
-        "artifact": "org.scala-lang:scala3-interfaces:3.10.0",
-        "sha256": "2293237c57462efcc200e1cf9ec7b5764c17458b3886689cc16c5ec9a5552ddf",
-        "srcjar_sha256": "5b3eec0a0f05c77b0d694ed036dc6606359f6ff563a24e6f5c1c14bcdc7ab8ff",
+        "artifact": "org.scala-lang:scala3-interfaces:3.10.1",
+        "sha256": "a39fb9ea2bbacfc9a4c602a28bc9954fea8d2c48ee9e366fb3485160eb151dfc",
+        "srcjar_sha256": "1f8c1858d5bd989da3ea443583926ea650fb0e7923a7f307af4174c8d5e78c55",
     },
     "io_bazel_rules_scala_scala_library": {
-        "artifact": "org.scala-lang:scala3-library_3:3.10.0",
-        "sha256": "4daaede24ddfeea082bbed096ba0c492d99e8428632e9fd3c38f82cf7aad4b63",
-        "srcjar_sha256": "4d600b6c00f58d985c98348e07f68781e23718b182026029428c57a81df2cb19",
+        "artifact": "org.scala-lang:scala3-library_3:3.10.1",
+        "sha256": "de6f5d7f9175fd0c1043bb2ca26f349959e00d4c9dbfd1a1f30f6144843a3d13",
+        "srcjar_sha256": "ec17be592150a328c83d5fb936226fd8aaae011d72bc69026206e51ba463ae62",
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
         ],
     },
     "io_bazel_rules_scala_scala_library_2": {
-        "artifact": "org.scala-lang:scala-library:3.10.0",
-        "sha256": "b47befb29e02bbc08a10bbd387b35cf80ff9bf04fda8fdf3dda6c8ad6895f325",
-        "srcjar_sha256": "40b37d9ddd1161b173598bda8c9277c9568afc0c0aaf6f7e9a0606c27aa3d6fe",
+        "artifact": "org.scala-lang:scala-library:3.10.1",
+        "sha256": "ff0a773187f827ea7b596e4f370098abc417d6a4de24858ff907bbb6af97b9a5",
+        "srcjar_sha256": "382de23b9a6faa8e7bc7175e604e459393aa912a04263dc092192aa654d8d5ad",
     },
     "io_bazel_rules_scala_scala_parallel_collections": {
         "artifact": "org.scala-lang.modules:scala-parallel-collections_2.13:1.2.0",
@@ -592,18 +605,30 @@ artifacts = {
             "@io_bazel_rules_scala_scala_library_2",
         ],
     },
+    "io_bazel_rules_scala_scala_repl": {
+        "artifact": "org.scala-lang:scala3-repl_3:3.10.1",
+        "sha256": "88cfa65d3bd8b7581de1f78bb7b02dc172e6d675d7f52a180956490143e933a7",
+        "deps": [
+            "@io_get_coursier_interface",
+            "@org_jline_jline_native",
+            "@org_jline_jline_reader",
+            "@org_jline_jline_terminal",
+            "@org_jline_jline_terminal_jni",
+            "@io_bazel_rules_scala_scala_directives_parser",
+        ],
+    },
     "io_bazel_rules_scala_scala_tasty_core": {
-        "artifact": "org.scala-lang:tasty-core_3:3.10.0",
-        "sha256": "cd8088db4457e84610cfdf0381e8c2f92f409fb565ad5d792a3bdc7d37526058",
-        "srcjar_sha256": "e4f328cb9afc61e9bacae6e208166aac3988e09da4d56c9c1e21815505e7f2d7",
+        "artifact": "org.scala-lang:tasty-core_3:3.10.1",
+        "sha256": "536b6c5b85ee5a59986b218bc8143fd8a8b59d1bbbb218a9c780f96b1bcca6fc",
+        "srcjar_sha256": "662ed9e4453ec0df99ed946be7a81613e3b6bb6c220fdd94033c610c984d04a5",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
         ],
     },
     "io_bazel_rules_scala_scala_tasty_inspector": {
-        "artifact": "org.scala-lang:scala3-tasty-inspector_3:3.10.0",
-        "sha256": "96a9e772a6d3f5c7e76f8fba9f6745cf6d68478c8c9346109b287de8cf957a12",
-        "srcjar_sha256": "f8c8b3c2dfd4a4671bb8533420da3db60024c59b700617726fb3d530c20089ec",
+        "artifact": "org.scala-lang:scala3-tasty-inspector_3:3.10.1",
+        "sha256": "fe8ca32de2484877bd588949000ae531608a91c682ec9fbeafa961b4a119c173",
+        "srcjar_sha256": "01a7d13753cb94fdc642588ccac014616d976f7905a74606141ded3f8908e697",
         "deps": [
             "@io_bazel_rules_scala_scala_compiler",
         ],
@@ -625,14 +650,15 @@ artifacts = {
         ],
     },
     "io_bazel_rules_scala_scaladoc": {
-        "artifact": "org.scala-lang:scaladoc_3:3.10.0",
-        "sha256": "2f1a34c894696858c0ccc97a4ea0d6400efb7a6ba6171281c50813c956a851af",
-        "srcjar_sha256": "85afc574479cfd6bfaa38f3e5ed5cf553f70497776d1f2500a1ca4102f1fe11c",
+        "artifact": "org.scala-lang:scaladoc_3:3.10.1",
+        "sha256": "2c4a7c0122621162c8446d4b792ee8ddb70e682cd38c0695ab88ebb9c22c3708",
+        "srcjar_sha256": "946f6fb6510019747437fa1a7f7c8223f8ad86edb95a9b86b9c520b040606d54",
         "deps": [
             "@com_vladsch_flexmark_flexmark",
             "@com_vladsch_flexmark_flexmark_ext_anchorlink",
             "@com_vladsch_flexmark_flexmark_ext_autolink",
             "@com_vladsch_flexmark_flexmark_ext_emoji",
+            "@com_vladsch_flexmark_flexmark_ext_footnotes",
             "@com_vladsch_flexmark_flexmark_ext_gfm_strikethrough",
             "@com_vladsch_flexmark_flexmark_ext_gfm_tasklist",
             "@com_vladsch_flexmark_flexmark_ext_tables",
@@ -821,7 +847,6 @@ artifacts = {
     "io_get_coursier_interface": {
         "artifact": "io.get-coursier:interface:1.0.29-M4",
         "sha256": "a9173f8348005f7a64ae4748854c473e8acdc3433afad0cd37d82167aec272fc",
-        "srcjar_sha256": "472e004350e18061382dc97ac276d8f7e2b85c13d2a720593a44dc5886c025f8",
         "deps": [
             "@org_slf4j_slf4j_api",
         ],
@@ -876,48 +901,21 @@ artifacts = {
         "sha256": "beb0039b0ebd18b68240082715ba57cec1b85e43e667758df4a9c34e4f9dd0a3",
     },
     "org_jline_jline_native": {
-        "artifact": "org.jline:jline-native:3.30.6",
-        "sha256": "43c36f0934545a9549fb3c8ff3afa361c320efe1c94759ecd09b340648397c80",
-        "srcjar_sha256": "a0bcb1cc9bb3a9902ee4a6b1f7a16cac06734e7b44b6d7b85ba6b92693b67008",
-    },
-    # scala3-repl_3:3.10.0 pins jline 4.3.1, a major bump from the 3.30.6
-    # this file already carries for the Scala 2.13 compiler bundled inside
-    # scala3-compiler_3, so it gets its own "_4"-suffixed set of artifacts.
-    "org_jline_jline_native_4": {
         "artifact": "org.jline:jline-native:4.3.1",
         "sha256": "ff94ab4bccc3c1549444082ce07a2760cbf1ad4dae04e43508597bd802bcb231",
-        "srcjar_sha256": "bc19d0539f602db947f5d94fc9f53c13cc22d1cbecf5d47636daceefe3cbf9ce",
     },
     "org_jline_jline_reader": {
-        "artifact": "org.jline:jline-reader:3.30.6",
-        "sha256": "065ca5599713a8bf80fb11b24401ebe5be92816cda0fa9b73450d767a86dd07f",
-        "srcjar_sha256": "8c923f814f3fdffd432d42c4e2aa320c353d5fdfc39e0b0dd4754587e592fad2",
+        "artifact": "org.jline:jline-reader:4.3.1",
+        "sha256": "02aa899906086ce9d9c992bb05aed776045e5915a180e717dcb661fb87ab84d3",
         "deps": [
             "@org_jline_jline_terminal",
         ],
     },
-    "org_jline_jline_reader_4": {
-        "artifact": "org.jline:jline-reader:4.3.1",
-        "sha256": "02aa899906086ce9d9c992bb05aed776045e5915a180e717dcb661fb87ab84d3",
-        "srcjar_sha256": "4b282beaedd903ef59bb2697155f914d7954a47e278350e0eca648dec2ca8c9e",
-        "deps": [
-            "@org_jline_jline_terminal_4",
-        ],
-    },
     "org_jline_jline_terminal": {
-        "artifact": "org.jline:jline-terminal:3.30.6",
-        "sha256": "9a8dfde8a25b0a9687cf11e0dd4a128665e831f14f9ced85ffc284d3adbad374",
-        "srcjar_sha256": "5d52ad88f8b83c7e82f72c6d66795cbd9f605aa48b40c2d475e597af2c5d73ef",
-        "deps": [
-            "@org_jline_jline_native",
-        ],
-    },
-    "org_jline_jline_terminal_4": {
         "artifact": "org.jline:jline-terminal:4.3.1",
         "sha256": "272927363471fdbf2f38710befbfe866acc1ed3472062a8ced02b16686f27bcc",
-        "srcjar_sha256": "9290648ed190add84fa15f482d92d760a4217e4f26d79255d1770ccd7015d72c",
         "deps": [
-            "@org_jline_jline_native_4",
+            "@org_jline_jline_native",
         ],
     },
     "org_jline_jline_terminal_jna": {
@@ -930,27 +928,17 @@ artifacts = {
         ],
     },
     "org_jline_jline_terminal_jni": {
-        "artifact": "org.jline:jline-terminal-jni:3.30.6",
-        "sha256": "f42a21ac1121e253673a377aafec24330d8b646d831e1e02ac856c16a92de95e",
-        "srcjar_sha256": "c778016c9fb60e726eb50c28530195db222f25983c4c369d7de15eaa0a704e73",
+        "artifact": "org.jline:jline-terminal-jni:4.3.1",
+        "sha256": "1c4873798f36412827087013e424199bced29da7c8421f3850cfe7f31f274c1c",
         "deps": [
             "@org_jline_jline_native",
             "@org_jline_jline_terminal",
         ],
     },
-    "org_jline_jline_terminal_jni_4": {
-        "artifact": "org.jline:jline-terminal-jni:4.3.1",
-        "sha256": "1c4873798f36412827087013e424199bced29da7c8421f3850cfe7f31f274c1c",
-        "srcjar_sha256": "c75238127017279e956c85608ccd2aa40ff9dd18542e2e7ad534db9348c4c534",
-        "deps": [
-            "@org_jline_jline_native_4",
-            "@org_jline_jline_terminal_4",
-        ],
-    },
     "org_jsoup_jsoup": {
-        "artifact": "org.jsoup:jsoup:1.22.2",
-        "sha256": "596785996d3c6df16f544c232d10a9a1d88783b2a4740cf5251cb616f2be704d",
-        "srcjar_sha256": "3aed3e38ec1e0373eb6755213b01d197802f858850bce20e63d99c93e08818bc",
+        "artifact": "org.jsoup:jsoup:1.23.2",
+        "sha256": "e9d8c856856680427f096d156f02a414289985c930998fcb519ce5be39b42003",
+        "srcjar_sha256": "f0ed21735857df93c3e461d1aecf89d28c3eda552f2e043d68959d341376aa17",
     },
     "org_jspecify_jspecify": {
         "artifact": "org.jspecify:jspecify:1.0.0",
@@ -970,24 +958,6 @@ artifacts = {
             "@io_bazel_rules_scala_scala_library_2",
         ],
     },
-    "org_scala_lang_scala3_directives_parser": {
-        "artifact": "org.scala-lang:scala3-directives-parser_3:3.10.0",
-        "sha256": "2d28f3366f452296134228b0a165ca33cf9a962ae97566085ba59c8031cc2b2b",
-        "srcjar_sha256": "05f5e841759f03bd3e0679c2ca4710afdc2490c5bafdb49d658f6c586b73ce71",
-    },
-    "org_scala_lang_scala3_repl": {
-        "artifact": "org.scala-lang:scala3-repl_3:3.10.0",
-        "sha256": "648c00039a5b4234ba5e618fe9df615c14cd87a679d3943d915f3ccd2a451f0f",
-        "srcjar_sha256": "d40c588f4693ab95891b4226c9d8eedb9e3e25900d6bb15be8804f838bdb395c",
-        "deps": [
-            "@io_get_coursier_interface",
-            "@org_jline_jline_native_4",
-            "@org_jline_jline_reader_4",
-            "@org_jline_jline_terminal_4",
-            "@org_jline_jline_terminal_jni_4",
-            "@org_scala_lang_scala3_directives_parser",
-        ],
-    },
     "org_scala_lang_scalap": {
         "artifact": "org.scala-lang:scalap:2.13.18",
         "sha256": "278216a595f34d0cfb78ae710cb487f31d468fa5e883ffae8af0947b6f67c517",
@@ -997,9 +967,9 @@ artifacts = {
         ],
     },
     "org_scala_sbt_compiler_interface": {
-        "artifact": "org.scala-sbt:compiler-interface:1.12.0",
-        "sha256": "92f487a505eafdd0a033e4ff4f38a81509a655c76257c64e6808dd873cc145c3",
-        "srcjar_sha256": "6e59d8fd35f900e2f96c2e3defe0c55c0a3577dde712a0912ffd1e7eae2fbaf0",
+        "artifact": "org.scala-sbt:compiler-interface:1.12.1",
+        "sha256": "8571d6dae6c3f7f4e782d0bda16ca832e06f749f60cd0e1c66d28dba621c27a9",
+        "srcjar_sha256": "21b3bc1d67ab6b29d19eee0aa88d4382af0ba348b98b6a252c421f639287d3ed",
         "deps": [
             "@org_scala_sbt_util_interface",
         ],
@@ -1154,7 +1124,6 @@ artifacts = {
     "org_slf4j_slf4j_api": {
         "artifact": "org.slf4j:slf4j-api:1.7.36",
         "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0",
-        "srcjar_sha256": "15bc04357a3725b7a5153f132db71379f95e83b7b8590a86cc6d4ad77bfc150a",
     },
     "org_snakeyaml_snakeyaml_engine": {
         "artifact": "org.snakeyaml:snakeyaml-engine:3.0.1",
@@ -1502,23 +1471,23 @@ artifacts = {
         ],
     },
     "tools_jackson_core_jackson_core": {
-        "artifact": "tools.jackson.core:jackson-core:3.2.1",
-        "sha256": "2688aaa60b207403287e16a71fb5644bf2f9cfc464cc601ae95c6c86a5af1f94",
-        "srcjar_sha256": "06db11dfde5279230a7fb63a91659ead5d4f37879a5368c8493590324356619d",
+        "artifact": "tools.jackson.core:jackson-core:3.2.2",
+        "sha256": "93d9090b8c505b2f942ad85dd5821e8c401bfbafafff11708a3fbe2ef9da18ca",
+        "srcjar_sha256": "3d20867513cc78a44f56f1152f85f94492ba3e1f89a1065a3bd7629dbfdb3b94",
     },
     "tools_jackson_core_jackson_databind": {
-        "artifact": "tools.jackson.core:jackson-databind:3.2.1",
-        "sha256": "8d005c5626b1839e2eea6bd33a437287e7a24d54e1bb3746b8f861193262b519",
-        "srcjar_sha256": "e6455e24b0621c5f9def55101fdb1e0599fbadce11389f9b51e478d5a664d4e5",
+        "artifact": "tools.jackson.core:jackson-databind:3.2.2",
+        "sha256": "d27509f990d990fc779a01f3f612005ff6c67dc3bb0a720f5f4d9b2f5c713401",
+        "srcjar_sha256": "da9d8f260e7cf527e9f26ccd2ccc7dec65d5c6eaad03bf6842b3a29425c644b7",
         "deps": [
             "@com_fasterxml_jackson_core_jackson_annotations",
             "@tools_jackson_core_jackson_core",
         ],
     },
     "tools_jackson_dataformat_jackson_dataformat_yaml": {
-        "artifact": "tools.jackson.dataformat:jackson-dataformat-yaml:3.2.1",
-        "sha256": "b6a748ca9aab640f647079b6bfa53f16a5b65b815a19581c4afe0601e754854e",
-        "srcjar_sha256": "c64757ea5e5deb9913c652adefeb9474e5926dda4ddd70463bdc971449474129",
+        "artifact": "tools.jackson.dataformat:jackson-dataformat-yaml:3.2.2",
+        "sha256": "c2c24e93676832dbb14196685e24292bb04258165c70d6c1e41e475e34fc93d3",
+        "srcjar_sha256": "6d7f8a4c3c6c21fed71e951999291aa3d5de00f3e214ec605372f8258f3995f7",
         "deps": [
             "@org_snakeyaml_snakeyaml_engine",
             "@tools_jackson_core_jackson_core",
