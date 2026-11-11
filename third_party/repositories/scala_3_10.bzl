@@ -562,7 +562,7 @@ artifacts = {
     },
     "io_bazel_rules_scala_scala_directives_parser": {
         "artifact": "org.scala-lang:scala3-directives-parser_3:3.10.1",
-        "sha256": "2d28f3366f452296134228b0a165ca33cf9a962ae97566085ba59c8031cc2b2b",
+        "sha256": "25dff9d1cb98fe00cefde42374f91e6be4d9d0ee453e9fcb2d7154826964c21f",
     },
     "io_bazel_rules_scala_scala_interfaces": {
         "artifact": "org.scala-lang:scala3-interfaces:3.10.1",
@@ -607,7 +607,7 @@ artifacts = {
     },
     "io_bazel_rules_scala_scala_repl": {
         "artifact": "org.scala-lang:scala3-repl_3:3.10.1",
-        "sha256": "648c00039a5b4234ba5e618fe9df615c14cd87a679d3943d915f3ccd2a451f0f",
+        "sha256": "88cfa65d3bd8b7581de1f78bb7b02dc172e6d675d7f52a180956490143e933a7",
         "deps": [
             "@io_get_coursier_interface",
             "@org_jline_jline_native",
