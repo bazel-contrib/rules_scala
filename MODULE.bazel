@@ -119,6 +119,7 @@ dev_deps.jmh()
 dev_deps.junit()
 dev_deps.scala_proto()
 dev_deps.scalafmt()
+dev_deps.scaladoc()
 dev_deps.scalatest()
 dev_deps.specs2()
 dev_deps.twitter_scrooge()
@@ -127,6 +128,9 @@ use_repo(
     "scala_proto_rules_scalapb_compilerplugin",
     "scala_proto_rules_scalapb_protoc_bridge",
 )
+
+# For //test/toolchains/scala_doc_version_mismatch.
+use_repo(dev_deps, "io_bazel_rules_scala_scaladoc_3_3_9")
 
 # Default versions of version specific repos needed by some of our tests. Tests
 # that set `--repo_env=SCALA_VERSION=...` break without using the default here,
