@@ -31,7 +31,7 @@ def _mapped_3_8_and_3_9_have_extra_deps_test(ctx):
 
     deps_3_8 = repl_extra_deps("3.8.4")
     deps_3_9 = repl_extra_deps("3.9.0")
-    deps_3_10 = repl_extra_deps("3.10.0")
+    deps_3_10 = repl_extra_deps("3.10.1")
 
     for dep in ["@org_scala_lang_scala3_repl", "@com_lihaoyi_fansi_3"]:
         asserts.true(env, dep in deps_3_8, "expected %s in 3.8's repl deps" % dep)
@@ -43,6 +43,8 @@ def _mapped_3_8_and_3_9_have_extra_deps_test(ctx):
 
     for dep in ["@org_scala_lang_scala3_repl", "@org_jline_jline_reader_4"]:
         asserts.true(env, dep in deps_3_9, "expected %s in 3.9's repl deps" % dep)
+        asserts.false(env, dep in deps_3_10, "expected %s to be absent from 3.10's repl deps" % dep)
+    for dep in ["@io_bazel_rules_scala_scala_repl", "@org_jline_jline_reader"]:
         asserts.true(env, dep in deps_3_10, "expected %s in 3.10's repl deps" % dep)
     asserts.true(
         env,
@@ -60,7 +62,7 @@ def _mapped_3_8_and_3_9_have_extra_deps_test(ctx):
 def _known_supported_versions_test(ctx):
     env = unittest.begin(ctx)
 
-    for scala_version in ["2.12.21", "3.1.3", "3.7.4", "3.8.4", "3.9.0", "3.10.0"]:
+    for scala_version in ["2.12.21", "3.1.3", "3.7.4", "3.8.4", "3.9.0", "3.10.1"]:
         asserts.true(
             env,
             repl_is_known_supported(scala_version),

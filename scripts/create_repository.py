@@ -26,7 +26,7 @@ ROOT_SCALA_VERSIONS = [
     "3.7.4",
     "3.8.4",
     "3.9.0", # LTS
-    "3.10.0",
+    "3.10.1",
 ]
 PARSER_COMBINATORS_VERSION = '2.4.0'
 SBT_COMPILER_INTERFACE_VERSION = '1.12.0'
