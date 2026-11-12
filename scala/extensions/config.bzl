@@ -7,6 +7,7 @@ See the `_settings_attrs` dict for documentation.
 load(
     "//:scala_config.bzl",
     "DEFAULT_SCALA_VERSION",
+    "parse_compiler_dependency_tracking",
     _scala_config = "scala_config",
 )
 load(
@@ -64,10 +65,12 @@ def _scala_config_impl(module_ctx):
     _scala_config(
         scala_version = version,
         scala_versions = versions.keys(),
-        enable_compiler_dependency_tracking = menv.get(
-            "ENABLE_COMPILER_DEPENDENCY_TRACKING",
-            str(settings["enable_compiler_dependency_tracking"]),
-        ) == "True",
+        enable_compiler_dependency_tracking = parse_compiler_dependency_tracking(
+            menv.get(
+                "ENABLE_COMPILER_DEPENDENCY_TRACKING",
+                str(settings["enable_compiler_dependency_tracking"]),
+            ),
+        ),
     )
     return module_ctx.extension_metadata(reproducible = True)
 

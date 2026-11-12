@@ -1,4 +1,7 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load(":compiler_dependency_tracking_test.bzl", "compiler_dependency_tracking_test_suite")
+
+compiler_dependency_tracking_test_suite(name = "compiler_dependency_tracking_test")
 
 # The scalac Javac action must carry the scala-library matching the configured
 # SCALA_VERSION. Same check, once per major version, off one parameterised script.
@@ -40,8 +43,7 @@ sh_test(
     srcs = ["config_bzl_reflects_env_test.sh"],
     args = [
         "--repo_env=SCALA_VERSION=0.0.0",
-        # Windows and Unix sh_test runners parse quoted args differently.
-        "SCALA_MAJOR_VERSION=__QUOTE__0.0__QUOTE__",
+        "SCALA_MAJOR_VERSION=.0[.]0.$$",
     ],
     data = [
         "//:MODULE.bazel",
@@ -58,41 +60,15 @@ sh_test(
     ],
 )
 
-# The module extension must convert a repository environment string to the
-# boolean accepted by scala_config's repository rule.
-[
-    sh_test(
-        name = "config_bzl_reflects_compiler_tracking_%s_env_test" % value.lower(),
-        size = "large",
-        srcs = ["config_bzl_reflects_env_test.sh"],
-        args = [
-            "--repo_env=ENABLE_COMPILER_DEPENDENCY_TRACKING=%s" % value,
-            "ENABLE_COMPILER_DEPENDENCY_TRACKING=%s" % value,
-        ],
-        data = [
-            "//:MODULE.bazel",
-            "//test/expect_build_failure:nested_bazel.sh",
-            "//:scala_config.bzl",
-            "//scala/extensions:config.bzl",
-        ],
-        tags = [
-            "exclusive",
-            "local",
-            "no-release",
-            "requires-network",
-        ],
-    )
-    for value in ["True", "False"]
-]
-
+# The True override proves the module extension passes the environment value
+# through to the generated repository config. Parsing itself has cheap unit tests.
 sh_test(
-    name = "invalid_compiler_tracking_env_test",
+    name = "config_bzl_reflects_compiler_tracking_true_env_test",
     size = "large",
     srcs = ["config_bzl_reflects_env_test.sh"],
     args = [
-        "--repo_env=ENABLE_COMPILER_DEPENDENCY_TRACKING=true",
-        "\"ENABLE_COMPILER_DEPENDENCY_TRACKING must be True or False, got true\"",
-        "expect-failure",
+        "--repo_env=ENABLE_COMPILER_DEPENDENCY_TRACKING=True",
+        "ENABLE_COMPILER_DEPENDENCY_TRACKING=True",
     ],
     data = [
         "//:MODULE.bazel",
