@@ -74,7 +74,7 @@ test_scala3_9_example() {
 }
 
 test_scala3_10_example() {
-   run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.10.0 //...
+   run_in_example_dir scala3 bazel build --repo_env=SCALA_VERSION=3.10.1 //...
 }
 
 test_semanticdb_example() {

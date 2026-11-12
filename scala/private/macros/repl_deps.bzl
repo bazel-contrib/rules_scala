@@ -26,6 +26,18 @@ _REPL_DEPS_SINCE_3_9 = [
     "@org_slf4j_slf4j_api",
 ]
 
+# 3.10: jline 4 under unsuffixed names.
+_REPL_DEPS_SINCE_3_10 = [
+    "@io_bazel_rules_scala_scala_directives_parser",
+    "@io_bazel_rules_scala_scala_repl",
+    "@io_get_coursier_interface",
+    "@org_jline_jline_native",
+    "@org_jline_jline_reader",
+    "@org_jline_jline_terminal",
+    "@org_jline_jline_terminal_jni",
+    "@org_slf4j_slf4j_api",
+]
+
 def _scala3_minor(scala_version):
     if not scala_version.startswith("3."):
         return None
@@ -46,8 +58,10 @@ def repl_extra_deps(scala_version):
     minor = _scala3_minor(scala_version)
     if minor == 8:
         return _REPL_DEPS_3_8
-    if minor != None and minor >= 9:
+    if minor == 9:
         return _REPL_DEPS_SINCE_3_9
+    if minor != None and minor >= 10:
+        return _REPL_DEPS_SINCE_3_10
     return []
 
 def repl_is_known_supported(scala_version):
