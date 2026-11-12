@@ -175,7 +175,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
         executable = ctx.executable._scala3_scaladoc,
         mnemonic = "ScalaDoc",
         progress_message = "scaladoc {}".format(ctx.label),
-        arguments = [args],
+        arguments = ["--jvm_flag=%s" % f for f in ctx.attr.scaladoc_jvm_flags] + [args],
     )
 
 def _scala_doc_impl(ctx):
@@ -241,7 +241,7 @@ def _scala_doc_impl(ctx):
         executable = ctx.attr._scaladoc.files_to_run.executable,
         mnemonic = "ScalaDoc",
         progress_message = "scaladoc {}".format(ctx.label),
-        arguments = [args],
+        arguments = ["--jvm_flag=%s" % f for f in ctx.attr.scaladoc_jvm_flags] + [args],
     )
 
     return [DefaultInfo(files = depset(direct = [output_path]))]
@@ -256,6 +256,7 @@ def make_scala_doc_rule(aspect = _scaladoc_transitive_aspect):
             "scalacopts": attr.string_list(),
             "site_srcs": attr.label_list(allow_files = True),
             "site_root": attr.string(),
+            "scaladoc_jvm_flags": attr.string_list(),
             "_scaladoc": attr.label(
                 cfg = "exec",
                 executable = True,
