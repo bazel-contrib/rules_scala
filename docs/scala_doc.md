@@ -15,8 +15,23 @@ of the compiled deps, so `scalacopts` gives Scaladoc options, for example
 `-source-links`. Set [`scala_version`](cross-compilation.md) on `scala_doc` to
 the version of the deps. Scala 3 `scala_doc` writes API pages for the Scala 3
 sources only. Scaladoc reads the types of Java sources, Java deps and Scala 2
-deps from the classpath. Static site support (`-siteroot`) can come in a later
-change.
+deps from the classpath.
+
+Scala 3 `scala_doc` can also add a
+[static site](https://docs.scala-lang.org/scala3/guides/scaladoc/static-site.html).
+Put the site files, for example `_docs/`, `_blog/` and `sidebar.yml`, in
+`site_srcs`, and set `site_root` to their root directory. Scaladoc writes the
+pages of `_docs/` to `docs/` in the output.
+
+```py
+scala_doc(
+    name = "scala_docs",
+    scala_version = "3.9.0",
+    site_root = "site",
+    site_srcs = glob(["site/**"]),
+    deps = [":target1"],
+)
+```
 
 Scala 3 `scala_doc` needs the Scaladoc jars. To download them and add them to
 the default Scala toolchains, use `scala_deps.scaladoc()` in `MODULE.bazel` or
@@ -58,3 +73,5 @@ pkg_tar(
 | name                  | `Name, required`<br/>A unique name for this target. |
 | deps                  | `List of labels, optional`<br/>Labels for which you want to create scaladoc. |
 | scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |
+| site_srcs             | `List of labels, optional`<br/>Static site files for Scala 3 Scaladoc. All files must be under `site_root`. Scala 2 `scala_doc` fails if this is not empty. |
+| site_root             | `String, optional`<br/>The root directory of `site_srcs`, relative to the package of this target. The default is the package directory. |

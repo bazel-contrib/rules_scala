@@ -22,9 +22,13 @@ import java.util.zip.ZipFile;
  * <p>Scaladoc reads a jar only together with a {@code .tasty} file input. Thus the runner copies
  * the {@code .tasty} files of each {@code --tasty_jar} into a directory, and gives the
  * directories to Scaladoc.
+ *
+ * <p>Each {@code --site_file=<path>} line is followed by a line with a file. The runner copies the
+ * file to {@code <path>} in the {@code -siteroot} directory.
  */
 public class ScaladocRunner {
   private static final String TASTY_JAR_FLAG = "--tasty_jar=";
+  private static final String SITE_FILE_FLAG = "--site_file=";
 
   public static void main(String[] args) throws Exception {
     if (args.length != 1 || !args[0].startsWith("@")) {
@@ -35,7 +39,7 @@ public class ScaladocRunner {
 
     // Scaladoc reads static site pages from `-siteroot`, which is `./docs` by default. Without a
     // sandbox, `./docs` is the `docs` directory of the main repository. An empty directory gives
-    // only the API pages.
+    // only the API pages, and `--site_file` lines add the static site.
     Path siteRoot = Files.createDirectory(tmp.resolve("siteroot"));
     List<String> scaladocArgs = new ArrayList<>(List.of("-siteroot", siteRoot.toString()));
     List<String> lines = Files.readAllLines(Paths.get(args[0].substring(1)));
@@ -46,6 +50,10 @@ public class ScaladocRunner {
         Path dir = tmp.resolve("tasty").resolve(Integer.toString(i));
         extractTasty(line.substring(TASTY_JAR_FLAG.length()), dir);
         scaladocArgs.add(dir.toString());
+      } else if (line.startsWith(SITE_FILE_FLAG)) {
+        Path target = siteRoot.resolve(line.substring(SITE_FILE_FLAG.length()));
+        Files.createDirectories(target.getParent());
+        Files.copy(Paths.get(lines.get(++i)), target);
       } else {
         break;
       }

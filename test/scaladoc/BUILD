@@ -202,6 +202,17 @@ _OTHER_SCALA3_VERSIONS = [
 ]
 
 [
+    scala_doc(
+        name = "scaladoc_site_" + version.replace(".", "_"),
+        scala_version = version,
+        site_root = "site",
+        site_srcs = glob(["site/**"]),
+        deps = [":Scala3Enum" + ("" if version == "3.9.0" else "_" + version.replace(".", "_"))],
+    )
+    for version in ["3.9.0"] + _OTHER_SCALA3_VERSIONS
+]
+
+[
     genrule(
         name = name + "_pages",
         srcs = [":" + name],
@@ -213,7 +224,10 @@ _OTHER_SCALA3_VERSIONS = [
         "scaladoc_scala3_transitive",
         "scaladoc_scala3_intransitive",
         "scaladoc_scala3_over_scala2",
-    ] + ["scaladoc_scala3_" + v.replace(".", "_") for v in _OTHER_SCALA3_VERSIONS]
+    ] + ["scaladoc_scala3_" + v.replace(".", "_") for v in _OTHER_SCALA3_VERSIONS] + [
+        "scaladoc_site_" + v.replace(".", "_")
+        for v in ["3.9.0"] + _OTHER_SCALA3_VERSIONS
+    ]
 ]
 
 scala_doc(
@@ -258,6 +272,9 @@ scala_doc_intransitive(
     ] + [
         ("scaladoc_scala3_" + v.replace(".", "_"), "true", "./scalarules/test/scaladoc/Color.html")
         for v in _OTHER_SCALA3_VERSIONS
+    ] + [
+        ("scaladoc_site_" + v.replace(".", "_"), "true", "./docs/guide.html")
+        for v in ["3.9.0"] + _OTHER_SCALA3_VERSIONS
     ]
 ]
 
@@ -363,4 +380,33 @@ toolchain_build_test(
     name = "scaladoc_scala2_without_doc_classpath_test",
     extra_toolchains = ["//test/toolchains/scala_doc_classpath_missing:toolchain_scala2"],
     target = ":scaladoc_old_fields",
+)
+
+scala_doc(
+    name = "scaladoc_scala2_site",
+    scala_version = "2.13.18",
+    site_srcs = ["site/_docs/guide.md"],
+    tags = ["manual"],
+    deps = [":Sibling"],
+)
+
+expect_analysis_failure_test(
+    name = "scaladoc_scala2_site_test",
+    message = "`site_srcs` works only with Scala 3. This target uses Scala 2.13.18.",
+    target_under_test = ":scaladoc_scala2_site",
+)
+
+scala_doc(
+    name = "scaladoc_site_outside_root",
+    scala_version = "3.9.0",
+    site_root = "site/_docs",
+    site_srcs = ["A.scala"],
+    tags = ["manual"],
+    deps = [":Scala3Enum"],
+)
+
+expect_analysis_failure_test(
+    name = "scaladoc_site_outside_root_test",
+    message = "`site_srcs` file test/scaladoc/A.scala is not under `site_root` test/scaladoc/site/_docs.",
+    target_under_test = ":scaladoc_site_outside_root",
 )
