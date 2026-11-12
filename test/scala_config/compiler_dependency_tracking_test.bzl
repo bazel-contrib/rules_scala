@@ -38,7 +38,8 @@ def compiler_dependency_tracking_test_suite(name):
     for suffix, value in [("lowercase", "true"), ("empty", ""), ("other", "1")]:
         target = name + "_" + suffix + "_value"
         test = name + "_" + suffix
-        _invalid_value_rule(name = target, value = value)
+        # Intentionally fails analysis; exclude it from wildcard //... builds.
+        _invalid_value_rule(name = target, value = value, tags = ["manual"])
         invalid_value_test(
             name = test,
             target_under_test = ":" + target,
