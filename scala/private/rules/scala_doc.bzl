@@ -111,20 +111,22 @@ def _jar_version(deps, artifact):
                 return jar.basename[i + len(artifact) + 1:].removesuffix(".jar")
     return None
 
-def _site_files(ctx):
-    """Returns (path under `site_root`, File) for each file of `site_srcs`."""
-    repo = "../%s/" % ctx.label.workspace_name if ctx.label.workspace_name else ""
+def _site_prefix(ctx):
+    """Returns the `short_path` prefix of `site_root`, and checks that `site_srcs` are under it."""
+    repo = "../%s/" % ctx.label.repo_name if ctx.label.repo_name else ""
     root = paths.normalize(paths.join(repo + ctx.label.package, ctx.attr.site_root))
     prefix = "" if root == "." else root + "/"
-    result = []
     for file in ctx.files.site_srcs:
-        path = file.short_path[len(prefix):]
+        # A directory can be `site_root` itself.
+        path = file.short_path + "/" if file.is_directory else file.short_path
 
         # With an empty prefix, files of other repositories start with `../`.
-        if not file.short_path.startswith(prefix) or path.startswith("../"):
+        if not path.startswith(prefix) or path[len(prefix):].startswith("../"):
             fail("%s: `site_srcs` file %s is not under `site_root` %s." % (ctx.label, file.short_path, root))
-        result.append((path, file))
-    return result
+    return prefix
+
+def _site_file_args(file):
+    return ["--site_file=" + file.short_path, file.path]
 
 def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
@@ -151,14 +153,16 @@ def _scala3_doc(ctx, output_path, compile_jars):
     for opt in ctx.attr.scalacopts:
         if "\n" in opt or "\r" in opt:
             fail("%s: each `scalacopts` value of Scala 3 `scala_doc` must be one line: %r" % (ctx.label, opt))
+        if opt == "-siteroot" or opt.startswith("-siteroot:"):
+            fail("%s: Scala 3 `scala_doc` sets `-siteroot`. Use `site_srcs` and `site_root` for static site files." % ctx.label)
 
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)
     args.add_all(class_jars, format_each = "--tasty_jar=%s")
-    for path, file in _site_files(ctx):
-        args.add("--site_file=" + path)
-        args.add(file)
+    args.add("--site_prefix=" + _site_prefix(ctx))
+    # Bazel expands directories in `site_srcs` to their files.
+    args.add_all(ctx.files.site_srcs, map_each = _site_file_args)
     args.add("-project", ctx.label.name)
     args.add_all(ctx.attr.scalacopts)
     args.add("-d")

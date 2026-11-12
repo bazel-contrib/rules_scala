@@ -27,3 +27,15 @@ expect_analysis_failure_without_doc_classpath_test = make_expect_analysis_failur
 expect_analysis_failure_with_scaladoc_version_mismatch_test = make_expect_analysis_failure_test({
     "//command_line_option:extra_toolchains": ["//test/toolchains/scala_doc_version_mismatch:toolchain"],
 })
+
+def _site_dir_impl(ctx):
+    out = ctx.actions.declare_directory(ctx.attr.name)
+    ctx.actions.run_shell(
+        outputs = [out],
+        command = "mkdir \"$1/_docs\" && printf -- '---\\ntitle: Tree\\n---\\n' > \"$1/_docs/tree.md\"",
+        arguments = [out.path],
+    )
+    return [DefaultInfo(files = depset([out]))]
+
+# A static site as one directory output, as from a site generator.
+site_dir = rule(implementation = _site_dir_impl)

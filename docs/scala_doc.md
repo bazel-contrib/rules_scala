@@ -20,8 +20,9 @@ deps from the classpath.
 Scala 3 `scala_doc` can also add a
 [static site](https://docs.scala-lang.org/scala3/guides/scaladoc/static-site.html).
 Put the site files, for example `_docs/`, `_blog/` and `sidebar.yml`, in
-`site_srcs`, and set `site_root` to their root directory. Scaladoc writes the
-pages of `_docs/` to `docs/` in the output.
+`site_srcs`, and set `site_root` to their root directory. `site_srcs` can also
+have directory outputs of other rules, for example a site generator. Scaladoc
+writes the pages of `_docs/` to `docs/` in the output.
 
 ```py
 scala_doc(
@@ -32,6 +33,10 @@ scala_doc(
     deps = [":target1"],
 )
 ```
+
+`site_root` is relative to the package of the `scala_doc` target. For site
+files in another package, use a relative path, for example
+`site_root = "../site"` for files in the `site` package next to this package.
 
 Scala 3 `scala_doc` needs the Scaladoc jars. To download them and add them to
 the default Scala toolchains, use `scala_deps.scaladoc()` in `MODULE.bazel` or

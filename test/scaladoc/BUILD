@@ -4,7 +4,7 @@ load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
-load("scaladoc.bzl", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields")
+load("scaladoc.bzl", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields", "site_dir")
 
 package(default_testonly = 1)
 
@@ -201,12 +201,28 @@ _OTHER_SCALA3_VERSIONS = [
     for version in _OTHER_SCALA3_VERSIONS
 ]
 
+genrule(
+    name = "generated_page",
+    outs = ["site/_docs/generated.md"],
+    cmd = "printf -- '---\\ntitle: Generated\\n---\\n' > $@",
+)
+
+site_dir(name = "tree_site")
+
+scala_doc(
+    name = "scaladoc_tree_site",
+    scala_version = "3.9.0",
+    site_root = "tree_site",
+    site_srcs = [":tree_site"],
+    deps = [":Scala3Enum"],
+)
+
 [
     scala_doc(
         name = "scaladoc_site_" + version.replace(".", "_"),
         scala_version = version,
         site_root = "site",
-        site_srcs = glob(["site/**"]),
+        site_srcs = glob(["site/**"]) + [":generated_page"],
         deps = [":Scala3Enum" + ("" if version == "3.9.0" else "_" + version.replace(".", "_"))],
     )
     for version in ["3.9.0"] + _OTHER_SCALA3_VERSIONS
@@ -227,7 +243,7 @@ _OTHER_SCALA3_VERSIONS = [
     ] + ["scaladoc_scala3_" + v.replace(".", "_") for v in _OTHER_SCALA3_VERSIONS] + [
         "scaladoc_site_" + v.replace(".", "_")
         for v in ["3.9.0"] + _OTHER_SCALA3_VERSIONS
-    ]
+    ] + ["scaladoc_tree_site"]
 ]
 
 scala_doc(
@@ -273,9 +289,13 @@ scala_doc_intransitive(
         ("scaladoc_scala3_" + v.replace(".", "_"), "true", "./scalarules/test/scaladoc/Color.html")
         for v in _OTHER_SCALA3_VERSIONS
     ] + [
-        ("scaladoc_site_" + v.replace(".", "_"), "true", "./docs/guide.html")
+        ("scaladoc_site_" + v.replace(".", "_"), "true", page)
         for v in ["3.9.0"] + _OTHER_SCALA3_VERSIONS
-    ]
+        for page in [
+            "./docs/guide.html",
+            "./docs/generated.html",
+        ]
+    ] + [("scaladoc_tree_site", "true", "./docs/tree.html")]
 ]
 
 genrule(
@@ -409,4 +429,21 @@ expect_analysis_failure_test(
     name = "scaladoc_site_outside_root_test",
     message = "`site_srcs` file test/scaladoc/A.scala is not under `site_root` test/scaladoc/site/_docs.",
     target_under_test = ":scaladoc_site_outside_root",
+)
+
+scala_doc(
+    name = "scaladoc_scala3_siteroot_opt",
+    scala_version = "3.9.0",
+    scalacopts = [
+        "-siteroot",
+        "docs",
+    ],
+    tags = ["manual"],
+    deps = [":Scala3Shape"],
+)
+
+expect_analysis_failure_test(
+    name = "scaladoc_scala3_siteroot_opt_test",
+    message = "Scala 3 `scala_doc` sets `-siteroot`. Use `site_srcs` and `site_root` for static site files.",
+    target_under_test = ":scaladoc_scala3_siteroot_opt",
 )
