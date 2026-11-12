@@ -1,5 +1,6 @@
 """Scaladoc support"""
 
+load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load("//scala:providers.bzl", "ScalaInfo")
 load("//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
@@ -110,6 +111,23 @@ def _jar_version(deps, artifact):
                 return jar.basename[i + len(artifact) + 1:].removesuffix(".jar")
     return None
 
+def _site_prefix(ctx):
+    """Returns the `short_path` prefix of `site_root`, and checks that `site_srcs` are under it."""
+    repo = "../%s/" % ctx.label.repo_name if ctx.label.repo_name else ""
+    root = paths.normalize(paths.join(repo + ctx.label.package, ctx.attr.site_root))
+    prefix = "" if root == "." else root + "/"
+    for file in ctx.files.site_srcs:
+        # A directory can be `site_root` itself.
+        path = file.short_path + "/" if file.is_directory else file.short_path
+
+        # With an empty prefix, files of other repositories start with `../`.
+        if not path.startswith(prefix) or path[len(prefix):].startswith("../"):
+            fail("%s: `site_srcs` file %s is not under `site_root` %s." % (ctx.label, file.short_path, root))
+    return prefix
+
+def _site_file_args(file):
+    return ["--site_file=" + file.short_path, file.path]
+
 def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
@@ -135,11 +153,16 @@ def _scala3_doc(ctx, output_path, compile_jars):
     for opt in ctx.attr.scalacopts:
         if "\n" in opt or "\r" in opt:
             fail("%s: each `scalacopts` value of Scala 3 `scala_doc` must be one line: %r" % (ctx.label, opt))
+        if opt == "-siteroot" or opt.startswith("-siteroot:"):
+            fail("%s: Scala 3 `scala_doc` sets `-siteroot`. Use `site_srcs` and `site_root` for static site files." % ctx.label)
 
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)
     args.add_all(class_jars, format_each = "--tasty_jar=%s")
+    args.add("--site_prefix=" + _site_prefix(ctx))
+    # Bazel expands directories in `site_srcs` to their files.
+    args.add_all(ctx.files.site_srcs, map_each = _site_file_args)
     args.add("-project", ctx.label.name)
     args.add_all(ctx.attr.scalacopts)
     args.add("-d")
@@ -147,7 +170,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
     args.add_joined("-classpath", compile_jars, join_with = ctx.configuration.host_path_separator)
 
     ctx.actions.run(
-        inputs = depset(transitive = [compile_jars, class_jars]),
+        inputs = depset(ctx.files.site_srcs, transitive = [compile_jars, class_jars]),
         outputs = [output_path],
         executable = ctx.executable._scala3_scaladoc,
         mnemonic = "ScalaDoc",
@@ -178,6 +201,9 @@ def _scala_doc_impl(ctx):
     if scala3:
         _scala3_doc(ctx, output_path, compile_jars)
         return [DefaultInfo(files = depset(direct = [output_path]))]
+
+    if ctx.files.site_srcs:
+        fail("%s: `site_srcs` works only with Scala 3. This target uses Scala %s." % (ctx.label, scala_version))
 
     # Collect all source files to pass to scaladoc by way of an aspect.
     src_files = depset(transitive = [dep[ScaladocAspectInfo].src_files for dep in ctx.attr.deps])
@@ -228,6 +254,8 @@ def make_scala_doc_rule(aspect = _scaladoc_transitive_aspect):
                 providers = [JavaInfo],
             ),
             "scalacopts": attr.string_list(),
+            "site_srcs": attr.label_list(allow_files = True),
+            "site_root": attr.string(),
             "_scaladoc": attr.label(
                 cfg = "exec",
                 executable = True,
