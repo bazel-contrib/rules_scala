@@ -816,9 +816,6 @@ artifacts = {
         "sha256": "43c36f0934545a9549fb3c8ff3afa361c320efe1c94759ecd09b340648397c80",
         "srcjar_sha256": "a0bcb1cc9bb3a9902ee4a6b1f7a16cac06734e7b44b6d7b85ba6b92693b67008",
     },
-    # scala3-repl_3:3.9.0 pins jline 4.0.14, a major bump from the 3.30.6
-    # this file already carries for the Scala 2.13 compiler bundled inside
-    # scala3-compiler_3, so it gets its own "_4"-suffixed set of artifacts.
     "org_jline_jline_native_4": {
         "artifact": "org.jline:jline-native:4.0.14",
         "sha256": "72f9da7bef7c2f3c0dbb4eda3f4c0bd012caa047755452a7f40f25e61187fc08",
