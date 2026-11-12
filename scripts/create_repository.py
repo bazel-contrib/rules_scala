@@ -46,6 +46,9 @@ GUAVA_VERSION = '33.5.0-jre'
 # i.e., group:artifact after stripping any Scala version suffix from artifact.
 EXCLUDED_ARTIFACTS = set(["com.google.guava:listenablefuture"])
 
+# Root of the list that `_scaladoc_artifact_ids` writes into Scala 3 files.
+SCALADOC_ARTIFACT_ID = 'io_bazel_rules_scala_scaladoc'
+
 THIS_FILE = Path(__file__)
 REPO_ROOT = THIS_FILE.parent.parent
 OUTPUT_DIR = REPO_ROOT / 'third_party' / 'repositories'
@@ -765,6 +768,17 @@ class ArtifactUpdater:
         # Add trailing commas.
         artifacts = re.sub(r'([]}"])\n', r'\1,\n', artifacts) + '\n'
 
+        # The list goes before `artifacts`, because `_get_original_artifacts`
+        # reads the file from its first `{`.
+        scaladoc = ''
+        if scala_version.startswith('3.'):
+            scaladoc = 'scaladoc_artifact_ids = ' + re.sub(
+                r'"\n', '",\n', json.dumps(
+                    ArtifactUpdater._scaladoc_artifact_ids(artifact_dict),
+                    indent=4,
+                )
+            ) + '\n\n'
+
         with file.open('w', encoding='utf-8') as data:
             data.write('\n'.join([
                 '"""Maven artifact repository metadata.\n',
@@ -772,9 +786,33 @@ class ArtifactUpdater:
                 f'{THIS_FILE_RELATIVE_TO_REPO_ROOT}.',
                 '"""\n',
                 f'scala_version = "{scala_version}"\n',
-                'artifacts = ',
+                scaladoc + 'artifacts = ',
             ]))
             data.write(artifacts)
+
+    @staticmethod
+    def _scaladoc_artifact_ids(artifacts):
+        """Returns the Scaladoc artifact and its transitive dependencies.
+
+        `scaladoc_artifact_ids` in scala/private/macros/scala_repositories.bzl
+        uses this list unless an override changes one of these artifacts.
+        """
+        ids = {SCALADOC_ARTIFACT_ID}
+        pending = [SCALADOC_ARTIFACT_ID]
+
+        while pending:
+            metadata = artifacts.get(pending.pop(), {})
+
+            for dep in (
+                metadata.get('deps', []) + metadata.get('runtime_deps', [])
+            ):
+                label = dep.lstrip('@')
+
+                if label not in ids:
+                    ids.add(label)
+                    pending.append(label)
+
+        return sorted(ids)
 
 
 if __name__ == "__main__":

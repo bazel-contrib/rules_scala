@@ -23,51 +23,61 @@ load(
     "//third_party/repositories:scala_3_1.bzl",
     _artifacts_3_1 = "artifacts",
     _scala_version_3_1 = "scala_version",
+    _scaladoc_artifact_ids_3_1 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_10.bzl",
     _artifacts_3_10 = "artifacts",
     _scala_version_3_10 = "scala_version",
+    _scaladoc_artifact_ids_3_10 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_2.bzl",
     _artifacts_3_2 = "artifacts",
     _scala_version_3_2 = "scala_version",
+    _scaladoc_artifact_ids_3_2 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_3.bzl",
     _artifacts_3_3 = "artifacts",
     _scala_version_3_3 = "scala_version",
+    _scaladoc_artifact_ids_3_3 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_4.bzl",
     _artifacts_3_4 = "artifacts",
     _scala_version_3_4 = "scala_version",
+    _scaladoc_artifact_ids_3_4 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_5.bzl",
     _artifacts_3_5 = "artifacts",
     _scala_version_3_5 = "scala_version",
+    _scaladoc_artifact_ids_3_5 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_6.bzl",
     _artifacts_3_6 = "artifacts",
     _scala_version_3_6 = "scala_version",
+    _scaladoc_artifact_ids_3_6 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_7.bzl",
     _artifacts_3_7 = "artifacts",
     _scala_version_3_7 = "scala_version",
+    _scaladoc_artifact_ids_3_7 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_8.bzl",
     _artifacts_3_8 = "artifacts",
     _scala_version_3_8 = "scala_version",
+    _scaladoc_artifact_ids_3_8 = "scaladoc_artifact_ids",
 )
 load(
     "//third_party/repositories:scala_3_9.bzl",
     _artifacts_3_9 = "artifacts",
     _scala_version_3_9 = "scala_version",
+    _scaladoc_artifact_ids_3_9 = "scaladoc_artifact_ids",
 )
 
 artifacts_by_major_scala_version = {
@@ -83,6 +93,19 @@ artifacts_by_major_scala_version = {
     "3.8": _artifacts_3_8,
     "3.9": _artifacts_3_9,
     "3.10": _artifacts_3_10,
+}
+
+scaladoc_artifact_ids_by_major_scala_version = {
+    "3.1": _scaladoc_artifact_ids_3_1,
+    "3.2": _scaladoc_artifact_ids_3_2,
+    "3.3": _scaladoc_artifact_ids_3_3,
+    "3.4": _scaladoc_artifact_ids_3_4,
+    "3.5": _scaladoc_artifact_ids_3_5,
+    "3.6": _scaladoc_artifact_ids_3_6,
+    "3.7": _scaladoc_artifact_ids_3_7,
+    "3.8": _scaladoc_artifact_ids_3_8,
+    "3.9": _scaladoc_artifact_ids_3_9,
+    "3.10": _scaladoc_artifact_ids_3_10,
 }
 
 scala_version_by_major_scala_version = {

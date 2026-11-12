@@ -5,9 +5,12 @@ load("//scala:scala_import.bzl", "scala_import")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
+load("scaladoc_artifact_ids_test.bzl", "scaladoc_artifact_ids_test_suite")
 load("scaladoc.bzl", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields", "site_dir")
 
 package(default_testonly = 1)
+
+scaladoc_artifact_ids_test_suite(name = "scaladoc_artifact_ids_test")
 
 # Scala_library with no deps
 scala_library(

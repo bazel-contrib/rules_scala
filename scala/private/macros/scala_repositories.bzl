@@ -17,6 +17,7 @@ load("//scala/private:macros/repl_deps.bzl", "repl_extra_deps")
 load(
     "//third_party/repositories:repositories.bzl",
     "artifacts_by_major_scala_version",
+    "scaladoc_artifact_ids_by_major_scala_version",
 )
 
 def _dt_patched_compiler_impl(rctx):
@@ -302,6 +303,10 @@ SCALADOC_ARTIFACT_ID = "io_bazel_rules_scala_scaladoc"
 def scaladoc_artifact_ids(scala_version, overridden_artifacts = {}):
     """Returns the Scala 3 Scaladoc artifact and all of its dependencies.
 
+    The list comes from third_party/repositories/scala_3_*.bzl, which
+    scripts/create_repository.py generates. An override of an artifact in that
+    list can change its deps, so then the function follows the deps again.
+
     Args:
         scala_version: Scala version string.
         overridden_artifacts: artifacts that replace the ones in
@@ -312,9 +317,23 @@ def scaladoc_artifact_ids(scala_version, overridden_artifacts = {}):
     """
     if not scala_version.startswith("3."):
         return []
-    artifacts = artifacts_by_major_scala_version[
-        extract_major_version(scala_version)
-    ] | overridden_artifacts
+    major_version = extract_major_version(scala_version)
+    ids = scaladoc_artifact_ids_by_major_scala_version[major_version]
+    if not [id for id in ids if id in overridden_artifacts]:
+        return ids
+    return _walk_scaladoc_deps(
+        artifacts_by_major_scala_version[major_version] | overridden_artifacts,
+    )
+
+def _walk_scaladoc_deps(artifacts):
+    """Follows `deps` and `runtime_deps` from the Scaladoc artifact.
+
+    Args:
+        artifacts: dict from artifact id to its metadata.
+
+    Returns:
+        List of artifact ids.
+    """
     ids = {SCALADOC_ARTIFACT_ID: None}
     pending = [SCALADOC_ARTIFACT_ID]
 

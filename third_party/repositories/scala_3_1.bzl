@@ -5,6 +5,40 @@ Mostly generated and updated by scripts/create_repository.py.
 
 scala_version = "3.1.3"
 
+scaladoc_artifact_ids = [
+    "com_fasterxml_jackson_core_jackson_annotations",
+    "com_fasterxml_jackson_core_jackson_core",
+    "com_fasterxml_jackson_core_jackson_databind",
+    "com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
+    "com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+    "com_vladsch_flexmark_flexmark",
+    "com_vladsch_flexmark_flexmark_ext_anchorlink",
+    "com_vladsch_flexmark_flexmark_ext_autolink",
+    "com_vladsch_flexmark_flexmark_ext_emoji",
+    "com_vladsch_flexmark_flexmark_ext_gfm_strikethrough",
+    "com_vladsch_flexmark_flexmark_ext_gfm_tables",
+    "com_vladsch_flexmark_flexmark_ext_gfm_tasklist",
+    "com_vladsch_flexmark_flexmark_ext_ins",
+    "com_vladsch_flexmark_flexmark_ext_superscript",
+    "com_vladsch_flexmark_flexmark_ext_tables",
+    "com_vladsch_flexmark_flexmark_ext_wikilink",
+    "com_vladsch_flexmark_flexmark_ext_yaml_front_matter",
+    "com_vladsch_flexmark_flexmark_formatter",
+    "com_vladsch_flexmark_flexmark_html_parser",
+    "com_vladsch_flexmark_flexmark_jira_converter",
+    "com_vladsch_flexmark_flexmark_util",
+    "io_bazel_rules_scala_scala_asm",
+    "io_bazel_rules_scala_scala_compiler",
+    "io_bazel_rules_scala_scala_tasty_inspector",
+    "io_bazel_rules_scala_scaladoc",
+    "nl_big_o_liqp",
+    "org_antlr_antlr4_runtime",
+    "org_jsoup_jsoup",
+    "org_nibor_autolink_autolink",
+    "org_yaml_snakeyaml",
+    "ua_co_k_strftime4j",
+]
+
 artifacts = {
     "com_fasterxml_jackson_core_jackson_annotations": {
         "artifact": "com.fasterxml.jackson.core:jackson-annotations:2.12.1",
