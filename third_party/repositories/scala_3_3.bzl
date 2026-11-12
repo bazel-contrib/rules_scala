@@ -6,6 +6,45 @@ Mostly generated and updated by scripts/create_repository.py.
 scala_version = "3.3.9"
 
 artifacts = {
+    "com_fasterxml_jackson_core_jackson_annotations": {
+        "artifact": "com.fasterxml.jackson.core:jackson-annotations:2.21",
+        "sha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b",
+        "srcjar_sha256": "71fe6323d91b16d5d1007fd1e1533fa06bb369abde74f68a42a68c0f8f061a8b",
+    },
+    "com_fasterxml_jackson_core_jackson_core": {
+        "artifact": "com.fasterxml.jackson.core:jackson-core:2.21.2",
+        "sha256": "12e8655b100267b44d0f14d01b1f5082a5105e616174dc4307be1a761e92407b",
+        "srcjar_sha256": "f756a72f5a8a0b53c7c80ee7425de4d29f46d03c6f9350549b28d182a6ee7ca9",
+    },
+    "com_fasterxml_jackson_core_jackson_databind": {
+        "artifact": "com.fasterxml.jackson.core:jackson-databind:2.21.2",
+        "sha256": "8c982f01f148d805f0aaac2339011244757e0df7c6ff8951f2fa3f433b8ed849",
+        "srcjar_sha256": "f2804ae5ec27efe04f3648f5d7fd6856d8b5b562f7a43c532e4c9ef4242a4d94",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@com_fasterxml_jackson_core_jackson_core",
+        ],
+    },
+    "com_fasterxml_jackson_dataformat_jackson_dataformat_yaml": {
+        "artifact": "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2",
+        "sha256": "d25551812fa0c14f37cabaa9401e63eadcea42ce36311183af5622d5bc8a1bc7",
+        "srcjar_sha256": "af4ce80d704aec3d134d86fd07934b7cedf842e8f78671887cdd1216a48a1351",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_core",
+            "@com_fasterxml_jackson_core_jackson_databind",
+            "@org_yaml_snakeyaml",
+        ],
+    },
+    "com_fasterxml_jackson_datatype_jackson_datatype_jsr310": {
+        "artifact": "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2",
+        "sha256": "cf5034791afbbec5139d539c1a94194f172d52a516ad9c25aad5f235a937c747",
+        "srcjar_sha256": "bd4af65370497f452bdac399c9d88f348a2fbae98d3c30a3854f85e3ad8fd85a",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@com_fasterxml_jackson_core_jackson_core",
+            "@com_fasterxml_jackson_core_jackson_databind",
+        ],
+    },
     "com_google_android_annotations": {
         "artifact": "com.google.android:annotations:4.1.1.4",
         "sha256": "ba734e1e84c09d615af6a09d33034b4f0442f8772dec120efb376d86a565ae15",
@@ -79,6 +118,260 @@ artifacts = {
         "artifact": "com.typesafe:config:1.4.5",
         "sha256": "4a4b0affb22a9572409d3a6bde99ce3f2045c551cadc1ca7fe09690892c526c3",
         "srcjar_sha256": "4e17ad7d6a83922a9f1f7b65a33a2d33052a85314303d6f6e318ca3caf9c5d75",
+    },
+    "com_vladsch_flexmark_flexmark": {
+        "artifact": "com.vladsch.flexmark:flexmark:0.62.2",
+        "sha256": "5ebc1707b86c22c70a0ef7c5b7b38a9361c80b89b6bfd0e17be39ab0ed3272a6",
+        "srcjar_sha256": "c22f2c40e16476b822f83b2a966b79c8af490605822e64fdc884bc9fb9d1dadd",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_builder",
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_dependency",
+            "@com_vladsch_flexmark_flexmark_util_format",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@com_vladsch_flexmark_flexmark_util_visitor",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_anchorlink": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-anchorlink:0.62.2",
+        "sha256": "996f33ef589d0aa851e8bc3e0e2a0faff1b0447c35a9cd02ac9bec4c400d7a94",
+        "srcjar_sha256": "f415ee5eb1b098ff3a132a918266277b3e859d150eb7216c418b0959069849f1",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_autolink": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-autolink:0.62.2",
+        "sha256": "527d4a294778d7dcc7f309d407eba0526816ced2d691c51308606b286abf6573",
+        "srcjar_sha256": "51f4e031a2fe6d9b49f53f2739615eb10fbba1d8970df050b6eefe42cb72edbb",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+            "@org_nibor_autolink_autolink",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_emoji": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-emoji:0.62.2",
+        "sha256": "dcdefc2da8ec742ab81605276ebf300962613499c1196fb87e082bd76bc61789",
+        "srcjar_sha256": "1d7f1838a05837dcb7a2b30a39dc32b3e044ec2c728d6351d4af839cec4b3967",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_jira_converter",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_gfm_strikethrough": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-gfm-strikethrough:0.62.2",
+        "sha256": "a46a7c2abd5e8f2d6655b7e870408053e0beb2dd14a5acec4f2b18f6e5b1f0cf",
+        "srcjar_sha256": "47d40c2254a29df4f324ae688a8ce7e7a23b370e10b1eb3592c207a91f0653cb",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_gfm_tasklist": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-gfm-tasklist:0.62.2",
+        "sha256": "b97cb3df6dbd38a32bc1f90a7c81f5b112d8a390984e7a5f9fff7d83f6e2d2c9",
+        "srcjar_sha256": "d7c7f3773cd5636a0a67a3804a75642f0911a83211e51a2d3e73555ce340efe6",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_ins": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-ins:0.62.2",
+        "sha256": "15d217ef8f4d7702da4c7c11a9fd192eec3d67e9ab5486344df95584e73336fa",
+        "srcjar_sha256": "65159ecf4262d7a4569d9f36be4a5e8a65f1e3a6a17cf181d4467444e3cecc7c",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_superscript": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-superscript:0.62.2",
+        "sha256": "c60fe12c39d48f548ef27ba55221483d76d4fbfc1476f4903414ad5aacd2395f",
+        "srcjar_sha256": "b0c537d203bc5f6d28a476125588dbc44121c6fe3a34458c3f405709a2b74e7f",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_tables": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-tables:0.62.2",
+        "sha256": "761943d94020b78ac27c89840d9979328fc4cb18cb03aed23ee3b9767bf924b5",
+        "srcjar_sha256": "1101dfe8752e9419b586748b55934d97f18a91a9db261c2be03503b208836a02",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_wikilink": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-wikilink:0.62.2",
+        "sha256": "370676119e0db87453fe00d823c5b40172980cb24891ea4fedacf88eff909da3",
+        "srcjar_sha256": "0dbe35dde394c3c6e982c51277404e6dc264d3a0bbe0377713f899ee06e8f8e5",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_ext_yaml_front_matter": {
+        "artifact": "com.vladsch.flexmark:flexmark-ext-yaml-front-matter:0.62.2",
+        "sha256": "d59096960d6c80b29b64d4d9dac936b2c121d0b11c3e00b3dfcc1329dbc113b1",
+        "srcjar_sha256": "c8ec44d1bf5d054dca50f3531e90091e387d59b4c4ef3d79ca0a04edd0dbfa39",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_jira_converter": {
+        "artifact": "com.vladsch.flexmark:flexmark-jira-converter:0.62.2",
+        "sha256": "e464fb813d747712e88784ed7459f9e1b1300fb53f8e5dcfee90220811271512",
+        "srcjar_sha256": "9549329d989e14dcb5f7df7209de14b03dec0ce5e80d8f42d4173b15d374aa56",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_ext_gfm_strikethrough",
+            "@com_vladsch_flexmark_flexmark_ext_ins",
+            "@com_vladsch_flexmark_flexmark_ext_superscript",
+            "@com_vladsch_flexmark_flexmark_ext_tables",
+            "@com_vladsch_flexmark_flexmark_ext_wikilink",
+            "@com_vladsch_flexmark_flexmark_util",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util": {
+        "artifact": "com.vladsch.flexmark:flexmark-util:0.62.2",
+        "sha256": "36bb72a3b57a99ff751190cb538ad553499bd49bc24763c642d58c61e9d5b171",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_builder",
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_dependency",
+            "@com_vladsch_flexmark_flexmark_util_format",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_options",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@com_vladsch_flexmark_flexmark_util_visitor",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_ast": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-ast:0.62.2",
+        "sha256": "762c1c2b9cec0cdf53fe1fa1068061265a44f7bc33e672c13f838a697189e434",
+        "srcjar_sha256": "913c5c558176ae83c15cb0e3ad161bc8870f1a751fc823d275e7b4d8ee48f80e",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@com_vladsch_flexmark_flexmark_util_visitor",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_builder": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-builder:0.62.2",
+        "sha256": "1f3177abf51b4e26e2bba994df4902b392c7336e16dfee7ab2c492e0685d52f5",
+        "srcjar_sha256": "353d15015dcbe11cd78a80634f5e74cc4ace613196031bf1ae0233ae51a067b6",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_collection": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-collection:0.62.2",
+        "sha256": "59f350f064aeb3d0e01e97fb773fb9701e3605d9db7a6eb12bce0686412b3809",
+        "srcjar_sha256": "52a5f824bfc25186ae5766f8176ee99229a4a0b23aa90eec8bbe6cc521c417ab",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_data": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-data:0.62.2",
+        "sha256": "4ec42683f8ae51ee8227f3443a54ef0d70d076b593890abac24648d93eecc39c",
+        "srcjar_sha256": "9dc0f68aacb067c61d36cd59bde88a11b6d38d2d2df774cb6c3a4513c5b6e90e",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_dependency": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-dependency:0.62.2",
+        "sha256": "582d01d2f3f42a9ea966551b354edbd6c19dfc70be74f470bc847db255de1367",
+        "srcjar_sha256": "402f9ad484f7c883944ece9d98600493a148d7189e37298ca3e77fad8a26b69b",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_format": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-format:0.62.2",
+        "sha256": "78ced2e678e746a78948ce9469fe95ec78c22d085b0254cce7f826b40231087f",
+        "srcjar_sha256": "6f518303c29487cef3fab94f79d41c67705d50795ca0c4f61daf44f09db33f75",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_html": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-html:0.62.2",
+        "sha256": "377bbf407bc7d7b091ada9eba16b058b7e7fa60ed4a3ee3c584c5d514e159786",
+        "srcjar_sha256": "29c813f743a8dacb47308207857f51d308d3204ecf7984e396b0a51c1ca8d079",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_misc": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-misc:0.62.2",
+        "sha256": "06cec0698633f875e668b401dbab208e0f56a5d55f956a993209efae6be45da6",
+        "srcjar_sha256": "d8b98ba7a212cbc5c419dfda8030b40c5f242f17c85383347fe8fa756bfccb6b",
+        "deps": [
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_options": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-options:0.62.2",
+        "sha256": "a26573c1fedb494d2ff06d28db852d316f4d6fc3b43ed2247afbacd743d9ae50",
+        "srcjar_sha256": "7b6310d6a06f3ac972d7ae264a481ca64cfd16eb7d47c437b45d8736e5db1dc1",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@com_vladsch_flexmark_flexmark_util_sequence",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_sequence": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-sequence:0.62.2",
+        "sha256": "6684a0048ad088452419a2871a6516e7fd3013700cb34a71cca4f9f31a0320c4",
+        "srcjar_sha256": "0056f66c4d65febc3ab820dbdff9a002156a31fa0f8b3828f6e486051d257d46",
+        "deps": [
+            "@com_vladsch_flexmark_flexmark_util_collection",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_misc",
+            "@org_jetbrains_annotations",
+        ],
+    },
+    "com_vladsch_flexmark_flexmark_util_visitor": {
+        "artifact": "com.vladsch.flexmark:flexmark-util-visitor:0.62.2",
+        "sha256": "7197bfcfdeca859c2da2d775f322f98b9fd722cb992760a9678ba4c706eac982",
+        "srcjar_sha256": "c8fcfc0611720519368c29b84b156044a86a689d05e747e2d03f719ca43e876b",
+        "deps": [
+            "@org_jetbrains_annotations",
+        ],
     },
     "dev_dirs_directories": {
         "artifact": "dev.dirs:directories:26",
@@ -261,6 +554,14 @@ artifacts = {
             "@io_bazel_rules_scala_scala_library",
         ],
     },
+    "io_bazel_rules_scala_scala_tasty_inspector": {
+        "artifact": "org.scala-lang:scala3-tasty-inspector_3:3.3.9",
+        "sha256": "cd9f3b7b03d777f0f33d35b36ef23a17c89dc2d38a2e74d16c6f06c6155a21ad",
+        "srcjar_sha256": "97467a1656f8b80c72843359ba55b7f0f58240fe78731dadb7b4cf5a0742a808",
+        "deps": [
+            "@io_bazel_rules_scala_scala_compiler",
+        ],
+    },
     "io_bazel_rules_scala_scala_xml": {
         "artifact": "org.scala-lang.modules:scala-xml_3:2.1.0",
         "sha256": "48f22343575f4b1d6550eecc42d4b7f0a0d30223c72f015d8d893feab4cbeecd",
@@ -275,6 +576,30 @@ artifacts = {
         "srcjar_sha256": "bbfa9bf00870adf3587cc98dd374a32394e817c0a22a0285deed3fa20ef3e82c",
         "deps": [
             "@io_bazel_rules_scala_scala_library",
+        ],
+    },
+    "io_bazel_rules_scala_scaladoc": {
+        "artifact": "org.scala-lang:scaladoc_3:3.3.9",
+        "sha256": "03128cd225f6dd7d0d0142061685aafdc10a767eb468fd3d0671ab0210e2e76c",
+        "srcjar_sha256": "1f5b6074ad5f94b4aa384ca3f093970b403bb600db368e58fcf135086983221f",
+        "deps": [
+            "@com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
+            "@com_vladsch_flexmark_flexmark",
+            "@com_vladsch_flexmark_flexmark_ext_anchorlink",
+            "@com_vladsch_flexmark_flexmark_ext_autolink",
+            "@com_vladsch_flexmark_flexmark_ext_emoji",
+            "@com_vladsch_flexmark_flexmark_ext_gfm_strikethrough",
+            "@com_vladsch_flexmark_flexmark_ext_gfm_tasklist",
+            "@com_vladsch_flexmark_flexmark_ext_tables",
+            "@com_vladsch_flexmark_flexmark_ext_wikilink",
+            "@com_vladsch_flexmark_flexmark_ext_yaml_front_matter",
+            "@com_vladsch_flexmark_flexmark_util_ast",
+            "@com_vladsch_flexmark_flexmark_util_data",
+            "@com_vladsch_flexmark_flexmark_util_html",
+            "@io_bazel_rules_scala_scala_compiler",
+            "@io_bazel_rules_scala_scala_tasty_inspector",
+            "@nl_big_o_liqp",
+            "@org_jsoup_jsoup",
         ],
     },
     "io_bazel_rules_scala_scalatest": {
@@ -461,6 +786,18 @@ artifacts = {
         "sha256": "b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0",
         "srcjar_sha256": "1e8dd4205deab6eb9d6045ad9e69a8754fc21029d56ede1dcd9f22a5e06571a7",
     },
+    "nl_big_o_liqp": {
+        "artifact": "nl.big-o:liqp:0.9.2.3",
+        "sha256": "1f7dc450a0e116dcf9be7f7285f531bd59c6f9a88a85377bb0f716678e2d838a",
+        "srcjar_sha256": "effe55f82f8b5e048da1cd72653724cf238129c6ad1d5bf8fc12e876e871bb49",
+        "deps": [
+            "@com_fasterxml_jackson_core_jackson_annotations",
+            "@com_fasterxml_jackson_core_jackson_core",
+            "@com_fasterxml_jackson_core_jackson_databind",
+            "@com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+            "@ua_co_k_strftime4j",
+        ],
+    },
     "org_checkerframework_checker_qual": {
         "artifact": "org.checkerframework:checker-qual:3.43.0",
         "sha256": "3fbc2e98f05854c3df16df9abaa955b91b15b3ecac33623208ed6424640ef0f6",
@@ -469,6 +806,11 @@ artifacts = {
         "artifact": "org.codehaus.mojo:animal-sniffer-annotations:1.26",
         "sha256": "342f4d815eae69bb980620d0a622862709be37d38f47577675b42c739a962da9",
         "srcjar_sha256": "56d2844b620f4742f4b1c47d83357745b39cb26c45423d1249066c15eca31a86",
+    },
+    "org_jetbrains_annotations": {
+        "artifact": "org.jetbrains:annotations:15.0",
+        "sha256": "d74599cef2b363fdb3cdd3198515aca090e3ea3e98b2ba473c6e46f114dab272",
+        "srcjar_sha256": "5ab01a68db908fa869038e1f30f3f6c31e6d90115142f24ced767f9bb7e845e0",
     },
     "org_jline_jline": {
         "artifact": "org.jline:jline:jar:jdk8:3.30.6",
@@ -513,10 +855,20 @@ artifacts = {
             "@org_jline_jline_terminal",
         ],
     },
+    "org_jsoup_jsoup": {
+        "artifact": "org.jsoup:jsoup:1.22.2",
+        "sha256": "596785996d3c6df16f544c232d10a9a1d88783b2a4740cf5251cb616f2be704d",
+        "srcjar_sha256": "3aed3e38ec1e0373eb6755213b01d197802f858850bce20e63d99c93e08818bc",
+    },
     "org_jspecify_jspecify": {
         "artifact": "org.jspecify:jspecify:1.0.0",
         "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
         "srcjar_sha256": "adf0898191d55937fb3192ba971826f4f294292c4a960740f3c27310e7b70296",
+    },
+    "org_nibor_autolink_autolink": {
+        "artifact": "org.nibor.autolink:autolink:0.6.0",
+        "sha256": "a80be030f6386f18111cad9161c0b6983157352a1b59a59e6002172f0d321c04",
+        "srcjar_sha256": "26d6fba888c9e332f6357773ef0500a7552c2453779a7d3e5d163e079546d8a8",
     },
     "org_scala_lang_modules_scala_collection_compat": {
         "artifact": "org.scala-lang.modules:scala-collection-compat_2.13:2.14.0",
@@ -696,6 +1048,11 @@ artifacts = {
         "deps": [
             "@io_bazel_rules_scala_scala_library_2",
         ],
+    },
+    "org_yaml_snakeyaml": {
+        "artifact": "org.yaml:snakeyaml:2.5",
+        "sha256": "e6682acf1ace77508ef13649cbf4f8d09d2cf5457bdb61d25ffb6ac0233d78dd",
+        "srcjar_sha256": "7a7d307ca9fe1663219a60045a8e5a113a69331566f9ebbe1d3b12c6781909ac",
     },
     "scala_proto_rules_disruptor": {
         "artifact": "com.lmax:disruptor:3.4.2",
@@ -1002,5 +1359,10 @@ artifacts = {
             "@scala_proto_rules_grpc_stub",
             "@scala_proto_rules_scalapb_runtime",
         ],
+    },
+    "ua_co_k_strftime4j": {
+        "artifact": "ua.co.k:strftime4j:1.0.6",
+        "sha256": "d37cabad2f97a746fa811f04c01c9e4b5f6636fff05e294f4e5324c051dd7495",
+        "srcjar_sha256": "c4e97074d607a1f2195a8b10b026a957ceb8f70de4b13a2c59529af27fccc1f7",
     },
 }

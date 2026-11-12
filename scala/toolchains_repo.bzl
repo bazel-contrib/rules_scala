@@ -46,6 +46,7 @@ def _scala_toolchains_repo_impl(repository_ctx):
 
     if repo_attr.scala:
         toolchains["scala"] = _SCALA_TOOLCHAIN_BUILD
+        format_args["scaladoc"] = repo_attr.scaladoc
     if repo_attr.scala_proto:
         toolchains["scala_proto"] = _SCALA_PROTO_TOOLCHAIN_BUILD
         format_args["scala_proto_opts"] = _stringify_args({
@@ -99,6 +100,9 @@ scala_toolchains_repo = repository_rule(
             doc = "Default Scalafmt config file",
             allow_single_file = True,
         ),
+        "scaladoc": attr.bool(
+            doc = "Add the Scala 3 Scaladoc jars to the Scala toolchains",
+        ),
         "scala_proto": attr.bool(
             doc = "Instantiate the scala_proto toolchain",
         ),
@@ -133,6 +137,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
     setup_scala_toolchain(
         name = "toolchain" + version_suffix(scala_version),
         scala_version = scala_version,
+        scala_doc_classpath = default_deps("scala_doc_classpath", scala_version) if {scaladoc} else [],
         use_argument_file_in_runner = True,
     )
     for scala_version in SCALA_VERSIONS
@@ -150,7 +155,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         deps = select({{
             "@rules_scala_config//:scala_version" + version_suffix(v): default_deps(deps_id, v)
             for v in SCALA_VERSIONS
-        }}),
+        }}) if deps_id != "scala_doc_classpath" or {scaladoc} else [],
     )
     for deps_id in [
         "scala_xml",
@@ -159,6 +164,7 @@ load("@rules_scala_config//:config.bzl", "SCALA_VERSIONS")
         "scala_library_classpath",
         "scala_macro_classpath",
         "semanticdb",
+        "scala_doc_classpath",
     ]
 ]
 

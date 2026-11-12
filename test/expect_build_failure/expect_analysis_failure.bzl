@@ -13,8 +13,16 @@ def _impl(ctx):
     asserts.expect_failure(env, ctx.attr.message)
     return analysistest.end(env)
 
-expect_analysis_failure_test = analysistest.make(
-    _impl,
-    expect_failure = True,
-    attrs = {"message": attr.string(mandatory = True, doc = "Substring the analysis error must contain.")},
-)
+def make_expect_analysis_failure_test(config_settings = {}):
+    """Makes an `expect_analysis_failure_test` rule that sets `config_settings`.
+
+    Call it at the top level of a .bzl file and assign the result to a name.
+    """
+    return analysistest.make(
+        _impl,
+        expect_failure = True,
+        attrs = {"message": attr.string(mandatory = True, doc = "Substring the analysis error must contain.")},
+        config_settings = config_settings,
+    )
+
+expect_analysis_failure_test = make_expect_analysis_failure_test()

@@ -66,6 +66,7 @@ Multiple rules, such as:
 
 - [scala_library](../scala/private/rules/scala_library.bzl)
 - [scala_binary](../scala/private/rules/scala_binary.bzl)
+- [scala_doc](../scala/private/rules/scala_doc.bzl)
 - [scala_repl](../scala/private/rules/scala_repl.bzl)
 - [scala_test](../scala/private/rules/scala_test.bzl)
 
