@@ -80,3 +80,4 @@ pkg_tar(
 | scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |
 | site_srcs             | `List of labels, optional`<br/>Static site files for Scala 3 Scaladoc. All files must be under `site_root`. Scala 2 `scala_doc` fails if this is not empty. |
 | site_root             | `String, optional`<br/>The root directory of `site_srcs`, relative to the package of this target. The default is the package directory. |
+| scaladoc_jvm_flags    | `List of strings, optional`<br/>JVM flags for the Scaladoc process, for example `-Xmx4g` for a large target. |
