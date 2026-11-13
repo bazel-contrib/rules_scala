@@ -1,6 +1,6 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
-load("//test/expect_build_failure:toolchain_transition.bzl", "toolchain_build_test")
 load(
     ":toolchain_plugins_test.bzl",
     "scala_doc_toolchain_options_test",
@@ -19,16 +19,11 @@ genrule(
     cmd = "touch $@",
 )
 
-# A toolchain that enables a compiler plugin for every target. `scala_doc`
-# skips the options with `#` or `"`.
+# A toolchain that enables a compiler plugin for every target.
 scala_toolchain(
     name = "with_plugin_impl",
     plugins = [":dummy_plugin"],
-    scalacopts = [
-        "-Wconf:msg=a -x:s",
-        "-Wconf:msg=a#b:s",
-        "-Wconf:msg=\"a\":s",
-    ],
+    scalacopts = ["-P:dummy:$(location //test/toolchain_plugins:dummy_plugin)"],
     visibility = ["//visibility:public"],
 )
 
@@ -56,9 +51,11 @@ toolchain_plugin_absent_test(
     target_under_test = ":plain_library",
 )
 
+# Scaladoc fails with `bad option: '-x:s'` if it splits this option.
 scala_doc(
     name = "plain_doc",
     scala_version = "2.13.18",
+    scalacopts = ["-Wconf:msg=a -x:s"],
     deps = [":plain_library"],
 )
 
@@ -68,21 +65,7 @@ scala_doc_toolchain_options_test(
     target_under_test = ":plain_doc",
 )
 
-# Scaladoc fails with `bad option: '-x:s'` if it splits this option.
-scala_toolchain(
-    name = "option_with_space_impl",
-    scalacopts = ["-Wconf:msg=a -x:s"],
-)
-
-toolchain(
-    name = "option_with_space",
-    target_settings = ["@rules_scala_config//:scala_version_2_13_18"],
-    toolchain = ":option_with_space_impl",
-    toolchain_type = "//scala:toolchain_type",
-)
-
-toolchain_build_test(
-    name = "scala_doc_option_with_space_test",
-    extra_toolchains = ["//test/toolchain_plugins:option_with_space"],
-    target = ":plain_doc",
+build_test(
+    name = "plain_doc_build_test",
+    targets = [":plain_doc"],
 )
