@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Asserts the @rules_scala_config repo is regenerated from SCALA_VERSION: building
-# it under a fake SCALA_VERSION=0.0.0 must write that version into the generated
+# Asserts that a repository environment setting is reflected in the generated
 # config.bzl.
 #
 # The signal is a generated external-repo file, not a build/test *outcome*, so
@@ -16,7 +15,10 @@ source "${TEST_SRCDIR:-${RUNFILES_DIR:-$0.runfiles}}/${TEST_WORKSPACE:-_main}/te
 
 nested_bazel_setup "rules_scala_scala_config_output_base"
 
-if ! build_output="$(nested_bazel_run build --repo_env=SCALA_VERSION=0.0.0 @rules_scala_config//:all 2>&1)"; then
+repo_env_flag="$1"
+expected="$2"
+
+if ! build_output="$(nested_bazel_run build "${repo_env_flag}" @rules_scala_config//:all 2>&1)"; then
   echo "Build of @rules_scala_config//:all failed:" >&2
   echo "${build_output}" >&2
   exit 1
@@ -35,9 +37,9 @@ if [[ ! -f "${config_bzl[0]}" ]]; then
   exit 1
 fi
 
-if ! grep --quiet --fixed-strings "SCALA_MAJOR_VERSION='0.0'" "${config_bzl[@]}"; then
-  echo "Expected SCALA_MAJOR_VERSION='0.0' in one of ${config_bzl[*]} under" \
-    "SCALA_VERSION=0.0.0, but it was absent. config.bzl contents:" >&2
+if ! grep --quiet --extended-regexp "${expected}" "${config_bzl[@]}"; then
+  echo "Expected '${expected}' in one of ${config_bzl[*]} under" \
+    "${repo_env_flag}, but it was absent. config.bzl contents:" >&2
   cat "${config_bzl[@]}" >&2
   exit 1
 fi

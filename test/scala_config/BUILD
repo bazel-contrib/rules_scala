@@ -1,4 +1,7 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load(":compiler_dependency_tracking_test.bzl", "compiler_dependency_tracking_test_suite")
+
+compiler_dependency_tracking_test_suite(name = "compiler_dependency_tracking_test")
 
 # The scalac Javac action must carry the scala-library matching the configured
 # SCALA_VERSION. Same check, once per major version, off one parameterised script.
@@ -37,13 +40,41 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 sh_test(
     name = "config_bzl_reflects_scala_version_test",
     size = "large",
-    srcs = ["config_bzl_reflects_scala_version_test.sh"],
+    srcs = ["config_bzl_reflects_env_test.sh"],
+    args = [
+        "--repo_env=SCALA_VERSION=0.0.0",
+        "SCALA_MAJOR_VERSION=.0[.]0.$$",
+    ],
     data = [
         "//:MODULE.bazel",
         "//test/expect_build_failure:nested_bazel.sh",
         # The repo rule that writes SCALA_MAJOR_VERSION into config.bzl; editing
         # its logic must re-run this test.
         "//:scala_config.bzl",
+    ],
+    tags = [
+        "exclusive",
+        "local",
+        "no-release",
+        "requires-network",
+    ],
+)
+
+# The True override proves the module extension passes the environment value
+# through to the generated repository config. Parsing itself has cheap unit tests.
+sh_test(
+    name = "config_bzl_reflects_compiler_tracking_true_env_test",
+    size = "large",
+    srcs = ["config_bzl_reflects_env_test.sh"],
+    args = [
+        "--repo_env=ENABLE_COMPILER_DEPENDENCY_TRACKING=True",
+        "ENABLE_COMPILER_DEPENDENCY_TRACKING=True",
+    ],
+    data = [
+        "//:MODULE.bazel",
+        "//test/expect_build_failure:nested_bazel.sh",
+        "//:scala_config.bzl",
+        "//scala/extensions:config.bzl",
     ],
     tags = [
         "exclusive",

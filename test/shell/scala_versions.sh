@@ -5,7 +5,7 @@ scala_2_12="2.12.21"
 scala_2_13="2.13.18"
 scala_3_3="3.3.9"
 scala_3_9="3.9.0" # LTS
-scala_3="3.10.0" # Latest Next
+scala_3="3.10.1" # Latest Next
 
 scala_versions=(
   "$scala_2_12"
