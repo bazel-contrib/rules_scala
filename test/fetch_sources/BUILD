@@ -14,7 +14,8 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
+        "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
@@ -34,7 +35,8 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
+        "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
@@ -54,7 +56,8 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
+        "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
@@ -74,7 +77,8 @@ sh_test(
         "//test/expect_build_failure:nested_bazel.sh",
     ],
     tags = [
-        "exclusive",
+        "resources:fetch_sources_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
