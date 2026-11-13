@@ -3,6 +3,13 @@ load("//scala:scala_cross_version.bzl", "extract_major_version", "extract_minor_
 """Default Scala version for use in Maven coordinates"""
 DEFAULT_SCALA_VERSION = "2.12.21"
 
+def parse_compiler_dependency_tracking(value):
+    if value == "True":
+        return True
+    if value == "False":
+        return False
+    fail("ENABLE_COMPILER_DEPENDENCY_TRACKING must be True or False, got %r" % value)
+
 def _validate_supported_scala_version(scala_major_version, scala_minor_version):
     if scala_major_version == "2.12" and int(scala_minor_version) < 1:
         fail("Scala version must be newer or equal to 2.12.1 to use compiler dependency tracking.")
@@ -32,15 +39,17 @@ def _store_config(repository_ctx):
     elif scala_version not in scala_versions:
         fail("You have to include the default Scala version (%s) in the `scala_versions` list." % scala_version)
 
-    enable_compiler_dependency_tracking = repository_ctx.os.environ.get(
-        "ENABLE_COMPILER_DEPENDENCY_TRACKING",
-        str(repository_ctx.attr.enable_compiler_dependency_tracking),
+    enable_compiler_dependency_tracking = parse_compiler_dependency_tracking(
+        repository_ctx.os.environ.get(
+            "ENABLE_COMPILER_DEPENDENCY_TRACKING",
+            str(repository_ctx.attr.enable_compiler_dependency_tracking),
+        ),
     )
 
     scala_major_version = extract_major_version(scala_version)
 
     scala_minor_version = extract_minor_version(scala_version)
-    if enable_compiler_dependency_tracking == "True":
+    if enable_compiler_dependency_tracking:
         _validate_supported_scala_version(scala_major_version, scala_minor_version)
 
     config_file_content = "\n".join([
@@ -48,7 +57,7 @@ def _store_config(repository_ctx):
         "SCALA_VERSIONS=" + str(scala_versions),
         "SCALA_MAJOR_VERSION='" + scala_major_version + "'",
         "SCALA_MINOR_VERSION='" + scala_minor_version + "'",
-        "ENABLE_COMPILER_DEPENDENCY_TRACKING=" + enable_compiler_dependency_tracking,
+        "ENABLE_COMPILER_DEPENDENCY_TRACKING=" + str(enable_compiler_dependency_tracking),
     ])
 
     build_file_content = """load("@bazel_skylib//rules:common_settings.bzl", "string_setting")
