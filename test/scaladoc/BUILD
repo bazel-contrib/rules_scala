@@ -391,7 +391,7 @@ scala_doc(
 
 expect_analysis_failure_test(
     name = "scaladoc_scala3_line_break_test",
-    message = "each `scalacopts` value of Scala 3 `scala_doc` must be one line",
+    message = "each `scalacopts` value of `scala_doc` must be one line",
     target_under_test = ":scaladoc_scala3_line_break",
 )
 

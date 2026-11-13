@@ -149,10 +149,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
         fail("%s: Scala 3 `scala_doc` needs `class_jars` in `ScaladocAspectInfo`. Set it in the aspect of this rule." % ctx.label)
     class_jars = depset(transitive = [info.class_jars for info in infos])
 
-    # The runner reads one argument on each line of the params file.
     for opt in ctx.attr.scalacopts:
-        if "\n" in opt or "\r" in opt:
-            fail("%s: each `scalacopts` value of Scala 3 `scala_doc` must be one line: %r" % (ctx.label, opt))
         if opt == "-siteroot" or opt.startswith("-siteroot:"):
             fail("%s: Scala 3 `scala_doc` sets `-siteroot`. Use `site_srcs` and `site_root` for static site files." % ctx.label)
 
@@ -185,7 +182,8 @@ def _scala_doc_impl(ctx):
     compile_jars = depset(transitive = [dep[ScaladocAspectInfo].compile_jars for dep in ctx.attr.deps])
 
     # Scala 2 Scaladoc compiles the sources, and Scala 3 syntax makes it fail.
-    scala_version = ctx.toolchains[_SCALA_TOOLCHAIN].scala_version
+    toolchain = ctx.toolchains[_SCALA_TOOLCHAIN]
+    scala_version = toolchain.scala_version
     scala3 = scala_version.startswith("3.")
     # A custom aspect can make `ScaladocAspectInfo` without the newer fields.
     scala_versions = depset(transitive = [getattr(dep[ScaladocAspectInfo], "scala_versions", depset()) for dep in ctx.attr.deps])
@@ -197,6 +195,11 @@ def _scala_doc_impl(ctx):
                 scala_version,
                 dep_version,
             ))
+
+    # The runners read one argument on each line of the params file.
+    for opt in ctx.attr.scalacopts:
+        if "\n" in opt or "\r" in opt:
+            fail("%s: each `scalacopts` value of `scala_doc` must be one line: %r" % (ctx.label, opt))
 
     if scala3:
         _scala3_doc(ctx, output_path, compile_jars)
@@ -212,8 +215,10 @@ def _scala_doc_impl(ctx):
     # classpath
     macro_classpath = depset(transitive = [dep[ScaladocAspectInfo].macro_classpath for dep in ctx.attr.deps])
 
+    plugin_targets = toolchain.plugins + depset(transitive = [dep[ScaladocAspectInfo].plugins for dep in ctx.attr.deps]).to_list()
+
     # Get the 'real' paths to the plugin jars.
-    plugins = collect_plugin_paths(depset(transitive = [dep[ScaladocAspectInfo].plugins for dep in ctx.attr.deps]).to_list())
+    plugins = collect_plugin_paths(plugin_targets)
 
     # Construct the full classpath depset since we need to add compiler plugins too.
     classpath = depset(transitive = [macro_classpath, plugins, compile_jars])
@@ -225,7 +230,7 @@ def _scala_doc_impl(ctx):
     args.use_param_file(param_file_arg = "@%s", use_always = True)
     args.add("-usejavacp")
     args.add("-nowarn")  # turn off warnings for now since they can obscure actual errors for large scala_doc targets
-    args.add_all(ctx.attr.scalacopts)
+    args.add_all([ctx.expand_location(opt, plugin_targets) for opt in toolchain.scalacopts + ctx.attr.scalacopts])
     # output_path is a directory, and Args#add rejects those because they may expand to
     # multiple values. add_all with expand_directories = False passes it as one mapped path.
     args.add("-d")
@@ -259,7 +264,7 @@ def make_scala_doc_rule(aspect = _scaladoc_transitive_aspect):
             "_scaladoc": attr.label(
                 cfg = "exec",
                 executable = True,
-                default = "//src/scala/io/bazel/rules_scala/scaladoc_support:scaladoc_generator",
+                default = "//src/java/io/bazel/rulesscala/scaladoc:scala2_runner",
             ),
             "_scala3_scaladoc": attr.label(
                 cfg = "exec",

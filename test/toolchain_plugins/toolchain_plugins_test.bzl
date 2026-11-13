@@ -11,9 +11,9 @@ load("@bazel_skylib//lib:unittest.bzl", "analysistest", "asserts")
 # The jar `//test/toolchain_plugins:with_plugin` injects; any jar would do.
 _PLUGIN_JAR = "dummy_plugin.jar"
 
-def _scalac_argv(env):
+def _action_argv(env, mnemonic = "Scalac"):
     for action in analysistest.target_actions(env):
-        if action.mnemonic == "Scalac":
+        if action.mnemonic == mnemonic:
             return action.argv
     return None
 
@@ -22,7 +22,7 @@ def _has_plugin_arg(argv):
 
 def _toolchain_plugin_present_test(ctx):
     env = analysistest.begin(ctx)
-    argv = _scalac_argv(env)
+    argv = _action_argv(env)
     asserts.false(env, argv == None, "expected a Scalac action")
     asserts.true(
         env,
@@ -33,13 +33,21 @@ def _toolchain_plugin_present_test(ctx):
 
 def _toolchain_plugin_absent_test(ctx):
     env = analysistest.begin(ctx)
-    argv = _scalac_argv(env)
+    argv = _action_argv(env)
     asserts.false(env, argv == None, "expected a Scalac action")
     asserts.false(
         env,
         _has_plugin_arg(argv),
         "did not expect the plugin jar in the scalac command line",
     )
+    return analysistest.end(env)
+
+def _scala_doc_toolchain_options_test(ctx):
+    env = analysistest.begin(ctx)
+    argv = _action_argv(env, "ScalaDoc")
+    asserts.false(env, argv == None, "expected a ScalaDoc action")
+    asserts.true(env, any([arg.startswith("-Xplugin:") and arg.endswith(_PLUGIN_JAR) for arg in argv]))
+    asserts.true(env, any([arg.startswith("-P:dummy:") and arg.endswith(_PLUGIN_JAR) for arg in argv]))
     return analysistest.end(env)
 
 toolchain_plugin_present_test = analysistest.make(
@@ -55,5 +63,14 @@ toolchain_plugin_absent_test = analysistest.make(
     _toolchain_plugin_absent_test,
     config_settings = {
         "//command_line_option:extra_toolchains": [],
+    },
+)
+
+scala_doc_toolchain_options_test = analysistest.make(
+    _scala_doc_toolchain_options_test,
+    config_settings = {
+        "//command_line_option:extra_toolchains": [
+            "//test/toolchain_plugins:with_plugin",
+        ],
     },
 )
