@@ -128,6 +128,9 @@ def _site_prefix(ctx):
 def _site_file_args(file):
     return ["--site_file=" + file.short_path, file.path]
 
+def _jvm_flag_args(ctx):
+    return ["--jvm_flag=%s" % f for f in ctx.attr.scaladoc_jvm_flags]
+
 def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
@@ -175,7 +178,7 @@ def _scala3_doc(ctx, output_path, compile_jars):
         executable = ctx.executable._scala3_scaladoc,
         mnemonic = "ScalaDoc",
         progress_message = "scaladoc {}".format(ctx.label),
-        arguments = ["--jvm_flag=%s" % f for f in ctx.attr.scaladoc_jvm_flags] + [args],
+        arguments = _jvm_flag_args(ctx) + [args],
     )
 
 def _scala_doc_impl(ctx):
@@ -241,7 +244,7 @@ def _scala_doc_impl(ctx):
         executable = ctx.attr._scaladoc.files_to_run.executable,
         mnemonic = "ScalaDoc",
         progress_message = "scaladoc {}".format(ctx.label),
-        arguments = ["--jvm_flag=%s" % f for f in ctx.attr.scaladoc_jvm_flags] + [args],
+        arguments = _jvm_flag_args(ctx) + [args],
     )
 
     return [DefaultInfo(files = depset(direct = [output_path]))]
