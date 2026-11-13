@@ -14,6 +14,7 @@ The script will not update any entry that:
 - already matches the version resolved by `cs` (executed by
     `ArtifactResolver._fetch_artifact_data()`)
 - has `"testonly": True` set
+- has its label in `MANUAL_ARTIFACT_LABELS`
 - has a version newer than the resolved version
 
 In other words, if the script doesn't see a need to update the artifact version,
@@ -97,6 +98,13 @@ edit the `select_root_artifacts()` function accordingly.
 ### `testonly` artifacts
 
 Artifacts marked as "testonly" are manually updated. The script will not change them.
+
+### `scala3-repl_3` artifacts
+
+When you update the version of Scala 3.8 or later, update the `scala3-repl_3`
+entries and their deps by hand. The script keeps the entries in
+`MANUAL_ARTIFACT_LABELS` exactly as they are, because their labels are
+different from the labels that the script makes.
 
 ### Update an existing entry without changing its version
 

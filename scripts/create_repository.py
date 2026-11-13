@@ -46,6 +46,28 @@ GUAVA_VERSION = '33.5.0-jre'
 # i.e., group:artifact after stripping any Scala version suffix from artifact.
 EXCLUDED_ARTIFACTS = set(["com.google.guava:listenablefuture"])
 
+# The script keeps these entries as they are in the repository file. They hold
+# scala3-repl_3 jars and their deps (see scala/private/macros/repl_deps.bzl).
+# scala3-repl_3 needs other versions of jars that the compiler also uses: for
+# example, in 3.9 it needs jline 4, and the Scala 2.13 compiler inside
+# scala3-compiler_3 needs jline 3. One coursier resolution gives one version of
+# each jar, so these entries have their own labels (such as the "_4" suffix)
+# and are updated by hand.
+MANUAL_ARTIFACT_LABELS = set([
+    "com_lihaoyi_fansi_3",
+    "com_lihaoyi_pprint_repl",
+    "com_lihaoyi_sourcecode_3",
+    "io_get_coursier_interface",
+    "org_jline_jline_native_4",
+    "org_jline_jline_reader_4",
+    "org_jline_jline_terminal_4",
+    "org_jline_jline_terminal_jni_4",
+    "org_scala_lang_scala3_directives_parser",
+    "org_scala_lang_scala3_repl",
+    "org_slf4j_slf4j_api",
+    "org_virtuslab_using_directives",
+])
+
 THIS_FILE = Path(__file__)
 REPO_ROOT = THIS_FILE.parent.parent
 OUTPUT_DIR = REPO_ROOT / 'third_party' / 'repositories'
@@ -568,7 +590,9 @@ class ArtifactUpdater:
         print('\nUPDATING:', file_path)
 
         labeler = ArtifactLabelMaker(is_scala_3)
-        original_artifacts = self._get_original_artifacts(file_path, labeler)
+        original_artifacts, manual_artifacts = self._get_original_artifacts(
+            file_path, labeler
+        )
         resolved_artifacts = self._to_rules_scala_compatible_dict(
             self._resolver.resolve_artifacts(
                 select_root_artifacts(
@@ -578,11 +602,20 @@ class ArtifactUpdater:
             ),
             labeler,
         )
+        clashes = resolved_artifacts.keys() & manual_artifacts.keys()
+
+        if clashes:
+            raise CreateRepositoryError(
+                'Resolved artifacts use labels in MANUAL_ARTIFACT_LABELS: ' +
+                ', '.join(sorted(clashes))
+            )
         self._update_artifacts(original_artifacts, resolved_artifacts)
         self._apply_srcjar_checksums(
             original_artifacts, self._resolver.srcjar_checksums
         )
-        self._write_to_file(original_artifacts, scala_version, file_path)
+        self._write_to_file(
+            original_artifacts | manual_artifacts, scala_version, file_path
+        )
 
     def _get_original_artifacts(self, file_path, labeler):
         self._copy_previous_version_or_create_new_file(file_path)
@@ -591,7 +624,14 @@ class ArtifactUpdater:
             read_data = data.read()
 
         artifacts = ast.literal_eval(read_data[read_data.find('{'):])
-        return self._update_artifact_labels(artifacts, labeler)
+        manual_artifacts = {
+            label: artifacts.pop(label)
+            for label in MANUAL_ARTIFACT_LABELS
+            if label in artifacts
+        }
+        return (
+            self._update_artifact_labels(artifacts, labeler), manual_artifacts
+        )
 
     def _copy_previous_version_or_create_new_file(self, file_path):
         if file_path.exists():
@@ -632,7 +672,7 @@ class ArtifactUpdater:
                 metadata with any repository labels updated as needed
         """
         result = {}
-        updated_labels = {}
+        updated_labels = {f'@{l}': f'@{l}' for l in MANUAL_ARTIFACT_LABELS}
 
         for existing_label, metadata in artifacts.items():
             coords = MavenCoordinates.new(metadata['artifact'])
