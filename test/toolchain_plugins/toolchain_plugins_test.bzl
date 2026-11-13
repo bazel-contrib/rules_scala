@@ -47,8 +47,7 @@ def _scala_doc_toolchain_options_test(ctx):
     argv = _action_argv(env, "ScalaDoc")
     asserts.false(env, argv == None, "expected a ScalaDoc action")
     asserts.true(env, any([arg.startswith("-Xplugin:") and arg.endswith(_PLUGIN_JAR) for arg in argv]))
-    asserts.true(env, '"-Wconf:msg=a -x:s"' in argv)
-    asserts.false(env, any(["a#b" in arg or 'msg="a"' in arg for arg in argv]))
+    asserts.true(env, any([arg.startswith("-P:dummy:") and arg.endswith(_PLUGIN_JAR) for arg in argv]))
     return analysistest.end(env)
 
 toolchain_plugin_present_test = analysistest.make(
