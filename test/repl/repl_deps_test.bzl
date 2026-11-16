@@ -33,28 +33,15 @@ def _mapped_3_8_and_3_9_have_extra_deps_test(ctx):
     deps_3_9 = repl_extra_deps("3.9.0")
     deps_3_10 = repl_extra_deps("3.10.1")
 
-    for dep in ["@org_scala_lang_scala3_repl", "@com_lihaoyi_fansi_3"]:
+    for dep in ["@io_bazel_rules_scala_scala_repl", "@com_lihaoyi_pprint"]:
         asserts.true(env, dep in deps_3_8, "expected %s in 3.8's repl deps" % dep)
-    asserts.true(
-        env,
-        "@com_lihaoyi_fansi_3" not in deps_3_9,
-        "expected 3.9's repl deps to stay clear of fansi, dropped since 3.8",
-    )
-
-    for dep in ["@org_scala_lang_scala3_repl", "@org_jline_jline_reader_4"]:
-        asserts.true(env, dep in deps_3_9, "expected %s in 3.9's repl deps" % dep)
-        asserts.false(env, dep in deps_3_10, "expected %s to be absent from 3.10's repl deps" % dep)
     for dep in ["@io_bazel_rules_scala_scala_repl", "@org_jline_jline_reader"]:
-        asserts.true(env, dep in deps_3_10, "expected %s in 3.10's repl deps" % dep)
+        asserts.true(env, dep in deps_3_9, "expected %s in 3.9's repl deps" % dep)
+    asserts.equals(env, deps_3_9, deps_3_10, "expected 3.9 and 3.10 to share repl deps")
     asserts.true(
         env,
-        "@org_jline_jline_reader_4" not in deps_3_8,
-        "expected 3.8's repl deps to stay on the repo's existing jline 3.30.6 set",
-    )
-    asserts.true(
-        env,
-        "@com_lihaoyi_fansi_3" not in deps_3_10,
-        "expected 3.10's repl deps to stay clear of fansi, dropped since 3.8",
+        "@com_lihaoyi_pprint" not in deps_3_9,
+        "expected 3.9's repl deps to stay clear of pprint, dropped since 3.8",
     )
 
     return unittest.end(env)

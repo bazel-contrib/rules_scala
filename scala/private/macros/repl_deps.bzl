@@ -6,28 +6,16 @@ From 3.9, that artifact's dependencies changed, and newer minors keep those repo
 Pinned coordinates live in third_party/repositories/scala_<major>_<minor>.bzl.
 """
 _REPL_DEPS_3_8 = [
-    "@com_lihaoyi_fansi_3",
-    "@com_lihaoyi_pprint_repl",
-    "@com_lihaoyi_sourcecode_3",
+    "@com_lihaoyi_fansi",
+    "@com_lihaoyi_pprint",
+    "@com_lihaoyi_sourcecode",
+    "@io_bazel_rules_scala_scala_repl",
     "@io_get_coursier_interface",
-    "@org_scala_lang_scala3_repl",
     "@org_slf4j_slf4j_api",
     "@org_virtuslab_using_directives",
 ]
 
 _REPL_DEPS_SINCE_3_9 = [
-    "@io_get_coursier_interface",
-    "@org_jline_jline_native_4",
-    "@org_jline_jline_reader_4",
-    "@org_jline_jline_terminal_4",
-    "@org_jline_jline_terminal_jni_4",
-    "@org_scala_lang_scala3_directives_parser",
-    "@org_scala_lang_scala3_repl",
-    "@org_slf4j_slf4j_api",
-]
-
-# 3.10: jline 4 under unsuffixed names.
-_REPL_DEPS_SINCE_3_10 = [
     "@io_bazel_rules_scala_scala_directives_parser",
     "@io_bazel_rules_scala_scala_repl",
     "@io_get_coursier_interface",
@@ -58,10 +46,8 @@ def repl_extra_deps(scala_version):
     minor = _scala3_minor(scala_version)
     if minor == 8:
         return _REPL_DEPS_3_8
-    if minor == 9:
+    if minor != None and minor >= 9:
         return _REPL_DEPS_SINCE_3_9
-    if minor != None and minor >= 10:
-        return _REPL_DEPS_SINCE_3_10
     return []
 
 def repl_is_known_supported(scala_version):
