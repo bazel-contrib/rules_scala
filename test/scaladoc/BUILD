@@ -3,6 +3,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
+load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
 load("scaladoc.bzl", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields", "site_dir")
 
@@ -447,3 +448,31 @@ expect_analysis_failure_test(
     message = "Scala 3 `scala_doc` sets `-siteroot`. Use `site_srcs` and `site_root` for static site files.",
     target_under_test = ":scaladoc_scala3_siteroot_opt",
 )
+
+# The JVM rejects this option, so these builds fail only if
+# `scaladoc_jvm_flags` reaches the Scaladoc JVM.
+[
+    scala_doc(
+        name = "scaladoc_jvm_flags_" + suffix,
+        scala_version = version,
+        scaladoc_jvm_flags = ["-XX:+ScaladocJvmFlagsProbe"],
+        tags = ["manual"],
+        deps = [dep],
+    )
+    for suffix, version, dep in [
+        ("scala2", "2.13.18", ":Scala2Lib"),
+        ("scala3", "3.9.0", ":Scala3Shape"),
+    ]
+]
+
+[
+    expect_build_failure_test(
+        name = "scaladoc_jvm_flags_%s_test" % suffix,
+        expect = ["expected_unrecognized_jvm_flag.txt"],
+        target = ":scaladoc_jvm_flags_" + suffix,
+    )
+    for suffix in [
+        "scala2",
+        "scala3",
+    ]
+]
