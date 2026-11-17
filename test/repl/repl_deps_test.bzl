@@ -26,7 +26,7 @@ def _versions_with_no_extra_deps_test(ctx):
 
     return unittest.end(env)
 
-def _mapped_3_8_and_3_9_have_extra_deps_test(ctx):
+def _scala_3_8_and_later_have_extra_deps_test(ctx):
     env = unittest.begin(ctx)
 
     deps_3_8 = repl_extra_deps("3.8.4")
@@ -59,13 +59,13 @@ def _known_supported_versions_test(ctx):
     return unittest.end(env)
 
 versions_with_no_extra_deps_test = unittest.make(_versions_with_no_extra_deps_test)
-mapped_3_8_and_3_9_have_extra_deps_test = unittest.make(_mapped_3_8_and_3_9_have_extra_deps_test)
+scala_3_8_and_later_have_extra_deps_test = unittest.make(_scala_3_8_and_later_have_extra_deps_test)
 known_supported_versions_test = unittest.make(_known_supported_versions_test)
 
 def repl_deps_test_suite(name):
     unittest.suite(
         name,
         versions_with_no_extra_deps_test,
-        mapped_3_8_and_3_9_have_extra_deps_test,
+        scala_3_8_and_later_have_extra_deps_test,
         known_supported_versions_test,
     )
