@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_library")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala_cross_version.bzl", "version_suffix")
 
@@ -19,3 +20,19 @@ load("//scala:scala_cross_version.bzl", "version_suffix")
 ]
 
 exports_files(["testing.bzl"])
+
+bzl_library(
+    name = "testing",
+    srcs = ["testing.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//junit:junit",
+        "//scala:providers",
+        "//scala:scala_cross_version",
+        "//scalatest:scalatest",
+        "//specs2:specs2_bzl",
+        "//specs2:specs2_junit",
+        "//testing/toolchain:toolchain",
+        "@rules_scala_config//:config",
+    ],
+)

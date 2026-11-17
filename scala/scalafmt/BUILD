@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_library")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala.bzl", "scala_binary")
 load("//scala:scala_cross_version.bzl", "version_suffix")
@@ -48,4 +49,24 @@ export_scalafmt_deps(
     name = "scalafmt_classpath",
     deps_id = "scalafmt_classpath",
     visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "phase_scalafmt_ext",
+    srcs = ["phase_scalafmt_ext.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala/private:phases/phases",
+        "//scala:advanced_usage/providers",
+    ],
+)
+
+bzl_library(
+    name = "scalafmt_repositories",
+    srcs = ["scalafmt_repositories.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala:scala_cross_version",
+        "//scala_proto/default:repositories",
+    ],
 )
