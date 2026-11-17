@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_library")
 # For //tools:lint_check, which requires a `workspace` attribute. However, this
 # can be any file, and `WORKSPACE` is going away one day. See:
 # https://github.com/bazelbuild/buildtools/blob/v8.2.1/buildifier/runner.bash.template
@@ -17,3 +18,12 @@ exports_files([
     "MODULE.bazel.lock",
     "deps/latest/MODULE.bazel",
 ])
+
+bzl_library(
+    name = "scala_config",
+    srcs = ["scala_config.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala:scala_cross_version",
+    ],
+)

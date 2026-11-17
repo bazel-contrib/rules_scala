@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_library")
 load("@rules_java//java:defs.bzl", "java_import", "java_library")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala_cross_version.bzl", "version_suffix")
@@ -70,5 +71,164 @@ java_import(
 java_library(
     name = "PlaceHolderClassToCreateEmptyJarForScalaImport",
     srcs = ["PlaceHolderClassToCreateEmptyJarForScalaImport.java"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "advanced_usage/providers",
+    srcs = ["advanced_usage/providers.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "advanced_usage/scala",
+    srcs = ["advanced_usage/scala.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala/private:rules/scala_binary",
+        "//scala/private:rules/scala_junit_test",
+        "//scala/private:rules/scala_library",
+        "//scala/private:rules/scala_repl",
+        "//scala/private:rules/scala_test",
+    ],
+)
+
+bzl_library(
+    name = "deps",
+    srcs = ["deps.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala/private:macros/workspace_compat",
+        "@bazel_tools//tools/build_defs/repo:cache.bzl",
+        "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "@bazel_tools//tools/build_defs/repo:utils.bzl",
+    ],
+)
+
+bzl_library(
+    name = "jars_to_labels",
+    srcs = ["jars_to_labels.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "latest_deps",
+    srcs = ["latest_deps.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala/private:macros/workspace_compat",
+        "@bazel_tools//tools/build_defs/repo:cache.bzl",
+        "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "@bazel_tools//tools/build_defs/repo:utils.bzl",
+    ],
+)
+
+bzl_library(
+    name = "plusone",
+    srcs = ["plusone.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "providers",
+    srcs = ["providers.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "scala",
+    srcs = ["scala.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala/private:macros/setup_scala_toolchain",
+        "//scala/private:rules/scala_binary",
+        "//scala/private:rules/scala_doc",
+        "//scala/private:rules/scala_junit_test",
+        "//scala/private:rules/scala_library",
+        "//scala/private:rules/scala_repl",
+        "//scala/private:rules/scala_test",
+        "//specs2:specs2_junit",
+    ],
+)
+
+bzl_library(
+    name = "scala_cross_version",
+    srcs = ["scala_cross_version.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "scala_cross_version_select",
+    srcs = ["scala_cross_version_select.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":scala_cross_version",
+        "@rules_scala_config//:config",
+    ],
+)
+
+bzl_library(
+    name = "scala_import",
+    srcs = ["scala_import.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scala/private:rule_impls",
+        "//scala/settings:stamp_settings",
+        ":jars_to_labels",
+        "@rules_java//java/common:common",
+    ],
+)
+
+bzl_library(
+    name = "scala_maven_import_external",
+    srcs = ["scala_maven_import_external.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@bazel_tools//tools/build_defs/repo:utils.bzl",
+    ],
+)
+
+bzl_library(
+    name = "scala_toolchain",
+    srcs = ["scala_toolchain.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":providers",
+        "@bazel_skylib//rules:common_settings",
+        "@rules_scala_config//:config",
+    ],
+)
+
+bzl_library(
+    name = "semanticdb_provider",
+    srcs = ["semanticdb_provider.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "toolchains",
+    srcs = ["toolchains.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//jmh/toolchain:toolchain",
+        "//junit:junit",
+        "//scala/private:macros/scala_repositories",
+        "//scala/private:toolchain_defaults",
+        "//scala/scalafmt:scalafmt_repositories",
+        "//scala_proto/default:repositories",
+        "//scalatest:scalatest",
+        "//specs2:specs2_bzl",
+        "//specs2:specs2_junit",
+        "//third_party/repositories:repositories",
+        "//twitter_scrooge/toolchain:toolchain",
+        ":scala_cross_version",
+        ":toolchains_repo",
+        "@rules_scala_config//:config",
+    ],
+)
+
+bzl_library(
+    name = "toolchains_repo",
+    srcs = ["toolchains_repo.bzl"],
     visibility = ["//visibility:public"],
 )

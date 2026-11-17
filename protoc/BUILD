@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_library")
 load(
     "@com_google_protobuf//bazel/toolchains:proto_lang_toolchain.bzl",
     "proto_lang_toolchain",
@@ -34,4 +35,43 @@ alias(
     actual = "@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc",
     tags = ["manual"],
     visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "private/protoc_integrity",
+    srcs = ["private/protoc_integrity.bzl"],
+    visibility = ["//:__subpackages__"],
+)
+
+bzl_library(
+    name = "private/protoc_toolchains",
+    # protobuf_version.bzl is visible only inside @com_google_protobuf.
+    extract_docs = False,
+    srcs = ["private/protoc_toolchains.bzl"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":private/protoc_integrity",
+        ":private/toolchain_impl",
+        "@platforms//host:constraints_lib",
+    ],
+)
+
+bzl_library(
+    name = "private/toolchain_impl",
+    srcs = ["private/toolchain_impl.bzl"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "@com_google_protobuf//bazel/common:proto_common_bzl",
+    ],
+)
+
+bzl_library(
+    name = "toolchains",
+    # protobuf_version.bzl is visible only inside @com_google_protobuf.
+    extract_docs = False,
+    srcs = ["toolchains.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":private/protoc_toolchains",
+    ],
 )
