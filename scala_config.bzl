@@ -60,13 +60,8 @@ def _store_config(repository_ctx):
         "ENABLE_COMPILER_DEPENDENCY_TRACKING=" + str(enable_compiler_dependency_tracking),
     ])
 
-    build_file_content = """load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("@bazel_skylib//rules:common_settings.bzl", "string_setting")
-bzl_library(
-    name = "config",
-    srcs = ["config.bzl"],
-    visibility = ["//visibility:public"],
-)
+    build_file_content = """load("@bazel_skylib//rules:common_settings.bzl", "string_setting")
+exports_files(["config.bzl"])
 string_setting(
     name = "scala_version",
     build_setting_default = "{scala_version}",

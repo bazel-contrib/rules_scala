@@ -16,9 +16,5 @@ def scala_proto_library(**kwargs):
     _scala_proto_library(**kwargs)
 
 def scalapb_proto_library(**kwargs):
-    """Same as scala_proto_library.
-
-    Deprecated:
-        Use scala_proto_library
-    """
+    """Deprecated alias of scala_proto_library."""
     _scala_proto_library(**kwargs)
