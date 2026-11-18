@@ -2,9 +2,9 @@ load("@rules_java//java:defs.bzl", "java_binary")
 load("//scala/private:jacoco_runtime.bzl", "JACOCO_RUNTIME_DEPS", "JACOCO_RUNTIME_JVM_FLAGS")
 
 java_binary(
-    name = "runner",
-    srcs = ["ScaladocRunner.java"],
-    main_class = "io.bazel.rulesscala.scaladoc.ScaladocRunner",
+    name = "scala3_runner",
+    srcs = ["Scala3ScaladocRunner.java"],
+    main_class = "io.bazel.rulesscala.scaladoc.Scala3ScaladocRunner",
     visibility = ["//visibility:public"],
     # For some Scala 3 versions, `scala3-interfaces` comes only from
     # `scala_compile_classpath`.

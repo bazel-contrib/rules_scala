@@ -273,7 +273,7 @@ def make_scala_doc_rule(aspect = _scaladoc_transitive_aspect):
             "_scala3_scaladoc": attr.label(
                 cfg = "exec",
                 executable = True,
-                default = "//src/java/io/bazel/rulesscala/scaladoc:runner",
+                default = "//src/java/io/bazel/rulesscala/scaladoc:scala3_runner",
             ),
         } | toolchain_transition_attr,
         doc = "Generate Scaladoc HTML documentation for source files in from the given dependencies.",
