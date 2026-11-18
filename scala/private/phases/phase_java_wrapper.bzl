@@ -60,7 +60,8 @@ def _phase_java_wrapper(
 if [[ -z "$JAVA_EXEC_TO_USE" ]]; then
   JAVA_EXEC_TO_USE="$JAVA_RUNFILES/{key}"
   if [[ ! -e "$JAVA_EXEC_TO_USE" ]]; then
-    JAVA_EXEC_TO_USE=$(awk -v key='{key}' '{{ sub(/\\r$/, "") }} $1 == key {{ sub(/^[^ ]* /, ""); print; exit }}' "$RUNFILES_MANIFEST_FILE")
+    JAVA_EXEC_TO_USE=
+    [[ -f "$RUNFILES_MANIFEST_FILE" ]] && JAVA_EXEC_TO_USE=$(awk -v key='{key}' '{{ sub(/\\r$/, "") }} $1 == key {{ sub(/^[^ ]* /, ""); print; exit }}' "$RUNFILES_MANIFEST_FILE")
     if [[ -z "$JAVA_EXEC_TO_USE" ]]; then
       echo "$0: cannot find runfile {key} in runfiles tree '$JAVA_RUNFILES' or manifest '$RUNFILES_MANIFEST_FILE'" >&2
       exit 1
