@@ -2,6 +2,7 @@ load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
+load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
@@ -105,6 +106,37 @@ toolchain_build_test(
     name = "scaladoc_C_build_test",
     extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
     target = ":scaladoc_C",
+)
+
+scala_toolchain(
+    name = "scaladoc_warnings_error_impl",
+    scalacopts = ["-Wconf:cat=scaladoc:e"],
+    # Non-test toolchain deps use this toolchain.
+    testonly = False,
+)
+
+toolchain(
+    name = "scaladoc_warnings_error",
+    toolchain = ":scaladoc_warnings_error_impl",
+    toolchain_type = "//scala:toolchain_type",
+)
+
+scala_library(
+    name = "BrokenLink",
+    srcs = ["BrokenLink.scala"],
+)
+
+scala_doc(
+    name = "scaladoc_broken_link",
+    tags = ["manual"],
+    deps = [":BrokenLink"],
+)
+
+# Scaladoc warnings, such as a broken link, stay silent with a toolchain `-Wconf`.
+toolchain_build_test(
+    name = "scaladoc_broken_link_build_test",
+    extra_toolchains = ["//test/scaladoc:scaladoc_warnings_error"],
+    target = ":scaladoc_broken_link",
 )
 
 scala_library(
