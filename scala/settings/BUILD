@@ -1,4 +1,4 @@
-load("//scala/private:bzl_library.bzl", "bzl_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load("//scala/settings:stamp_settings.bzl", "stamp_scala_import")
 
 stamp_scala_import(
@@ -7,8 +7,4 @@ stamp_scala_import(
     visibility = ["//visibility:public"],
 )
 
-bzl_library(
-    name = "stamp_settings",
-    srcs = ["stamp_settings.bzl"],
-    visibility = ["//visibility:public"],
-)
+bzl_libraries()

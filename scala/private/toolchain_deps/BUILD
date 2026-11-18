@@ -1,4 +1,4 @@
-load("//scala/private:bzl_library.bzl", "bzl_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load(":toolchain_dep_rules.bzl", "common_toolchain_deps")
 
 common_toolchain_deps(
@@ -38,21 +38,4 @@ common_toolchain_deps(
     visibility = ["//visibility:public"],
 )
 
-bzl_library(
-    name = "toolchain_dep_rules",
-    srcs = ["toolchain_dep_rules.bzl"],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        ":toolchain_deps",
-    ],
-)
-
-bzl_library(
-    name = "toolchain_deps",
-    srcs = ["toolchain_deps.bzl"],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        "//scala:providers",
-        "@rules_java//java/common:common",
-    ],
-)
+bzl_libraries()

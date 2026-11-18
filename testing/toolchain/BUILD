@@ -1,4 +1,4 @@
-load("//scala/private:bzl_library.bzl", "bzl_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load("//testing:testing.bzl", "DEP_PROVIDERS")
 load(":toolchain_deps.bzl", "testing_toolchain_deps")
 
@@ -16,20 +16,4 @@ toolchain_type(
     for dep in DEP_PROVIDERS
 ]
 
-bzl_library(
-    name = "toolchain",
-    srcs = ["toolchain.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//scala:providers",
-    ],
-)
-
-bzl_library(
-    name = "toolchain_deps",
-    srcs = ["toolchain_deps.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//scala/private/toolchain_deps:toolchain_deps",
-    ],
-)
+bzl_libraries()

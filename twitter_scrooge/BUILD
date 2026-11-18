@@ -1,4 +1,4 @@
-load("//scala/private:bzl_library.bzl", "bzl_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load(
     "//twitter_scrooge/toolchain:toolchain.bzl",
     "DEP_PROVIDERS",
@@ -14,17 +14,4 @@ load(
     for dep in DEP_PROVIDERS
 ]
 
-bzl_library(
-    name = "twitter_scrooge",
-    srcs = ["twitter_scrooge.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//scala/private:common",
-        "//scala/private:dependency",
-        "//scala/private:rule_impls",
-        "//thrift:thrift",
-        "//thrift:thrift_info",
-        "@bazel_skylib//lib:dicts",
-        "@rules_java//java/common:common",
-    ],
-)
+bzl_libraries()

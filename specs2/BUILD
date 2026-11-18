@@ -1,6 +1,6 @@
-load("//scala/private:bzl_library.bzl", "bzl_library")
 load("@rules_java//java:java_import.bzl", "java_import")
 load("@rules_java//java:java_library.bzl", "java_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -18,17 +18,4 @@ java_import(
 
 java_library(name = "empty")
 
-bzl_library(
-    name = "specs2_bzl",
-    srcs = ["specs2.bzl"],
-    visibility = ["//visibility:public"],
-)
-
-bzl_library(
-    name = "specs2_junit",
-    srcs = ["specs2_junit.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":specs2_bzl",
-    ],
-)
+bzl_libraries(names = {"specs2.bzl": "specs2_bzl"})

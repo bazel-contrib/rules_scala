@@ -1,27 +1,43 @@
-"""`bzl_library` that also checks its `deps`."""
+"""`bzl_library` targets for the `.bzl` files of a package."""
 
-load("@bazel_skylib//:bzl_library.bzl", _bzl_library = "bzl_library")
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
-def bzl_library(name, srcs, extract_docs = True, **kwargs):
-    """Declares a skylib `bzl_library` and a `starlark_doc_extract` for each file in `srcs`.
+def bzl_libraries(srcs = None, names = {}, skip_docs = []):
+    """Declares `bzl_library` targets for the `.bzl` files of this package.
 
-    `starlark_doc_extract` fails at analysis when `deps` miss a module that a
-    file in `srcs` loads, so `bazel build //... --nobuild` finds missing
-    `deps`.
+    Declares a `bzl_srcs` filegroup with all `srcs`, for `//:all_bzl`. Each
+    file outside a `private` directory also gets a `bzl_library` target that
+    depends on `//:all_bzl`, and a `starlark_doc_extract` target.
+    `starlark_doc_extract` fails at analysis when `//:all_bzl` misses a module
+    that the file loads, so `bazel build //... --nobuild` finds it.
 
     Args:
-        name: the `bzl_library` name
-        srcs: the `.bzl` files
-        extract_docs: set to `False` when a module that `srcs` load is
-            visible only inside another repository
-        **kwargs: other `bzl_library` attributes
+        srcs: the `.bzl` files; all `.bzl` files of the package by default
+        names: maps a file to its target name when the default name, the file
+            path without `.bzl`, is already in use
+        skip_docs: files that load a module that is visible only inside
+            another repository
     """
-    _bzl_library(name = name, srcs = srcs, **kwargs)
-    if not extract_docs:
-        return
+    if srcs == None:
+        srcs = native.glob(["**/*.bzl"])
+    native.filegroup(
+        name = "bzl_srcs",
+        srcs = srcs,
+        visibility = ["//:__pkg__"],
+    )
     for src in srcs:
-        native.starlark_doc_extract(
-            name = src.removesuffix(".bzl") + "_doc",
-            src = src,
-            deps = [name],
+        if "private" in (native.package_name() + "/" + src).split("/"):
+            continue
+        name = names.get(src, src.removesuffix(".bzl"))
+        bzl_library(
+            name = name,
+            srcs = [src],
+            visibility = ["//visibility:public"],
+            deps = ["//:all_bzl"],
         )
+        if src not in skip_docs:
+            native.starlark_doc_extract(
+                name = name + "_doc",
+                src = src,
+                deps = [name],
+            )
