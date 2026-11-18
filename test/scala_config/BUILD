@@ -79,7 +79,8 @@ sh_test(
         "//scala/extensions:config.bzl",
     ],
     tags = [
-        "exclusive",
+        "resources:scala_config_lock:1",
+        "resources:nested_bazel:1",
         "local",
         "no-release",
         "requires-network",
