@@ -1,8 +1,3 @@
-load("//scala/private:bzl_library.bzl", "bzl_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
-
-bzl_library(
-    name = "junit",
-    srcs = ["junit.bzl"],
-    visibility = ["//visibility:public"],
-)
+bzl_libraries()
