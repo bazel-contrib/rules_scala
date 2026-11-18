@@ -173,8 +173,10 @@ if [[ "$SINGLEJAR" != 1 || "%needs_runfiles%" == 1 ]]; then
 fi
 
 # Without a runfiles tree (--noenable_runfiles) runfiles are found through a manifest.
+# This launcher's own manifest comes before the caller's RUNFILES_MANIFEST_FILE, which
+# may be inherited from a different binary and not list this launcher's runfiles.
 RUNFILES_MANIFEST=""
-for candidate in "${JAVA_RUNFILES:+$JAVA_RUNFILES/MANIFEST}" "$RUNFILES_MANIFEST_FROM_ENV" "${self}.runfiles_manifest"; do
+for candidate in "${JAVA_RUNFILES:+$JAVA_RUNFILES/MANIFEST}" "${self}.runfiles_manifest" "$RUNFILES_MANIFEST_FROM_ENV"; do
   if [[ -n "$candidate" && -f "$candidate" ]]; then
     RUNFILES_MANIFEST="$candidate"
     break
