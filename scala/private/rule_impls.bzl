@@ -175,7 +175,10 @@ def compile_java(ctx, source_jars, source_files, output, extra_javac_opts, provi
     )
 
 def runfiles_root(ctx):
-    return "${TEST_SRCDIR}/%s" % ctx.workspace_name
+    # The java stub template exports JAVA_RUNFILES whether it discovered the
+    # runfiles tree itself or inherited it from the environment, but only sets
+    # TEST_SRCDIR in the former case. Matches rules_java's java_binary launcher.
+    return "${JAVA_RUNFILES}/%s" % ctx.workspace_name
 
 def specified_java_compile_toolchain(ctx):
     # Aspects such as scrooge_java_aspect are not allowed public label attrs
