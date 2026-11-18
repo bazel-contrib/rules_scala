@@ -86,5 +86,6 @@ if ! is_macos && ! is_windows; then
   $runner bazel test $remote_cache_config "${test_output_flag}" "${toolchain_sweep_test_flag}" //test/... --extra_toolchains="//test_expect_failure/plus_one_deps:plus_one_deps"
 fi
 $runner bazel build $remote_cache_config //test/binary_in_genrule:ScalaBinaryInGenrule --nolegacy_external_runfiles
+$runner bazel run $remote_cache_config //test:ScalaBinary --noenable_runfiles
 $runner bazel build $remote_cache_config //test_statsfile:Simple_statsfile
 $runner bazel build $remote_cache_config //test_statsfile:SimpleNoStatsFile_statsfile --extra_toolchains="//test/toolchains:enable_stats_file_disabled_toolchain"

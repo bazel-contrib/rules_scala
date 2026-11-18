@@ -139,6 +139,9 @@ if [[ "$self" != /* ]]; then
   self="$PWD/$self"
 fi
 
+# The caller's manifest, before this script points RUNFILES_MANIFEST_FILE at its own.
+RUNFILES_MANIFEST_FROM_ENV="${RUNFILES_MANIFEST_FILE:-}"
+
 if [[ "$SINGLEJAR" != 1 || "%needs_runfiles%" == 1 ]]; then
   if [[ -z "$JAVA_RUNFILES" ]]; then
     while true; do
@@ -165,10 +168,21 @@ if [[ "$SINGLEJAR" != 1 || "%needs_runfiles%" == 1 ]]; then
       export TEST_SRCDIR=${TEST_SRCDIR:-$JAVA_RUNFILES}
     elif [[ -f "${self}_deploy.jar" && "%needs_runfiles%" == 0 ]]; then
       SINGLEJAR=1;
-    else
-      die 'Cannot locate runfiles directory. (Set $JAVA_RUNFILES to inhibit searching.)'
     fi
   fi
+fi
+
+# Without a runfiles tree (--noenable_runfiles) runfiles are found through a manifest.
+RUNFILES_MANIFEST=""
+for candidate in "${JAVA_RUNFILES:+$JAVA_RUNFILES/MANIFEST}" "$RUNFILES_MANIFEST_FROM_ENV" "${self}.runfiles_manifest"; do
+  if [[ -n "$candidate" && -f "$candidate" ]]; then
+    RUNFILES_MANIFEST="$candidate"
+    break
+  fi
+done
+
+if [[ ( "$SINGLEJAR" != 1 || "%needs_runfiles%" == 1 ) && -z "$JAVA_RUNFILES" && -z "$RUNFILES_MANIFEST" ]]; then
+  die 'Cannot locate runfiles directory or manifest. (Set $JAVA_RUNFILES to inhibit searching.)'
 fi
 
 # If we are running on Windows, we need a windows style runfiles path for constructing CLASSPATH
@@ -177,7 +191,8 @@ if is_windows; then
 fi
 
 export JAVA_RUNFILES
-export RUNFILES_MANIFEST_FILE="${JAVA_RUNFILES}/MANIFEST"
+# The java wrapper reads this to find java when there is no runfiles tree.
+export RUNFILES_MANIFEST_FILE="${RUNFILES_MANIFEST:-${JAVA_RUNFILES}/MANIFEST}"
 export RUNFILES_MANIFEST_ONLY=%runfiles_manifest_only%
 
 if [ -z "$RUNFILES_MANIFEST_ONLY" ]; then
@@ -228,6 +243,39 @@ else
   function md5func() { md5sum $@ | awk '{print $1}' ; }
 fi
 
+# Prints the paths of the ":"-separated runfiles keys in $1, ":"-separated, as
+# listed in the runfiles manifest. Dies naming the first key it does not list.
+function runfiles_manifest_paths() {
+  local paths
+  [[ -n "$RUNFILES_MANIFEST" ]] \
+    || die "cannot find runfile %s: no runfiles tree under '%s' and no runfiles manifest" "${1%%:*}" "$JAVA_RUNFILES"
+  # Keys of external files arrive as <workspace>/../<repo>/<path>; the manifest lists <repo>/<path>.
+  paths=$(awk -v keys="$1" '
+    { sub(/\r$/, ""); i = index($0, " "); if (i > 1) path[substr($0, 1, i - 1)] = substr($0, i + 1) }
+    END {
+      n = split(keys, key, ":")
+      for (j = 1; j <= n; j++) {
+        k = key[j]
+        while (sub(/[^\/]+\/\.\.\//, "", k)) {}
+        if (!(k in path) || path[k] == "") { print k; exit 1 }
+        out = out (j > 1 ? ":" : "") path[k]
+      }
+      print out
+    }' "$RUNFILES_MANIFEST") \
+    || die "cannot find runfile %s in runfiles manifest %s" "$paths" "$RUNFILES_MANIFEST"
+  echo "$paths"
+}
+
+# Prints the path of runfile $1 (a key such as <repo>/<path>), from the runfiles
+# tree when it has the file, otherwise from the runfiles manifest.
+function runfile_path() {
+  if [[ -n "$JAVA_RUNFILES" && -e "$JAVA_RUNFILES/$1" ]]; then
+    echo "$JAVA_RUNFILES/$1"
+  else
+    runfiles_manifest_paths "$1"
+  fi
+}
+
 # Set JAVABIN to the path to the JVM launcher.
 %javabin%
 
@@ -247,6 +295,12 @@ else
   RUNPATH="${JAVA_RUNFILES}/%workspace_prefix%"
   RUNPATH="${RUNPATH#$PWD/}"
   CLASSPATH=%classpath%
+  # Without a runfiles tree (--noenable_runfiles) the jars are not under RUNPATH, so take
+  # each jar from the runfiles manifest. `bazel run` still creates an empty RUNPATH, so
+  # test for a jar rather than for the directory.
+  if [[ ! -e "${CLASSPATH%%:*}" ]]; then
+    CLASSPATH=$(RUNPATH="%workspace_prefix%"; runfiles_manifest_paths %classpath%) || exit 1
+  fi
 fi
 
 # Export the locations which will be used to find the location of the classes from the classpath file.
