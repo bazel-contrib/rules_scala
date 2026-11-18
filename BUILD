@@ -67,6 +67,6 @@ bzl_library(
         "@rules_java//java/common",
         "@rules_java//java/private:proto_support",
         "@rules_java//toolchains:toolchain_utils",
-        "@rules_scala_config//:config",
+        "@rules_scala_config//:config.bzl",
     ],
 )

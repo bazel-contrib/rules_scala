@@ -20,11 +20,9 @@ def find_deps_info_on(ctx, toolchain_type_label, deps_id):
     return _lookup_provider_by_id(ctx, toolchain_type_label, dep_providers, deps_id)[DepsInfo]
 
 def find_deps_info_on_if_present(ctx, toolchain_type_label, deps_id):
-    """Same as find_deps_info_on, but returns None instead of failing.
-
-    It returns None when a toolchain's dep_providers doesn't map deps_id -- for
-    a deps_id a custom scala_toolchain() caller may predate and not know about.
-    """
+    """Same as find_deps_info_on, but returns None instead of failing when a
+    toolchain's dep_providers doesn't map deps_id -- for a deps_id a custom
+    scala_toolchain() caller may predate and not know about."""
     dep_providers = getattr(ctx.toolchains[toolchain_type_label], "dep_providers")
     for dep_provider in dep_providers:
         if dep_provider[DepsInfo].deps_id == deps_id:

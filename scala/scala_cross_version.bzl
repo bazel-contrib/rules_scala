@@ -30,10 +30,7 @@ def extract_minor_version(scala_version):
     return scala_version.split(".")[2]
 
 def extract_major_version_underscore(scala_version):
-    """Return major Scala version with underscore given a full version.
-
-    e.g. "2.13.18" -> "2_13"
-    """
+    """Return major Scala version with underscore given a full version, e.g. "2.13.18" -> "2_13" """
     return extract_major_version(scala_version).replace(".", "_")
 
 def scala_mvn_artifact(
