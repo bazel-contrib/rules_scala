@@ -62,7 +62,7 @@ bzl_library(
         "@bazel_tools//tools/build_defs/repo:utils.bzl",
         "@com_google_protobuf//bazel/common:proto_common_bzl",
         "@com_google_protobuf//bazel/common:proto_info_bzl",
-        "@platforms//host:constraints_lib",
+        "@platforms//host:constraints.bzl",
         "@rules_java//java:rules",
         "@rules_java//java/common",
         "@rules_java//java/private:proto_support",
