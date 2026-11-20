@@ -37,7 +37,8 @@ sh_test(
     tags = [
         "no-sandbox",
         "external",
-        "exclusive",
+        "resources:coverage_lock:1",
+        "resources:nested_bazel:1",
         "requires-network",
         "no-release",
         "skip-toolchain-sweep",
