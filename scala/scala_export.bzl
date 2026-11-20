@@ -28,8 +28,9 @@ def scala_export(
         **kwargs):
     """Builds a `scala_library` and the files to publish it to a Maven
     repository. This macro is the Scala version of `java_export` from
-    `rules_jvm_external`. It needs `rules_jvm_external` 6.9 or later. A legacy
-    `WORKSPACE` must declare it.
+    `rules_jvm_external`. It needs `rules_jvm_external` 6.9 or later. In a
+    legacy `WORKSPACE`, declare `rules_jvm_external` before you call
+    `protobuf_deps()`. Otherwise, `protobuf_deps()` declares an older version.
 
     Other targets can depend on `name` to get its jar. To publish the
     files, use `bazel run` on `name.publish` with these `--define` values:
