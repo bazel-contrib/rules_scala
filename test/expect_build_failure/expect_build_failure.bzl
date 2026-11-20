@@ -75,8 +75,9 @@ _NESTED_BAZEL_LIB = "//test/expect_build_failure:nested_bazel.sh"
 # jar's path, so the jar itself has to be an input for its content to count.
 _SCALAC_JAR = "//src/java/io/bazel/rulesscala/scalac:scalac_deploy.jar"
 
-# The compiler jar above does not pull in the test runners, and a nested
-# `bazel test` runs through them, so their content decides its outcome too.
+# The compiler jar above holds only the compiler. A nested `bazel test` runs
+# through the test runners, and `scala_doc` runs through a Scaladoc runner, so
+# their content decides the outcome too.
 # Kept in sync by hand with each rule's default runner/instrumenter dep; a new
 # one added to rules_scala needs a line here too.
 _RUNNER_JARS = [
@@ -84,6 +85,8 @@ _RUNNER_JARS = [
     "//src/java/io/bazel/rulesscala/specs2:specs2_test_discovery.jar",
     "//src/java/io/bazel/rulesscala/scala_test:librunner.jar",
     "//src/java/io/bazel/rulesscala/coverage/instrumenter:instrumenter.jar",
+    "//src/java/io/bazel/rulesscala/scaladoc:scala2_runner.jar",
+    "//src/java/io/bazel/rulesscala/scaladoc:scala3_runner.jar",
 ]
 
 def _absolutize(target):
