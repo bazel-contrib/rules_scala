@@ -5,7 +5,6 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 scala_library(
     name = "deploy_env_dep",
     srcs = ["DeployEnvDependency.scala"],
-    deps = [],
 )
 
 scala_library(
@@ -43,28 +42,6 @@ scala_export(
     maven_coordinates = "com.example:testonly:1.0.0",
 )
 
-genrule(
-    name = "list-classes",
-    srcs = [
-        ":test-project",
-    ],
-    outs = ["classes.txt"],
-    cmd = "for SRC in $(SRCS); do jar tf $$SRC >> $@; done",
-)
-
-sh_test(
-    name = "check-deploy-env",
-    srcs = [
-        "check-deploy-env.sh",
-    ],
-    data = [
-        ":classes.txt",
-    ],
-    deps = [
-        "@bazel_tools//tools/bash/runfiles",
-    ],
-)
-
 scala_export(
     name = "scala3_export",
     srcs = ["Dependency.scala"],
@@ -87,13 +64,14 @@ scala_export(
         cmd = "jar tf $< > $@",
     )
     for target in [
+        "test",
         "external_dep",
         "bundled_stdlib_export",
     ]
 ]
 
 # The pom lists the Scala standard library with compile scope, and the jar
-# omits its classes. The jar check uses `:external_dep`, because the
+# omits its classes. The `scala/` checks use `:external_dep`, because the
 # `deploy_env` of `:test` also removes these classes.
 [
     sh_test(
@@ -111,6 +89,9 @@ scala_export(
         ("pom-has-scala-library", "true", "scala-library", ":test-pom"),
         ("pom-has-scala3-library", "true", "scala3-library_3", ":scala3_export-pom"),
         ("pom-has-compile-scope", "false", "runtime", ":scala3_export-pom"),
+        ("jar-has-main", "true", "/Main.class", ":test_classes.txt"),
+        ("jar-has-dependency", "true", "/Dependency.class", ":test_classes.txt"),
+        ("jar-has-no-deploy-env-dependency", "false", "/DeployEnvDependency.class", ":test_classes.txt"),
         ("jar-has-no-scala-classes", "false", "scala/", ":external_dep_classes.txt"),
         ("bundled-jar-has-scala-classes", "true", "scala/", ":bundled_stdlib_export_classes.txt"),
         ("scala3-javadoc-has-dependency", "true", "scala_export/Dependency.html", ":scala3_scaladocs.txt"),
