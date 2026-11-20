@@ -84,6 +84,8 @@ _RUNNER_JARS = [
     "//src/java/io/bazel/rulesscala/specs2:specs2_test_discovery.jar",
     "//src/java/io/bazel/rulesscala/scala_test:librunner.jar",
     "//src/java/io/bazel/rulesscala/coverage/instrumenter:instrumenter.jar",
+    "//src/java/io/bazel/rulesscala/scaladoc:scala2_runner.jar",
+    "//src/java/io/bazel/rulesscala/scaladoc:scala3_runner.jar",
 ]
 
 def _absolutize(target):
