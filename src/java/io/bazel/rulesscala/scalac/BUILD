@@ -1,5 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 load("//scala:scala_cross_version_select.bzl", "select_for_scala_version")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load("//src/java/io/bazel/rulesscala/scalac:definitions.bzl", "define_scalac", "define_scalac_bootstrap")
 
 define_scalac()
@@ -31,3 +32,5 @@ java_test(
     test_class = "io.bazel.rulesscala.scalac.StdlibVersionCheckTest",
     deps = [":stdlib_version_check"],
 )
+
+bzl_libraries()

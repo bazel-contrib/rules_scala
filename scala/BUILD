@@ -2,6 +2,7 @@ load("@rules_java//java:defs.bzl", "java_import", "java_library")
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala_cross_version.bzl", "version_suffix")
 load("//scala:scala_toolchain.bzl", "scala_toolchain")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
 # For //test/semanticdb, whose tests build a fixture using this provider;
 # listing it in those tests' `data` re-keys the tests when its fields change.
@@ -72,3 +73,5 @@ java_library(
     srcs = ["PlaceHolderClassToCreateEmptyJarForScalaImport.java"],
     visibility = ["//visibility:public"],
 )
+
+bzl_libraries()

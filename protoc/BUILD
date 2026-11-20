@@ -2,6 +2,7 @@ load(
     "@com_google_protobuf//bazel/toolchains:proto_lang_toolchain.bzl",
     "proto_lang_toolchain",
 )
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
 exports_files(
     ["toolchains.bzl"],
@@ -35,3 +36,5 @@ alias(
     tags = ["manual"],
     visibility = ["//visibility:public"],
 )
+
+bzl_libraries(skip_docs = ["toolchains.bzl"])
