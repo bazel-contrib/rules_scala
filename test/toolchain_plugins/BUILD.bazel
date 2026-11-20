@@ -51,21 +51,32 @@ toolchain_plugin_absent_test(
     target_under_test = ":plain_library",
 )
 
-# Scaladoc fails with `bad option: '-x:s'` if it splits this option.
-scala_doc(
-    name = "plain_doc",
-    scala_version = "2.13.18",
-    scalacopts = ["-Wconf:msg=a -x:s"],
-    deps = [":plain_library"],
-)
+_SCALA2_VERSIONS = [
+    "2.12.21",
+    "2.13.18",
+]
 
-scala_doc_toolchain_options_test(
-    name = "scala_doc_toolchain_options_test",
-    size = "small",
-    target_under_test = ":plain_doc",
-)
+# Scaladoc fails with `bad option: '-x:s'` if it splits this option.
+[
+    scala_doc(
+        name = "plain_doc_" + version.replace(".", "_"),
+        scala_version = version,
+        scalacopts = ["-Wconf:msg=a -x:s"],
+        deps = [":plain_library"],
+    )
+    for version in _SCALA2_VERSIONS
+]
+
+[
+    scala_doc_toolchain_options_test(
+        name = "scala_doc_toolchain_options_%s_test" % version.replace(".", "_"),
+        size = "small",
+        target_under_test = ":plain_doc_" + version.replace(".", "_"),
+    )
+    for version in _SCALA2_VERSIONS
+]
 
 build_test(
     name = "plain_doc_build_test",
-    targets = [":plain_doc"],
+    targets = [":plain_doc_" + version.replace(".", "_") for version in _SCALA2_VERSIONS],
 )

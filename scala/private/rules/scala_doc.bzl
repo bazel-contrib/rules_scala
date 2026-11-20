@@ -131,6 +131,12 @@ def _site_file_args(file):
 def _jvm_flag_args(ctx):
     return ["--jvm_flag=%s" % f for f in ctx.attr.scaladoc_jvm_flags]
 
+def _check_one_line(ctx, opts, owner):
+    # The runners read one argument on each line of the params file.
+    for opt in opts:
+        if "\n" in opt or "\r" in opt:
+            fail("%s: each `scalacopts` value of %s must be one line: %r" % (ctx.label, owner, opt))
+
 def _scala3_doc(ctx, output_path, compile_jars):
     """Runs Scala 3 Scaladoc, which reads TASTy from compiled classes."""
     doc_classpath = find_deps_info_on_if_present(ctx, _SCALA_TOOLCHAIN, "scala_doc_classpath")
@@ -199,10 +205,7 @@ def _scala_doc_impl(ctx):
                 dep_version,
             ))
 
-    # The runners read one argument on each line of the params file.
-    for opt in ctx.attr.scalacopts:
-        if "\n" in opt or "\r" in opt:
-            fail("%s: each `scalacopts` value of `scala_doc` must be one line: %r" % (ctx.label, opt))
+    _check_one_line(ctx, ctx.attr.scalacopts, "`scala_doc`")
 
     if scala3:
         _scala3_doc(ctx, output_path, compile_jars)
@@ -210,6 +213,7 @@ def _scala_doc_impl(ctx):
 
     if ctx.files.site_srcs:
         fail("%s: `site_srcs` works only with Scala 3. This target uses Scala %s." % (ctx.label, scala_version))
+    _check_one_line(ctx, toolchain.scalacopts, "the Scala toolchain")
 
     # Collect all source files to pass to scaladoc by way of an aspect.
     src_files = depset(transitive = [dep[ScaladocAspectInfo].src_files for dep in ctx.attr.deps])
@@ -235,12 +239,12 @@ def _scala_doc_impl(ctx):
     args.add("-nowarn")  # turn off warnings for now since they can obscure actual errors for large scala_doc targets
     args.add_all([ctx.expand_location(opt, plugin_targets) for opt in toolchain.scalacopts])
 
-    # The last `-Wconf` that matches a warning wins. Thus Scaladoc warnings stay silent with a
+    # The last `-Wconf` that matches a warning wins. Thus all warnings stay silent with a
     # toolchain `-Wconf`, as with `-nowarn`, and `scalacopts` of `scala_doc` can make them
     # errors. Scala before 2.12.13 and 2.13.2 rejects `-Wconf`, so add it only after a toolchain
     # `-Wconf`.
     if any([opt.startswith("-Wconf") for opt in toolchain.scalacopts]):
-        args.add("-Wconf:cat=scaladoc:s")
+        args.add("-Wconf:any:s")
     args.add_all([ctx.expand_location(opt, plugin_targets) for opt in ctx.attr.scalacopts])
     # output_path is a directory, and Args#add rejects those because they may expand to
     # multiple values. add_all with expand_directories = False passes it as one mapped path.
