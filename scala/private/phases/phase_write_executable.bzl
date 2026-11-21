@@ -22,8 +22,7 @@ load(
     "first_non_empty",
     "is_windows",
     "java_bin",
-    "java_bin_windows",
-    "runfiles_root",
+    "java_bin_rlocationpath",
 )
 
 def phase_write_executable_scalatest(ctx, p):
@@ -108,7 +107,7 @@ def _write_executable_windows(ctx, executable, rjars, main_class, jvm_flags, wra
     classpath = ";".join([j.short_path for j in rjars.to_list()])
 
     jvm_flags_str = ";".join(jvm_flags)
-    java_for_exe = java_bin_windows(ctx)
+    java_for_exe = java_bin_rlocationpath(ctx)
 
     cpfile = ctx.actions.declare_file("%s.classpath" % ctx.label.name)
     ctx.actions.write(cpfile, classpath)
@@ -134,9 +133,9 @@ def _write_executable_non_windows(ctx, executable, rjars, main_class, jvm_flags,
         [ctx.expand_location(f, ctx.attr.data) for f in jvm_flags],
     )
 
-    javabin = "export REAL_EXTERNAL_JAVA_BIN=${JAVABIN};JAVABIN=${JAVABIN:-%s/%s}" % (
-        runfiles_root(ctx),
-        wrapper.short_path,
+    # runfile_path dies in its subshell when it cannot find the wrapper, so exit with it.
+    javabin = "export REAL_EXTERNAL_JAVA_BIN=${JAVABIN};JAVABIN=${JAVABIN:-$(runfile_path %s)} || exit 1" % (
+        rlocationpath_from_file(ctx, wrapper)
     )
 
     scala_toolchain = ctx.toolchains["//scala:toolchain_type"]

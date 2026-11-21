@@ -209,7 +209,9 @@ def java_bin(ctx):
         javabin = "%s/%s" % (runfiles_root_var, java_path)
     return javabin
 
-def java_bin_windows(ctx):
+# Returns the java executable as an absolute path or as a runfiles key
+# (`<repo>/<path>`, as listed in the runfiles manifest).
+def java_bin_rlocationpath(ctx):
     java_runtime = specified_java_runtime(
         ctx,
         default_runtime = ctx.attr._java_runtime[java_common.JavaRuntimeInfo],
