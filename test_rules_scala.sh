@@ -86,7 +86,6 @@ if ! is_macos && ! is_windows; then
   $runner bazel test $remote_cache_config "${test_output_flag}" "${toolchain_sweep_test_flag}" //test/... --extra_toolchains="//test_expect_failure/plus_one_deps:plus_one_deps"
 fi
 $runner bazel build $remote_cache_config //test/binary_in_genrule:ScalaBinaryInGenrule --nolegacy_external_runfiles
-$runner bazel run $remote_cache_config //test:ScalaBinary --noenable_runfiles
 
 # Runs the ScalaBinary launcher the way another program would start it, with
 # that program's RUNFILES_MANIFEST_FILE inherited. That manifest lists none of
@@ -105,8 +104,11 @@ test_scala_binary_prefers_own_runfiles_manifest() {
   return "$result"
 }
 
-# Windows launches binaries through the native launcher, not this shell stub.
+# Windows launches binaries through the native exe launcher, not this shell stub.
+# Building that launcher with --noenable_runfiles fails in LauncherFileWriter,
+# which cannot find @bazel_tools' launcher without a runfiles tree.
 if ! is_windows; then
+  $runner bazel run $remote_cache_config //test:ScalaBinary --noenable_runfiles
   $runner test_scala_binary_prefers_own_runfiles_manifest
 fi
 $runner bazel build $remote_cache_config //test_statsfile:Simple_statsfile
