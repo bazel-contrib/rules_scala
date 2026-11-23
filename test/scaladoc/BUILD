@@ -2,12 +2,18 @@ load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//scala:scala.bzl", "scala_doc", "scala_library")
 load("//scala:scala_import.bzl", "scala_import")
+load("//scala:scala_toolchain.bzl", "scala_toolchain")
 load("//test/expect_build_failure:expect_analysis_failure.bzl", "expect_analysis_failure_test")
 load("//test/expect_build_failure:expect_build_failure.bzl", "expect_build_failure_test")
 load("//test/expect_build_failure:toolchain_transition.bzl", "build_under_toolchains", "toolchain_build_test")
-load("scaladoc.bzl", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields", "site_dir")
+load("scaladoc.bzl", "expect_analysis_failure_with_line_break_toolchain_test", "expect_analysis_failure_with_scaladoc_version_mismatch_test", "expect_analysis_failure_without_doc_classpath_test", "scala_doc_intransitive", "scala_doc_old_fields", "site_dir")
 
 package(default_testonly = 1)
+
+_SCALA2_VERSIONS = [
+    "2.12.21",
+    "2.13.18",
+]
 
 # Scala_library with no deps
 scala_library(
@@ -105,6 +111,121 @@ toolchain_build_test(
     name = "scaladoc_C_build_test",
     extra_toolchains = ["//test/toolchains:ast_plus_one_deps_unused_deps_warn"],
     target = ":scaladoc_C",
+)
+
+scala_toolchain(
+    name = "scaladoc_warnings_error_impl",
+    scalacopts = ["-Wconf:cat=scaladoc:e"],
+    # Non-test toolchain deps use this toolchain.
+    testonly = False,
+)
+
+toolchain(
+    name = "scaladoc_warnings_error",
+    toolchain = ":scaladoc_warnings_error_impl",
+    toolchain_type = "//scala:toolchain_type",
+)
+
+scala_library(
+    name = "BrokenLink",
+    srcs = ["BrokenLink.scala"],
+)
+
+[
+    scala_doc(
+        name = "scaladoc_broken_link" + suffix + "_" + version.replace(".", "_"),
+        scala_version = version,
+        scalacopts = scalacopts,
+        tags = ["manual"],
+        deps = [":BrokenLink"],
+    )
+    for version in _SCALA2_VERSIONS
+    for suffix, scalacopts in [
+        ("", []),
+        ("_error", ["-Wconf:cat=scaladoc:e"]),
+    ]
+]
+
+# Scaladoc warnings, such as a broken link, stay silent with a toolchain `-Wconf`.
+[
+    toolchain_build_test(
+        name = "scaladoc_broken_link_%s_build_test" % version.replace(".", "_"),
+        extra_toolchains = ["//test/scaladoc:scaladoc_warnings_error"],
+        target = ":scaladoc_broken_link_" + version.replace(".", "_"),
+    )
+    for version in _SCALA2_VERSIONS
+]
+
+# `-Wconf` in `scalacopts` of `scala_doc` makes the broken link warning an error.
+[
+    expect_build_failure_test(
+        name = "scaladoc_broken_link_error_%s_test" % version.replace(".", "_"),
+        build_args = ["--extra_toolchains=//test/scaladoc:scaladoc_warnings_error"],
+        expect = ["expected_broken_link_error.txt"],
+        target = ":scaladoc_broken_link_error_" + version.replace(".", "_"),
+    )
+    for version in _SCALA2_VERSIONS
+]
+
+scala_toolchain(
+    name = "feature_error_impl",
+    # The toolchain also builds the exec tools, and `msg` keeps their
+    # warnings as they are.
+    scalacopts = ["-Wconf:cat=feature&msg=intToString:e"],
+    # Non-test toolchain deps use this toolchain.
+    testonly = False,
+)
+
+toolchain(
+    name = "feature_error",
+    toolchain = ":feature_error_impl",
+    toolchain_type = "//scala:toolchain_type",
+)
+
+scala_library(
+    name = "ImplicitConversions",
+    srcs = ["Conversions.scala"],
+    scalacopts = ["-language:implicitConversions"],
+)
+
+[
+    scala_doc(
+        name = "scaladoc_implicit_conversions_" + version.replace(".", "_"),
+        scala_version = version,
+        tags = ["manual"],
+        deps = [":ImplicitConversions"],
+    )
+    for version in _SCALA2_VERSIONS
+]
+
+# A warning that the toolchain makes an error and a target turns off stays
+# silent in Scaladoc, which gets only the toolchain options.
+[
+    toolchain_build_test(
+        name = "scaladoc_implicit_conversions_%s_build_test" % version.replace(".", "_"),
+        extra_toolchains = ["//test/scaladoc:feature_error"],
+        target = ":scaladoc_implicit_conversions_" + version.replace(".", "_"),
+    )
+    for version in _SCALA2_VERSIONS
+]
+
+scala_toolchain(
+    name = "line_break_impl",
+    scalacopts = ["-Wconf:msg=first\nsecond:s"],
+    testonly = False,
+)
+
+toolchain(
+    name = "line_break",
+    toolchain = ":line_break_impl",
+    toolchain_type = "//scala:toolchain_type",
+)
+
+expect_analysis_failure_with_line_break_toolchain_test(
+    name = "scaladoc_toolchain_line_break_test",
+    message = "each `scalacopts` value of the Scala toolchain must be one line",
+    tags = ["skip-toolchain-sweep"],
+    target_under_test = ":scaladoc_broken_link_2_13_18",
 )
 
 scala_library(
@@ -392,7 +513,7 @@ scala_doc(
 
 expect_analysis_failure_test(
     name = "scaladoc_scala3_line_break_test",
-    message = "each `scalacopts` value of Scala 3 `scala_doc` must be one line",
+    message = "each `scalacopts` value of `scala_doc` must be one line",
     target_under_test = ":scaladoc_scala3_line_break",
 )
 

@@ -77,7 +77,7 @@ pkg_tar(
 | --------------------- | ----------------------------------------------------- |
 | name                  | `Name, required`<br/>A unique name for this target. |
 | deps                  | `List of labels, optional`<br/>Labels for which you want to create scaladoc. |
-| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc. With Scala 2, Scaladoc also reads scalac options. |
+| scalacopts            | `List of strings, optional`<br/>Extra options for Scaladoc, one argument for each value. With Scala 2, Scaladoc also reads scalac options, and it also gets the `plugins` and `scalacopts` of the Scala toolchain. It compiles the sources of all documented targets in one run, so it uses only these options and the toolchain options. Scala 3 Scaladoc reads the compiled TASTy, so it gets only these options. With Scala 2, all warnings are silent, also with a toolchain `-Wconf`, and a `-Wconf` here can make them errors, for example `-Wconf:cat=scaladoc:e`. |
 | site_srcs             | `List of labels, optional`<br/>Static site files for Scala 3 Scaladoc. All files must be under `site_root`. Scala 2 `scala_doc` fails if this is not empty. |
 | site_root             | `String, optional`<br/>The root directory of `site_srcs`, relative to the package of this target. The default is the package directory. |
 | scaladoc_jvm_flags    | `List of strings, optional`<br/>JVM flags for the Scaladoc process, for example `-Xmx4g` for a large target. |

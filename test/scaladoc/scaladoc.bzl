@@ -28,6 +28,10 @@ expect_analysis_failure_with_scaladoc_version_mismatch_test = make_expect_analys
     "//command_line_option:extra_toolchains": ["//test/toolchains/scala_doc_version_mismatch:toolchain"],
 })
 
+expect_analysis_failure_with_line_break_toolchain_test = make_expect_analysis_failure_test({
+    "//command_line_option:extra_toolchains": ["//test/scaladoc:line_break"],
+})
+
 def _site_dir_impl(ctx):
     out = ctx.actions.declare_directory(ctx.attr.name)
     ctx.actions.run_shell(

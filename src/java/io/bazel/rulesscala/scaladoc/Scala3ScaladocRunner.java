@@ -27,14 +27,14 @@ import java.util.zip.ZipFile;
  * removes the {@code --site_prefix=<prefix>} value from {@code <short_path>}, and copies the file
  * to the result in the {@code -siteroot} directory.
  */
-public class ScaladocRunner {
+public class Scala3ScaladocRunner {
   private static final String TASTY_JAR_FLAG = "--tasty_jar=";
   private static final String SITE_FILE_FLAG = "--site_file=";
   private static final String SITE_PREFIX_FLAG = "--site_prefix=";
 
   public static void main(String[] args) throws Exception {
     if (args.length != 1 || !args[0].startsWith("@")) {
-      throw new IllegalArgumentException("Usage: ScaladocRunner @<file>");
+      throw new IllegalArgumentException("Usage: Scala3ScaladocRunner @<file>");
     }
     Path tmp = Files.createTempDirectory("scaladoc");
     Runtime.getRuntime().addShutdownHook(new Thread(() -> deleteTree(tmp)));
