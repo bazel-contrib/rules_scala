@@ -42,9 +42,19 @@ scala_export(
     maven_coordinates = "com.example:testonly:1.0.0",
 )
 
+# Two files, so the `doc_resources` label gives more than one file.
+filegroup(
+    name = "doc_resources",
+    srcs = [
+        "ExternalDependency.scala",
+        "Main.scala",
+    ],
+)
+
 scala_export(
     name = "scala3_export",
     srcs = ["Dependency.scala"],
+    doc_resources = [":doc_resources"],
     maven_coordinates = "com.example:scala3:1.0.0",
     scala_version = "3.7.4",
 )
@@ -95,6 +105,8 @@ scala_export(
         ("jar-has-no-scala-classes", "false", "scala/", ":external_dep_classes.txt"),
         ("bundled-jar-has-scala-classes", "true", "scala/", ":bundled_stdlib_export_classes.txt"),
         ("scala3-javadoc-has-dependency", "true", "scala_export/Dependency.html", ":scala3_scaladocs.txt"),
+        ("scala3-javadoc-has-doc-resource-main", "true", "Main.scala", ":scala3_scaladocs.txt"),
+        ("scala3-javadoc-has-doc-resource-external", "true", "ExternalDependency.scala", ":scala3_scaladocs.txt"),
     ]
 ]
 
