@@ -34,6 +34,7 @@ def coverage_test(
         tags = [
             "no-sandbox",
             "external",
+            "no-remote-exec",
             "resources:coverage_lock:1",
             "resources:nested_bazel:1",
             "requires-network",
@@ -50,6 +51,8 @@ def coverage_test(
     reads the real source tree, not this test's runfiles (see nested_bazel.sh
     module docstring), so there is no correct cache key to give it short of
     never caching at all -- `external` is Bazel's own way of saying that.
+    Tagged `no-remote-exec` because the nested build needs this machine's
+    checkout.
     Tagged `resources:coverage_lock:1` because every coverage_test shares one
     nested output base (see nested_bazel.sh): two of these running at once
     could race on the same fixture's coverage.dat (e.g. one run's
