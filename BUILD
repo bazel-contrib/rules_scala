@@ -57,6 +57,8 @@ bzl_library(
         "@bazel_skylib//lib:dicts",
         "@bazel_skylib//lib:paths",
         "@bazel_skylib//rules:common_settings",
+        # `@rules_jvm_external//:implementation` loads this module and misses it.
+        "@bazel_skylib//rules:run_binary",
         "@bazel_tools//tools/build_defs/repo:cache.bzl",
         "@bazel_tools//tools/build_defs/repo:http.bzl",
         "@bazel_tools//tools/build_defs/repo:utils.bzl",
@@ -67,6 +69,7 @@ bzl_library(
         "@rules_java//java/common",
         "@rules_java//java/private:proto_support",
         "@rules_java//toolchains:toolchain_utils",
+        "@rules_jvm_external//:implementation",
         "@rules_scala_config//:config.bzl",
     ],
 )
