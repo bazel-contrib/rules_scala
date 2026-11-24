@@ -42,6 +42,13 @@ Set `maven_repo` to an `https` URL to publish to a remote repository, and set
 `maven_user` and `maven_password` for it. Add `--define gpg_sign=true` to sign
 the files with GPG.
 
+To publish to Maven Central, the pom must have the project name, description,
+URL, license, developers and SCM. Give them in a `pom_template` file. See the
+`java_export` docs for its placeholders.
+
 See the docstring in
 [`scala/scala_export.bzl`](../scala/scala_export.bzl) for all arguments, and
 for the Scaladoc setup with Scala 3.
+
+Another way to publish is
+[`bazel-distribution`](https://github.com/typedb/bazel-distribution).
