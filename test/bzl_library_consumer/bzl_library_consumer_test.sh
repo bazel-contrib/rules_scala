@@ -21,6 +21,7 @@ fi
 scratch_module="${TEST_TMPDIR:-$(mktemp -d)}/bzl_library_consumer"
 mkdir -p "${scratch_module}"
 cp "${NESTED_BAZEL_WORKSPACE}/.bazelversion" "${scratch_module}/"
+cp "${NESTED_BAZEL_WORKSPACE}/test/bzl_library_consumer/consumer/"* "${scratch_module}/"
 
 cat >"${scratch_module}/MODULE.bazel" <<EOF
 module(name = "bzl_library_consumer", version = "0.0.0")
@@ -30,43 +31,6 @@ bazel_dep(name = "rules_scala")
 local_path_override(
     module_name = "rules_scala",
     path = "${rules_scala_dir}",
-)
-EOF
-
-cat >"${scratch_module}/macros.bzl" <<'EOF'
-"""Macros of the consumer module."""
-
-load("@rules_scala//scala:advanced_usage/scala.bzl", "make_scala_library")
-load("@rules_scala//scala:scala.bzl", "scala_library")
-
-def consumer_library(name, **kwargs):
-    """Declares a `scala_library`.
-
-    Args:
-        name: the target name
-        **kwargs: other `scala_library` attributes
-    """
-    scala_library(name = name, **kwargs)
-
-consumer_custom_library = make_scala_library()
-EOF
-
-cat >"${scratch_module}/BUILD" <<'EOF'
-load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-
-bzl_library(
-    name = "macros",
-    srcs = ["macros.bzl"],
-    deps = [
-        "@rules_scala//scala:advanced_usage/scala",
-        "@rules_scala//scala:scala",
-    ],
-)
-
-starlark_doc_extract(
-    name = "macros_doc",
-    src = "macros.bzl",
-    deps = [":macros"],
 )
 EOF
 

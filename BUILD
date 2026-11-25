@@ -26,7 +26,7 @@ bzl_libraries(srcs = ["scala_config.bzl"])
 # All `.bzl` files of rules_scala and the modules that they load.
 bzl_library(
     name = "all_bzl",
-    visibility = ["//visibility:public"],
+    visibility = ["//:__subpackages__"],
     deps = [
         ":bzl_srcs",
         "//jmh:bzl_srcs",

@@ -74,4 +74,7 @@ java_library(
     visibility = ["//visibility:public"],
 )
 
-bzl_libraries()
+bzl_libraries(srcs = glob([
+    "*.bzl",
+    "advanced_usage/*.bzl",
+]))

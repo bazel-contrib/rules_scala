@@ -12,8 +12,8 @@ sh_test(
         "//:all_bzl",
         "//test/expect_build_failure:nested_bazel.sh",
     ],
-    # `external` runs the test every time, because BUILD files outside `data`
-    # declare the tested labels.
+    # `external` runs the test every time, because files outside `data`
+    # declare the tested labels and the consumer module in `consumer/`.
     tags = [
         "external",
         "local",

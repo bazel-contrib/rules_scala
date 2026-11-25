@@ -12,14 +12,15 @@ def bzl_libraries(srcs = None, names = {}, skip_docs = []):
     that the file loads, so `bazel build //... --nobuild` finds it.
 
     Args:
-        srcs: the `.bzl` files; all `.bzl` files of the package by default
+        srcs: the `.bzl` files; the `.bzl` files directly in the package
+            directory by default
         names: maps a file to its target name when the default name, the file
             path without `.bzl`, is already in use
         skip_docs: files that load a module that is visible only inside
             another repository
     """
     if srcs == None:
-        srcs = native.glob(["**/*.bzl"])
+        srcs = native.glob(["*.bzl"])
     native.filegroup(
         name = "bzl_srcs",
         srcs = srcs,

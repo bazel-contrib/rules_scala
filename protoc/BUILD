@@ -37,4 +37,10 @@ alias(
     visibility = ["//visibility:public"],
 )
 
-bzl_libraries(skip_docs = ["toolchains.bzl"])
+bzl_libraries(
+    srcs = glob([
+        "*.bzl",
+        "private/*.bzl",
+    ]),
+    skip_docs = ["toolchains.bzl"],
+)

@@ -30,4 +30,9 @@ exports_files(
 # a template expansion, which fingerprints by mnemonic and not by content.
 exports_files(["phases/phase_semanticdb.bzl"])
 
-bzl_libraries()
+bzl_libraries(srcs = glob([
+    "*.bzl",
+    "macros/*.bzl",
+    "phases/*.bzl",
+    "rules/*.bzl",
+]))
