@@ -3,6 +3,8 @@
 Use the `scala_export` macro. It is the Scala version of
 [`java_export`](https://github.com/bazel-contrib/rules_jvm_external/blob/6.9/docs/api.md#java_export)
 from `rules_jvm_external`, and it needs `rules_jvm_external` 6.9 or later.
+First set up `rules_scala` as the [README](../README.md) shows.
+[`examples/scala_export`](../examples/scala_export) is a full project.
 
 ```py
 load("@rules_scala//scala:scala_export.bzl", "scala_export")
@@ -10,6 +12,7 @@ load("@rules_scala//scala:scala_export.bzl", "scala_export")
 scala_export(
     name = "greeter",
     srcs = glob(["*.scala"]),
+    # Scala libraries usually add the Scala binary version to the artifact.
     maven_coordinates = "com.example:greeter_2.13:1.0.0",
     deps = [
         "@maven//:com_google_guava_guava",
