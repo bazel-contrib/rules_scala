@@ -1,3 +1,4 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@rules_scala//scala:scala.bzl", "scala_library")
 load("@rules_scala//scala:scala_export.bzl", "scala_export")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
@@ -137,5 +138,17 @@ sh_test(
     data = [
         ":scaladocs.txt",
         "scaladocs.golden.txt",
+    ],
+)
+
+# A label string in the macro body resolves from the repo that calls the macro.
+# This target fails if such a label needs a repo that only `rules_scala` sees.
+build_test(
+    name = "external_repo_export_build_test",
+    targets = [
+        "@example_external_workspace//export",
+        "@example_external_workspace//export:export-javadoc",
+        "@example_external_workspace//export:export-pom",
+        "@example_external_workspace//export:export.publish",
     ],
 )

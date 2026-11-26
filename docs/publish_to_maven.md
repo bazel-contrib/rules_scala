@@ -3,8 +3,9 @@
 Use the `scala_export` macro. It is the Scala version of
 [`java_export`](https://github.com/bazel-contrib/rules_jvm_external/blob/6.9/docs/api.md#java_export)
 from `rules_jvm_external`, and it needs `rules_jvm_external` 6.9 or later.
-First set up `rules_scala` as the [README](../README.md) shows.
-[`examples/scala_export`](../examples/scala_export) is a full project.
+First set up `rules_scala` as the [README](../README.md) shows. In a legacy
+`WORKSPACE`, declare `rules_jvm_external` before you call `protobuf_deps()`.
+The example below uses Scala 2.13 and Guava from `maven.install`.
 
 ```py
 load("@rules_scala//scala:scala_export.bzl", "scala_export")
@@ -41,9 +42,10 @@ To publish, run the `.publish` target:
 bazel run --define "maven_repo=file://$HOME/.m2/repository" //:greeter.publish
 ```
 
-Set `maven_repo` to an `https` URL to publish to a remote repository, and set
-`maven_user` and `maven_password` for it. Add `--define gpg_sign=true` to sign
-the files with GPG.
+Set `maven_repo` to an `https` URL to publish to a remote repository. Give the
+credentials in the `MAVEN_USER` and `MAVEN_PASSWORD` environment variables,
+because a `--define` value goes into the generated publish script. Add
+`--define gpg_sign=true` to sign the files with GPG.
 
 To publish to Maven Central, the pom must have the project name, description,
 URL, license, developers and SCM. Give them in a `pom_template` file. See the

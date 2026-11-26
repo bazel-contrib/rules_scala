@@ -12,7 +12,6 @@ MODULE_DIRS = [
     "examples/crossbuild",
     "examples/overridden_artifacts",
     "examples/scala3",
-    "examples/scala_export",
     "examples/semanticdb",
     "examples/testing/multi_frameworks_toolchain",
     "examples/testing/scalatest_repositories",
