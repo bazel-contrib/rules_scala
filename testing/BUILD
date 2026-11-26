@@ -1,5 +1,6 @@
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala_cross_version.bzl", "version_suffix")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
 # Aliases for backward compatibility:
 [
@@ -19,3 +20,5 @@ load("//scala:scala_cross_version.bzl", "version_suffix")
 ]
 
 exports_files(["testing.bzl"])
+
+bzl_libraries()

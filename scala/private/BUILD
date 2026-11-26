@@ -1,3 +1,5 @@
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
+
 # Declared inputs for nested Bazel tests. Listing these files in those tests'
 # `data` re-keys the tests when the logic changes.
 exports_files([
@@ -27,3 +29,10 @@ exports_files(
 # fixture_actions can't see this on its own: the fixture's only own action is
 # a template expansion, which fingerprints by mnemonic and not by content.
 exports_files(["phases/phase_semanticdb.bzl"])
+
+bzl_libraries(srcs = glob([
+    "*.bzl",
+    "macros/*.bzl",
+    "phases/*.bzl",
+    "rules/*.bzl",
+]))

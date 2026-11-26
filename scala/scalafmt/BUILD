@@ -1,6 +1,7 @@
 load("@rules_scala_config//:config.bzl", "SCALA_VERSION")
 load("//scala:scala.bzl", "scala_binary")
 load("//scala:scala_cross_version.bzl", "version_suffix")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load("//scala/scalafmt:phase_scalafmt_ext.bzl", "scalafmt_singleton")
 load("//scala/scalafmt/toolchain:toolchain.bzl", "export_scalafmt_deps")
 
@@ -49,3 +50,5 @@ export_scalafmt_deps(
     deps_id = "scalafmt_classpath",
     visibility = ["//visibility:public"],
 )
+
+bzl_libraries()

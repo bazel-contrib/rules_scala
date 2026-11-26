@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load(
     "//twitter_scrooge/toolchain:toolchain.bzl",
     "DEP_PROVIDERS",
@@ -12,3 +13,5 @@ load(
     )
     for dep in DEP_PROVIDERS
 ]
+
+bzl_libraries()

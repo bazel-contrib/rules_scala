@@ -1,4 +1,5 @@
 load("//jmh/toolchain:toolchain.bzl", "DEP_PROVIDERS", "export_toolchain_deps")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
 [
     export_toolchain_deps(
@@ -8,3 +9,5 @@ load("//jmh/toolchain:toolchain.bzl", "DEP_PROVIDERS", "export_toolchain_deps")
     )
     for provider in DEP_PROVIDERS
 ]
+
+bzl_libraries()

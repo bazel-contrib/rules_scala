@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load("//scala/settings:stamp_settings.bzl", "stamp_scala_import")
 
 stamp_scala_import(
@@ -5,3 +6,5 @@ stamp_scala_import(
     build_setting_default = True,
     visibility = ["//visibility:public"],
 )
+
+bzl_libraries()

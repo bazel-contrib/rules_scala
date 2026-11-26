@@ -1,3 +1,4 @@
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 load(
     "//scala_proto/private:toolchain_deps.bzl",
     "export_scalapb_toolchain_deps",
@@ -18,3 +19,5 @@ export_scalapb_toolchain_deps(
     deps_id = "scalapb_worker_deps",
     visibility = ["//visibility:public"],
 )
+
+bzl_libraries()
