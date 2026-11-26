@@ -54,8 +54,9 @@ def scala_export(
         publish_maven_metadata = False,
         scala_library_maven_deps = Label("@rules_scala_toolchains//scala:scala_library_maven_deps"),
         **kwargs):
-    """Builds a `scala_library` and the files to publish it to a Maven
-    repository. This macro is the Scala version of `java_export` from
+    """Builds a `scala_library` and the files to publish it to a Maven repository.
+
+    This macro is the Scala version of `java_export` from
     `rules_jvm_external`. It needs `rules_jvm_external` 6.9 or later. In a
     legacy `WORKSPACE`, declare `rules_jvm_external` before you call
     `protobuf_deps()`. Otherwise, `protobuf_deps()` declares an older version.

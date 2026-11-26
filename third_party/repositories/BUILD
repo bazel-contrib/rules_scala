@@ -1,3 +1,5 @@
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
+
 # For //test/scala_config:scalac_javac_uses_scala_library_*_test, which assert the
 # scala-library coordinate these files pin lands on the scalac classpath; listing
 # them in those tests' `data` re-keys the tests when a coordinate is bumped.
@@ -26,3 +28,5 @@ exports_files(
     ["repositories.bzl"],
     visibility = ["//test/scala_config:__pkg__"],
 )
+
+bzl_libraries()

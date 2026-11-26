@@ -27,3 +27,6 @@ third_party/test/proto
 # workspace root, so they must not be loaded as packages of this repo.
 test_version/test_reporter
 test_version/version_specific_tests_dir
+
+# Fixture module that bzl_library_consumer_test copies into a standalone module.
+test/bzl_library_consumer/consumer

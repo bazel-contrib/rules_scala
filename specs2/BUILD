@@ -1,5 +1,6 @@
 load("@rules_java//java:java_import.bzl", "java_import")
 load("@rules_java//java:java_library.bzl", "java_library")
+load("//scala/private:bzl_library.bzl", "bzl_libraries")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -16,3 +17,5 @@ java_import(
 )
 
 java_library(name = "empty")
+
+bzl_libraries(names = {"specs2.bzl": "specs2_bzl"})

@@ -61,6 +61,7 @@ def _store_config(repository_ctx):
     ])
 
     build_file_content = """load("@bazel_skylib//rules:common_settings.bzl", "string_setting")
+exports_files(["config.bzl"])
 string_setting(
     name = "scala_version",
     build_setting_default = "{scala_version}",
