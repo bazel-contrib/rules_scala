@@ -32,3 +32,10 @@ exports_files(
     "//test:test_scala_proto_server",
     "//test:scala_binary_jdk_11",
 ]]
+
+sh_test(
+    name = "RunScalaBinaryWithInheritedRunfiles",
+    srcs = ["test_binary_with_inherited_runfiles.sh"],
+    args = ["$(rootpath //test:ScalaBinary)"],
+    data = ["//test:ScalaBinary"],
+)
