@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 @AutoBazelRepository
 public class LauncherFileWriter {
   public static void main(String[] args) throws IOException {
-    Preconditions.require(args.length == 6);
+    Preconditions.require(args.length == 6 || args.length == 7);
 
     final String location = args[0];
     final String workspaceName = args[1];
@@ -28,8 +28,9 @@ public class LauncherFileWriter {
     final String cpFile = args[4];
     final List<String> jvmFlags = Arrays.asList(args[5].split(";"));
     final String classpath = Files.readAllLines(Paths.get(cpFile)).get(0);
+    final String jacocoMainClass = args.length == 7 ? args[6] : "";
 
-    LaunchInfo launchInfo =
+    LaunchInfo.Builder launchInfoBuilder =
         LaunchInfo.builder()
             .addKeyValuePair("binary_type", "Java")
             .addKeyValuePair("workspace_name", workspaceName)
@@ -38,8 +39,11 @@ public class LauncherFileWriter {
             .addKeyValuePair("jar_bin_path", rlocationpath_to_rootpath( workspaceName, jarBinPath)) //Expects rootpath location 
             .addKeyValuePair("java_start_class", javaStartClass)
             .addKeyValuePair("classpath", classpath) //Expects rootpath location
-            .addJoinedValues("jvm_flags", "\t", jvmFlags)
-            .build();
+            .addJoinedValues("jvm_flags", "\t", jvmFlags);
+    if (!jacocoMainClass.isEmpty()) {
+      launchInfoBuilder.addKeyValuePair("jacoco_main_class", jacocoMainClass);
+    }
+    LaunchInfo launchInfo = launchInfoBuilder.build();
 
     Runfiles runfiles = Runfiles.preload()
         .withSourceRepository(AutoBazelRepository_LauncherFileWriter.NAME);
