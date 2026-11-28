@@ -6,7 +6,8 @@
 # `scalacopts` and restores terminal settings on exit. phase_write_executable
 # uses the wrapper for the Unix launcher.
 #
-load("//scala/private:rule_impls.bzl", _java_bin = "java_bin")
+load("@bazel_skylib//lib:paths.bzl", "paths")
+load("//scala/private:rule_impls.bzl", "java_bin_rlocationpath")
 
 def phase_java_wrapper_repl(ctx, p):
     args = struct(
@@ -49,18 +50,36 @@ def _phase_java_wrapper(
     if wrapper_preamble == "":
         exec_str = "exec "
 
+    java = java_bin_rlocationpath(ctx)
+    if paths.is_absolute(java):
+        find_java = "JAVA_EXEC_TO_USE=${{REAL_EXTERNAL_JAVA_BIN:-{java}}}".format(java = java)
+    else:
+        # The launcher exports JAVA_RUNFILES and RUNFILES_MANIFEST_FILE. Without a
+        # runfiles tree (--noenable_runfiles) java is only in the manifest.
+        find_java = """JAVA_EXEC_TO_USE=$REAL_EXTERNAL_JAVA_BIN
+if [[ -z "$JAVA_EXEC_TO_USE" ]]; then
+  JAVA_EXEC_TO_USE="$JAVA_RUNFILES/{key}"
+  if [[ ! -e "$JAVA_EXEC_TO_USE" ]]; then
+    JAVA_EXEC_TO_USE=
+    [[ -f "$RUNFILES_MANIFEST_FILE" ]] && JAVA_EXEC_TO_USE=$(awk -v key='{key}' '{{ sub(/\\r$/, "") }} $1 == key {{ sub(/^[^ ]* /, ""); print; exit }}' "$RUNFILES_MANIFEST_FILE")
+    if [[ -z "$JAVA_EXEC_TO_USE" ]]; then
+      echo "$0: cannot find runfile {key} in runfiles tree '$JAVA_RUNFILES' or manifest '$RUNFILES_MANIFEST_FILE'" >&2
+      exit 1
+    fi
+  fi
+fi""".format(key = java)
+
     wrapper = ctx.actions.declare_file(ctx.label.name + "_wrapper.sh")
     ctx.actions.write(
         output = wrapper,
         content = """#!/usr/bin/env bash
 {preamble}
-DEFAULT_JAVABIN={javabin}
-JAVA_EXEC_TO_USE=${{REAL_EXTERNAL_JAVA_BIN:-$DEFAULT_JAVABIN}}
+{find_java}
 {exec_str}$JAVA_EXEC_TO_USE "$@" {args}
 """.format(
             preamble = wrapper_preamble,
+            find_java = find_java,
             exec_str = exec_str,
-            javabin = _java_bin(ctx),
             args = args,
         ),
         is_executable = True,
