@@ -7,10 +7,11 @@ load("//scala/private:common.bzl", "rlocationpath_from_file")
 # phase_default_info sets this file as the executable in `DefaultInfo`. The
 # launcher starts the main class of the rule with the runtime jars
 # (`p.compile.rjars`) and the JVM flags. It is a shell script from the Java
-# stub template, or an exe launcher on Windows. In a coverage build, the shell
-# script of the test variants starts `JacocoCoverageRunner`. The phase then
-# also writes `<name>.jacoco_metadata.txt` and returns it as `runfiles`.
-# phase_default_info adds that file to the runfiles in `DefaultInfo`.
+# stub template, or an exe launcher on Windows. In a coverage build, the launcher
+# of the test variants starts `JacocoCoverageRunner`. On Linux and macOS the
+# phase then also writes `<name>.jacoco_metadata.txt` and returns it as
+# `runfiles`. phase_default_info adds that file to the runfiles in
+# `DefaultInfo`.
 #
 load(
     "//scala/private:macros/repl_deps.bzl",
@@ -102,10 +103,16 @@ def _phase_write_executable(
         return _write_executable_non_windows(ctx, executable, rjars, main_class, jvm_flags, wrapper, use_jacoco)
 
 def _write_executable_windows(ctx, executable, rjars, main_class, jvm_flags, wrapper, use_jacoco):
-    # NOTE: `use_jacoco` is currently ignored on Windows.
-    # TODO: tests coverage support for Windows
+    jars = rjars.to_list()
+    start_class = main_class
+    jacoco_args = []
+    if use_jacoco and ctx.configuration.coverage_enabled:
+        jars = jars + ctx.toolchains["//scala:toolchain_type"].jacocorunner.files.to_list()
+        start_class = "com.google.testing.coverage.JacocoCoverageRunner"
+        jacoco_args = [main_class]
+
     #launcher expects classpaths to be in rootpath form (ie. relative to runfiles_dir, short_path does the trick)
-    classpath = ";".join([j.short_path for j in rjars.to_list()])
+    classpath = ";".join([j.short_path for j in jars])
 
     jvm_flags_str = ";".join(jvm_flags)
     java_for_exe = java_bin_windows(ctx)
@@ -120,7 +127,7 @@ def _write_executable_windows(ctx, executable, rjars, main_class, jvm_flags, wra
         outputs = [executable],
         inputs = [cpfile],
         executable = ctx.attr._exe.files_to_run.executable,
-        arguments = [executable.path, ctx.workspace_name, java_for_exe, main_class, cpfile.path, jvm_flags_str],
+        arguments = [executable.path, ctx.workspace_name, java_for_exe, start_class, cpfile.path, jvm_flags_str] + jacoco_args,
         env = specifiedEnv,
         mnemonic = "ExeLauncher",
         progress_message = "Creating exe launcher",
